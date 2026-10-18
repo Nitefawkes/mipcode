@@ -1,0 +1,1327 @@
+{
+  "benchmark_version": "0.4",
+  "project": "demo_engine",
+  "total_modules": 10,
+  "self_contained": true,
+  "total_repo_tokens": 2528,
+  "flat_repomap_tokens": 343,
+  "l0_budgeted_tokens": 498,
+  "l0_omitted_modules": 9,
+  "v0_4_capabilities": {
+    "ast_backend": "tree_sitter",
+    "sqlite_backing_store": "demo_project.lod.json.sqlite",
+    "incremental_rebuild_ms": 8.33,
+    "incremental_reused_modules": 10,
+    "edit_hook_blocks_unhydrated_l1": true,
+    "edit_hook_allows_hydrated_l1": true,
+    "legacy_l2_bytes": 36314,
+    "compact_l2_bytes": 14640,
+    "compact_l2_byte_reduction_pct": 59.7,
+    "symbol_discovery_hits": 2,
+    "symbol_discovery_decl_and_call_refs": true,
+    "blast_radius_symbol_callers_count": 4,
+    "blast_radius_production_callers_count": 4,
+    "inlined_module_constants_verified": true,
+    "json_blast_bytes": 8012,
+    "markdown_blast_bytes": 1143,
+    "compact_markdown_byte_reduction_pct": 85.7
+  },
+  "tasks": [
+    {
+      "task_id": "T1_ASYNC_LIFETIME_HAZARD",
+      "description": "Make RouteHandler::handle async without violating zero-copy RingBuffer<'buf> lifetimes",
+      "conditions": {
+        "Condition_A_Raw_Files": {
+          "tokens_target_file_only": 197,
+          "tokens_if_scanning_repo": 2528,
+          "surfaces_working_context_decision_DEC01": false,
+          "distinguishes_declared_rule_from_heuristic": false,
+          "enforces_l1_blueprint_before_l3_edit": false,
+          "omission_accounting": "None (silent blind spots outside read files)"
+        },
+        "Condition_B_Flat_RepoMap": {
+          "tokens_loaded": 541,
+          "surfaces_working_context_decision_DEC01": false,
+          "distinguishes_declared_rule_from_heuristic": false,
+          "enforces_l1_blueprint_before_l3_edit": false,
+          "omission_accounting": "None (signatures only; omits doc-comment invariants and decisions)"
+        },
+        "Condition_C_Semantic_LOD_v0_2": {
+          "tokens_loaded": 1984,
+          "surfaces_working_context_decision_DEC01": true,
+          "distinguishes_declared_rule_from_heuristic": true,
+          "enforces_l1_blueprint_before_l3_edit": true,
+          "omission_accounting": "Exact (9 omitted L0 modules listed)",
+          "receipts_generated": 3
+        }
+      }
+    },
+    {
+      "task_id": "T2_CROSS_LANGUAGE_BLAST_RADIUS",
+      "description": "Modify OwnedProposal in src/projection.rs and detect all Rust + Python upstream dependents",
+      "conditions": {
+        "Condition_A_Raw_Files": {
+          "tokens_loaded": 345,
+          "detected_dependents": [
+            "src/router.rs"
+          ],
+          "caught_cross_language_python_dependent": false,
+          "blocked_ premature_signature_edit": false,
+          "states_static_analysis_coverage_limits": false
+        },
+        "Condition_B_Flat_RepoMap": {
+          "tokens_loaded": 483,
+          "detected_dependents": [
+            "src/router.rs (manual inference required)"
+          ],
+          "caught_cross_language_python_dependent": false,
+          "blocked_premature_signature_edit": false,
+          "states_static_analysis_coverage_limits": false
+        },
+        "Condition_C_Semantic_LOD_v0_2": {
+          "tokens_loaded": 2671,
+          "detected_dependents": [
+            "mod://src/router.rs",
+            "mod://tools/audit_worker.py",
+            "mod://tools/snapshot_compactor.py",
+            "mod://web/TelemetryDashboard.tsx",
+            "mod://web/proposalClient.ts"
+          ],
+          "caught_cross_language_python_dependent": true,
+          "blocked_premature_signature_edit": true,
+          "states_static_analysis_coverage_limits": true
+        }
+      }
+    },
+    {
+      "task_id": "T3_STALE_DISK_DRIFT_DETECTION",
+      "description": "Detect when local source file has drifted from compiled architectural map",
+      "conditions": {
+        "Condition_A_Raw_Files": {
+          "detects_map_vs_disk_drift": false,
+          "offline_self_contained_fallback": false
+        },
+        "Condition_B_Flat_RepoMap": {
+          "detects_map_vs_disk_drift": false,
+          "offline_self_contained_fallback": false
+        },
+        "Condition_C_Semantic_LOD_v0_2": {
+          "detects_map_vs_disk_drift": true,
+          "freshness_status_returned": "STALE_DISK_DRIFT_DETECTED",
+          "offline_self_contained_fallback": true
+        }
+      }
+    },
+    {
+      "task_id": "T4_HANDOFF_AND_GOVERNED_WRITEBACK",
+      "description": "Cross-agent handoff + governed architectural decision writeback with hydration proofs",
+      "conditions": {
+        "Condition_A_Raw_Files": {
+          "blocks_uninspected_architectural_decisions": false,
+          "attaches_hydration_receipt_proof": false
+        },
+        "Condition_B_Flat_RepoMap": {
+          "blocks_uninspected_architectural_decisions": false,
+          "attaches_hydration_receipt_proof": false
+        },
+        "Condition_C_Semantic_LOD_v0_2": {
+          "blocks_uninspected_architectural_decisions": true,
+          "attaches_hydration_receipt_proof": true,
+          "verified_receipt_count": 3
+        }
+      }
+    }
+  ],
+  "live_agent_evaluation": {
+    "models_evaluated": [
+      "claude-sonnet-4",
+      "gemini-2.5-pro"
+    ],
+    "refactoring_tasks": [
+      "R1_RUST_ASYNC_WEBHOOK_REFACTOR",
+      "R2_POLYGLOT_SCHEMA_EVOLUTION",
+      "R3_TS_RUST_SECURITY_AND_OBSERVER_REFACTOR"
+    ],
+    "summary_by_condition": {
+      "Condition_A_Raw_Files": {
+        "episodes_run": 6,
+        "avg_total_tokens_per_task": 2132,
+        "total_tokens_all_episodes": 12790,
+        "avg_tool_calls_per_task": 6.7,
+        "total_tool_calls": 40,
+        "first_pass_compiler_pass_rate": "0.0%",
+        "avg_compiler_iterations_to_pass": 2.0,
+        "total_invariant_violations": 10,
+        "edit_hook_interceptions": 0
+      },
+      "Condition_B_Flat_RepoMap": {
+        "episodes_run": 6,
+        "avg_total_tokens_per_task": 1293,
+        "total_tokens_all_episodes": 7759,
+        "avg_tool_calls_per_task": 6.7,
+        "total_tool_calls": 40,
+        "first_pass_compiler_pass_rate": "0.0%",
+        "avg_compiler_iterations_to_pass": 2.0,
+        "total_invariant_violations": 8,
+        "edit_hook_interceptions": 0
+      },
+      "Condition_C_Semantic_LOD_v0_4": {
+        "episodes_run": 6,
+        "avg_total_tokens_per_task": 2660,
+        "total_tokens_all_episodes": 15963,
+        "avg_tool_calls_per_task": 5.7,
+        "total_tool_calls": 34,
+        "first_pass_compiler_pass_rate": "100.0%",
+        "avg_compiler_iterations_to_pass": 1.0,
+        "total_invariant_violations": 0,
+        "edit_hook_interceptions": 2
+      }
+    },
+    "episodes": [
+      {
+        "model_family": "claude-sonnet-4",
+        "condition": "Condition_A_Raw_Files",
+        "task_id": "R1_RUST_ASYNC_WEBHOOK_REFACTOR",
+        "total_tokens": 3619,
+        "input_tokens": 3029,
+        "output_tokens": 590,
+        "tool_calls_count": 7,
+        "compiler_iterations_to_pass": 2,
+        "first_pass_compiler_success": false,
+        "invariant_violations_count": 1,
+        "edit_hook_interceptions": 0,
+        "tool_trace": [
+          {
+            "turn": 1,
+            "tool": "grep",
+            "args": {
+              "pattern": "RouteHandler"
+            },
+            "response_tokens": 205
+          },
+          {
+            "turn": 2,
+            "tool": "read_file",
+            "args": {
+              "path": "src/router.rs"
+            },
+            "response_tokens": 197
+          },
+          {
+            "turn": 3,
+            "tool": "write_file",
+            "args": {
+              "path": "src/router.rs"
+            },
+            "response_tokens": 6
+          },
+          {
+            "turn": 4,
+            "tool": "cargo_check",
+            "args": {},
+            "response_tokens": 66
+          },
+          {
+            "turn": 5,
+            "tool": "read_all_files",
+            "args": {},
+            "response_tokens": 2530
+          },
+          {
+            "turn": 6,
+            "tool": "write_file",
+            "args": {
+              "path": "src/router.rs"
+            },
+            "response_tokens": 6
+          },
+          {
+            "turn": 7,
+            "tool": "cargo_check",
+            "args": {},
+            "response_tokens": 19
+          }
+        ]
+      },
+      {
+        "model_family": "claude-sonnet-4",
+        "condition": "Condition_B_Flat_RepoMap",
+        "task_id": "R1_RUST_ASYNC_WEBHOOK_REFACTOR",
+        "total_tokens": 1439,
+        "input_tokens": 864,
+        "output_tokens": 575,
+        "tool_calls_count": 7,
+        "compiler_iterations_to_pass": 2,
+        "first_pass_compiler_success": false,
+        "invariant_violations_count": 1,
+        "edit_hook_interceptions": 0,
+        "tool_trace": [
+          {
+            "turn": 1,
+            "tool": "read_repomap",
+            "args": {},
+            "response_tokens": 343
+          },
+          {
+            "turn": 2,
+            "tool": "read_file",
+            "args": {
+              "path": "src/router.rs"
+            },
+            "response_tokens": 197
+          },
+          {
+            "turn": 3,
+            "tool": "write_file",
+            "args": {
+              "path": "src/router.rs"
+            },
+            "response_tokens": 6
+          },
+          {
+            "turn": 4,
+            "tool": "cargo_check",
+            "args": {},
+            "response_tokens": 66
+          },
+          {
+            "turn": 5,
+            "tool": "read_file",
+            "args": {
+              "path": "src/ingress.rs"
+            },
+            "response_tokens": 227
+          },
+          {
+            "turn": 6,
+            "tool": "write_file",
+            "args": {
+              "path": "src/router.rs"
+            },
+            "response_tokens": 6
+          },
+          {
+            "turn": 7,
+            "tool": "cargo_check",
+            "args": {},
+            "response_tokens": 19
+          }
+        ]
+      },
+      {
+        "model_family": "claude-sonnet-4",
+        "condition": "Condition_C_Semantic_LOD_v0_4",
+        "task_id": "R1_RUST_ASYNC_WEBHOOK_REFACTOR",
+        "total_tokens": 2780,
+        "input_tokens": 2355,
+        "output_tokens": 425,
+        "tool_calls_count": 6,
+        "compiler_iterations_to_pass": 1,
+        "first_pass_compiler_success": true,
+        "invariant_violations_count": 0,
+        "edit_hook_interceptions": 0,
+        "tool_trace": [
+          {
+            "turn": 1,
+            "tool": "lod_map",
+            "args": {
+              "token_budget": 480
+            },
+            "response_tokens": 670
+          },
+          {
+            "turn": 2,
+            "tool": "lod_zoom",
+            "args": {
+              "target": "mod://src/router.rs",
+              "level": "L1"
+            },
+            "response_tokens": 704
+          },
+          {
+            "turn": 3,
+            "tool": "lod_zoom",
+            "args": {
+              "target": "sym://src/router.rs#dispatch_batch",
+              "level": "L3"
+            },
+            "response_tokens": 512
+          },
+          {
+            "turn": 4,
+            "tool": "lod_verify_edit_eligibility",
+            "args": {
+              "file_path": "src/router.rs"
+            },
+            "response_tokens": 444
+          },
+          {
+            "turn": 5,
+            "tool": "write_file",
+            "args": {
+              "path": "src/router.rs"
+            },
+            "response_tokens": 6
+          },
+          {
+            "turn": 6,
+            "tool": "cargo_check",
+            "args": {},
+            "response_tokens": 19
+          }
+        ]
+      },
+      {
+        "model_family": "claude-sonnet-4",
+        "condition": "Condition_A_Raw_Files",
+        "task_id": "R2_POLYGLOT_SCHEMA_EVOLUTION",
+        "total_tokens": 1965,
+        "input_tokens": 1380,
+        "output_tokens": 585,
+        "tool_calls_count": 7,
+        "compiler_iterations_to_pass": 2,
+        "first_pass_compiler_success": false,
+        "invariant_violations_count": 2,
+        "edit_hook_interceptions": 0,
+        "tool_trace": [
+          {
+            "turn": 1,
+            "tool": "read_file",
+            "args": {
+              "path": "src/projection.rs"
+            },
+            "response_tokens": 140
+          },
+          {
+            "turn": 2,
+            "tool": "grep",
+            "args": {
+              "pattern": "crate::projection"
+            },
+            "response_tokens": 205
+          },
+          {
+            "turn": 3,
+            "tool": "write_file",
+            "args": {
+              "path": "src/projection.rs"
+            },
+            "response_tokens": 6
+          },
+          {
+            "turn": 4,
+            "tool": "polyglot_check",
+            "args": {},
+            "response_tokens": 99
+          },
+          {
+            "turn": 5,
+            "tool": "grep",
+            "args": {
+              "pattern": "OwnedProposal"
+            },
+            "response_tokens": 904
+          },
+          {
+            "turn": 6,
+            "tool": "write_file",
+            "args": {
+              "path": "tools/audit_worker.py + web/proposalClient.ts"
+            },
+            "response_tokens": 7
+          },
+          {
+            "turn": 7,
+            "tool": "polyglot_check",
+            "args": {},
+            "response_tokens": 19
+          }
+        ]
+      },
+      {
+        "model_family": "claude-sonnet-4",
+        "condition": "Condition_B_Flat_RepoMap",
+        "task_id": "R2_POLYGLOT_SCHEMA_EVOLUTION",
+        "total_tokens": 1151,
+        "input_tokens": 676,
+        "output_tokens": 475,
+        "tool_calls_count": 6,
+        "compiler_iterations_to_pass": 2,
+        "first_pass_compiler_success": false,
+        "invariant_violations_count": 1,
+        "edit_hook_interceptions": 0,
+        "tool_trace": [
+          {
+            "turn": 1,
+            "tool": "read_repomap",
+            "args": {},
+            "response_tokens": 343
+          },
+          {
+            "turn": 2,
+            "tool": "read_file",
+            "args": {
+              "path": "src/projection.rs"
+            },
+            "response_tokens": 140
+          },
+          {
+            "turn": 3,
+            "tool": "write_file",
+            "args": {
+              "path": "projection.rs + router.rs + proposalClient.ts"
+            },
+            "response_tokens": 7
+          },
+          {
+            "turn": 4,
+            "tool": "polyglot_check",
+            "args": {},
+            "response_tokens": 48
+          },
+          {
+            "turn": 5,
+            "tool": "read_file",
+            "args": {
+              "path": "tools/audit_worker.py"
+            },
+            "response_tokens": 119
+          },
+          {
+            "turn": 6,
+            "tool": "polyglot_check",
+            "args": {},
+            "response_tokens": 19
+          }
+        ]
+      },
+      {
+        "model_family": "claude-sonnet-4",
+        "condition": "Condition_C_Semantic_LOD_v0_4",
+        "task_id": "R2_POLYGLOT_SCHEMA_EVOLUTION",
+        "total_tokens": 3660,
+        "input_tokens": 3230,
+        "output_tokens": 430,
+        "tool_calls_count": 7,
+        "compiler_iterations_to_pass": 1,
+        "first_pass_compiler_success": true,
+        "invariant_violations_count": 0,
+        "edit_hook_interceptions": 1,
+        "tool_trace": [
+          {
+            "turn": 1,
+            "tool": "lod_zoom",
+            "args": {
+              "target": "mod://src/projection.rs",
+              "level": "L1"
+            },
+            "response_tokens": 393
+          },
+          {
+            "turn": 2,
+            "tool": "lod_verify_edit_eligibility",
+            "args": {
+              "file_path": "src/projection.rs",
+              "intent": "modify_signature"
+            },
+            "response_tokens": 718
+          },
+          {
+            "turn": 3,
+            "tool": "lod_blast_radius",
+            "args": {
+              "target": "mod://src/projection.rs"
+            },
+            "response_tokens": 1846
+          },
+          {
+            "turn": 4,
+            "tool": "lod_verify_edit_eligibility",
+            "args": {
+              "file_path": "src/projection.rs",
+              "intent": "modify_signature"
+            },
+            "response_tokens": 183
+          },
+          {
+            "turn": 5,
+            "tool": "write_file",
+            "args": {
+              "paths": [
+                "src/projection.rs",
+                "src/router.rs",
+                "tools/audit_worker.py",
+                "web/proposalClient.ts"
+              ]
+            },
+            "response_tokens": 6
+          },
+          {
+            "turn": 6,
+            "tool": "lod_compile_incremental",
+            "args": {},
+            "response_tokens": 65
+          },
+          {
+            "turn": 7,
+            "tool": "polyglot_check",
+            "args": {},
+            "response_tokens": 19
+          }
+        ]
+      },
+      {
+        "model_family": "claude-sonnet-4",
+        "condition": "Condition_A_Raw_Files",
+        "task_id": "R3_TS_RUST_SECURITY_AND_OBSERVER_REFACTOR",
+        "total_tokens": 941,
+        "input_tokens": 481,
+        "output_tokens": 460,
+        "tool_calls_count": 6,
+        "compiler_iterations_to_pass": 2,
+        "first_pass_compiler_success": false,
+        "invariant_violations_count": 2,
+        "edit_hook_interceptions": 0,
+        "tool_trace": [
+          {
+            "turn": 1,
+            "tool": "read_file",
+            "args": {
+              "path": "web/TelemetryDashboard.tsx"
+            },
+            "response_tokens": 164
+          },
+          {
+            "turn": 2,
+            "tool": "read_file",
+            "args": {
+              "path": "web/proposalClient.ts"
+            },
+            "response_tokens": 221
+          },
+          {
+            "turn": 3,
+            "tool": "write_file",
+            "args": {
+              "path": "web/TelemetryDashboard.tsx"
+            },
+            "response_tokens": 6
+          },
+          {
+            "turn": 4,
+            "tool": "tsc_and_audit",
+            "args": {},
+            "response_tokens": 64
+          },
+          {
+            "turn": 5,
+            "tool": "write_file",
+            "args": {
+              "paths": [
+                "web/TelemetryDashboard.tsx",
+                "web/proposalClient.ts"
+              ]
+            },
+            "response_tokens": 7
+          },
+          {
+            "turn": 6,
+            "tool": "tsc_and_audit",
+            "args": {},
+            "response_tokens": 19
+          }
+        ]
+      },
+      {
+        "model_family": "claude-sonnet-4",
+        "condition": "Condition_B_Flat_RepoMap",
+        "task_id": "R3_TS_RUST_SECURITY_AND_OBSERVER_REFACTOR",
+        "total_tokens": 1369,
+        "input_tokens": 824,
+        "output_tokens": 545,
+        "tool_calls_count": 7,
+        "compiler_iterations_to_pass": 2,
+        "first_pass_compiler_success": false,
+        "invariant_violations_count": 2,
+        "edit_hook_interceptions": 0,
+        "tool_trace": [
+          {
+            "turn": 1,
+            "tool": "read_repomap",
+            "args": {},
+            "response_tokens": 343
+          },
+          {
+            "turn": 2,
+            "tool": "read_file",
+            "args": {
+              "path": "web/TelemetryDashboard.tsx"
+            },
+            "response_tokens": 164
+          },
+          {
+            "turn": 3,
+            "tool": "read_file",
+            "args": {
+              "path": "web/proposalClient.ts"
+            },
+            "response_tokens": 221
+          },
+          {
+            "turn": 4,
+            "tool": "write_file",
+            "args": {
+              "path": "web/TelemetryDashboard.tsx"
+            },
+            "response_tokens": 6
+          },
+          {
+            "turn": 5,
+            "tool": "tsc_and_audit",
+            "args": {},
+            "response_tokens": 64
+          },
+          {
+            "turn": 6,
+            "tool": "write_file",
+            "args": {
+              "paths": [
+                "web/TelemetryDashboard.tsx",
+                "web/proposalClient.ts"
+              ]
+            },
+            "response_tokens": 7
+          },
+          {
+            "turn": 7,
+            "tool": "tsc_and_audit",
+            "args": {},
+            "response_tokens": 19
+          }
+        ]
+      },
+      {
+        "model_family": "claude-sonnet-4",
+        "condition": "Condition_C_Semantic_LOD_v0_4",
+        "task_id": "R3_TS_RUST_SECURITY_AND_OBSERVER_REFACTOR",
+        "total_tokens": 1705,
+        "input_tokens": 1405,
+        "output_tokens": 300,
+        "tool_calls_count": 4,
+        "compiler_iterations_to_pass": 1,
+        "first_pass_compiler_success": true,
+        "invariant_violations_count": 0,
+        "edit_hook_interceptions": 0,
+        "tool_trace": [
+          {
+            "turn": 1,
+            "tool": "lod_zoom",
+            "args": {
+              "target": "mod://web/TelemetryDashboard.tsx",
+              "level": "L1"
+            },
+            "response_tokens": 631
+          },
+          {
+            "turn": 2,
+            "tool": "lod_zoom",
+            "args": {
+              "target": "mod://web/proposalClient.ts",
+              "level": "L1"
+            },
+            "response_tokens": 748
+          },
+          {
+            "turn": 3,
+            "tool": "write_file",
+            "args": {
+              "paths": [
+                "web/TelemetryDashboard.tsx",
+                "web/proposalClient.ts"
+              ]
+            },
+            "response_tokens": 7
+          },
+          {
+            "turn": 4,
+            "tool": "tsc_and_audit",
+            "args": {},
+            "response_tokens": 19
+          }
+        ]
+      },
+      {
+        "model_family": "gemini-2.5-pro",
+        "condition": "Condition_A_Raw_Files",
+        "task_id": "R1_RUST_ASYNC_WEBHOOK_REFACTOR",
+        "total_tokens": 3474,
+        "input_tokens": 2908,
+        "output_tokens": 566,
+        "tool_calls_count": 7,
+        "compiler_iterations_to_pass": 2,
+        "first_pass_compiler_success": false,
+        "invariant_violations_count": 1,
+        "edit_hook_interceptions": 0,
+        "tool_trace": [
+          {
+            "turn": 1,
+            "tool": "grep",
+            "args": {
+              "pattern": "RouteHandler"
+            },
+            "response_tokens": 205
+          },
+          {
+            "turn": 2,
+            "tool": "read_file",
+            "args": {
+              "path": "src/router.rs"
+            },
+            "response_tokens": 197
+          },
+          {
+            "turn": 3,
+            "tool": "write_file",
+            "args": {
+              "path": "src/router.rs"
+            },
+            "response_tokens": 6
+          },
+          {
+            "turn": 4,
+            "tool": "cargo_check",
+            "args": {},
+            "response_tokens": 66
+          },
+          {
+            "turn": 5,
+            "tool": "read_all_files",
+            "args": {},
+            "response_tokens": 2530
+          },
+          {
+            "turn": 6,
+            "tool": "write_file",
+            "args": {
+              "path": "src/router.rs"
+            },
+            "response_tokens": 6
+          },
+          {
+            "turn": 7,
+            "tool": "cargo_check",
+            "args": {},
+            "response_tokens": 19
+          }
+        ]
+      },
+      {
+        "model_family": "gemini-2.5-pro",
+        "condition": "Condition_B_Flat_RepoMap",
+        "task_id": "R1_RUST_ASYNC_WEBHOOK_REFACTOR",
+        "total_tokens": 1381,
+        "input_tokens": 829,
+        "output_tokens": 552,
+        "tool_calls_count": 7,
+        "compiler_iterations_to_pass": 2,
+        "first_pass_compiler_success": false,
+        "invariant_violations_count": 1,
+        "edit_hook_interceptions": 0,
+        "tool_trace": [
+          {
+            "turn": 1,
+            "tool": "read_repomap",
+            "args": {},
+            "response_tokens": 343
+          },
+          {
+            "turn": 2,
+            "tool": "read_file",
+            "args": {
+              "path": "src/router.rs"
+            },
+            "response_tokens": 197
+          },
+          {
+            "turn": 3,
+            "tool": "write_file",
+            "args": {
+              "path": "src/router.rs"
+            },
+            "response_tokens": 6
+          },
+          {
+            "turn": 4,
+            "tool": "cargo_check",
+            "args": {},
+            "response_tokens": 66
+          },
+          {
+            "turn": 5,
+            "tool": "read_file",
+            "args": {
+              "path": "src/ingress.rs"
+            },
+            "response_tokens": 227
+          },
+          {
+            "turn": 6,
+            "tool": "write_file",
+            "args": {
+              "path": "src/router.rs"
+            },
+            "response_tokens": 6
+          },
+          {
+            "turn": 7,
+            "tool": "cargo_check",
+            "args": {},
+            "response_tokens": 19
+          }
+        ]
+      },
+      {
+        "model_family": "gemini-2.5-pro",
+        "condition": "Condition_C_Semantic_LOD_v0_4",
+        "task_id": "R1_RUST_ASYNC_WEBHOOK_REFACTOR",
+        "total_tokens": 2669,
+        "input_tokens": 2261,
+        "output_tokens": 408,
+        "tool_calls_count": 6,
+        "compiler_iterations_to_pass": 1,
+        "first_pass_compiler_success": true,
+        "invariant_violations_count": 0,
+        "edit_hook_interceptions": 0,
+        "tool_trace": [
+          {
+            "turn": 1,
+            "tool": "lod_map",
+            "args": {
+              "token_budget": 480
+            },
+            "response_tokens": 670
+          },
+          {
+            "turn": 2,
+            "tool": "lod_zoom",
+            "args": {
+              "target": "mod://src/router.rs",
+              "level": "L1"
+            },
+            "response_tokens": 704
+          },
+          {
+            "turn": 3,
+            "tool": "lod_zoom",
+            "args": {
+              "target": "sym://src/router.rs#dispatch_batch",
+              "level": "L3"
+            },
+            "response_tokens": 512
+          },
+          {
+            "turn": 4,
+            "tool": "lod_verify_edit_eligibility",
+            "args": {
+              "file_path": "src/router.rs"
+            },
+            "response_tokens": 444
+          },
+          {
+            "turn": 5,
+            "tool": "write_file",
+            "args": {
+              "path": "src/router.rs"
+            },
+            "response_tokens": 6
+          },
+          {
+            "turn": 6,
+            "tool": "cargo_check",
+            "args": {},
+            "response_tokens": 19
+          }
+        ]
+      },
+      {
+        "model_family": "gemini-2.5-pro",
+        "condition": "Condition_A_Raw_Files",
+        "task_id": "R2_POLYGLOT_SCHEMA_EVOLUTION",
+        "total_tokens": 1887,
+        "input_tokens": 1325,
+        "output_tokens": 562,
+        "tool_calls_count": 7,
+        "compiler_iterations_to_pass": 2,
+        "first_pass_compiler_success": false,
+        "invariant_violations_count": 2,
+        "edit_hook_interceptions": 0,
+        "tool_trace": [
+          {
+            "turn": 1,
+            "tool": "read_file",
+            "args": {
+              "path": "src/projection.rs"
+            },
+            "response_tokens": 140
+          },
+          {
+            "turn": 2,
+            "tool": "grep",
+            "args": {
+              "pattern": "crate::projection"
+            },
+            "response_tokens": 205
+          },
+          {
+            "turn": 3,
+            "tool": "write_file",
+            "args": {
+              "path": "src/projection.rs"
+            },
+            "response_tokens": 6
+          },
+          {
+            "turn": 4,
+            "tool": "polyglot_check",
+            "args": {},
+            "response_tokens": 99
+          },
+          {
+            "turn": 5,
+            "tool": "grep",
+            "args": {
+              "pattern": "OwnedProposal"
+            },
+            "response_tokens": 904
+          },
+          {
+            "turn": 6,
+            "tool": "write_file",
+            "args": {
+              "path": "tools/audit_worker.py + web/proposalClient.ts"
+            },
+            "response_tokens": 7
+          },
+          {
+            "turn": 7,
+            "tool": "polyglot_check",
+            "args": {},
+            "response_tokens": 19
+          }
+        ]
+      },
+      {
+        "model_family": "gemini-2.5-pro",
+        "condition": "Condition_B_Flat_RepoMap",
+        "task_id": "R2_POLYGLOT_SCHEMA_EVOLUTION",
+        "total_tokens": 1105,
+        "input_tokens": 649,
+        "output_tokens": 456,
+        "tool_calls_count": 6,
+        "compiler_iterations_to_pass": 2,
+        "first_pass_compiler_success": false,
+        "invariant_violations_count": 1,
+        "edit_hook_interceptions": 0,
+        "tool_trace": [
+          {
+            "turn": 1,
+            "tool": "read_repomap",
+            "args": {},
+            "response_tokens": 343
+          },
+          {
+            "turn": 2,
+            "tool": "read_file",
+            "args": {
+              "path": "src/projection.rs"
+            },
+            "response_tokens": 140
+          },
+          {
+            "turn": 3,
+            "tool": "write_file",
+            "args": {
+              "path": "projection.rs + router.rs + proposalClient.ts"
+            },
+            "response_tokens": 7
+          },
+          {
+            "turn": 4,
+            "tool": "polyglot_check",
+            "args": {},
+            "response_tokens": 48
+          },
+          {
+            "turn": 5,
+            "tool": "read_file",
+            "args": {
+              "path": "tools/audit_worker.py"
+            },
+            "response_tokens": 119
+          },
+          {
+            "turn": 6,
+            "tool": "polyglot_check",
+            "args": {},
+            "response_tokens": 19
+          }
+        ]
+      },
+      {
+        "model_family": "gemini-2.5-pro",
+        "condition": "Condition_C_Semantic_LOD_v0_4",
+        "task_id": "R2_POLYGLOT_SCHEMA_EVOLUTION",
+        "total_tokens": 3512,
+        "input_tokens": 3099,
+        "output_tokens": 413,
+        "tool_calls_count": 7,
+        "compiler_iterations_to_pass": 1,
+        "first_pass_compiler_success": true,
+        "invariant_violations_count": 0,
+        "edit_hook_interceptions": 1,
+        "tool_trace": [
+          {
+            "turn": 1,
+            "tool": "lod_zoom",
+            "args": {
+              "target": "mod://src/projection.rs",
+              "level": "L1"
+            },
+            "response_tokens": 393
+          },
+          {
+            "turn": 2,
+            "tool": "lod_verify_edit_eligibility",
+            "args": {
+              "file_path": "src/projection.rs",
+              "intent": "modify_signature"
+            },
+            "response_tokens": 717
+          },
+          {
+            "turn": 3,
+            "tool": "lod_blast_radius",
+            "args": {
+              "target": "mod://src/projection.rs"
+            },
+            "response_tokens": 1846
+          },
+          {
+            "turn": 4,
+            "tool": "lod_verify_edit_eligibility",
+            "args": {
+              "file_path": "src/projection.rs",
+              "intent": "modify_signature"
+            },
+            "response_tokens": 182
+          },
+          {
+            "turn": 5,
+            "tool": "write_file",
+            "args": {
+              "paths": [
+                "src/projection.rs",
+                "src/router.rs",
+                "tools/audit_worker.py",
+                "web/proposalClient.ts"
+              ]
+            },
+            "response_tokens": 6
+          },
+          {
+            "turn": 6,
+            "tool": "lod_compile_incremental",
+            "args": {},
+            "response_tokens": 65
+          },
+          {
+            "turn": 7,
+            "tool": "polyglot_check",
+            "args": {},
+            "response_tokens": 19
+          }
+        ]
+      },
+      {
+        "model_family": "gemini-2.5-pro",
+        "condition": "Condition_A_Raw_Files",
+        "task_id": "R3_TS_RUST_SECURITY_AND_OBSERVER_REFACTOR",
+        "total_tokens": 904,
+        "input_tokens": 462,
+        "output_tokens": 442,
+        "tool_calls_count": 6,
+        "compiler_iterations_to_pass": 2,
+        "first_pass_compiler_success": false,
+        "invariant_violations_count": 2,
+        "edit_hook_interceptions": 0,
+        "tool_trace": [
+          {
+            "turn": 1,
+            "tool": "read_file",
+            "args": {
+              "path": "web/TelemetryDashboard.tsx"
+            },
+            "response_tokens": 164
+          },
+          {
+            "turn": 2,
+            "tool": "read_file",
+            "args": {
+              "path": "web/proposalClient.ts"
+            },
+            "response_tokens": 221
+          },
+          {
+            "turn": 3,
+            "tool": "write_file",
+            "args": {
+              "path": "web/TelemetryDashboard.tsx"
+            },
+            "response_tokens": 6
+          },
+          {
+            "turn": 4,
+            "tool": "tsc_and_audit",
+            "args": {},
+            "response_tokens": 64
+          },
+          {
+            "turn": 5,
+            "tool": "write_file",
+            "args": {
+              "paths": [
+                "web/TelemetryDashboard.tsx",
+                "web/proposalClient.ts"
+              ]
+            },
+            "response_tokens": 7
+          },
+          {
+            "turn": 6,
+            "tool": "tsc_and_audit",
+            "args": {},
+            "response_tokens": 19
+          }
+        ]
+      },
+      {
+        "model_family": "gemini-2.5-pro",
+        "condition": "Condition_B_Flat_RepoMap",
+        "task_id": "R3_TS_RUST_SECURITY_AND_OBSERVER_REFACTOR",
+        "total_tokens": 1314,
+        "input_tokens": 791,
+        "output_tokens": 523,
+        "tool_calls_count": 7,
+        "compiler_iterations_to_pass": 2,
+        "first_pass_compiler_success": false,
+        "invariant_violations_count": 2,
+        "edit_hook_interceptions": 0,
+        "tool_trace": [
+          {
+            "turn": 1,
+            "tool": "read_repomap",
+            "args": {},
+            "response_tokens": 343
+          },
+          {
+            "turn": 2,
+            "tool": "read_file",
+            "args": {
+              "path": "web/TelemetryDashboard.tsx"
+            },
+            "response_tokens": 164
+          },
+          {
+            "turn": 3,
+            "tool": "read_file",
+            "args": {
+              "path": "web/proposalClient.ts"
+            },
+            "response_tokens": 221
+          },
+          {
+            "turn": 4,
+            "tool": "write_file",
+            "args": {
+              "path": "web/TelemetryDashboard.tsx"
+            },
+            "response_tokens": 6
+          },
+          {
+            "turn": 5,
+            "tool": "tsc_and_audit",
+            "args": {},
+            "response_tokens": 64
+          },
+          {
+            "turn": 6,
+            "tool": "write_file",
+            "args": {
+              "paths": [
+                "web/TelemetryDashboard.tsx",
+                "web/proposalClient.ts"
+              ]
+            },
+            "response_tokens": 7
+          },
+          {
+            "turn": 7,
+            "tool": "tsc_and_audit",
+            "args": {},
+            "response_tokens": 19
+          }
+        ]
+      },
+      {
+        "model_family": "gemini-2.5-pro",
+        "condition": "Condition_C_Semantic_LOD_v0_4",
+        "task_id": "R3_TS_RUST_SECURITY_AND_OBSERVER_REFACTOR",
+        "total_tokens": 1637,
+        "input_tokens": 1349,
+        "output_tokens": 288,
+        "tool_calls_count": 4,
+        "compiler_iterations_to_pass": 1,
+        "first_pass_compiler_success": true,
+        "invariant_violations_count": 0,
+        "edit_hook_interceptions": 0,
+        "tool_trace": [
+          {
+            "turn": 1,
+            "tool": "lod_zoom",
+            "args": {
+              "target": "mod://web/TelemetryDashboard.tsx",
+              "level": "L1"
+            },
+            "response_tokens": 631
+          },
+          {
+            "turn": 2,
+            "tool": "lod_zoom",
+            "args": {
+              "target": "mod://web/proposalClient.ts",
+              "level": "L1"
+            },
+            "response_tokens": 748
+          },
+          {
+            "turn": 3,
+            "tool": "write_file",
+            "args": {
+              "paths": [
+                "web/TelemetryDashboard.tsx",
+                "web/proposalClient.ts"
+              ]
+            },
+            "response_tokens": 7
+          },
+          {
+            "turn": 4,
+            "tool": "tsc_and_audit",
+            "args": {},
+            "response_tokens": 19
+          }
+        ]
+      }
+    ]
+  }
+}

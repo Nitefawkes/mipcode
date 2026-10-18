@@ -1,0 +1,17 @@
+{
+  "mission": "Build a zero-copy event router with governed single-writer state projection.",
+  "active_objective": "Add async external webhook dispatch without violating zero-copy ring buffer lifetimes.",
+  "accepted_decisions": [
+    {
+      "id": "DEC-01",
+      "statement": "RingBuffer slices ('buf) must never cross async await boundaries; clone into OwnedProposal first."
+    }
+  ],
+  "hard_constraints": [
+    "SPRITE state projection is single-writer; workers may only emit OwnedProposal.",
+    "Zero-copy RingBuffer cannot be locked across network I/O."
+  ],
+  "open_questions": [
+    "Should retry backoff live in router.rs or a dedicated async dispatcher worker?"
+  ]
+}

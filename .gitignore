@@ -1,0 +1,15 @@
+# Local artifacts & external repo snapshots (never commit private repo indexes)
+artifacts/
+*.sqlite
+*.sessions.json
+
+# Python bytecode & packaging
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+build/
+dist/
+*.egg-info/
+.pytest_cache/

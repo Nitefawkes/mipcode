@@ -1,0 +1,2464 @@
+{
+  "lod_version": "0.4",
+  "project": "demo_engine",
+  "repo_root": ".",
+  "git_commit": "unversioned-snapshot",
+  "portability": {
+    "self_contained": true,
+    "source_encoding": "zlib+base64",
+    "hash_algorithm": "sha256",
+    "ast_backend": "tree_sitter",
+    "sqlite_backing_store": "demo_project.lod.json.sqlite",
+    "supported_languages": [
+      "rust",
+      "python",
+      "typescript",
+      "javascript"
+    ]
+  },
+  "incremental_stats": {
+    "incremental_mode": true,
+    "elapsed_ms": 8.33,
+    "reused_modules_count": 10,
+    "reparsed_modules_count": 0,
+    "reparsed_modules": [],
+    "deleted_modules": []
+  },
+  "working_context": {
+    "mission": "Build a zero-copy event router with governed single-writer state projection.",
+    "active_objective": "Add async external webhook dispatch without violating zero-copy ring buffer lifetimes.",
+    "accepted_decisions": [
+      {
+        "id": "DEC-01",
+        "statement": "RingBuffer slices ('buf) must never cross async await boundaries; clone into OwnedProposal first."
+      }
+    ],
+    "hard_constraints": [
+      "SPRITE state projection is single-writer; workers may only emit OwnedProposal.",
+      "Zero-copy RingBuffer cannot be locked across network I/O."
+    ],
+    "open_questions": [
+      "Should retry backoff live in router.rs or a dedicated async dispatcher worker?"
+    ],
+    "epistemic_type": "DECLARED_WORKING_CONTEXT"
+  },
+  "l0_world_map": {
+    "token_budget_target": 480,
+    "estimated_l0_tokens": 498,
+    "total_modules_in_repo": 10,
+    "declared_project_rules": [
+      "INVARIANT: Wire frames use big-endian length prefixes and CRC32C trailers.",
+      "INVARIANT: RuntimeConfig is immutable after engine bootstrap.",
+      "INVARIANT: RingBuffer owns the underlying arena; slices tied to 'buf cannot outlive a single poll cycle.",
+      "RULE: Never allocate inside RingBuffer::next_frame.",
+      "CANONICAL RULE: Only StateProjector::apply_verified may mutate canonical state snapshots.",
+      "INVARIANT: RouteHandler::handle executes synchronously inside the hot ring-buffer loop.",
+      "CONTRACT: Must not hold RawFrame<'buf> across async suspension points.",
+      "RULE: Telemetry spans must never include raw payload bytes or secret tokens.",
+      "INVARIANT: Audit worker is read-only and must never write directly to StateProjector.",
+      "CONTRACT: Verifies OwnedProposal digests before archival."
+    ],
+    "top_modules_by_centrality": {
+      "mod://src/projection.rs": {
+        "language": "rust",
+        "centrality_score": 17.0,
+        "contracts_count": 3,
+        "depends_on_count": 0,
+        "depended_on_by_count": 5,
+        "declared_rules_count": 1,
+        "heuristic_hazards_count": 0
+      }
+    },
+    "l0_loss": {
+      "lossy": true,
+      "omitted_modules_count": 9,
+      "omitted_modules": [
+        "mod://web/proposalClient.ts",
+        "mod://src/router.rs",
+        "mod://src/ingress.rs",
+        "mod://web/TelemetryDashboard.tsx",
+        "mod://tools/audit_worker.py",
+        "mod://src/telemetry.rs",
+        "mod://src/codec.rs",
+        "mod://tools/snapshot_compactor.py",
+        "mod://src/config.rs"
+      ],
+      "omitted_declared_rules_count": 6,
+      "omitted_heuristic_hazards_count": 10,
+      "expand_instruction": "Call lod_map(token_budget=2500) to reveal omitted modules, or call lod_zoom(mod_id, 'L1') to inspect module contracts and epistemic rules."
+    }
+  },
+  "l1_blueprints": {
+    "mod://src/codec.rs": {
+      "language": "rust",
+      "parser_backend": "tree_sitter",
+      "sha256": "1d0b06019c8a73b52cba6039e2ae953ab4e9738fffdbe9aefc2521aaee06d7b4",
+      "line_count": 64,
+      "embedded_source_b64_zlib": "eNqVVU1v2zgQvftXTC+uDLh2ZGfTrJIGSI0W20NSwM1mD4Eh0NTYJiJLKj8SZwv/9x2Ski1FTjblxdZw5vFx5s1wOHwH365vL6ffLq9vIvhHSISFZGtUYBTCXCw/YJYIlkGK2VKvoJC4EBvaZlkCk+lkPJqAlkykKNWgY2O4ZBqjSGRLiUpF0ZQ9frWIZ51OYeagtDRcgzP9hSxBCb86QMturtlS8AhMeNLf2R4IWeQZWU/3xkXKlqppKthTmrMkJqK0MR7td7jk4xEvjVtPAzOzhkmeIP8iZV5x+MySK0shIAY9D/B3pkxR5FJjcuuZBOa03JuskN8rs74Sas00X8EvwE2BnHz9acC4Nix1H7D1QTfSZJxSlLgUUEiGmLgAJf5FCnmgbLJ5iqXFxm0bubNVctRL1mQWXMd0zQjmeZ76c9ZsE7tSxhalgrdQYl2kLRCX1YzIPAYtvMNYPfhwAT8wXZQIdvnPGqPnsbB1vsTC/gyHQ5h8v76ZXk5IfVdGaXhgqUgoPbDy4nCSgDkucpKmJBsJq6o1qFRwHNT5V+H+yPP3c7O4CLqKaPW9sCPoVor0u+4aU1Qm1ec1VfZr6rio3VAsPM6g5DAgvQU9OIdwVPOyS6I2MgNCCPZQUfS8/o0Yuyo9hKWE66smjgMsmv7b3tnue7v7l6Iuc/rJ9lkULWS+jucYz580quCuAXt3NOs3D7oLZ7MaLmXDg737BEebyzCcvC0Ju0Zz0b0XmZbNT1ybLEazs4afmwctr/Ezr9qIsLcfj1q3b3Bvgh23UvFHy3LSsnyc7SDrebNs/Fj6fSKnrUP+bFfpQOHCw1SohLY9BvuehW53R47K+raKvjoLw/0kPHpBl9/vg8ab4HXVrxTQ9yXu12vYr1hue/WhUk4CzDjRixm/r/pf4U9DVju/To7pUzNt3CPiRsAt8nNzWm911ypGA00JqhLtR9Gj0KuYs4JxoZ8CeiT2VyGvAW40PZexq6WbTUHXdwV12kDn+/r2ngUWRq2C8JDRs/z/c6rLvXrMIX6kvtdiysxuO/8BWfx4Ig==",
+      "imports": [
+        "crate::ingress::RawFrame"
+      ],
+      "defined_symbols": [
+        "CodecError",
+        "FrameHeader",
+        "WireCodec"
+      ],
+      "module_constants": {},
+      "contracts": [
+        "pub struct FrameHeader",
+        "pub enum CodecError",
+        "pub struct WireCodec",
+        "impl WireCodec"
+      ],
+      "epistemics": {
+        "extracted_facts": [
+          {
+            "epistemic_type": "EXTRACTED_FACT",
+            "symbol": "sym://src/codec.rs#FrameHeader",
+            "fact": "Declares struct `FrameHeader` at lines 4-10: `pub struct FrameHeader`"
+          },
+          {
+            "epistemic_type": "EXTRACTED_FACT",
+            "symbol": "sym://src/codec.rs#CodecError",
+            "fact": "Declares enum `CodecError` at lines 12-17: `pub enum CodecError`"
+          },
+          {
+            "epistemic_type": "EXTRACTED_FACT",
+            "symbol": "sym://src/codec.rs#WireCodec",
+            "fact": "Declares struct `WireCodec` at lines 19-22: `pub struct WireCodec`"
+          },
+          {
+            "epistemic_type": "EXTRACTED_FACT",
+            "symbol": "sym://src/codec.rs#impl:WireCodec",
+            "fact": "Declares impl `impl:WireCodec` at lines 24-64: `impl WireCodec`"
+          }
+        ],
+        "declared_rules": [
+          {
+            "epistemic_type": "DECLARED_RULE",
+            "source": "src/codec.rs:1",
+            "statement": "INVARIANT: Wire frames use big-endian length prefixes and CRC32C trailers."
+          }
+        ],
+        "heuristic_hazards": []
+      },
+      "loss": {
+        "omitted_at_l1": [
+          "7 symbol implementation bodies (64 lines of raw Rust source)",
+          "local control-flow branches and private expressions"
+        ],
+        "truncated_contracts_count": 0,
+        "mandatory_expand_triggers": [
+          "Before modifying any public struct, trait, or fn signature",
+          "Before editing any symbol flagged with a HEURISTIC_HAZARD or DECLARED_RULE"
+        ]
+      },
+      "l2_mechanics": {
+        "sym://src/codec.rs#FrameHeader": {
+          "signature": "pub struct FrameHeader",
+          "kind": "struct",
+          "is_public": true,
+          "lines": [
+            4,
+            10
+          ],
+          "line_count": 7,
+          "docstring": null,
+          "trait_bounds": [],
+          "call_graph_identifiers": [],
+          "referenced_identifiers": [
+            "crc32c",
+            "flags",
+            "magic",
+            "payload_len",
+            "version"
+          ],
+          "omitted_in_l2": {
+            "omitted_categories": [
+              "statement-level expressions",
+              "exact macro expansion tokens"
+            ],
+            "omitted_identifier_count": 0
+          },
+          "gate_policy": {
+            "requires_l1_mounted": true,
+            "expand_to_l3_when": "Modifying implementation body of `FrameHeader`"
+          }
+        },
+        "sym://src/codec.rs#CodecError": {
+          "signature": "pub enum CodecError",
+          "kind": "enum",
+          "is_public": true,
+          "lines": [
+            12,
+            17
+          ],
+          "line_count": 6,
+          "docstring": null,
+          "trait_bounds": [],
+          "call_graph_identifiers": [],
+          "referenced_identifiers": [
+            "BadMagic",
+            "ChecksumMismatch",
+            "TruncatedFrame",
+            "UnsupportedVersion",
+            "actual",
+            "available",
+            "expected",
+            "needed"
+          ],
+          "omitted_in_l2": {
+            "omitted_categories": [
+              "statement-level expressions",
+              "exact macro expansion tokens"
+            ],
+            "omitted_identifier_count": 0
+          },
+          "gate_policy": {
+            "requires_l1_mounted": true,
+            "expand_to_l3_when": "Modifying implementation body of `CodecError`"
+          }
+        },
+        "sym://src/codec.rs#WireCodec": {
+          "signature": "pub struct WireCodec",
+          "kind": "struct",
+          "is_public": true,
+          "lines": [
+            19,
+            22
+          ],
+          "line_count": 4,
+          "docstring": null,
+          "trait_bounds": [],
+          "call_graph_identifiers": [],
+          "referenced_identifiers": [
+            "max_frame_size",
+            "strict_crc"
+          ],
+          "omitted_in_l2": {
+            "omitted_categories": [
+              "statement-level expressions",
+              "exact macro expansion tokens"
+            ],
+            "omitted_identifier_count": 0
+          },
+          "gate_policy": {
+            "requires_l1_mounted": true,
+            "expand_to_l3_when": "Modifying implementation body of `WireCodec`"
+          }
+        },
+        "sym://src/codec.rs#impl:WireCodec": {
+          "signature": "impl WireCodec",
+          "kind": "impl",
+          "is_public": false,
+          "lines": [
+            24,
+            64
+          ],
+          "line_count": 41,
+          "docstring": null,
+          "trait_bounds": [
+            "<'buf>"
+          ],
+          "call_graph_identifiers": [
+            "0u32.to_be_bytes",
+            "0xA11Cu16.to_be_bytes",
+            "CodecError::BadMagic",
+            "Err",
+            "Ok",
+            "Vec::with_capacity",
+            "buf.extend_from_slice",
+            "buf.push",
+            "frame.payload.len",
+            "sequence.to_be_bytes",
+            "u16::from_be_bytes",
+            "u32::from_be_bytes"
+          ],
+          "referenced_identifiers": [
+            "BadMagic",
+            "CONTRACT",
+            "ChecksumMismatch",
+            "CodecError",
+            "FrameHeader",
+            "Must",
+            "RawFrame",
+            "TruncatedFrame",
+            "WireCodec",
+            "actual",
+            "available",
+            "before",
+            "buf",
+            "crc32c",
+            "encode_ack",
+            "expected",
+            "extend_from_slice",
+            "flags",
+            "frame",
+            "from_be_bytes",
+            "header",
+            "len",
+            "magic",
+            "max_frame_size",
+            "needed",
+            "new",
+            "payload",
+            "payload_len",
+            "push",
+            "reading",
+            "sequence",
+            "slice",
+            "status",
+            "strict_crc",
+            "to_be_bytes",
+            "validate",
+            "validate_frame",
+            "version",
+            "with_capacity"
+          ],
+          "omitted_in_l2": {
+            "omitted_categories": [
+              "statement-level expressions",
+              "exact macro expansion tokens"
+            ],
+            "omitted_identifier_count": 0
+          },
+          "gate_policy": {
+            "requires_l1_mounted": true,
+            "expand_to_l3_when": "Modifying implementation body of `impl:WireCodec`"
+          }
+        },
+        "sym://src/codec.rs#WireCodec.new": {
+          "signature": "pub fn new(strict_crc: bool, max_frame_size: usize) -> Self",
+          "kind": "method",
+          "is_public": true,
+          "lines": [
+            25,
+            27
+          ],
+          "line_count": 3,
+          "docstring": null,
+          "trait_bounds": [],
+          "call_graph_identifiers": [],
+          "referenced_identifiers": [
+            "max_frame_size",
+            "strict_crc"
+          ],
+          "omitted_in_l2": {
+            "omitted_categories": [
+              "statement-level expressions"
+            ],
+            "omitted_identifier_count": 0
+          },
+          "gate_policy": {
+            "requires_l1_mounted": true,
+            "expand_to_l3_when": "Modifying method `WireCodec.new`"
+          }
+        },
+        "sym://src/codec.rs#WireCodec.validate_frame": {
+          "signature": "pub fn validate_frame<'buf>(&self, frame: &RawFrame<'buf>) -> Result<FrameHeader, CodecError>",
+          "kind": "method",
+          "is_public": true,
+          "lines": [
+            30,
+            53
+          ],
+          "line_count": 24,
+          "docstring": null,
+          "trait_bounds": [],
+          "call_graph_identifiers": [
+            "CodecError::BadMagic",
+            "Err",
+            "Ok",
+            "frame.payload.len",
+            "u16::from_be_bytes",
+            "u32::from_be_bytes"
+          ],
+          "referenced_identifiers": [
+            "BadMagic",
+            "ChecksumMismatch",
+            "CodecError",
+            "FrameHeader",
+            "RawFrame",
+            "TruncatedFrame",
+            "actual",
+            "available",
+            "buf",
+            "crc32c",
+            "expected",
+            "flags",
+            "frame",
+            "from_be_bytes",
+            "len",
+            "magic",
+            "needed",
+            "payload",
+            "payload_len",
+            "strict_crc",
+            "version"
+          ],
+          "omitted_in_l2": {
+            "omitted_categories": [
+              "statement-level expressions"
+            ],
+            "omitted_identifier_count": 0
+          },
+          "gate_policy": {
+            "requires_l1_mounted": true,
+            "expand_to_l3_when": "Modifying method `WireCodec.validate_frame`"
+          }
+        },
+        "sym://src/codec.rs#WireCodec.encode_ack": {
+          "signature": "pub fn encode_ack(&self, sequence: u64, status: u8) -> Vec<u8>",
+          "kind": "method",
+          "is_public": true,
+          "lines": [
+            55,
+            63
+          ],
+          "line_count": 9,
+          "docstring": null,
+          "trait_bounds": [],
+          "call_graph_identifiers": [
+            "0u32.to_be_bytes",
+            "0xA11Cu16.to_be_bytes",
+            "Vec::with_capacity",
+            "buf.extend_from_slice",
+            "buf.push",
+            "sequence.to_be_bytes"
+          ],
+          "referenced_identifiers": [
+            "buf",
+            "extend_from_slice",
+            "push",
+            "sequence",
+            "status",
+            "to_be_bytes",
+            "with_capacity"
+          ],
+          "omitted_in_l2": {
+            "omitted_categories": [
+              "statement-level expressions"
+            ],
+            "omitted_identifier_count": 0
+          },
+          "gate_policy": {
+            "requires_l1_mounted": true,
+            "expand_to_l3_when": "Modifying method `WireCodec.encode_ack`"
+          }
+        }
+      },
+      "coupled_with": [
+        {
+          "target": "mod://src/ingress.rs",
+          "reasons": [
+            "imports module `ingress`",
+            "references symbol `RawFrame`"
+          ],
+          "epistemic_type": "EXTRACTED_FACT"
+        }
+      ],
+      "depended_on_by": [],
+      "centrality_score": 3.5
+    },
+    "mod://src/config.rs": {
+      "language": "rust",
+      "parser_backend": "tree_sitter",
+      "sha256": "4e6a2382dfe34c7ac407a0209786177f4b53f101857ff51067134573a77ba1f9",
+      "line_count": 31,
+      "embedded_source_b64_zlib": "eNqFkk9P4zAQxe/5FEMPKEUlCahU2i6thBAHLiAVtFfLSe12VMeO7DGIXfrdcUq75E/Z9SGJ9d6M3/ycND2B+4dfN4v7m4fnKSy8JizFrdESV4AOsCw98VwJ4JKEBaFXqAXkxpAjy6skiiqfQ/j2BXXK/0QQVi1b1CuWeymFZfkbCTcF7/C3GP115JyKNVNYIvW00BwLYsVaFBvny1Acjldfeilqg2MglXdrhjoEfeGK1U4/GTcaaV65tSG2RDuFJ6pjjaJtFGFZqW/DSw1LIblXxCprlmFONDoewvkcnoSSe2e9Ott6HZl8MoYzuMguD69Rq6AF4vJq0lb7KAJ40fYccByhcZVlWadhC8kgfeE2VZinn/ecHmQ3SMgwtyMWD79abKPPZxNWOAyXnER86gKPHaeFcAHfdajcU583MKGEk9qZ9Fgl6FhlXsPWSEavJkDv0BXkrYY7a+NBrxpK7wjy8OfCrgkYCaFJa5Lhz84o+0C7PI2rgNkMMnh/7wtzGGc/Jv/I1TQfEqGGiySZ1ZX/j/O4iYOyB72NPgB+7B6K",
+      "imports": [],
+      "defined_symbols": [
+        "RuntimeConfig"
+      ],
+      "module_constants": {},
+      "contracts": [
+        "pub struct RuntimeConfig",
+        "impl RuntimeConfig"
+      ],
+      "epistemics": {
+        "extracted_facts": [
+          {
+            "epistemic_type": "EXTRACTED_FACT",
+            "symbol": "sym://src/config.rs#RuntimeConfig",
+            "fact": "Declares struct `RuntimeConfig` at lines 3-9: `pub struct RuntimeConfig`"
+          },
+          {
+            "epistemic_type": "EXTRACTED_FACT",
+            "symbol": "sym://src/config.rs#impl:RuntimeConfig",
+            "fact": "Declares impl `impl:RuntimeConfig` at lines 11-31: `impl RuntimeConfig`"
+          }
+        ],
+        "declared_rules": [
+          {
+            "epistemic_type": "DECLARED_RULE",
+            "source": "src/config.rs:1",
+            "statement": "INVARIANT: RuntimeConfig is immutable after engine bootstrap."
+          }
+        ],
+        "heuristic_hazards": []
+      },
+      "loss": {
+        "omitted_at_l1": [
+          "4 symbol implementation bodies (31 lines of raw Rust source)",
+          "local control-flow branches and private expressions"
+        ],
+        "truncated_contracts_count": 0,
+        "mandatory_expand_triggers": [
+          "Before modifying any public struct, trait, or fn signature",
+          "Before editing any symbol flagged with a HEURISTIC_HAZARD or DECLARED_RULE"
+        ]
+      },
+      "l2_mechanics": {
+        "sym://src/config.rs#RuntimeConfig": {
+          "signature": "pub struct RuntimeConfig",
+          "kind": "struct",
+          "is_public": true,
+          "lines": [
+            3,
+            9
+          ],
+          "line_count": 7,
+          "docstring": null,
+          "trait_bounds": [],
+          "call_graph_identifiers": [],
+          "referenced_identifiers": [
+            "batch_limit",
+            "flush_interval_ms",
+            "metrics_",
+            "ring_buffer_bytes",
+            "snapshot_dir",
+            "strict_checksums"
+          ],
+          "omitted_in_l2": {
+            "omitted_categories": [
+              "statement-level expressions",
+              "exact macro expansion tokens"
+            ],
+            "omitted_identifier_count": 0
+          },
+          "gate_policy": {
+            "requires_l1_mounted": true,
+            "expand_to_l3_when": "Modifying implementation body of `RuntimeConfig`"
+          }
+        },
+        "sym://src/config.rs#impl:RuntimeConfig": {
+          "signature": "impl RuntimeConfig",
+          "kind": "impl",
+          "is_public": false,
+          "lines": [
+            11,
+            31
+          ],
+          "line_count": 21,
+          "docstring": null,
+          "trait_bounds": [],
+          "call_graph_identifiers": [
+            "\"/var/lib/engine/snapshots\".to_string",
+            "\"batch_limitmustbein1..=4096\".to_string",
+            "\"ring_buffer_bytesmustbeapoweroftwo\".to_string",
+            "Err",
+            "Ok",
+            "self.ring_buffer_bytes.is_power_of_two"
+          ],
+          "referenced_identifiers": [
+            "RuntimeConfig",
+            "a",
+            "batch_limit",
+            "be",
+            "default_production",
+            "engine",
+            "in",
+            "is_power_of_two",
+            "lib",
+            "metrics_flush_interval_ms",
+            "must",
+            "of",
+            "power",
+            "ring_buffer_bytes",
+            "snapshot_dir",
+            "snapshots",
+            "strict_checksums",
+            "to_string",
+            "two",
+            "validate",
+            "var"
+          ],
+          "omitted_in_l2": {
+            "omitted_categories": [
+              "statement-level expressions",
+              "exact macro expansion tokens"
+            ],
+            "omitted_identifier_count": 0
+          },
+          "gate_policy": {
+            "requires_l1_mounted": true,
+            "expand_to_l3_when": "Modifying implementation body of `impl:RuntimeConfig`"
+          }
+        },
+        "sym://src/config.rs#RuntimeConfig.default_production": {
+          "signature": "pub fn default_production() -> Self",
+          "kind": "method",
+          "is_public": true,
+          "lines": [
+            12,
+            20
+          ],
+          "line_count": 9,
+          "docstring": null,
+          "trait_bounds": [],
+          "call_graph_identifiers": [
+            "\"/var/lib/engine/snapshots\".to_string"
+          ],
+          "referenced_identifiers": [
+            "batch_limit",
+            "engine",
+            "lib",
+            "metrics_flush_interval_ms",
+            "ring_buffer_bytes",
+            "snapshot_dir",
+            "snapshots",
+            "strict_checksums",
+            "to_string",
+            "var"
+          ],
+          "omitted_in_l2": {
+            "omitted_categories": [
+              "statement-level expressions"
+            ],
+            "omitted_identifier_count": 0
+          },
+          "gate_policy": {
+            "requires_l1_mounted": true,
+            "expand_to_l3_when": "Modifying method `RuntimeConfig.default_production`"
+          }
+        },
+        "sym://src/config.rs#RuntimeConfig.validate": {
+          "signature": "pub fn validate(&self) -> Result<(), String>",
+          "kind": "method",
+          "is_public": true,
+          "lines": [
+            22,
+            30
+          ],
+          "line_count": 9,
+          "docstring": null,
+          "trait_bounds": [],
+          "call_graph_identifiers": [
+            "\"batch_limit must be in 1..=4096\".to_string",
+            "\"ring_buffer_bytes must be a power of two\".to_string",
+            "Err",
+            "Ok",
+            "self.ring_buffer_bytes.is_power_of_two"
+          ],
+          "referenced_identifiers": [
+            "a",
+            "batch_limit",
+            "be",
+            "in",
+            "is_power_of_two",
+            "must",
+            "of",
+            "power",
+            "ring_buffer_bytes",
+            "to_string",
+            "two"
+          ],
+          "omitted_in_l2": {
+            "omitted_categories": [
+              "statement-level expressions"
+            ],
+            "omitted_identifier_count": 0
+          },
+          "gate_policy": {
+            "requires_l1_mounted": true,
+            "expand_to_l3_when": "Modifying method `RuntimeConfig.validate`"
+          }
+        }
+      },
+      "coupled_with": [],
+      "depended_on_by": [],
+      "centrality_score": 2.0
+    },
+    "mod://src/ingress.rs": {
+      "language": "rust",
+      "parser_backend": "tree_sitter",
+      "sha256": "148ce7cf4a7c703e94bc4506b1017f24f4a03b8fefb23efea10a552e96cb40b5",
+      "line_count": 28,
+      "embedded_source_b64_zlib": "eNptkltrGzEQhd8N/g8nfmht6u6+hrVjcE0CgeKA4wZKKUaWZ20RrbToktQN+98r7fqyNtWT0JnLmU+Tpjd4nL9MF4/T+TLDQqjtN5/nZKDflYXbEbzakJH7oIAZUmwEKwWnIArawGl8XvscnCmlHbR3UrwRGGxIkIRSSwm+55KSbicN3RY/vt9nmNNb6MGk1Jw5glBWbKjVPssU/XGr3LAiJnY7pV/DOuO5a5v86HYQzoY5luGF+NjfTobN247YJoO34i+Fl+q6Bnt/iLXH0fzkWCcGOF0KnuFTPVWIHp6lku2ljlUb8Ze//X0sLYpS/sdYmqZ4nj7cL39i9jRfLqazAHkWxg4hhbcOpKw3BO6N1QbjepJEkuoPsKZcm4if74i/BtQRe+iQnA15ZVlOyBXOtJqJ+o3FwjtYkvkQoeaBxgBfJ3gqndBqfInhxCEekdeZSeSILzEfk+al5bEVH48kh1Vht7hDT2xVtJ+zV8LaME6ojt8cqMZtksKRYbI3CpjgKNBo4kpmbOBjyAopSHG6uexiyHmjMNeKRmelOl+jjXpHg48Doo+W9S251Ylq/zRkklzNO0DVqt8S76Lakp51Qf0jymsmh33qhYVXzvaGl+pppWq/LbEaNPeqXrB/CEkX2A==",
+      "imports": [],
+      "defined_symbols": [
+        "RawFrame",
+        "RingBuffer"
+      ],
+      "module_constants": {},
+      "contracts": [
+        "pub struct RingBuffer",
+        "pub struct RawFrame<'buf>",
+        "impl RingBuffer"
+      ],
+      "epistemics": {
+        "extracted_facts": [
+          {
+            "epistemic_type": "EXTRACTED_FACT",
+            "symbol": "sym://src/ingress.rs#RingBuffer",
+            "fact": "Declares struct `RingBuffer` at lines 4-7: `pub struct RingBuffer`"
+          },
+          {
+            "epistemic_type": "EXTRACTED_FACT",
+            "symbol": "sym://src/ingress.rs#RawFrame",
+            "fact": "Declares struct `RawFrame` at lines 9-12: `pub struct RawFrame<'buf>`"
+          },
+          {
+            "epistemic_type": "EXTRACTED_FACT",
+            "symbol": "sym://src/ingress.rs#impl:RingBuffer",
+            "fact": "Declares impl `impl:RingBuffer` at lines 14-28: `impl RingBuffer`"
+          }
+        ],
+        "declared_rules": [
+          {
+            "epistemic_type": "DECLARED_RULE",
+            "source": "src/ingress.rs:1",
+            "statement": "INVARIANT: RingBuffer owns the underlying arena; slices tied to 'buf cannot outlive a single poll cycle."
+          },
+          {
+            "epistemic_type": "DECLARED_RULE",
+            "source": "src/ingress.rs:2",
+            "statement": "RULE: Never allocate inside RingBuffer::next_frame."
+          }
+        ],
+        "heuristic_hazards": [
+          {
+            "epistemic_type": "HEURISTIC_HAZARD",
+            "symbol": "sym://src/ingress.rs#RawFrame",
+            "warning": "Symbol `RawFrame` uses explicit lifetime parameter(s) 'buf; verify borrow scope.",
+            "verification_required": "Inspect L3 source and run `cargo check`."
+          },
+          {
+            "epistemic_type": "HEURISTIC_HAZARD",
+            "symbol": "sym://src/ingress.rs#impl:RingBuffer",
+            "warning": "Symbol `impl:RingBuffer` contains `unsafe` code; memory/aliasing invariants are manually upheld.",
+            "verification_required": "Inspect L3 source and run `cargo check`."
+          }
+        ]
+      },
+      "loss": {
+        "omitted_at_l1": [
+          "4 symbol implementation bodies (28 lines of raw Rust source)",
+          "local control-flow branches and private expressions"
+        ],
+        "truncated_contracts_count": 0,
+        "mandatory_expand_triggers": [
+          "Before modifying any public struct, trait, or fn signature",
+          "Before editing any symbol flagged with a HEURISTIC_HAZARD or DECLARED_RULE"
+        ]
+      },
+      "l2_mechanics": {
+        "sym://src/ingress.rs#RingBuffer": {
+          "signature": "pub struct RingBuffer",
+          "kind": "struct",
+          "is_public": true,
+          "lines": [
+            4,
+            7
+          ],
+          "line_count": 4,
+          "docstring": null,
+          "trait_bounds": [],
+          "call_graph_identifiers": [],
+          "referenced_identifiers": [
+            "data",
+            "head"
+          ],
+          "omitted_in_l2": {
+            "omitted_categories": [
+              "statement-level expressions",
+              "exact macro expansion tokens"
+            ],
+            "omitted_identifier_count": 0
+          },
+          "gate_policy": {
+            "requires_l1_mounted": true,
+            "expand_to_l3_when": "Modifying implementation body of `RingBuffer`"
+          }
+        },
+        "sym://src/ingress.rs#RawFrame": {
+          "signature": "pub struct RawFrame<'buf>",
+          "kind": "struct",
+          "is_public": true,
+          "lines": [
+            9,
+            12
+          ],
+          "line_count": 4,
+          "docstring": null,
+          "trait_bounds": [
+            "<'buf>"
+          ],
+          "call_graph_identifiers": [],
+          "referenced_identifiers": [
+            "buf",
+            "payload",
+            "topic"
+          ],
+          "omitted_in_l2": {
+            "omitted_categories": [
+              "statement-level expressions",
+              "exact macro expansion tokens"
+            ],
+            "omitted_identifier_count": 0
+          },
+          "gate_policy": {
+            "requires_l1_mounted": true,
+            "expand_to_l3_when": "Symbol `RawFrame` uses explicit lifetime parameter(s) 'buf; verify borrow scope."
+          }
+        },
+        "sym://src/ingress.rs#impl:RingBuffer": {
+          "signature": "impl RingBuffer",
+          "kind": "impl",
+          "is_public": false,
+          "lines": [
+            14,
+            28
+          ],
+          "line_count": 15,
+          "docstring": null,
+          "trait_bounds": [
+            "<'buf>"
+          ],
+          "call_graph_identifiers": [
+            "Some",
+            "self.data.get_unchecked",
+            "self.data.len"
+          ],
+          "referenced_identifiers": [
+            "CONTRACT",
+            "Caller",
+            "RawFrame",
+            "RingBuffer",
+            "SAFETY",
+            "_msg",
+            "before",
+            "brace",
+            "buf",
+            "cursor",
+            "data",
+            "ensure",
+            "events",
+            "fake",
+            "get_unchecked",
+            "head",
+            "ignore",
+            "inside",
+            "len",
+            "literal",
+            "must",
+            "next_frame",
+            "parser",
+            "payload",
+            "resilience",
+            "slice",
+            "slicing",
+            "string",
+            "test",
+            "topic",
+            "unchecked",
+            "unsafe"
+          ],
+          "omitted_in_l2": {
+            "omitted_categories": [
+              "statement-level expressions",
+              "exact macro expansion tokens"
+            ],
+            "omitted_identifier_count": 0
+          },
+          "gate_policy": {
+            "requires_l1_mounted": true,
+            "expand_to_l3_when": "Symbol `impl:RingBuffer` contains `unsafe` code; memory/aliasing invariants are manually upheld."
+          }
+        },
+        "sym://src/ingress.rs#RingBuffer.next_frame": {
+          "signature": "pub unsafe fn next_frame<'buf>(&'buf mut self, len: usize) -> Option<RawFrame<'buf>>",
+          "kind": "method",
+          "is_public": true,
+          "lines": [
+            16,
+            27
+          ],
+          "line_count": 12,
+          "docstring": null,
+          "trait_bounds": [],
+          "call_graph_identifiers": [
+            "Some",
+            "self.data.get_unchecked",
+            "self.data.len"
+          ],
+          "referenced_identifiers": [
+            "RawFrame",
+            "_msg",
+            "brace",
+            "buf",
+            "data",
+            "events",
+            "fake",
+            "get_unchecked",
+            "head",
+            "ignore",
+            "inside",
+            "len",
+            "literal",
+            "parser",
+            "payload",
+            "resilience",
+            "slice",
+            "string",
+            "test",
+            "topic",
+            "unsafe"
+          ],
+          "omitted_in_l2": {
+            "omitted_categories": [
+              "statement-level expressions"
+            ],
+            "omitted_identifier_count": 0
+          },
+          "gate_policy": {
+            "requires_l1_mounted": true,
+            "expand_to_l3_when": "Modifying method `RingBuffer.next_frame`"
+          }
+        }
+      },
+      "coupled_with": [],
+      "depended_on_by": [
+        "mod://src/codec.rs",
+        "mod://src/router.rs"
+      ],
+      "centrality_score": 12.0
+    },
+    "mod://src/projection.rs": {
+      "language": "rust",
+      "parser_backend": "tree_sitter",
+      "sha256": "cceb0e347874fa9bf65f25890f5023298a00796d72ccb6cbcc261ce544d8721b",
+      "line_count": 21,
+      "embedded_source_b64_zlib": "eNptkFFLwzAUhd/zK+4QZMPaIohI1EGZPgxGJ1P3IlKy9HZG2iQk6aTI/rvJ1o0Vdt/COefm3C9JBjBJs3k2naQzWHzMXijMZdXCm2MOX436Qe6UoZRpXbX5Bo0oBRZQsxbqJniAM6mk4KwCu3tbybT9Vs7GhFx8Fj6xweGkUhIjeMZVsx59Ed2svNs03MH8V2LhP9LK+hV/BPwEGaUTrs1FQX0XI+Q6OkoFVo7lq9ahpbBE/tjcjyOyJadr+/27vQY3wgolKTR3t7uEqHV13pskCUyzZbqYptk7hUUXBa4a6dD4660DIblBZhFqJZXbY/DwtNcDsECqd198vKGU0Ec6vPQ8wWJVRqA7O+2nR3A9Ds27hmFECYODOz7hEgubY61dOxyduMOEH+IDCLh6gpuHo74lZ11kr23JP5MUtcs=",
+      "imports": [],
+      "defined_symbols": [
+        "OwnedProposal",
+        "StateProjector"
+      ],
+      "module_constants": {},
+      "contracts": [
+        "pub struct OwnedProposal",
+        "pub struct StateProjector",
+        "impl StateProjector"
+      ],
+      "epistemics": {
+        "extracted_facts": [
+          {
+            "epistemic_type": "EXTRACTED_FACT",
+            "symbol": "sym://src/projection.rs#OwnedProposal",
+            "fact": "Declares struct `OwnedProposal` at lines 4-7: `pub struct OwnedProposal`"
+          },
+          {
+            "epistemic_type": "EXTRACTED_FACT",
+            "symbol": "sym://src/projection.rs#StateProjector",
+            "fact": "Declares struct `StateProjector` at lines 9-11: `pub struct StateProjector`"
+          },
+          {
+            "epistemic_type": "EXTRACTED_FACT",
+            "symbol": "sym://src/projection.rs#impl:StateProjector",
+            "fact": "Declares impl `impl:StateProjector` at lines 13-21: `impl StateProjector`"
+          }
+        ],
+        "declared_rules": [
+          {
+            "epistemic_type": "DECLARED_RULE",
+            "source": "src/projection.rs:1",
+            "statement": "CANONICAL RULE: Only StateProjector::apply_verified may mutate canonical state snapshots."
+          }
+        ],
+        "heuristic_hazards": []
+      },
+      "loss": {
+        "omitted_at_l1": [
+          "4 symbol implementation bodies (21 lines of raw Rust source)",
+          "local control-flow branches and private expressions"
+        ],
+        "truncated_contracts_count": 0,
+        "mandatory_expand_triggers": [
+          "Before modifying any public struct, trait, or fn signature",
+          "Before editing any symbol flagged with a HEURISTIC_HAZARD or DECLARED_RULE"
+        ]
+      },
+      "l2_mechanics": {
+        "sym://src/projection.rs#OwnedProposal": {
+          "signature": "pub struct OwnedProposal",
+          "kind": "struct",
+          "is_public": true,
+          "lines": [
+            4,
+            7
+          ],
+          "line_count": 4,
+          "docstring": null,
+          "trait_bounds": [],
+          "call_graph_identifiers": [],
+          "referenced_identifiers": [
+            "delta_bytes",
+            "entity_id"
+          ],
+          "omitted_in_l2": {
+            "omitted_categories": [
+              "statement-level expressions",
+              "exact macro expansion tokens"
+            ],
+            "omitted_identifier_count": 0
+          },
+          "gate_policy": {
+            "requires_l1_mounted": true,
+            "expand_to_l3_when": "Modifying implementation body of `OwnedProposal`"
+          }
+        },
+        "sym://src/projection.rs#StateProjector": {
+          "signature": "pub struct StateProjector",
+          "kind": "struct",
+          "is_public": true,
+          "lines": [
+            9,
+            11
+          ],
+          "line_count": 3,
+          "docstring": null,
+          "trait_bounds": [],
+          "call_graph_identifiers": [],
+          "referenced_identifiers": [
+            "revision"
+          ],
+          "omitted_in_l2": {
+            "omitted_categories": [
+              "statement-level expressions",
+              "exact macro expansion tokens"
+            ],
+            "omitted_identifier_count": 0
+          },
+          "gate_policy": {
+            "requires_l1_mounted": true,
+            "expand_to_l3_when": "Modifying implementation body of `StateProjector`"
+          }
+        },
+        "sym://src/projection.rs#impl:StateProjector": {
+          "signature": "impl StateProjector",
+          "kind": "impl",
+          "is_public": false,
+          "lines": [
+            13,
+            21
+          ],
+          "line_count": 9,
+          "docstring": null,
+          "trait_bounds": [],
+          "call_graph_identifiers": [
+            "proposal.delta_bytes.is_empty"
+          ],
+          "referenced_identifiers": [
+            "INVARIANT",
+            "OwnedProposal",
+            "Revision",
+            "StateProjector",
+            "applied",
+            "apply_verified",
+            "counter",
+            "delta_bytes",
+            "increase",
+            "is_empty",
+            "monotonically",
+            "must",
+            "per",
+            "proposal",
+            "revision"
+          ],
+          "omitted_in_l2": {
+            "omitted_categories": [
+              "statement-level expressions",
+              "exact macro expansion tokens"
+            ],
+            "omitted_identifier_count": 0
+          },
+          "gate_policy": {
+            "requires_l1_mounted": true,
+            "expand_to_l3_when": "Modifying implementation body of `impl:StateProjector`"
+          }
+        },
+        "sym://src/projection.rs#StateProjector.apply_verified": {
+          "signature": "pub fn apply_verified(&mut self, proposal: OwnedProposal) -> u64",
+          "kind": "method",
+          "is_public": true,
+          "lines": [
+            15,
+            20
+          ],
+          "line_count": 6,
+          "docstring": null,
+          "trait_bounds": [],
+          "call_graph_identifiers": [
+            "proposal.delta_bytes.is_empty"
+          ],
+          "referenced_identifiers": [
+            "OwnedProposal",
+            "delta_bytes",
+            "is_empty",
+            "proposal",
+            "revision"
+          ],
+          "omitted_in_l2": {
+            "omitted_categories": [
+              "statement-level expressions"
+            ],
+            "omitted_identifier_count": 0
+          },
+          "gate_policy": {
+            "requires_l1_mounted": true,
+            "expand_to_l3_when": "Modifying method `StateProjector.apply_verified`"
+          }
+        }
+      },
+      "coupled_with": [],
+      "depended_on_by": [
+        "mod://src/router.rs",
+        "mod://tools/audit_worker.py",
+        "mod://tools/snapshot_compactor.py",
+        "mod://web/TelemetryDashboard.tsx",
+        "mod://web/proposalClient.ts"
+      ],
+      "centrality_score": 17.0
+    },
+    "mod://src/router.rs": {
+      "language": "rust",
+      "parser_backend": "tree_sitter",
+      "sha256": "a938ec2e6e16f8d4e06cdbd3990f0120105da308ffc829f2396bdb7f1992f46f",
+      "line_count": 24,
+      "embedded_source_b64_zlib": "eNptkjFv2zAQhXf+iuuSyqgiLUUHyhXgBCicoXYhB1kDWjpFbGWS4JFwAkP/vaQsGxGSGwSCfO/ex6Py/As8bJ5W1cNq88ih0t7hWqimR8t5Ny4AX7EO2wT0purOaqU99W8gFckGwXUInXZgpXq53fu2RQu91iZjnhBqKxxyHs4sEnF+qsLyblSlUInjLysOOBTvtcbqv1g7qRXn26PC5o/VRpPoC8byPIf77eaxWt0H2t+eHKiQ3em+uXZbfg0UJYjaaiIQERrIk8HAqxUYLZWjjBm/B2eFdLNLn80cdqga+Aa7aD4xCNUqOM8juSHs2xTaGMbhZp67gNsSKiTfu+WMPoWdizMqCzawMZ2c9fUUb5frcgrqpvHDOo1KeTD92DqFNf+EtfzQIPY+XzswN5KMcHX3vI/fC3swBvLoh4MPCNdHGfGfsJ6zXzrH6tGNnhAKP6OUc4XHZFFcFcdOhr8m6nb6gMk4p0XQekWiRTjF9Ezhq3sej5If3xcwvEuIJduxwfZfEn4HE90RPJtmk11eYuo998YKdJnx1J3txex8YB9XQc/OOwP7DzQ9+Ws=",
+      "imports": [
+        "crate::ingress::{RingBuffer, RawFrame}",
+        "crate::projection::OwnedProposal"
+      ],
+      "defined_symbols": [
+        "RouteHandler",
+        "Router",
+        "dispatch_batch"
+      ],
+      "module_constants": {},
+      "contracts": [
+        "pub trait RouteHandler<'buf>: Send + Sync",
+        "pub struct Router<H>",
+        "pub async fn dispatch_batch(&self, buf: &'buf mut RingBuffer) -> Vec<OwnedProposal>"
+      ],
+      "epistemics": {
+        "extracted_facts": [
+          {
+            "epistemic_type": "EXTRACTED_FACT",
+            "symbol": "sym://src/router.rs#RouteHandler",
+            "fact": "Declares trait `RouteHandler` at lines 6-8: `pub trait RouteHandler<'buf>: Send + Sync`"
+          },
+          {
+            "epistemic_type": "EXTRACTED_FACT",
+            "symbol": "sym://src/router.rs#Router",
+            "fact": "Declares struct `Router` at lines 10-12: `pub struct Router<H>`"
+          },
+          {
+            "epistemic_type": "EXTRACTED_FACT",
+            "symbol": "sym://src/router.rs#dispatch_batch",
+            "fact": "Declares fn `dispatch_batch` at lines 15-23: `pub async fn dispatch_batch(&self, buf: &'buf mut RingBuffer) -> Vec<OwnedProposal>`"
+          }
+        ],
+        "declared_rules": [
+          {
+            "epistemic_type": "DECLARED_RULE",
+            "source": "src/router.rs:1",
+            "statement": "INVARIANT: RouteHandler::handle executes synchronously inside the hot ring-buffer loop."
+          },
+          {
+            "epistemic_type": "DECLARED_RULE",
+            "source": "sym://src/router.rs#RouteHandler (docstring)",
+            "statement": "CONTRACT: Must not hold RawFrame<'buf> across async suspension points."
+          }
+        ],
+        "heuristic_hazards": [
+          {
+            "epistemic_type": "HEURISTIC_HAZARD",
+            "symbol": "sym://src/router.rs#RouteHandler",
+            "warning": "Symbol `RouteHandler` uses explicit lifetime parameter(s) 'buf; verify borrow scope.",
+            "verification_required": "Inspect L3 source and run `cargo check`."
+          },
+          {
+            "epistemic_type": "HEURISTIC_HAZARD",
+            "symbol": "sym://src/router.rs#dispatch_batch",
+            "warning": "Symbol `dispatch_batch` uses explicit lifetime parameter(s) 'buf; verify borrow scope. Contains async/.await with borrowed lifetimes (check Send / borrow-across-await constraints).",
+            "verification_required": "Inspect L3 source and run `cargo check`."
+          },
+          {
+            "epistemic_type": "HEURISTIC_HAZARD",
+            "symbol": "sym://src/router.rs#dispatch_batch",
+            "warning": "Symbol `dispatch_batch` contains `unsafe` code; memory/aliasing invariants are manually upheld.",
+            "verification_required": "Inspect L3 source and run `cargo check`."
+          }
+        ]
+      },
+      "loss": {
+        "omitted_at_l1": [
+          "3 symbol implementation bodies (24 lines of raw Rust source)",
+          "local control-flow branches and private expressions"
+        ],
+        "truncated_contracts_count": 0,
+        "mandatory_expand_triggers": [
+          "Before modifying any public struct, trait, or fn signature",
+          "Before editing any symbol flagged with a HEURISTIC_HAZARD or DECLARED_RULE"
+        ]
+      },
+      "l2_mechanics": {
+        "sym://src/router.rs#RouteHandler": {
+          "signature": "pub trait RouteHandler<'buf>: Send + Sync",
+          "kind": "trait",
+          "is_public": true,
+          "lines": [
+            6,
+            8
+          ],
+          "line_count": 3,
+          "docstring": "CONTRACT: Must not hold RawFrame<'buf> across async suspension points.",
+          "trait_bounds": [
+            "<'buf>",
+            "Send + Sync"
+          ],
+          "call_graph_identifiers": [],
+          "referenced_identifiers": [
+            "OwnedProposal",
+            "RawFrame",
+            "Send",
+            "Sync",
+            "buf",
+            "frame",
+            "handle"
+          ],
+          "omitted_in_l2": {
+            "omitted_categories": [
+              "statement-level expressions",
+              "exact macro expansion tokens"
+            ],
+            "omitted_identifier_count": 0
+          },
+          "gate_policy": {
+            "requires_l1_mounted": true,
+            "expand_to_l3_when": "Symbol `RouteHandler` uses explicit lifetime parameter(s) 'buf; verify borrow scope."
+          }
+        },
+        "sym://src/router.rs#Router": {
+          "signature": "pub struct Router<H>",
+          "kind": "struct",
+          "is_public": true,
+          "lines": [
+            10,
+            12
+          ],
+          "line_count": 3,
+          "docstring": null,
+          "trait_bounds": [
+            "<H>"
+          ],
+          "call_graph_identifiers": [],
+          "referenced_identifiers": [
+            "H",
+            "handler"
+          ],
+          "omitted_in_l2": {
+            "omitted_categories": [
+              "statement-level expressions",
+              "exact macro expansion tokens"
+            ],
+            "omitted_identifier_count": 0
+          },
+          "gate_policy": {
+            "requires_l1_mounted": true,
+            "expand_to_l3_when": "Modifying implementation body of `Router`"
+          }
+        },
+        "sym://src/router.rs#dispatch_batch": {
+          "signature": "pub async fn dispatch_batch(&self, buf: &'buf mut RingBuffer) -> Vec<OwnedProposal>",
+          "kind": "fn",
+          "is_public": true,
+          "lines": [
+            15,
+            23
+          ],
+          "line_count": 9,
+          "docstring": null,
+          "trait_bounds": [
+            "impl<'buf, H: RouteHandler<'buf>> Router<H>"
+          ],
+          "call_graph_identifiers": [
+            "Vec::new",
+            "buf.next_frame",
+            "out.push",
+            "self.handler.handle"
+          ],
+          "referenced_identifiers": [
+            "OwnedProposal",
+            "RingBuffer",
+            "async",
+            "buf",
+            "frame",
+            "handle",
+            "handler",
+            "new",
+            "next_frame",
+            "out",
+            "prop",
+            "push",
+            "unsafe"
+          ],
+          "omitted_in_l2": {
+            "omitted_categories": [
+              "statement-level expressions",
+              "exact macro expansion tokens"
+            ],
+            "omitted_identifier_count": 0
+          },
+          "gate_policy": {
+            "requires_l1_mounted": true,
+            "expand_to_l3_when": "Symbol `dispatch_batch` uses explicit lifetime parameter(s) 'buf; verify borrow scope. Contains async/.await with borrowed lifetimes (check Send / borrow-across-await constraints)."
+          }
+        }
+      },
+      "coupled_with": [
+        {
+          "target": "mod://src/ingress.rs",
+          "reasons": [
+            "imports module `ingress`",
+            "references symbol `RawFrame`",
+            "references symbol `RingBuffer`"
+          ],
+          "epistemic_type": "EXTRACTED_FACT"
+        },
+        {
+          "target": "mod://src/projection.rs",
+          "reasons": [
+            "imports module `projection`",
+            "references symbol `OwnedProposal`"
+          ],
+          "epistemic_type": "EXTRACTED_FACT"
+        }
+      ],
+      "depended_on_by": [
+        "mod://web/proposalClient.ts"
+      ],
+      "centrality_score": 13.0
+    },
+    "mod://src/telemetry.rs": {
+      "language": "rust",
+      "parser_backend": "tree_sitter",
+      "sha256": "cd6489917847d646b4276723a435eaa6ae935bb0bef281ccc4df1e80fc3afe0c",
+      "line_count": 46,
+      "embedded_source_b64_zlib": "eNqVVMFymzAQvfMVGx88MCUkZBJPx4l7yfTWXpr2FGcYWaxtTYTESKvajod/rwjEoRhnWh1g0D7evvdYcXFxBj9+ffs6hZ8osUAyO7AlUxYKZwkU/kYDQnHpcgTDNlCyndQsh8WO0II2YJEbJCD9jMomQVC6BVgyjhM8eKJ7rQi3BPsA/KqLZBjHTORTcOnV5/iwX7dttifXnV1WlBL97kJrGQfVXw2+e72C23stJXLyYt67LA0r0Gal0RytxT5tW86NLsujon+p1JZJm3FdFILoCCEZoeK7bC0s6ZXnypydwqPH3EI6eXrVKbzwDxUqH+8mjOD8CzygXLalevUe63Xs5zIeAhwc9cqDnnqYE64uW09vsCporl0nBrk2edYyhOPCkZ8MuYyhENxo+5pf1PEk/cwsHH/2txmEk2s4b5GJRJYLtcpe0D/5eJgFZ8ULRkkhVJjeRLcHkrpDMqT6saF+gk8zSHv4fpIdzKCnOtF3Q10PXbo295NkuC21obqrP2RrdDYcN3T11/czola9cOqG2tXpNOXpdCNonXFWMi5oF96kV50kPDIpnV1n/mSE46U2BaOzcIRqJRRmfcsZaWIS9tVcjeLhVKL/JW8DOE3dAv6deGBkB9gHUN0WnhRCkW9j4NopivzP7PTYJILQhFGCyhVoPCCMesfwY8VvnM307fcSZ/ORFzuqqjm1olN/EODuDjqaOnKrbjbtGFXBH2LQx+Y=",
+      "imports": [],
+      "defined_symbols": [
+        "MetricsCollector",
+        "SpanContext"
+      ],
+      "module_constants": {},
+      "contracts": [
+        "pub struct SpanContext",
+        "pub struct MetricsCollector",
+        "impl MetricsCollector"
+      ],
+      "epistemics": {
+        "extracted_facts": [
+          {
+            "epistemic_type": "EXTRACTED_FACT",
+            "symbol": "sym://src/telemetry.rs#SpanContext",
+            "fact": "Declares struct `SpanContext` at lines 3-7: `pub struct SpanContext`"
+          },
+          {
+            "epistemic_type": "EXTRACTED_FACT",
+            "symbol": "sym://src/telemetry.rs#MetricsCollector",
+            "fact": "Declares struct `MetricsCollector` at lines 9-14: `pub struct MetricsCollector`"
+          },
+          {
+            "epistemic_type": "EXTRACTED_FACT",
+            "symbol": "sym://src/telemetry.rs#impl:MetricsCollector",
+            "fact": "Declares impl `impl:MetricsCollector` at lines 16-46: `impl MetricsCollector`"
+          }
+        ],
+        "declared_rules": [
+          {
+            "epistemic_type": "DECLARED_RULE",
+            "source": "src/telemetry.rs:1",
+            "statement": "RULE: Telemetry spans must never include raw payload bytes or secret tokens."
+          }
+        ],
+        "heuristic_hazards": []
+      },
+      "loss": {
+        "omitted_at_l1": [
+          "7 symbol implementation bodies (46 lines of raw Rust source)",
+          "local control-flow branches and private expressions"
+        ],
+        "truncated_contracts_count": 0,
+        "mandatory_expand_triggers": [
+          "Before modifying any public struct, trait, or fn signature",
+          "Before editing any symbol flagged with a HEURISTIC_HAZARD or DECLARED_RULE"
+        ]
+      },
+      "l2_mechanics": {
+        "sym://src/telemetry.rs#SpanContext": {
+          "signature": "pub struct SpanContext",
+          "kind": "struct",
+          "is_public": true,
+          "lines": [
+            3,
+            7
+          ],
+          "line_count": 5,
+          "docstring": null,
+          "trait_bounds": [],
+          "call_graph_identifiers": [],
+          "referenced_identifiers": [
+            "sampled",
+            "span_id",
+            "trace_id",
+            "u128"
+          ],
+          "omitted_in_l2": {
+            "omitted_categories": [
+              "statement-level expressions",
+              "exact macro expansion tokens"
+            ],
+            "omitted_identifier_count": 0
+          },
+          "gate_policy": {
+            "requires_l1_mounted": true,
+            "expand_to_l3_when": "Modifying implementation body of `SpanContext`"
+          }
+        },
+        "sym://src/telemetry.rs#MetricsCollector": {
+          "signature": "pub struct MetricsCollector",
+          "kind": "struct",
+          "is_public": true,
+          "lines": [
+            9,
+            14
+          ],
+          "line_count": 6,
+          "docstring": null,
+          "trait_bounds": [],
+          "call_graph_identifiers": [],
+          "referenced_identifiers": [
+            "frames_dropped",
+            "frames_processed",
+            "latency_histogram_us",
+            "proposals_committed"
+          ],
+          "omitted_in_l2": {
+            "omitted_categories": [
+              "statement-level expressions",
+              "exact macro expansion tokens"
+            ],
+            "omitted_identifier_count": 0
+          },
+          "gate_policy": {
+            "requires_l1_mounted": true,
+            "expand_to_l3_when": "Modifying implementation body of `MetricsCollector`"
+          }
+        },
+        "sym://src/telemetry.rs#impl:MetricsCollector": {
+          "signature": "impl MetricsCollector",
+          "kind": "impl",
+          "is_public": false,
+          "lines": [
+            16,
+            46
+          ],
+          "line_count": 31,
+          "docstring": null,
+          "trait_bounds": [],
+          "call_graph_identifiers": [
+            "(64-micros.leading_zeros()asusize).min",
+            "String::with_capacity",
+            "format",
+            "micros.leading_zeros",
+            "out.push_str",
+            "self.latency_histogram_us.iter",
+            "self.latency_histogram_us.iter().enumerate"
+          ],
+          "referenced_identifiers": [
+            "MetricsCollector",
+            "as",
+            "bucket",
+            "count",
+            "engine_frames_dropped_total",
+            "engine_frames_processed_total",
+            "engine_latency_bucket",
+            "engine_proposals_committed_total",
+            "enumerate",
+            "export_prometheus",
+            "format",
+            "frames_dropped",
+            "frames_processed",
+            "idx",
+            "in",
+            "iter",
+            "latency_histogram_us",
+            "le",
+            "leading_zeros",
+            "micros",
+            "min",
+            "n",
+            "new",
+            "out",
+            "proposals_committed",
+            "push_str",
+            "record_drop",
+            "record_latency",
+            "t",
+            "with_capacity"
+          ],
+          "omitted_in_l2": {
+            "omitted_categories": [
+              "statement-level expressions",
+              "exact macro expansion tokens"
+            ],
+            "omitted_identifier_count": 0
+          },
+          "gate_policy": {
+            "requires_l1_mounted": true,
+            "expand_to_l3_when": "Modifying implementation body of `impl:MetricsCollector`"
+          }
+        },
+        "sym://src/telemetry.rs#MetricsCollector.new": {
+          "signature": "pub fn new() -> Self",
+          "kind": "method",
+          "is_public": true,
+          "lines": [
+            17,
+            24
+          ],
+          "line_count": 8,
+          "docstring": null,
+          "trait_bounds": [],
+          "call_graph_identifiers": [],
+          "referenced_identifiers": [
+            "frames_dropped",
+            "frames_processed",
+            "latency_histogram_us",
+            "proposals_committed"
+          ],
+          "omitted_in_l2": {
+            "omitted_categories": [
+              "statement-level expressions"
+            ],
+            "omitted_identifier_count": 0
+          },
+          "gate_policy": {
+            "requires_l1_mounted": true,
+            "expand_to_l3_when": "Modifying method `MetricsCollector.new`"
+          }
+        },
+        "sym://src/telemetry.rs#MetricsCollector.record_latency": {
+          "signature": "pub fn record_latency(&mut self, micros: u64)",
+          "kind": "method",
+          "is_public": true,
+          "lines": [
+            26,
+            30
+          ],
+          "line_count": 5,
+          "docstring": null,
+          "trait_bounds": [],
+          "call_graph_identifiers": [
+            "(64 - micros.leading_zeros() as usize).min",
+            "micros.leading_zeros"
+          ],
+          "referenced_identifiers": [
+            "as",
+            "bucket",
+            "frames_processed",
+            "latency_histogram_us",
+            "leading_zeros",
+            "micros",
+            "min"
+          ],
+          "omitted_in_l2": {
+            "omitted_categories": [
+              "statement-level expressions"
+            ],
+            "omitted_identifier_count": 0
+          },
+          "gate_policy": {
+            "requires_l1_mounted": true,
+            "expand_to_l3_when": "Modifying method `MetricsCollector.record_latency`"
+          }
+        },
+        "sym://src/telemetry.rs#MetricsCollector.record_drop": {
+          "signature": "pub fn record_drop(&mut self)",
+          "kind": "method",
+          "is_public": true,
+          "lines": [
+            32,
+            34
+          ],
+          "line_count": 3,
+          "docstring": null,
+          "trait_bounds": [],
+          "call_graph_identifiers": [],
+          "referenced_identifiers": [
+            "frames_dropped"
+          ],
+          "omitted_in_l2": {
+            "omitted_categories": [
+              "statement-level expressions"
+            ],
+            "omitted_identifier_count": 0
+          },
+          "gate_policy": {
+            "requires_l1_mounted": true,
+            "expand_to_l3_when": "Modifying method `MetricsCollector.record_drop`"
+          }
+        },
+        "sym://src/telemetry.rs#MetricsCollector.export_prometheus": {
+          "signature": "pub fn export_prometheus(&self) -> String",
+          "kind": "method",
+          "is_public": true,
+          "lines": [
+            36,
+            45
+          ],
+          "line_count": 10,
+          "docstring": null,
+          "trait_bounds": [],
+          "call_graph_identifiers": [
+            "String::with_capacity",
+            "format",
+            "out.push_str",
+            "self.latency_histogram_us.iter",
+            "self.latency_histogram_us.iter().enumerate"
+          ],
+          "referenced_identifiers": [
+            "count",
+            "engine_frames_dropped_total",
+            "engine_frames_processed_total",
+            "engine_latency_bucket",
+            "engine_proposals_committed_total",
+            "enumerate",
+            "format",
+            "frames_dropped",
+            "frames_processed",
+            "idx",
+            "in",
+            "iter",
+            "latency_histogram_us",
+            "le",
+            "n",
+            "out",
+            "proposals_committed",
+            "push_str",
+            "t",
+            "with_capacity"
+          ],
+          "omitted_in_l2": {
+            "omitted_categories": [
+              "statement-level expressions"
+            ],
+            "omitted_identifier_count": 0
+          },
+          "gate_policy": {
+            "requires_l1_mounted": true,
+            "expand_to_l3_when": "Modifying method `MetricsCollector.export_prometheus`"
+          }
+        }
+      },
+      "coupled_with": [],
+      "depended_on_by": [
+        "mod://web/TelemetryDashboard.tsx",
+        "mod://web/proposalClient.ts"
+      ],
+      "centrality_score": 8.0
+    },
+    "mod://tools/audit_worker.py": {
+      "language": "python",
+      "parser_backend": "tree_sitter",
+      "sha256": "5cef90ffc115a6ca50bd1ceeeaee4a2475da267a408e7a0a51927d083401ee2f",
+      "line_count": 17,
+      "embedded_source_b64_zlib": "eNpNUE1rwkAQve+vGHJSsNJzoEIqpRUkFiteSgmb7MRuXXfD7KgNpf+9kxiqc9t5+z7mJUmiFvk2Wy+yfJNCdjSW4RxojwQ2AqE2d8G7FrQ3cDhGBo8nwc5kGcFYwooF5QBvrBlfKXzJJtBUJaKsnperx2xZzLP5yxM8wM+vUpXTMV6Mtki2tkipAhkhzFf5Zp3NJcgARVidPRqRbULUTgx3GDlCiXUgBE3Vpz1pN+3MOg2DNZw6als0A2cU0dUTQM+W28KaFCLTBBrduqDlVbaMcQx3MyhDcJco3RDykTw49KN/7hhmcN9X0a0HiX6pVGctbQQyhe6OKw7IZKvRHtvBUoKmYD33ZnnweDHbuVDKabdV9Xum9prmFn0XyQ9pU/R6HL8rbPj6t5GC1R8P+JP4",
+      "imports": [],
+      "defined_symbols": [
+        "AuditVerifier",
+        "GLOBAL_CACHE",
+        "record_audit_metric"
+      ],
+      "module_constants": {
+        "GLOBAL_CACHE": {
+          "value": "{}",
+          "line": 5,
+          "defined_in": "tools/audit_worker.py:5",
+          "source_line": "5: GLOBAL_CACHE = {}"
+        }
+      },
+      "contracts": [
+        "GLOBAL_CACHE = {}",
+        "class AuditVerifier() [methods: verify_proposal]",
+        "def record_audit_metric(key: str, val: int) -> None"
+      ],
+      "epistemics": {
+        "extracted_facts": [
+          {
+            "epistemic_type": "EXTRACTED_FACT",
+            "symbol": "sym://tools/audit_worker.py#AuditVerifier",
+            "fact": "Defines class `AuditVerifier` at lines 7-10: `class AuditVerifier() [methods: verify_proposal]`"
+          },
+          {
+            "epistemic_type": "EXTRACTED_FACT",
+            "symbol": "sym://tools/audit_worker.py#record_audit_metric",
+            "fact": "Defines fn `record_audit_metric` at lines 12-17: `def record_audit_metric(key: str, val: int) -> None`"
+          }
+        ],
+        "declared_rules": [
+          {
+            "epistemic_type": "DECLARED_RULE",
+            "source": "tools/audit_worker.py:module_docstring",
+            "statement": "INVARIANT: Audit worker is read-only and must never write directly to StateProjector."
+          },
+          {
+            "epistemic_type": "DECLARED_RULE",
+            "source": "sym://tools/audit_worker.py#AuditVerifier (docstring)",
+            "statement": "CONTRACT: Verifies OwnedProposal digests before archival."
+          }
+        ],
+        "heuristic_hazards": [
+          {
+            "epistemic_type": "HEURISTIC_HAZARD",
+            "symbol": "sym://tools/audit_worker.py#record_audit_metric",
+            "warning": "`record_audit_metric` mutates module-level `global` state.",
+            "verification_required": "Check concurrency and caller assumptions in L3."
+          },
+          {
+            "epistemic_type": "HEURISTIC_HAZARD",
+            "symbol": "sym://tools/audit_worker.py#record_audit_metric",
+            "warning": "`record_audit_metric` contains a bare `except:` clause that may swallow system exits or errors.",
+            "verification_required": "Inspect exception handling in L3."
+          }
+        ]
+      },
+      "loss": {
+        "omitted_at_l1": [
+          "3 function/class bodies (17 lines of Python source)"
+        ],
+        "truncated_contracts_count": 0,
+        "mandatory_expand_triggers": [
+          "Before modifying public function/class signatures or return types",
+          "Before modifying symbols with DECLARED_RULE or HEURISTIC_HAZARD entries"
+        ]
+      },
+      "l2_mechanics": {
+        "sym://tools/audit_worker.py#AuditVerifier": {
+          "signature": "class AuditVerifier() [methods: verify_proposal]",
+          "kind": "class",
+          "is_public": true,
+          "lines": [
+            7,
+            10
+          ],
+          "line_count": 4,
+          "docstring": "CONTRACT: Verifies OwnedProposal digests before archival.",
+          "trait_bounds": [],
+          "outgoing_calls": [
+            "len"
+          ],
+          "referenced_identifiers": [
+            "bool",
+            "bytes",
+            "entity_id",
+            "len",
+            "payload",
+            "str"
+          ],
+          "omitted_in_l2": {
+            "omitted_categories": [
+              "statement bodies",
+              "local variable assignments"
+            ],
+            "omitted_call_count": 0
+          },
+          "gate_policy": {
+            "requires_l1_mounted": true,
+            "expand_to_l3_when": "Editing control flow or return contract of `AuditVerifier`"
+          }
+        },
+        "sym://tools/audit_worker.py#AuditVerifier.verify_proposal": {
+          "signature": "def AuditVerifier.verify_proposal(self, entity_id: str, payload: bytes) -> bool",
+          "kind": "method",
+          "is_public": true,
+          "lines": [
+            9,
+            10
+          ],
+          "line_count": 2,
+          "docstring": null,
+          "trait_bounds": [],
+          "outgoing_calls": [
+            "len"
+          ],
+          "referenced_identifiers": [
+            "bool",
+            "bytes",
+            "entity_id",
+            "len",
+            "payload",
+            "str"
+          ],
+          "omitted_in_l2": {
+            "omitted_categories": [
+              "statement bodies",
+              "local variable assignments"
+            ],
+            "omitted_call_count": 0
+          },
+          "gate_policy": {
+            "requires_l1_mounted": true,
+            "expand_to_l3_when": "Editing method `AuditVerifier.verify_proposal`"
+          }
+        },
+        "sym://tools/audit_worker.py#record_audit_metric": {
+          "signature": "def record_audit_metric(key: str, val: int) -> None",
+          "kind": "fn",
+          "is_public": true,
+          "lines": [
+            12,
+            17
+          ],
+          "line_count": 6,
+          "docstring": null,
+          "trait_bounds": [],
+          "outgoing_calls": [],
+          "referenced_identifiers": [
+            "GLOBAL_CACHE",
+            "int",
+            "key",
+            "str",
+            "val"
+          ],
+          "omitted_in_l2": {
+            "omitted_categories": [
+              "statement bodies",
+              "local variable assignments"
+            ],
+            "omitted_call_count": 0
+          },
+          "gate_policy": {
+            "requires_l1_mounted": true,
+            "expand_to_l3_when": "Editing control flow or return contract of `record_audit_metric`"
+          }
+        }
+      },
+      "coupled_with": [
+        {
+          "target": "mod://src/projection.rs",
+          "reasons": [
+            "references symbol `OwnedProposal`",
+            "references symbol `StateProjector`"
+          ],
+          "epistemic_type": "EXTRACTED_FACT"
+        }
+      ],
+      "depended_on_by": [
+        "mod://web/TelemetryDashboard.tsx"
+      ],
+      "centrality_score": 10.5
+    },
+    "mod://tools/snapshot_compactor.py": {
+      "language": "python",
+      "parser_backend": "tree_sitter",
+      "sha256": "72875edfc0d73ad34a2fa4af44359ec51ed56042b79e3b9776feac4440e19ce0",
+      "line_count": 26,
+      "embedded_source_b64_zlib": "eNqFksFunDAQhu88xYgTVIRbL6jppe0traJGPSFkeWG8667XpvbsqlGUd+/YJMCSSPUBmWFm/m/+Ic/z7Oevu28NfHGnUfbkPDhrHmFAg4QBgpVjODgK4MyAHuggLT8QjOTPBBf0WmkcoD9gfxydtgQB/5zR9lhnObdX3p1glHQwegf6NDpPcM+v0wd6HLXdv8bvdKAKvuqesqw3MgR4eNGf8ZoM+HDj79LKPRN65rSknQWn4IEY696735hGeaUHpQ2ncs6gw7GOWLHLgAqE0FaTEEVAo6q5QgzaNxDIV3BEHAXDUANxulv4WMLNZ/jhLE4w8cTqel3MeXHKYh0rr9Pnxpw737OZzLAZYvY/8SXhaFIbe3eLvFZgHb2lqPEvZ4eiXFLjYc/O3kLbZZtI4C3gULztszduV+Rz6EO90zYvy4V2NNKKftoSL+PFzvhyQeHxogNHk4NpiLjjNtmbxuFbtxon6bAriWPjQ7ke2qCdHC7h0+3G1XdHfsr5Ipm9gTbUVp4QVPxRGGxS7SrIp58/pnTPc5P+TE4phlpp3mwkt3Y+XSH8T7qdJJquq67rFp7365qpsFvW+Zz9A7yUOvA=",
+      "imports": [
+        "from pathlib import Path",
+        "from typing import List, Dict"
+      ],
+      "defined_symbols": [
+        "SnapshotCompactor"
+      ],
+      "module_constants": {},
+      "contracts": [
+        "class SnapshotCompactor() [methods: __init__, list_snapshots, plan_compaction]"
+      ],
+      "epistemics": {
+        "extracted_facts": [
+          {
+            "epistemic_type": "EXTRACTED_FACT",
+            "symbol": "sym://tools/snapshot_compactor.py#SnapshotCompactor",
+            "fact": "Defines class `SnapshotCompactor` at lines 7-26: `class SnapshotCompactor() [methods: __init__, list_snapshots, plan_compaction]`"
+          }
+        ],
+        "declared_rules": [
+          {
+            "epistemic_type": "DECLARED_RULE",
+            "source": "tools/snapshot_compactor.py:module_docstring",
+            "statement": "RULE: Compactor only deletes snapshots older than the latest verified checkpoint sequence."
+          }
+        ],
+        "heuristic_hazards": []
+      },
+      "loss": {
+        "omitted_at_l1": [
+          "4 function/class bodies (26 lines of Python source)"
+        ],
+        "truncated_contracts_count": 0,
+        "mandatory_expand_triggers": [
+          "Before modifying public function/class signatures or return types",
+          "Before modifying symbols with DECLARED_RULE or HEURISTIC_HAZARD entries"
+        ]
+      },
+      "l2_mechanics": {
+        "sym://tools/snapshot_compactor.py#SnapshotCompactor": {
+          "signature": "class SnapshotCompactor() [methods: __init__, list_snapshots, plan_compaction]",
+          "kind": "class",
+          "is_public": true,
+          "lines": [
+            7,
+            26
+          ],
+          "line_count": 20,
+          "docstring": "Manages retention of StateProjector snapshot files on disk.",
+          "trait_bounds": [],
+          "outgoing_calls": [
+            "Path",
+            "len",
+            "self.list_snapshots",
+            "self.snapshot_dir.exists",
+            "self.snapshot_dir.glob",
+            "sorted"
+          ],
+          "referenced_identifiers": [
+            "Dict",
+            "List",
+            "Path",
+            "cutoff",
+            "int",
+            "keep_last",
+            "len",
+            "s",
+            "snaps",
+            "snapshot_dir",
+            "sorted",
+            "str"
+          ],
+          "omitted_in_l2": {
+            "omitted_categories": [
+              "statement bodies",
+              "local variable assignments"
+            ],
+            "omitted_call_count": 0
+          },
+          "gate_policy": {
+            "requires_l1_mounted": true,
+            "expand_to_l3_when": "Editing control flow or return contract of `SnapshotCompactor`"
+          }
+        },
+        "sym://tools/snapshot_compactor.py#SnapshotCompactor.__init__": {
+          "signature": "def SnapshotCompactor.__init__(self, snapshot_dir: str, keep_last: int=5) -> None",
+          "kind": "method",
+          "is_public": false,
+          "lines": [
+            9,
+            11
+          ],
+          "line_count": 3,
+          "docstring": null,
+          "trait_bounds": [],
+          "outgoing_calls": [
+            "Path"
+          ],
+          "referenced_identifiers": [
+            "Path",
+            "int",
+            "keep_last",
+            "snapshot_dir",
+            "str"
+          ],
+          "omitted_in_l2": {
+            "omitted_categories": [
+              "statement bodies",
+              "local variable assignments"
+            ],
+            "omitted_call_count": 0
+          },
+          "gate_policy": {
+            "requires_l1_mounted": true,
+            "expand_to_l3_when": "Editing method `SnapshotCompactor.__init__`"
+          }
+        },
+        "sym://tools/snapshot_compactor.py#SnapshotCompactor.list_snapshots": {
+          "signature": "def SnapshotCompactor.list_snapshots(self) -> List[Path]",
+          "kind": "method",
+          "is_public": true,
+          "lines": [
+            13,
+            16
+          ],
+          "line_count": 4,
+          "docstring": null,
+          "trait_bounds": [],
+          "outgoing_calls": [
+            "self.snapshot_dir.exists",
+            "self.snapshot_dir.glob",
+            "sorted"
+          ],
+          "referenced_identifiers": [
+            "List",
+            "Path",
+            "sorted"
+          ],
+          "omitted_in_l2": {
+            "omitted_categories": [
+              "statement bodies",
+              "local variable assignments"
+            ],
+            "omitted_call_count": 0
+          },
+          "gate_policy": {
+            "requires_l1_mounted": true,
+            "expand_to_l3_when": "Editing method `SnapshotCompactor.list_snapshots`"
+          }
+        },
+        "sym://tools/snapshot_compactor.py#SnapshotCompactor.plan_compaction": {
+          "signature": "def SnapshotCompactor.plan_compaction(self, active_revision: int) -> Dict[str, List[str]]",
+          "kind": "method",
+          "is_public": true,
+          "lines": [
+            18,
+            26
+          ],
+          "line_count": 9,
+          "docstring": null,
+          "trait_bounds": [],
+          "outgoing_calls": [
+            "len",
+            "self.list_snapshots"
+          ],
+          "referenced_identifiers": [
+            "Dict",
+            "List",
+            "cutoff",
+            "int",
+            "len",
+            "s",
+            "snaps",
+            "str"
+          ],
+          "omitted_in_l2": {
+            "omitted_categories": [
+              "statement bodies",
+              "local variable assignments"
+            ],
+            "omitted_call_count": 0
+          },
+          "gate_policy": {
+            "requires_l1_mounted": true,
+            "expand_to_l3_when": "Editing method `SnapshotCompactor.plan_compaction`"
+          }
+        }
+      },
+      "coupled_with": [
+        {
+          "target": "mod://src/projection.rs",
+          "reasons": [
+            "references symbol `StateProjector`"
+          ],
+          "epistemic_type": "EXTRACTED_FACT"
+        }
+      ],
+      "depended_on_by": [],
+      "centrality_score": 3.5
+    },
+    "mod://web/TelemetryDashboard.tsx": {
+      "language": "typescript",
+      "parser_backend": "tree_sitter",
+      "sha256": "e2e2745ab2beb9fece36f7c4f6b8d6d8d02fb69f63db947331da18deff4df7f8",
+      "line_count": 19,
+      "embedded_source_b64_zlib": "eNp1kUFv2zAMhe/6FYRPW9DFd6ctEGSHBmjSIg1yLRSLjjXIokHKzoIi/320syLogh0pkk/fe8xzWK53881yvt4W8NNKvSfLDkpqWooYk4BlBEbrflAMJ6C9IPfIAlTBChP7UhYUApaJGGx0MO+cTztkX3lkkGQTTo1XOU7wAdLtG59ejhHdK1NLYsMdfClf7SmQdXCGiqmBbJq3fzuL4JUomxmDv0c5HxNyZUu8kg8qAh8GAKNrSScKZWAfDzN9Y6wYpV4Oe70NKykgds0eeWbOxuSTiYEJLF7W2818oXlsVGOwGnyPt2ZrL4kObBv5j+9O4OhTTV2CptNaIeBtyEMhf40aU/0v/3RTUpQEWwzY6Fen6zEe4NsQgRT/2PwOD4+j1ctmy9h7PD6lJuhKdu98/3gD/TxY2enYfT70s0sqqeM4KsH18gVktyzZ3Th0zXYEm37Wl66z8YBMnYTTG6ZljMhP29Vzoed/f68Vr/jCeh62znqBmfkDn8DliA==",
+      "imports": [
+        "./proposalClient"
+      ],
+      "defined_symbols": [
+        "DashboardProps",
+        "TelemetryDashboard"
+      ],
+      "module_constants": {},
+      "contracts": [
+        "export interface DashboardProps",
+        "export const TelemetryDashboard = (props: DashboardProps) =>"
+      ],
+      "epistemics": {
+        "extracted_facts": [
+          {
+            "epistemic_type": "EXTRACTED_FACT",
+            "symbol": "sym://web/TelemetryDashboard.tsx#DashboardProps",
+            "fact": "Declares interface `DashboardProps` at lines 4-7: `export interface DashboardProps`"
+          },
+          {
+            "epistemic_type": "EXTRACTED_FACT",
+            "symbol": "sym://web/TelemetryDashboard.tsx#TelemetryDashboard",
+            "fact": "Declares const `TelemetryDashboard` at lines 12-19: `export const TelemetryDashboard = (props: DashboardProps) =>`"
+          }
+        ],
+        "declared_rules": [
+          {
+            "epistemic_type": "DECLARED_RULE",
+            "source": "web/TelemetryDashboard.tsx:1",
+            "statement": "INVARIANT: Dashboard components are read-only observers of MetricsCollector and AuditVerifier state."
+          },
+          {
+            "epistemic_type": "DECLARED_RULE",
+            "source": "sym://web/TelemetryDashboard.tsx#TelemetryDashboard (JSDoc)",
+            "statement": "CONTRACT: Renders live MetricsCollector histograms and AuditVerifier status without mutating StateProjector."
+          }
+        ],
+        "heuristic_hazards": [
+          {
+            "epistemic_type": "HEURISTIC_HAZARD",
+            "symbol": "sym://web/TelemetryDashboard.tsx#TelemetryDashboard",
+            "warning": "Symbol `TelemetryDashboard` uses `dangerouslySetInnerHTML` or `eval()`; verify XSS/injection sanitization.",
+            "verification_required": "Inspect L3 source and run `tsc --noEmit`."
+          }
+        ]
+      },
+      "loss": {
+        "omitted_at_l1": [
+          "2 symbol bodies (19 lines of typescript source)",
+          "internal closures, JSX trees, and local state transitions"
+        ],
+        "truncated_contracts_count": 0,
+        "mandatory_expand_triggers": [
+          "Before modifying any exported interface, type alias, class, or function signature",
+          "Before editing any symbol flagged with a HEURISTIC_HAZARD or DECLARED_RULE"
+        ]
+      },
+      "l2_mechanics": {
+        "sym://web/TelemetryDashboard.tsx#DashboardProps": {
+          "signature": "export interface DashboardProps",
+          "kind": "interface",
+          "is_public": true,
+          "lines": [
+            4,
+            7
+          ],
+          "line_count": 4,
+          "docstring": null,
+          "trait_bounds": [],
+          "call_graph_identifiers": [],
+          "referenced_identifiers": [
+            "endpoint",
+            "refreshIntervalMs"
+          ],
+          "omitted_in_l2": {
+            "omitted_categories": [
+              "statement bodies",
+              "JSX/template markup details"
+            ],
+            "omitted_identifier_count": 0
+          },
+          "gate_policy": {
+            "requires_l1_mounted": true,
+            "expand_to_l3_when": "Modifying implementation or type contract of `DashboardProps`"
+          }
+        },
+        "sym://web/TelemetryDashboard.tsx#TelemetryDashboard": {
+          "signature": "export const TelemetryDashboard = (props: DashboardProps) =>",
+          "kind": "const",
+          "is_public": true,
+          "lines": [
+            12,
+            19
+          ],
+          "line_count": 8,
+          "docstring": "CONTRACT: Renders live MetricsCollector histograms and AuditVerifier status without mutating StateProjector.",
+          "trait_bounds": [],
+          "call_graph_identifiers": [],
+          "referenced_identifiers": [
+            "DashboardProps",
+            "Live",
+            "MetricsCollector",
+            "View",
+            "__html",
+            "component",
+            "dangerouslySetInnerHTML",
+            "div",
+            "endpoint",
+            "previewHtml",
+            "props"
+          ],
+          "omitted_in_l2": {
+            "omitted_categories": [
+              "statement bodies",
+              "JSX/template markup details"
+            ],
+            "omitted_identifier_count": 0
+          },
+          "gate_policy": {
+            "requires_l1_mounted": true,
+            "expand_to_l3_when": "Symbol `TelemetryDashboard` uses `dangerouslySetInnerHTML` or `eval()`; verify XSS/injection sanitization."
+          }
+        }
+      },
+      "coupled_with": [
+        {
+          "target": "mod://src/projection.rs",
+          "reasons": [
+            "references symbol `StateProjector`"
+          ],
+          "epistemic_type": "EXTRACTED_FACT"
+        },
+        {
+          "target": "mod://src/telemetry.rs",
+          "reasons": [
+            "references symbol `MetricsCollector`"
+          ],
+          "epistemic_type": "EXTRACTED_FACT"
+        },
+        {
+          "target": "mod://tools/audit_worker.py",
+          "reasons": [
+            "references symbol `AuditVerifier`"
+          ],
+          "epistemic_type": "EXTRACTED_FACT"
+        },
+        {
+          "target": "mod://web/proposalClient.ts",
+          "reasons": [
+            "imports module `proposalClient`",
+            "references symbol `OwnedProposalPayload`",
+            "references symbol `submitOwnedProposal`"
+          ],
+          "epistemic_type": "EXTRACTED_FACT"
+        }
+      ],
+      "depended_on_by": [],
+      "centrality_score": 11.0
+    },
+    "mod://web/proposalClient.ts": {
+      "language": "typescript",
+      "parser_backend": "tree_sitter",
+      "sha256": "478a6f36c8e35ddaa000469137f0d3177e21d3d790ad6c11fb8520749e7ebbc8",
+      "line_count": 28,
+      "embedded_source_b64_zlib": "eNptUkuP2kAMvudXuFEPgCi5VD2EPgS0B6oWEKHb65qMA1OSmXTGaTai/Pc6QFhR7S3x2P4e/qII5ouHyXo+WWximOQ5bJ2tPbk3vtoWmpkUlM6W1mPuoag8Q4Gc7mFZG1Kr6wv4dE8FwpYy6wh+0jax6YEYlPZl2z4KogjWP759iWFBf8gBOzRe9oPDWsbQtTV7IONBG68VQVKimVnD9MTAlFNB7BrYEypyfhQE9FRax9LN5DJM6Z7RCpvcooJjAECGNTdzFYNnp81uLDVFOeO0YfJT9PTu7fPb6baam5Lg81VBwsiVhw8Q/q6oIhXCXwhFic709cfRL0rFr3AcBNFgEMAAZsvFZj2ZibMPmGuFAvefceWVZ05mx3tAo0AsrNEpL37A2lYiT0TuHHkvSlRpRfFIlkcdTfSNSSGrTMraGrjc7Q6ldzbhMtoJHUqtO2z8ondth1znOzF+ioVZE/RjkJ5Ce3p/b8vHs8+pNRKPDA80dXKQuUnOSK1nemfaYJy64144QK5FHebh+DYtMkv5IBnCGiUfGQlK7/H1sRNwim55fByecQEkG3sr9w1Xy2QTDs+1rVVNDF+T5WJ0QdNZ0zveNA/bIYw7hUMwlil+gf2p3+479VuOOoPeq47iyB76V3xHXDlzFwEZCZ4fbkFp8/UPdM0wNg==",
+      "imports": [],
+      "defined_symbols": [
+        "DispatchStatus",
+        "OwnedProposalPayload",
+        "submitOwnedProposal"
+      ],
+      "module_constants": {},
+      "contracts": [
+        "export interface OwnedProposalPayload",
+        "export type DispatchStatus = \"queued\" | \"verified\" | \"rejected\"",
+        "export async function submitOwnedProposal( endpoint: string, proposal: OwnedProposalPayload, rawMeta?: any ): Promise<DispatchStatus>"
+      ],
+      "epistemics": {
+        "extracted_facts": [
+          {
+            "epistemic_type": "EXTRACTED_FACT",
+            "symbol": "sym://web/proposalClient.ts#OwnedProposalPayload",
+            "fact": "Declares interface `OwnedProposalPayload` at lines 4-7: `export interface OwnedProposalPayload`"
+          },
+          {
+            "epistemic_type": "EXTRACTED_FACT",
+            "symbol": "sym://web/proposalClient.ts#DispatchStatus",
+            "fact": "Declares type `DispatchStatus` at lines 9-9: `export type DispatchStatus = \"queued\" | \"verified\" | \"rejected\"`"
+          },
+          {
+            "epistemic_type": "EXTRACTED_FACT",
+            "symbol": "sym://web/proposalClient.ts#submitOwnedProposal",
+            "fact": "Declares function `submitOwnedProposal` at lines 14-28: `export async function submitOwnedProposal( endpoint: string, proposal: OwnedProposalPayload, rawMeta?: any ): Promise<DispatchStatus>`"
+          }
+        ],
+        "declared_rules": [
+          {
+            "epistemic_type": "DECLARED_RULE",
+            "source": "sym://web/proposalClient.ts#OwnedProposalPayload (JSDoc)",
+            "statement": "INVARIANT: All browser-submitted proposals must match OwnedProposal schema before WebSocket dispatch."
+          },
+          {
+            "epistemic_type": "DECLARED_RULE",
+            "source": "sym://web/proposalClient.ts#OwnedProposalPayload (JSDoc)",
+            "statement": "RULE: Never transmit raw bearer tokens inside SpanContext telemetry headers."
+          },
+          {
+            "epistemic_type": "DECLARED_RULE",
+            "source": "sym://web/proposalClient.ts#submitOwnedProposal (JSDoc)",
+            "statement": "CONTRACT: Validates OwnedProposal payload length and forwards to Router ingress endpoint."
+          }
+        ],
+        "heuristic_hazards": [
+          {
+            "epistemic_type": "HEURISTIC_HAZARD",
+            "symbol": "sym://web/proposalClient.ts#submitOwnedProposal",
+            "warning": "Symbol `submitOwnedProposal` uses explicit `any` type escape; static type guarantees bypassed.",
+            "verification_required": "Inspect L3 source and run `tsc --noEmit`."
+          },
+          {
+            "epistemic_type": "HEURISTIC_HAZARD",
+            "symbol": "sym://web/proposalClient.ts#submitOwnedProposal",
+            "warning": "Async symbol `submitOwnedProposal` has no local try/catch block; verify caller handles rejected promises.",
+            "verification_required": "Inspect L3 source and run `tsc --noEmit`."
+          }
+        ]
+      },
+      "loss": {
+        "omitted_at_l1": [
+          "3 symbol bodies (28 lines of typescript source)",
+          "internal closures, JSX trees, and local state transitions"
+        ],
+        "truncated_contracts_count": 0,
+        "mandatory_expand_triggers": [
+          "Before modifying any exported interface, type alias, class, or function signature",
+          "Before editing any symbol flagged with a HEURISTIC_HAZARD or DECLARED_RULE"
+        ]
+      },
+      "l2_mechanics": {
+        "sym://web/proposalClient.ts#OwnedProposalPayload": {
+          "signature": "export interface OwnedProposalPayload",
+          "kind": "interface",
+          "is_public": true,
+          "lines": [
+            4,
+            7
+          ],
+          "line_count": 4,
+          "docstring": "INVARIANT: All browser-submitted proposals must match OwnedProposal schema before WebSocket dispatch. RULE: Never transmit raw bearer tokens inside SpanContext telemetry headers.",
+          "trait_bounds": [],
+          "call_graph_identifiers": [],
+          "referenced_identifiers": [
+            "deltaBytesBase64",
+            "entityId"
+          ],
+          "omitted_in_l2": {
+            "omitted_categories": [
+              "statement bodies",
+              "JSX/template markup details"
+            ],
+            "omitted_identifier_count": 0
+          },
+          "gate_policy": {
+            "requires_l1_mounted": true,
+            "expand_to_l3_when": "Modifying implementation or type contract of `OwnedProposalPayload`"
+          }
+        },
+        "sym://web/proposalClient.ts#DispatchStatus": {
+          "signature": "export type DispatchStatus = \"queued\" | \"verified\" | \"rejected\"",
+          "kind": "type",
+          "is_public": true,
+          "lines": [
+            9,
+            9
+          ],
+          "line_count": 1,
+          "docstring": null,
+          "trait_bounds": [],
+          "call_graph_identifiers": [],
+          "referenced_identifiers": [
+            "queued",
+            "rejected",
+            "verified"
+          ],
+          "omitted_in_l2": {
+            "omitted_categories": [
+              "statement bodies",
+              "JSX/template markup details"
+            ],
+            "omitted_identifier_count": 0
+          },
+          "gate_policy": {
+            "requires_l1_mounted": true,
+            "expand_to_l3_when": "Modifying implementation or type contract of `DispatchStatus`"
+          }
+        },
+        "sym://web/proposalClient.ts#submitOwnedProposal": {
+          "signature": "export async function submitOwnedProposal( endpoint: string, proposal: OwnedProposalPayload, rawMeta?: any ): Promise<DispatchStatus>",
+          "kind": "function",
+          "is_public": true,
+          "lines": [
+            14,
+            28
+          ],
+          "line_count": 15,
+          "docstring": "CONTRACT: Validates OwnedProposal payload length and forwards to Router ingress endpoint.",
+          "trait_bounds": [],
+          "call_graph_identifiers": [
+            "JSON.stringify",
+            "fetch"
+          ],
+          "referenced_identifiers": [
+            "DispatchStatus",
+            "JSON",
+            "OwnedProposalPayload",
+            "POST",
+            "body",
+            "endpoint",
+            "fakeBraceInString",
+            "fetch",
+            "ignore",
+            "inside",
+            "literal",
+            "meta",
+            "method",
+            "note",
+            "ok",
+            "proposal",
+            "proposals",
+            "rawMeta",
+            "rejected",
+            "response",
+            "stringify",
+            "verified"
+          ],
+          "omitted_in_l2": {
+            "omitted_categories": [
+              "statement bodies",
+              "JSX/template markup details"
+            ],
+            "omitted_identifier_count": 0
+          },
+          "gate_policy": {
+            "requires_l1_mounted": true,
+            "expand_to_l3_when": "Symbol `submitOwnedProposal` uses explicit `any` type escape; static type guarantees bypassed."
+          }
+        }
+      },
+      "coupled_with": [
+        {
+          "target": "mod://src/projection.rs",
+          "reasons": [
+            "references symbol `OwnedProposal`"
+          ],
+          "epistemic_type": "EXTRACTED_FACT"
+        },
+        {
+          "target": "mod://src/router.rs",
+          "reasons": [
+            "references symbol `Router`"
+          ],
+          "epistemic_type": "EXTRACTED_FACT"
+        },
+        {
+          "target": "mod://src/telemetry.rs",
+          "reasons": [
+            "references symbol `SpanContext`"
+          ],
+          "epistemic_type": "EXTRACTED_FACT"
+        }
+      ],
+      "depended_on_by": [
+        "mod://web/TelemetryDashboard.tsx"
+      ],
+      "centrality_score": 15.5
+    }
+  }
+}

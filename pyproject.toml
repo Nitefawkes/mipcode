@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "semantic-lod"
+version = "0.4.0"
+description = "Portable Multi-Resolution Cognitive Containers (.lod), Compact Markdown Guardrails, and Stateful Fog-of-War MCP Server for AI Coding Agents"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "Apache-2.0"}
+authors = [
+  {name = "Brian Gansz"}
+]
+keywords = ["ai-agents", "mcp", "context-engineering", "semantic-lod", "repomap", "guardrail", "rust", "typescript", "python"]
+dependencies = []
+
+[project.optional-dependencies]
+mcp = ["mcp>=1.2.0"]
+ast = [
+  "tree-sitter>=0.22.0",
+  "tree-sitter-rust>=0.23.0",
+  "tree-sitter-python>=0.23.0",
+  "tree-sitter-typescript>=0.23.0"
+]
+
+[project.scripts]
+lod-build = "semantic_lod.compiler:main_cli"
+lod-verify-edit = "semantic_lod.mcp_server:main_verify_edit_cli"
+lod-guardrail = "semantic_lod.real_repo_deploy:main_cli"
