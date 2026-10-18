@@ -801,6 +801,9 @@ def render_compact_markdown(payload: Dict[str, Any]) -> str:
             for ex in c.get("call_excerpts", [])[:3]:
                 out.append(f"    {ex}")
 
+    if payload.get("omitted_for_byte_budget"):
+        out.append(f"- BUDGET_FITTED_OMISSIONS: {payload['omitted_for_byte_budget']}")
+
     non_calls = payload.get("non_call_references") or []
     if non_calls:
         out.append(f"## Non-Call References (Docstring / Prose / Import: {len(non_calls)})")
@@ -817,11 +820,79 @@ def render_compact_markdown(payload: Dict[str, Any]) -> str:
     return "\n".join(out)
 
 
+def fit_payload_to_byte_budget(payload: Dict[str, Any], max_bytes: Optional[int] = None) -> Dict[str, Any]:
+    """
+    Heldout-v5 Post-Mortem Synthesis (Zero-Refusal Budget Auto-Fitter):
+    Progressively sheds lowest-priority tail items (1: non_call_references, 2: test callers,
+    3: multi-line call_excerpts, 4: tail production callers / contracts) until `render_compact_markdown(payload)`
+    fits within `max_bytes`, recording exact `omitted_for_byte_budget` counts instead of failing with `response_too_large`.
+    """
+    if max_bytes is None or max_bytes <= 0:
+        return payload
+
+    md = render_compact_markdown(payload)
+    if len(md.encode("utf-8")) <= max_bytes:
+        return payload
+
+    fitted = dict(payload)
+    omitted_ledger: Dict[str, int] = {}
+
+    # Tier 1: Shed non-call references (docstrings, comments, import lines)
+    if fitted.get("non_call_references"):
+        omitted_ledger["non_call_references"] = len(fitted["non_call_references"])
+        fitted["non_call_references"] = []
+        fitted["omitted_for_byte_budget"] = omitted_ledger
+        if len(render_compact_markdown(fitted).encode("utf-8")) <= max_bytes:
+            return fitted
+
+    # Tier 2: Shed unit-test callers while preserving production callers
+    callers = list(fitted.get("symbol_level_callers", []))
+    prod_callers = [c for c in callers if c.get("caller_tier") != "test"]
+    test_callers = [c for c in callers if c.get("caller_tier") == "test"]
+    if test_callers:
+        omitted_ledger["test_callers"] = len(test_callers)
+        fitted["symbol_level_callers"] = prod_callers
+        fitted["omitted_for_byte_budget"] = omitted_ledger
+        if len(render_compact_markdown(fitted).encode("utf-8")) <= max_bytes:
+            return fitted
+
+    # Tier 3: Compact call_excerpts to 1 line per production caller
+    if fitted.get("symbol_level_callers"):
+        slim_callers = []
+        for c in fitted["symbol_level_callers"]:
+            c_copy = dict(c)
+            if len(c_copy.get("call_excerpts", [])) > 1:
+                c_copy["call_excerpts"] = c_copy["call_excerpts"][:1]
+            slim_callers.append(c_copy)
+        fitted["symbol_level_callers"] = slim_callers
+        if len(render_compact_markdown(fitted).encode("utf-8")) <= max_bytes:
+            return fitted
+
+    # Tier 4: Paginate production callers from the tail until under max_bytes (keep at least 1 if possible)
+    while len(fitted.get("symbol_level_callers", [])) > 1:
+        fitted["symbol_level_callers"] = fitted["symbol_level_callers"][:-1]
+        omitted_ledger["production_callers"] = omitted_ledger.get("production_callers", 0) + 1
+        fitted["omitted_for_byte_budget"] = omitted_ledger
+        if len(render_compact_markdown(fitted).encode("utf-8")) <= max_bytes:
+            return fitted
+
+    # Tier 5: Trim contracts list if still over budget
+    while len(fitted.get("contracts", [])) > 1:
+        fitted["contracts"] = fitted["contracts"][:-1]
+        omitted_ledger["contracts"] = omitted_ledger.get("contracts", 0) + 1
+        fitted["omitted_for_byte_budget"] = omitted_ledger
+        if len(render_compact_markdown(fitted).encode("utf-8")) <= max_bytes:
+            return fitted
+
+    return fitted
+
+
 def lod_blast_radius(
     target: str,
     max_hops: int = 3,
     session_id: str = "default",
-    include_tests: bool = True
+    include_tests: bool = True,
+    max_bytes: Optional[int] = None
 ) -> Dict[str, Any]:
     """
     Transitive BFS Blast-Radius Analysis across the Symbol & Import Reference Graph.
@@ -988,7 +1059,7 @@ def lod_blast_radius(
                 "heuristic_hazards": ep.get("heuristic_hazards", [])
             }
 
-    return {
+    blast_payload = {
         "status": "OK",
         "target": mod_id,
         "requested_target": target,
@@ -1010,6 +1081,11 @@ def lod_blast_radius(
             ]
         }
     }
+    blast_payload = fit_payload_to_byte_budget(blast_payload, max_bytes=max_bytes)
+    blast_payload["compact_markdown"] = render_compact_markdown(blast_payload)
+    blast_payload["compact_markdown_bytes"] = len(blast_payload["compact_markdown"].encode("utf-8"))
+    return blast_payload
+
 
 
 def lod_propose_context_delta(
@@ -1189,7 +1265,8 @@ def lod_pre_edit_guardrail(
     target: str,
     session_id: str = "default",
     include_tests: bool = False,
-    workspace_dir: Optional[str] = None
+    workspace_dir: Optional[str] = None,
+    max_bytes: Optional[int] = None
 ) -> Dict[str, Any]:
     """
     Single-Call Hybrid Pre-Edit Guardrail Hook:
@@ -1255,6 +1332,7 @@ def lod_pre_edit_guardrail(
         "direct_dependents_1_hop": blast.get("direct_dependents_1_hop", []),
         "direct_dependencies_1_hop": blast.get("direct_dependencies_1_hop", []),
     }
+    guardrail_payload = fit_payload_to_byte_budget(guardrail_payload, max_bytes=max_bytes)
     guardrail_payload["compact_markdown"] = render_compact_markdown(guardrail_payload)
     guardrail_payload["json_bytes"] = len(json.dumps(guardrail_payload).encode("utf-8"))
     guardrail_payload["compact_markdown_bytes"] = len(guardrail_payload["compact_markdown"].encode("utf-8"))
@@ -1396,20 +1474,34 @@ def mip_blast(
     target: str,
     max_hops: int = 3,
     session_id: str = "default",
-    include_tests: bool = True
+    include_tests: bool = True,
+    max_bytes: Optional[int] = None
 ) -> Dict[str, Any]:
-    """mip.blast() — Production-first transitive blast-radius analysis separating executable calls from prose/imports."""
-    return lod_blast_radius(target=target, max_hops=max_hops, session_id=session_id, include_tests=include_tests)
+    """mip.blast() — Production-first transitive blast-radius analysis with Zero-Refusal byte-budget auto-fitting."""
+    return lod_blast_radius(
+        target=target,
+        max_hops=max_hops,
+        session_id=session_id,
+        include_tests=include_tests,
+        max_bytes=max_bytes,
+    )
 
 
 def mip_guardrail(
     target: str,
     session_id: str = "default",
     include_tests: bool = False,
-    workspace_dir: Optional[str] = None
+    workspace_dir: Optional[str] = None,
+    max_bytes: Optional[int] = None
 ) -> Dict[str, Any]:
-    """mip.guardrail() — Single-call Pre-Edit Guardrail packet in Compact Markdown (~86% byte reduction)."""
-    return lod_pre_edit_guardrail(target=target, session_id=session_id, include_tests=include_tests, workspace_dir=workspace_dir)
+    """mip.guardrail() — Single-call Pre-Edit Guardrail packet in Compact Markdown with Zero-Refusal byte-budget auto-fitting."""
+    return lod_pre_edit_guardrail(
+        target=target,
+        session_id=session_id,
+        include_tests=include_tests,
+        workspace_dir=workspace_dir,
+        max_bytes=max_bytes,
+    )
 
 
 def mip_verify_edit(
