@@ -1229,14 +1229,15 @@ def parse_python_file(path: Path, rel_path: str, use_tree_sitter: Optional[bool]
 
 
 def load_working_context(root: Path) -> Dict[str, Any]:
-    ctx_file = root / "lod_context.json"
-    if ctx_file.exists():
-        try:
-            loaded = json.loads(ctx_file.read_text(encoding="utf-8"))
-            loaded["epistemic_type"] = "DECLARED_WORKING_CONTEXT"
-            return loaded
-        except Exception:
-            pass
+    for fname in ("mip_context.json", "lod_context.json"):
+        ctx_file = root / fname
+        if ctx_file.exists():
+            try:
+                loaded = json.loads(ctx_file.read_text(encoding="utf-8"))
+                loaded["epistemic_type"] = "DECLARED_WORKING_CONTEXT"
+                return loaded
+            except Exception:
+                pass
 
     agents_md = root / "AGENTS.md"
     if agents_md.exists():
@@ -1466,6 +1467,7 @@ def build_lod_container(
 
     elapsed_ms = round((time.perf_counter() - t0) * 1000.0, 2)
     container = {
+        "mip_version": "0.4",
         "lod_version": "0.4",
         "project": root.name,
         "repo_root": "." if out_path.parent == root else str(root),
@@ -1500,8 +1502,8 @@ def build_lod_container(
                 "omitted_declared_rules_count": omitted_rules_count,
                 "omitted_heuristic_hazards_count": len(all_heuristic_hazards),
                 "expand_instruction": (
-                    "Call lod_map(token_budget=2500) to reveal omitted modules, "
-                    "or call lod_zoom(mod_id, 'L1') to inspect module contracts and epistemic rules."
+                    "Call mip_map(token_budget=2500) to reveal omitted modules, "
+                    "or call mip_zoom(mod_id, 'L1') to inspect module contracts and epistemic rules."
                 )
             }
         },
@@ -1519,8 +1521,26 @@ def build_lod_container(
         pass
 
     mode_str = f"incremental ({len(reparsed_modules)} reparsed, {len(reused_modules)} cached in {elapsed_ms}ms)" if incremental else f"full ({elapsed_ms}ms)"
-    print(f"[LOD v0.4] Compiled {len(raw_modules)} polyglot modules [{mode_str}] into {out_path} ({out_path.stat().st_size} bytes)")
+    print(f"[MipCode v0.4] Compiled {len(raw_modules)} polyglot modules [{mode_str}] into {out_path} ({out_path.stat().st_size} bytes)")
     return container
+
+
+def build_mip_container(
+    repo_dir: str,
+    output_file: str = ".mip.json",
+    default_l0_token_budget: int = 500,
+    use_tree_sitter: Optional[bool] = None,
+    incremental: bool = False,
+    sqlite_file: Optional[str] = None
+) -> Dict[str, Any]:
+    return build_lod_container(
+        repo_dir=repo_dir,
+        output_file=output_file,
+        default_l0_token_budget=default_l0_token_budget,
+        use_tree_sitter=use_tree_sitter,
+        incremental=incremental,
+        sqlite_file=sqlite_file,
+    )
 
 
 def main_cli() -> None:
@@ -1530,8 +1550,13 @@ def main_cli() -> None:
     budget = int(args[1]) if len(args) > 1 else 500
     incremental = "--incremental" in flags
     use_ts = False if "--no-tree-sitter" in flags else None
+    out_file = ".mip.json" if "--mip" in flags else ".lod.json"
+    for f in flags:
+        if f.startswith("--output="):
+            out_file = f.split("=", 1)[1].strip()
     build_lod_container(
         target_repo,
+        output_file=out_file,
         default_l0_token_budget=budget,
         use_tree_sitter=use_ts,
         incremental=incremental
@@ -1540,3 +1565,4 @@ def main_cli() -> None:
 
 if __name__ == "__main__":
     main_cli()
+

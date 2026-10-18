@@ -127,7 +127,16 @@ def invalidate_stale_session_receipts(container: Dict[str, Any]) -> Dict[str, Li
 def load_container(path: Optional[Path] = None) -> Dict[str, Any]:
     target_path = path or LOD_PATH
     if not target_path.exists():
-        raise FileNotFoundError(f"Missing {target_path}. Run `python lod_build_v0_2.py <repo>` first.")
+        for alt in (
+            target_path.with_name(".mip.json"),
+            target_path.with_name(".mip"),
+            target_path.with_name(".lod.json"),
+        ):
+            if alt.exists():
+                target_path = alt
+                break
+        else:
+            raise FileNotFoundError(f"Missing {target_path}. Run `mip-build <repo>` first.")
     container = json.loads(target_path.read_text(encoding="utf-8"))
     invalidate_stale_session_receipts(container)
     return container
@@ -1353,19 +1362,114 @@ def main_verify_edit_cli(argv: Optional[List[str]] = None) -> None:
     sys.exit(verdict.get("exit_code", 0 if verdict.get("eligible") else 2))
 
 
+# MipCode (`.mip` / `.mip.json`) First-Class MCP Tool Namespace (`mip.*` / `mip_*`)
+def mip_map(token_budget: int = 500, session_id: str = "default", workspace_dir: Optional[str] = None) -> Dict[str, Any]:
+    """mip.map() — Mount the L0 World Map (top modules by centrality, global rules, and explicit L0 loss ledger)."""
+    return lod_map(token_budget=token_budget, session_id=session_id, workspace_dir=workspace_dir)
+
+
+def mip_symbols(query: str = "", kind: Optional[str] = None, language: Optional[str] = None, limit: int = 25) -> Dict[str, Any]:
+    """mip.symbols() — Query the repository-wide symbol & contract index across all mipmap levels."""
+    return lod_symbols(query=query, kind=kind, language=language, limit=limit)
+
+
+def mip_zoom(
+    target: str,
+    level: str = "L1",
+    session_id: str = "default",
+    token_budget: int = 1500,
+    workspace_dir: Optional[str] = None,
+    compact_l2: bool = True
+) -> Dict[str, Any]:
+    """mip.zoom() — Progressive L1/L2/L3 mipmap zoom with Stateful Fog-of-War gating and SHA-256 freshness verification."""
+    return lod_zoom(
+        target=target,
+        level=level,
+        session_id=session_id,
+        token_budget=token_budget,
+        workspace_dir=workspace_dir,
+        compact_l2=compact_l2,
+    )
+
+
+def mip_blast(
+    target: str,
+    max_hops: int = 3,
+    session_id: str = "default",
+    include_tests: bool = True
+) -> Dict[str, Any]:
+    """mip.blast() — Production-first transitive blast-radius analysis separating executable calls from prose/imports."""
+    return lod_blast_radius(target=target, max_hops=max_hops, session_id=session_id, include_tests=include_tests)
+
+
+def mip_guardrail(
+    target: str,
+    session_id: str = "default",
+    include_tests: bool = False,
+    workspace_dir: Optional[str] = None
+) -> Dict[str, Any]:
+    """mip.guardrail() — Single-call Pre-Edit Guardrail packet in Compact Markdown (~86% byte reduction)."""
+    return lod_pre_edit_guardrail(target=target, session_id=session_id, include_tests=include_tests, workspace_dir=workspace_dir)
+
+
+def mip_verify_edit(
+    file_path: str,
+    session_id: str = "default",
+    intent: str = "edit",
+    patched_content: Optional[str] = None,
+    workspace_dir: Optional[str] = None,
+    token_budget: int = 1500
+) -> Dict[str, Any]:
+    """mip.verify_edit() — Pre-edit interception gate enforcing L1 blueprint & blast-radius hydration before file writes."""
+    return lod_verify_edit_eligibility(
+        file_path=file_path,
+        session_id=session_id,
+        intent=intent,
+        patched_content=patched_content,
+        workspace_dir=workspace_dir,
+        token_budget=token_budget,
+    )
+
+
+def mip_propose_delta(
+    decision_statement: str,
+    rationale: str,
+    affected_modules: List[str],
+    new_constraint: Optional[str] = None,
+    session_id: str = "default"
+) -> Dict[str, Any]:
+    """mip.propose_delta() — Governed working-context writeback backed by cryptographic hydration receipts."""
+    return lod_propose_context_delta(
+        decision_statement=decision_statement,
+        rationale=rationale,
+        affected_modules=affected_modules,
+        new_constraint=new_constraint,
+        session_id=session_id,
+    )
+
+
 # Support both MCP Python SDK v2 (MCPServer) and v1 (FastMCP)
 mcp_app = None
 try:
     from mcp.server.mcpserver import MCPServer
-    mcp_app = MCPServer("SemanticLOD-v0.4")
+    mcp_app = MCPServer("MipCode-v0.4")
 except ImportError:
     try:
         from mcp.server.fastmcp import FastMCP
-        mcp_app = FastMCP("SemanticLOD-v0.4")
+        mcp_app = FastMCP("MipCode-v0.4")
     except ImportError:
         mcp_app = None
 
 if mcp_app is not None:
+    # Primary MipCode tools (`mip_*`)
+    mcp_app.tool()(mip_map)
+    mcp_app.tool()(mip_symbols)
+    mcp_app.tool()(mip_zoom)
+    mcp_app.tool()(mip_blast)
+    mcp_app.tool()(mip_guardrail)
+    mcp_app.tool()(mip_verify_edit)
+    mcp_app.tool()(mip_propose_delta)
+    # Backward-compatible aliases (`lod_*`)
     mcp_app.tool()(lod_map)
     mcp_app.tool()(lod_symbols)
     mcp_app.tool()(lod_zoom)
@@ -1380,4 +1484,5 @@ if __name__ == "__main__":
     elif mcp_app and "--stdio" in sys.argv:
         mcp_app.run()
     else:
-        print(json.dumps(lod_map(token_budget=500), indent=2))
+        print(json.dumps(mip_map(token_budget=500), indent=2))
+
