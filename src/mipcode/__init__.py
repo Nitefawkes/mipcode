@@ -1,7 +1,7 @@
 """
 MipCode (`.mip` / `.mip.json`) — Architectural Mipmaps, Compact Markdown Guardrails & Stateful Fog-of-War MCP Runtime.
 """
-__version__ = "0.5.1"
+__version__ = "0.5.2"
 
 from semantic_lod.compiler import build_mip_container, build_lod_container
 from semantic_lod.mcp_server import (
@@ -14,6 +14,7 @@ from semantic_lod.mcp_server import (
     mip_propose_delta,
     render_compact_markdown,
     fit_payload_to_byte_budget,
+    match_repo_glob,
 )
 
 __all__ = [
@@ -29,4 +30,5 @@ __all__ = [
     "mip_propose_delta",
     "render_compact_markdown",
     "fit_payload_to_byte_budget",
+    "match_repo_glob",
 ]

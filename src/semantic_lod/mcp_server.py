@@ -803,6 +803,11 @@ def render_compact_markdown(payload: Dict[str, Any]) -> str:
 
     if payload.get("omitted_for_byte_budget"):
         out.append(f"- BUDGET_FITTED_OMISSIONS: {payload['omitted_for_byte_budget']}")
+    if payload.get("next_production_reference_offset") is not None:
+        out.append(
+            f"- NEXT_PAGES: reference_offset={payload['next_reference_offset']}; "
+            f"production_reference_offset={payload['next_production_reference_offset']}"
+        )
 
     non_calls = payload.get("non_call_references") or []
     if non_calls:
@@ -820,6 +825,51 @@ def render_compact_markdown(payload: Dict[str, Any]) -> str:
     return "\n".join(out)
 
 
+def match_repo_glob(path: str, glob_pattern: str) -> bool:
+    """
+    Heldout-v5.4 Synthesis:
+    Matches repository-relative POSIX paths against glob patterns while treating `**/` as zero-or-more
+    directory levels (so `services/**/*.py` matches `services/foo.py` as well as `services/sub/foo.py`)
+    and supporting simple brace alternations (`{a.py,b/**/*.py}`).
+    """
+    import fnmatch as _fnmatch
+    import re as _re
+
+    norm_path = path.replace("\\", "/").lstrip("./")
+    raw_glob = (glob_pattern or "*").strip().replace("\\", "/").lstrip("./")
+
+    # Expand simple top-level `{a,b}` brace groups
+    patterns = [raw_glob]
+    brace_match = _re.search(r"\{([^{}]+)\}", raw_glob)
+    if brace_match:
+        prefix = raw_glob[:brace_match.start()]
+        suffix = raw_glob[brace_match.end():]
+        patterns = [f"{prefix}{part.strip()}{suffix}" for part in brace_match.group(1).split(",") if part.strip()]
+
+    candidates: Set[str] = set()
+    for pat in patterns:
+        expanded = {pat}
+        # Collapse `/**/` to `/` as well so 0-subdirectory paths match `dir/**/*.py`
+        while any("/**/" in p or p.startswith("**/") or p.endswith("/**") for p in list(expanded)):
+            for p in list(expanded):
+                if "/**/" in p:
+                    expanded.add(p.replace("/**/", "/", 1))
+                if p.startswith("**/"):
+                    expanded.add(p[3:])
+                if p.endswith("/**"):
+                    expanded.add(p[:-3] + "/*")
+            break
+        for p in list(expanded):
+            while "/**/" in p:
+                p = p.replace("/**/", "/", 1)
+                expanded.add(p)
+            if p.startswith("**/"):
+                expanded.add(p[3:])
+        candidates.update(expanded)
+
+    return any(_fnmatch.fnmatchcase(norm_path, c) for c in candidates)
+
+
 def fit_payload_to_byte_budget(payload: Dict[str, Any], max_bytes: Optional[int] = None) -> Dict[str, Any]:
     """
     Heldout-v5 Post-Mortem Synthesis (Zero-Refusal Budget Auto-Fitter):
@@ -835,11 +885,11 @@ def fit_payload_to_byte_budget(payload: Dict[str, Any], max_bytes: Optional[int]
         return payload
 
     fitted = dict(payload)
-    omitted_ledger: Dict[str, int] = {}
+    omitted_ledger: Dict[str, int] = dict(fitted.get("omitted_for_byte_budget") or {})
 
     # Tier 1: Shed non-call references (docstrings, comments, import lines)
     if fitted.get("non_call_references"):
-        omitted_ledger["non_call_references"] = len(fitted["non_call_references"])
+        omitted_ledger["non_call_references"] = omitted_ledger.get("non_call_references", 0) + len(fitted["non_call_references"])
         fitted["non_call_references"] = []
         fitted["omitted_for_byte_budget"] = omitted_ledger
         if len(render_compact_markdown(fitted).encode("utf-8")) <= max_bytes:
@@ -850,7 +900,7 @@ def fit_payload_to_byte_budget(payload: Dict[str, Any], max_bytes: Optional[int]
     prod_callers = [c for c in callers if c.get("caller_tier") != "test"]
     test_callers = [c for c in callers if c.get("caller_tier") == "test"]
     if test_callers:
-        omitted_ledger["test_callers"] = len(test_callers)
+        omitted_ledger["test_callers"] = omitted_ledger.get("test_callers", 0) + len(test_callers)
         fitted["symbol_level_callers"] = prod_callers
         fitted["omitted_for_byte_budget"] = omitted_ledger
         if len(render_compact_markdown(fitted).encode("utf-8")) <= max_bytes:
@@ -869,10 +919,14 @@ def fit_payload_to_byte_budget(payload: Dict[str, Any], max_bytes: Optional[int]
             return fitted
 
     # Tier 4: Paginate production callers from the tail until under max_bytes (keep at least 1 if possible)
+    base_offset = int(fitted.get("reference_offset", 0) or 0)
     while len(fitted.get("symbol_level_callers", [])) > 1:
         fitted["symbol_level_callers"] = fitted["symbol_level_callers"][:-1]
         omitted_ledger["production_callers"] = omitted_ledger.get("production_callers", 0) + 1
         fitted["omitted_for_byte_budget"] = omitted_ledger
+        next_off = base_offset + len(fitted["symbol_level_callers"])
+        fitted["next_reference_offset"] = next_off
+        fitted["next_production_reference_offset"] = next_off
         if len(render_compact_markdown(fitted).encode("utf-8")) <= max_bytes:
             return fitted
 
@@ -889,6 +943,7 @@ def fit_payload_to_byte_budget(payload: Dict[str, Any], max_bytes: Optional[int]
 
 DEFAULT_BLAST_MAX_BYTES = 2400
 DEFAULT_GUARDRAIL_MAX_BYTES = 2400
+DEFAULT_BLAST_REFERENCE_LIMIT = 8
 
 
 def lod_blast_radius(
@@ -896,15 +951,18 @@ def lod_blast_radius(
     max_hops: int = 3,
     session_id: str = "default",
     include_tests: bool = False,
-    max_bytes: Optional[int] = DEFAULT_BLAST_MAX_BYTES
+    max_bytes: Optional[int] = DEFAULT_BLAST_MAX_BYTES,
+    reference_limit: Optional[int] = None,
+    reference_offset: int = 0,
+    production_reference_offset: Optional[int] = None,
 ) -> Dict[str, Any]:
     """
     Transitive BFS Blast-Radius Analysis across the Symbol & Import Reference Graph.
     Separates direct (1-hop) vs. transitive (N-hop) module impact, resolves exact symbol-level
     executable reverse callers (`enclosing_symbol`, `enclosing_lines`, 1-based `call_lines`, and `call_excerpts`),
     separates non-call references (`docstring_or_comment`, `import_statement`) from executable calls,
-    ranks production callers ahead of unit-test callers (`caller_tier: 'production' | 'test'`),
-    applies a safe per-call byte budget (~2.4 KB) by default, and states static-analysis coverage bounds.
+    ranks production callers by structural/owner affinity ahead of cross-package lexical matches and unit tests,
+    supports `reference_offset` / `production_reference_offset` pagination, and applies a safe per-call byte budget (~2.4 KB).
     """
     import re as _re
     data = load_container()
@@ -945,20 +1003,24 @@ def lod_blast_radius(
                 upstream_hops[dep] = dist + 1
                 queue.append((dep, dist + 1))
 
-    # Heldout-v3/v4 Synthesis: Resolve exact symbol-level reverse callers across all modules (high-recall lexical + AST spans)
+    # Heldout-v3/v4/v5.4 Synthesis: Resolve exact symbol-level reverse callers across all modules
+    owner_prefix: Optional[str] = None
     if target.startswith("sym://") and "#" in target:
         qual = target.split("#", 1)[1]
         short = qual.split(".")[-1].replace("impl:", "")
+        if "." in qual:
+            owner_prefix = qual.split(".", 1)[0].replace("impl:", "").strip()
         search_symbols = {s for s in (qual, short) if s and len(s) > 1}
         own_meta = blueprints[mod_id].get("l2_mechanics", {}).get(target)
         own_lines = set(range(own_meta["lines"][0], own_meta["lines"][1] + 1)) if own_meta else set()
-        # Scan all modules for symbol-specific queries so conditional/local imports (e.g. agents/service.py:264) are never missed!
         candidate_mods = [mod_id] + [m for m in sorted(blueprints.keys()) if m != mod_id]
     else:
         search_symbols = {s for s in blueprints[mod_id].get("defined_symbols", []) if len(s) > 2}
         own_lines = set()
         candidate_mods = [m for m, _ in sorted(downstream_hops.items(), key=lambda x: (x[1], x[0]))]
 
+    target_pkg = mod_id.rsplit("/", 1)[0] if "/" in mod_id else mod_id
+    owner_rx = _re.compile(rf"\b{_re.escape(owner_prefix)}\b") if owner_prefix else None
     symbol_patterns = {
         stok: _re.compile(rf"\b{_re.escape(stok)}\b")
         for stok in sorted(search_symbols)
@@ -974,6 +1036,8 @@ def lod_blast_radius(
         cand_lines = cand_source.splitlines()
         is_py = cand_mod.get("language") == "python"
         doc_lines, imp_lines = _extract_python_non_code_lines(cand_source) if is_py else (set(), set())
+        cand_pkg = cand_mod_id.rsplit("/", 1)[0] if "/" in cand_mod_id else cand_mod_id
+        mentions_owner = bool(owner_rx and owner_rx.search(cand_source))
 
         mechanics_items = sorted(
             cand_mod.get("l2_mechanics", {}).items(),
@@ -1023,6 +1087,16 @@ def lod_blast_radius(
                     claimed_lines.add(ln)
 
             if call_lines:
+                # Affinity tier 0: same module, direct/transitive module dependent, or mentions owner class/type
+                # Affinity tier 1: same package directory
+                # Affinity tier 2: cross-package lexical short-name match only
+                if cand_mod_id == mod_id or cand_mod_id in downstream_hops or mentions_owner:
+                    affinity_tier = 0
+                elif cand_pkg == target_pkg:
+                    affinity_tier = 1
+                else:
+                    affinity_tier = 2
+
                 symbol_level_callers.append({
                     "enclosing_symbol": caller_sym_id,
                     "enclosing_kind": caller_meta.get("kind", "fn"),
@@ -1030,7 +1104,8 @@ def lod_blast_radius(
                     "enclosing_lines": [c_start, c_end],
                     "module": cand_mod_id,
                     "caller_tier": "test" if is_test else "production",
-                    "hop_distance": 0 if cand_mod_id == mod_id else downstream_hops.get(cand_mod_id, 1),
+                    "affinity_tier": affinity_tier,
+                    "hop_distance": 0 if cand_mod_id == mod_id else downstream_hops.get(cand_mod_id, 2 if affinity_tier == 2 else 1),
                     "matched_symbols": sorted(matched_toks),
                     "call_lines": call_lines[:10],
                     "call_excerpts": [f"{ln}: {cand_lines[ln - 1].strip()}" for ln in call_lines[:5]]
@@ -1047,12 +1122,25 @@ def lod_blast_radius(
                         "excerpts": [f"{ln}: {cand_lines[ln - 1].strip()}" for ln in uniq_r[:3]]
                     })
 
-    # Always rank production callers ahead of test callers!
+    # Always rank production callers ahead of test callers, and high-affinity callers ahead of cross-package lexical matches!
     symbol_level_callers.sort(
-        key=lambda c: (1 if c["caller_tier"] == "test" else 0, c["hop_distance"], c["module"], c["enclosing_lines"][0])
+        key=lambda c: (
+            1 if c["caller_tier"] == "test" else 0,
+            c.get("affinity_tier", 0),
+            c["hop_distance"],
+            c["module"],
+            c["enclosing_lines"][0],
+        )
     )
     prod_count = sum(1 for c in symbol_level_callers if c["caller_tier"] == "production")
     test_count = sum(1 for c in symbol_level_callers if c["caller_tier"] == "test")
+
+    effective_offset = max(0, int(production_reference_offset if production_reference_offset is not None else reference_offset))
+    paged_callers = symbol_level_callers[effective_offset:]
+    if reference_limit is not None and reference_limit > 0:
+        paged_callers = paged_callers[:reference_limit]
+    omitted_by_page = max(0, len(symbol_level_callers) - (effective_offset + len(paged_callers)))
+    next_ref_offset = (effective_offset + len(paged_callers)) if omitted_by_page > 0 else None
 
     impacted_rules: Dict[str, Any] = {}
     for affected_id in [mod_id] + list(downstream_hops.keys()) + list(upstream_hops.keys()):
@@ -1063,7 +1151,7 @@ def lod_blast_radius(
                 "heuristic_hazards": ep.get("heuristic_hazards", [])
             }
 
-    blast_payload = {
+    blast_payload: Dict[str, Any] = {
         "status": "OK",
         "target": mod_id,
         "requested_target": target,
@@ -1071,7 +1159,8 @@ def lod_blast_radius(
         "transitive_dependents_n_hop": {m: f"{h}_hops" for m, h in downstream_hops.items() if h > 1},
         "production_callers_count": prod_count,
         "test_callers_count": test_count,
-        "symbol_level_callers": symbol_level_callers,
+        "reference_offset": effective_offset,
+        "symbol_level_callers": paged_callers,
         "non_call_references": non_call_references,
         "direct_dependencies_1_hop": blueprints[mod_id].get("coupled_with", []),
         "transitive_dependencies_n_hop": {m: f"{h}_hops" for m, h in upstream_hops.items() if h > 1},
@@ -1085,6 +1174,11 @@ def lod_blast_radius(
             ]
         }
     }
+    if next_ref_offset is not None:
+        blast_payload["next_reference_offset"] = next_ref_offset
+        blast_payload["next_production_reference_offset"] = next_ref_offset
+        blast_payload["omitted_for_byte_budget"] = {"production_callers": omitted_by_page}
+
     blast_payload = fit_payload_to_byte_budget(blast_payload, max_bytes=max_bytes)
     blast_payload["compact_markdown"] = render_compact_markdown(blast_payload)
     blast_payload["compact_markdown_bytes"] = len(blast_payload["compact_markdown"].encode("utf-8"))
@@ -1479,15 +1573,21 @@ def mip_blast(
     max_hops: int = 3,
     session_id: str = "default",
     include_tests: bool = False,
-    max_bytes: Optional[int] = DEFAULT_BLAST_MAX_BYTES
+    max_bytes: Optional[int] = DEFAULT_BLAST_MAX_BYTES,
+    reference_limit: Optional[int] = None,
+    reference_offset: int = 0,
+    production_reference_offset: Optional[int] = None,
 ) -> Dict[str, Any]:
-    """mip.blast() — Production-first transitive blast-radius analysis with Zero-Refusal byte-budget auto-fitting."""
+    """mip.blast() — Production-first transitive blast-radius analysis with Zero-Refusal byte-budget auto-fitting and caller affinity ranking."""
     return lod_blast_radius(
         target=target,
         max_hops=max_hops,
         session_id=session_id,
         include_tests=include_tests,
         max_bytes=max_bytes,
+        reference_limit=reference_limit,
+        reference_offset=reference_offset,
+        production_reference_offset=production_reference_offset,
     )
 
 
@@ -1548,11 +1648,11 @@ def mip_propose_delta(
 mcp_app = None
 try:
     from mcp.server.mcpserver import MCPServer
-    mcp_app = MCPServer("MipCode-v0.4")
+    mcp_app = MCPServer("MipCode-v0.5.2")
 except ImportError:
     try:
         from mcp.server.fastmcp import FastMCP
-        mcp_app = FastMCP("MipCode-v0.4")
+        mcp_app = FastMCP("MipCode-v0.5.2")
     except ImportError:
         mcp_app = None
 
