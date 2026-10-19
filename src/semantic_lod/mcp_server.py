@@ -887,12 +887,16 @@ def fit_payload_to_byte_budget(payload: Dict[str, Any], max_bytes: Optional[int]
     return fitted
 
 
+DEFAULT_BLAST_MAX_BYTES = 2400
+DEFAULT_GUARDRAIL_MAX_BYTES = 2400
+
+
 def lod_blast_radius(
     target: str,
     max_hops: int = 3,
     session_id: str = "default",
-    include_tests: bool = True,
-    max_bytes: Optional[int] = None
+    include_tests: bool = False,
+    max_bytes: Optional[int] = DEFAULT_BLAST_MAX_BYTES
 ) -> Dict[str, Any]:
     """
     Transitive BFS Blast-Radius Analysis across the Symbol & Import Reference Graph.
@@ -900,7 +904,7 @@ def lod_blast_radius(
     executable reverse callers (`enclosing_symbol`, `enclosing_lines`, 1-based `call_lines`, and `call_excerpts`),
     separates non-call references (`docstring_or_comment`, `import_statement`) from executable calls,
     ranks production callers ahead of unit-test callers (`caller_tier: 'production' | 'test'`),
-    and states static-analysis coverage bounds.
+    applies a safe per-call byte budget (~2.4 KB) by default, and states static-analysis coverage bounds.
     """
     import re as _re
     data = load_container()
@@ -1266,7 +1270,7 @@ def lod_pre_edit_guardrail(
     session_id: str = "default",
     include_tests: bool = False,
     workspace_dir: Optional[str] = None,
-    max_bytes: Optional[int] = None
+    max_bytes: Optional[int] = DEFAULT_GUARDRAIL_MAX_BYTES
 ) -> Dict[str, Any]:
     """
     Single-Call Hybrid Pre-Edit Guardrail Hook:
@@ -1474,8 +1478,8 @@ def mip_blast(
     target: str,
     max_hops: int = 3,
     session_id: str = "default",
-    include_tests: bool = True,
-    max_bytes: Optional[int] = None
+    include_tests: bool = False,
+    max_bytes: Optional[int] = DEFAULT_BLAST_MAX_BYTES
 ) -> Dict[str, Any]:
     """mip.blast() — Production-first transitive blast-radius analysis with Zero-Refusal byte-budget auto-fitting."""
     return lod_blast_radius(
@@ -1492,7 +1496,7 @@ def mip_guardrail(
     session_id: str = "default",
     include_tests: bool = False,
     workspace_dir: Optional[str] = None,
-    max_bytes: Optional[int] = None
+    max_bytes: Optional[int] = DEFAULT_GUARDRAIL_MAX_BYTES
 ) -> Dict[str, Any]:
     """mip.guardrail() — Single-call Pre-Edit Guardrail packet in Compact Markdown with Zero-Refusal byte-budget auto-fitting."""
     return lod_pre_edit_guardrail(
