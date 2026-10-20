@@ -1521,7 +1521,7 @@ def build_lod_container(
         pass
 
     mode_str = f"incremental ({len(reparsed_modules)} reparsed, {len(reused_modules)} cached in {elapsed_ms}ms)" if incremental else f"full ({elapsed_ms}ms)"
-    print(f"[MipCode v0.4] Compiled {len(raw_modules)} polyglot modules [{mode_str}] into {out_path} ({out_path.stat().st_size} bytes)")
+    print(f"[MipCode v0.5] Compiled {len(raw_modules)} polyglot modules [{mode_str}] into {out_path} ({out_path.stat().st_size} bytes)")
     return container
 
 

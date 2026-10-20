@@ -1,5 +1,6 @@
 # Local artifacts & external repo snapshots (never commit private repo indexes)
 artifacts/
+results/
 *.sqlite
 *.sessions.json
 

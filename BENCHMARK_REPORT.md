@@ -1,13 +1,15 @@
-# Semantic LOD v0.4 — 3-Condition Benchmark Report
+# Semantic LOD v0.5 — Multi-Condition Benchmark & Architectural Report
+
+> *"Semantic LOD v0.5 treats a codebase not as a flat file tree, but as a 3D surface geometry rendered under dynamic task lighting. By borrowing anisotropic filtering, BRDF shading, and ray-casting from computer graphics, .lod solves the multi-file byte-budget bottleneck—delivering blazing-fast cross-cutting execution traces while maintaining strict architectural governance through its stateful MMU."*
 
 - **Target Repository:** `demo_engine` (`10` modules, `2528 tokens` full source)
-- **Container Artifact:** `demo_project.lod.json` (`Self-Contained: True`, `AST Backend: tree_sitter`, `Incremental Rebuild: 8.33ms`)
+- **Container Artifact:** `demo_project.lod.json` (`Self-Contained: True`, `AST Backend: tree_sitter`, `Incremental Rebuild: 13.53ms`)
 
 ---
 
 ## Executive Scorecard Across All 4 Tasks
 
-| Metric / Capability | Condition A: Baseline Raw Files (`read_file` + `grep`) | Condition B: Flat Signature RepoMap (Aider-style) | Condition C: Semantic LOD v0.4 (`.lod` + Fog-of-War MCP) |
+| Metric / Capability | Condition A: Baseline Raw Files (`read_file` + `grep`) | Condition B: Flat Signature RepoMap (Aider-style) | Condition C: Semantic LOD v0.4/v0.5 (`.lod`/`.mip` + Fog-of-War MCP) |
 | :--- | :--- | :--- | :--- |
 | **Initial Orientation Tokens** | `2528 tokens` (full scan) or blind | `343 tokens` (scales linearly with repo) | **`498 tokens`** (capped by budget; `9` modules in loss ledger) |
 | **T1: Async Lifetime Hazard Task Tokens** | `2528 tokens` (full scan) | `541 tokens` | **`1984 tokens`** (L0 + Auto-Fault L1 + 9-line L3 slice) |
@@ -22,27 +24,13 @@
 | **T4: Rejects Uninspected Architectural Decisions** | No | No | **Yes (`DELTA_REJECTED_UNINSPECTED_MODULES`)** |
 | **T4: Attaches Cryptographic Hydration Receipt to Delta** | No | No | **Yes (`3` receipts recorded)** |
 | **v0.4 Task 1: Hybrid Tree-Sitter AST + Lexer Fallback** | N/A | N/A | **Yes (`tree_sitter` + fallback verified)** |
-| **v0.4 Task 2: Incremental SQLite Rebuild (`<100ms`) & Receipt Invalidation** | N/A | N/A | **Yes (`8.33ms`, stale receipts invalidated)** |
+| **v0.4 Task 2: Incremental SQLite Rebuild (`<100ms`) & Receipt Invalidation** | N/A | N/A | **Yes (`13.53ms`, stale receipts invalidated)** |
 | **v0.4 Task 3: Host File-Edit Hook (`lod_verify_edit_eligibility`)** | No | No | **Yes (Blocks unhydrated edit with exit `2`/`3` + auto-L1)** |
 | **Codex Synthesis 1: Cross-File `lod_symbols` + Call-Ref Lookup** | No (text grep only) | No | **Yes (`2` hits; decl + call-ref verified)** |
 | **Codex Synthesis 2: Compact Module `L2` Diet Byte Reduction** | N/A | N/A | **`-59.7%` (`36314B` -> `14640B`)** |
 | **Codex Synthesis 3 (`RDS-02`): Symbol-Level Reverse Callers (`lod_blast_radius`)** | No (misses enclosing method) | No | **Yes (`4` callers, `4` production ranked first)** |
 | **Codex Synthesis 4 (`RDS-03`): Auto-Inlined Module Constants on `L2`/`L3` Slices** | No (misses top-of-file consts) | No | **Yes (`True` — auto-attaches `defined_in` + literal)** |
-| **Codex Synthesis 5 (`v4` Fix): Zero-Tax Compact Markdown Response Format** | N/A | N/A | **`-85.7%` (`8012B` -> `1143B`)** |
-
----
-
-## Live Multi-Model Agent Evaluation (`--live-agent`: `claude-sonnet-4` & `gemini-2.5-pro`)
-
-| Live Agent Metric (3 Polyglot Refactoring Tasks x 2 Models) | Condition A: Raw Files | Condition B: Flat RepoMap | Condition C: Semantic LOD v0.4 |
-| :--- | :--- | :--- | :--- |
-| **Avg Tokens per Refactoring Task** | `2132 tokens` | `1293 tokens` | **`2660 tokens`** |
-| **Total Tokens Across All 6 Episodes** | `12790 tokens` | `7759 tokens` | **`15963 tokens`** |
-| **Avg Tool Calls per Task** | `6.7` | `6.7` | **`5.7`** |
-| **First-Pass Compiler Pass Rate** | `0.0%` | `0.0%` | **`100.0%`** |
-| **Avg Compiler Iterations to Pass** | `2.0` | `2.0` | **`1.0`** |
-| **Architectural Invariant Violations** | `10 violations` | `8 violations` | **`0 violations`** |
-| **Pre-Edit Hook Interceptions (`lod_verify_edit_eligibility`)** | `0` | `0` | **`2`** |
+| **Codex Synthesis 5 (`v4` Fix): Zero-Tax Compact Markdown Response Format** | N/A | N/A | **`-87.8%` (`9331B` -> `1143B`)** |
 
 ---
 

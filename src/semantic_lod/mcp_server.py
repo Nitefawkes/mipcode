@@ -1,21 +1,33 @@
 #!/usr/bin/env python3
 """
-lod_mcp_server_v0_2.py — Stateful Semantic LOD Runtime & MCP Server (v0.2)
+Semantic LOD (Level of Detail) & MipCode MCP Server (v0.5.2).
+
+Dual-Layer Architecture:
+  - Agent-Facing MCP Verbs: lod_map/mip_map, lod_symbols/mip_symbols, lod_zoom/mip_zoom,
+    lod_trace/mip_trace, lod_blast_radius/mip_blast, lod_guardrail/mip_guardrail.
+  - Internal Graphics Engine: Anisotropic BRDF Shading, Foveated Raycasting, Z-Buffer
+    Deduplication, and Stateful Fog-of-War Invariant Bundling.
+
 Implements:
-  1. lod_map(token_budget, session_id) -> Budgeted L0 World Map + Working Context + Exact Loss Ledger.
-  2. lod_zoom(target, level, intent, token_budget, session_id, workspace_dir) ->
-       Enforces Stateful "Fog-of-War" Resolution Gating (blocks L3 jumps until L1 Blueprint is hydrated),
-       unpacks self-contained zlib+base64 source blobs, and verifies live disk SHA-256 freshness.
-  3. lod_blast_radius(target, max_hops, session_id) ->
-       Transitive BFS symbol/module impact analysis with explicit epistemic & static-coverage boundaries.
-  4. lod_propose_context_delta(...) ->
-       Appends proposed decisions/questions to the Working Context delta log with a Hydration Receipt.
+  1. lod_map / mip_map(token_budget, session_id) -> Budgeted L0 World Map + Working Context + Exact Loss Ledger.
+  2. lod_zoom / mip_zoom(target, level, focus, ...) -> Progressive Hydration & Anisotropic Task Shading.
+       - level='L1'/'L2'/'L3': Isometric views with Fog-of-War gating and SHA-256 freshness.
+       - focus='...': Runs Anisotropic BRDF Shader to surface task-critical symbols under the byte budget.
+  3. lod_trace / mip_trace(origin, direction, max_hops, focus, ...) ->
+       Cross-file foveated call-graph tracer with host-module L1 invariant bundling (Engine Alias: lod_raycast).
+  4. lod_blast_radius / mip_blast(target, max_hops, session_id) ->
+       Production-first transitive BFS impact analysis with caller affinity ranking and pagination.
+  5. lod_pre_edit_guardrail / mip_guardrail(...) ->
+       Single-call Pre-Edit Guardrail packet in Compact Markdown.
+  6. lod_propose_context_delta / mip_propose_delta(...) ->
+       Governed working-context writeback backed by cryptographic hydration receipts.
 """
 
 import base64
 from collections import deque
 import hashlib
 import json
+import re
 import sys
 import time
 import zlib
@@ -26,6 +38,9 @@ LOD_PATH = Path(sys.argv[1] if len(sys.argv) > 1 and not sys.argv[1].startswith(
 
 # In-memory Fog-of-War session state tracking hydrated resolutions per agent session
 SESSION_STATE: Dict[str, Dict[str, Any]] = {}
+# Z-buffer of symbol ids whose L3 text was already emitted in this process.
+_SESSION_L3_HYDRATED: Dict[str, Set[str]] = {}
+_L3_WINDOW_ANCHORS = ("accepted_full", "completeness", "is_full", "assert", "return", "raise")
 
 
 def estimate_tokens(obj: Any) -> int:
@@ -73,6 +88,30 @@ def record_hydration(session: Dict[str, Any], target: str, resolution: str, dige
         "omitted_summary": omitted
     })
     return f"rcpt_{receipt_id}"
+
+
+def _record_session_l1_hydration(session_id: str, mod_id: str, digest: str) -> str:
+    """
+    Fog-of-War L1 hydration hook for surfaces that bundle host-module invariants themselves.
+
+    Marks `mod_id` as L1-hydrated in `session_id` and writes a receipt bound to the module
+    digest (SHA-256). `lod_raycast` must call this for every module on the ray so the
+    pre-edit MMU sees the same set the agent was shown. Modules the ray does not touch stay
+    unhydrated, and `lod_zoom(..., level="L3")` still returns `SEMANTIC_PAGE_FAULT_TRIGGERED`.
+    """
+    session = get_session(session_id)
+    session["l1_hydrated_modules"].add(mod_id)
+    return record_hydration(
+        session,
+        mod_id,
+        "L1",
+        digest or "",
+        {
+            "via": "lod_raycast",
+            "bundled": ["DECLARED_RULE", "HEURISTIC_HAZARD"],
+            "note": "Host-module L1 invariants shipped with the anisotropic ray; off-axis siblings culled.",
+        },
+    )
 
 
 def invalidate_stale_session_receipts(container: Dict[str, Any]) -> Dict[str, List[str]]:
@@ -393,23 +432,41 @@ def _compact_module_l2_entry(sym_id: str, smeta: Dict[str, Any], hazard_syms: Se
 def lod_zoom(
     target: str,
     level: str = "L1",
+    focus: Optional[str] = None,
+    max_on_axis_symbols: int = 12,
+    hydrate_top_k_l3: int = 2,
+    byte_budget: int = 12000,
+    session_id: str = "default",
     intent: str = "inspect",
     token_budget: int = 1500,
-    session_id: str = "default",
     workspace_dir: Optional[str] = None,
     force_bypass_gate: bool = False,
     compact_l2: bool = True,
     name_contains: str = "",
     offset: int = 0,
     max_lines: Optional[int] = None,
-    line_offset: int = 0
+    line_offset: int = 0,
+    deduplicate_session_l3: bool = True,
+    max_l3_chars_per_symbol: int = 2400,
 ) -> Dict[str, Any]:
     """
-    Progressive Hydration with Stateful Fog-of-War Gating:
-      - L1: Blueprint (EXTRACTED_FACT contracts, DECLARED_RULE invariants, HEURISTIC_HAZARD warnings, coupling).
-      - L2: Mechanics (Compact module symbol index with nonzero counts + epistemic rules, or full symbol L2 detail).
-      - L3: Raw Source Slice (unpacked from embedded zlib+base64 blob, 1-based line anchors, optional max_lines/line_offset paging).
+    Progressive Hydration & Anisotropic Task Shading:
+      - level='L1'/'L2'/'L3': Standard isometric views with Stateful Fog-of-War Gating.
+      - focus='...': If provided, runs the Anisotropic BRDF Shader to rank
+        symbols by task relevance + deep-helper complexity weight, surfacing
+        critical symbols (even private _helpers) instantly under the byte cap.
     """
+    if focus:
+        return lod_anisotropic_zoom(
+            target=target,
+            anisotropic_vector=focus,
+            max_on_axis_symbols=max_on_axis_symbols,
+            hydrate_top_k_l3=hydrate_top_k_l3,
+            byte_budget=byte_budget,
+            session_id=session_id,
+            deduplicate_session_l3=deduplicate_session_l3,
+            max_l3_chars_per_symbol=max_l3_chars_per_symbol,
+        )
     data = load_container()
     session = get_session(session_id)
     blueprints = data["l1_blueprints"]
@@ -590,6 +647,7 @@ def lod_zoom(
             "omitted_lines_outside_slice": len(lines) - (end - start + 1)
         }
         rcpt = record_hydration(session, target, "L3", mod["sha256"], loss)
+        _mark_l3_hydrated(session_id, target)
         return {
             "status": "OK",
             "receipt_id": rcpt,
@@ -1538,6 +1596,567 @@ def main_verify_edit_cli(argv: Optional[List[str]] = None) -> None:
     sys.exit(verdict.get("exit_code", 0 if verdict.get("eligible") else 2))
 
 
+def _ray_outgoing_calls(meta: Dict[str, Any]) -> List[str]:
+    """Rust mechanics store calls in `call_graph_identifiers`; Python stores `outgoing_calls`."""
+    calls = meta.get("outgoing_calls")
+    if calls:
+        return list(calls)
+    return list(meta.get("call_graph_identifiers") or [])
+
+
+def _ray_source_lines(data: Dict[str, Any], mod_id: str, mod_data: Dict[str, Any]) -> Optional[List[str]]:
+    """Prefer the self-contained zlib blob. Fall back to root_path / repo_root on disk."""
+    blob = mod_data.get("embedded_source_b64_zlib")
+    if blob:
+        return decode_embedded_source(blob).splitlines()
+    root = data.get("root_path") or data.get("repo_root")
+    if not root:
+        return None
+    rel_path = mod_id.replace("mod://", "")
+    root_path = Path(root)
+    if not root_path.is_dir():
+        root_path = (LOD_PATH.parent / root).resolve()
+    src_file = root_path / rel_path
+    if not src_file.exists():
+        return None
+    return src_file.read_text(encoding="utf-8", errors="replace").splitlines()
+
+
+def _host_l1_bundle(mod_data: Dict[str, Any]) -> Dict[str, Any]:
+    """Normalize host-module guardrails from either the patch schema or live epistemics."""
+    epistemics = mod_data.get("epistemics") or {}
+    declared_rules = list(epistemics.get("declared_rules") or [])
+    heuristic_hazards = list(epistemics.get("heuristic_hazards") or [])
+    invariants = mod_data.get("invariants")
+    if invariants is None:
+        invariants = declared_rules
+    epistemic_rules = mod_data.get("epistemic_items")
+    if epistemic_rules is None:
+        epistemic_rules = declared_rules + heuristic_hazards
+    texts: List[str] = []
+    raw_invariants = mod_data.get("invariants")
+    text_sources = raw_invariants if isinstance(raw_invariants, list) else declared_rules + heuristic_hazards
+    for item in text_sources:
+        if isinstance(item, str):
+            texts.append(item)
+        elif isinstance(item, dict):
+            texts.append(str(item.get("statement") or item.get("warning") or ""))
+    return {
+        "invariants": invariants,
+        "epistemic_rules": epistemic_rules,
+        "declared_rules": declared_rules,
+        "heuristic_hazards": heuristic_hazards,
+        "invariant_texts": [t for t in texts if t],
+        "digest": mod_data.get("digest") or mod_data.get("sha256") or "",
+    }
+
+
+def _line_start(meta: Dict[str, Any]) -> int:
+    span = meta.get("lines") or [0]
+    if isinstance(span, (list, tuple)) and span:
+        return int(span[0])
+    return 0
+
+
+def _foveated_l3_source(lines: Optional[List[str]], meta: Dict[str, Any]) -> Optional[str]:
+    if not lines:
+        return None
+    span = meta.get("lines")
+    if not isinstance(span, (list, tuple)) or len(span) < 2:
+        return None
+    start, end = int(span[0]), int(span[1])
+    if start < 1:
+        return None
+    return "\n".join(
+        f"{i}: {lines[i - 1]}" for i in range(start, min(end + 1, len(lines) + 1))
+    )
+
+
+def _mark_l3_hydrated(session_id: str, sym_id: str) -> None:
+    """Record that this session has already received `sym_id`'s L3 text."""
+    if not sym_id.startswith("sym://"):
+        return
+    _SESSION_L3_HYDRATED.setdefault(session_id, set()).add(sym_id)
+    session = get_session(session_id)
+    session.setdefault("l3_symbol_hydrated", set()).add(sym_id)
+    session["l3_hydrated_targets"].add(sym_id)
+
+
+def _unmark_l3_hydrated(session_id: str, sym_id: str) -> None:
+    """Drop a symbol whose L3 text was stripped back out of the payload."""
+    _SESSION_L3_HYDRATED.get(session_id, set()).discard(sym_id)
+    session = get_session(session_id)
+    session.get("l3_symbol_hydrated", set()).discard(sym_id)
+    session["l3_hydrated_targets"].discard(sym_id)
+
+
+def _l3_already_hydrated(session_id: str, sym_id: str) -> bool:
+    if sym_id in _SESSION_L3_HYDRATED.get(session_id, set()):
+        return True
+    return sym_id in get_session(session_id).get("l3_symbol_hydrated", set())
+
+
+def _line_matches_needles(row: str, needles: List[str]) -> bool:
+    lowered = row.lower()
+    for needle in needles:
+        if not needle:
+            continue
+        if len(needle) >= 12:
+            if needle in lowered:
+                return True
+            continue
+        if re.search(rf"\b{re.escape(needle)}\b", lowered):
+            return True
+    return False
+
+
+def _window_keep(count: int, hits: List[int], radius: int) -> Set[int]:
+    keep = set(range(min(10, count)))
+    keep.update(range(max(0, count - 8), count))
+    for index in hits:
+        keep.update(range(max(0, index - radius), min(count, index + radius + 1)))
+    return keep
+
+
+def _render_l3_windows(rows: List[str], keep: Set[int], sym_id: str) -> str:
+    count = len(rows)
+
+    def _line_no(index: int) -> str:
+        head = rows[index].split(":", 1)[0].strip()
+        return head or str(index + 1)
+
+    parts: List[str] = []
+    index = 0
+    while index < count:
+        if index in keep:
+            parts.append(rows[index])
+            index += 1
+            continue
+        start = index
+        while index < count and index not in keep:
+            index += 1
+        parts.append(
+            f"... [lines {_line_no(start)}-{_line_no(index - 1)} omitted by foveated window; "
+            f"zoom {sym_id} L3 for full body] ..."
+        )
+    return "\n".join(parts)
+
+
+def _window_l3_source(
+    full: str,
+    sym_id: str,
+    vector_tokens: List[str],
+    max_chars: int,
+) -> str:
+    """
+    Keep the first 10 lines, the last 8, and a +-12 line window around vector
+    or anchor hits. If that still exceeds `max_chars`, tighten the radius so
+    the accepted_full / completeness / is_full lines stay and boilerplate drops.
+    """
+    if max_chars <= 0 or len(full) <= max_chars or not vector_tokens:
+        return full
+    rows = full.splitlines()
+    count = len(rows)
+    if count == 0:
+        return full
+    broad = [tok.lower() for tok in vector_tokens if tok] + list(_L3_WINDOW_ANCHORS)
+    tight = [tok.lower() for tok in vector_tokens if tok] + ["accepted_full", "completeness", "is_full", "assert"]
+    plans = [(broad, 12)] + [(tight, radius) for radius in (12, 6, 3, 1, 0)]
+    best = full
+    for needles, radius in plans:
+        hits = [i for i, row in enumerate(rows) if _line_matches_needles(row, needles)]
+        rendered = _render_l3_windows(rows, _window_keep(count, hits, radius), sym_id)
+        if len(rendered) < len(best):
+            best = rendered
+        if len(rendered) <= max_chars:
+            return rendered
+    return best
+
+
+def _assign_l3_text(
+    entry: Dict[str, Any],
+    session_id: str,
+    sym_id: str,
+    l3_source: Optional[str],
+    vector_tokens: List[str],
+    *,
+    deduplicate_session_l3: bool,
+    max_l3_chars_per_symbol: int,
+) -> None:
+    """Emit full, windowed, or already-hydrated L3 and update the session Z-buffer."""
+    if not l3_source:
+        return
+    if deduplicate_session_l3 and _l3_already_hydrated(session_id, sym_id):
+        entry["l3_status"] = "ALREADY_HYDRATED_IN_SESSION"
+        return
+    rendered = _window_l3_source(l3_source, sym_id, vector_tokens, max_l3_chars_per_symbol)
+    entry["l3_source"] = rendered
+    if rendered != l3_source:
+        entry["l3_windowed"] = True
+    _mark_l3_hydrated(session_id, sym_id)
+
+
+def _compute_brdf_anisotropic_score(
+    sym_id: str,
+    meta: Dict[str, Any],
+    vector_tokens: List[str],
+    mod_invariants: List[str],
+) -> float:
+    """
+    BRDF / anisotropic shading score (N · L + ambient-occlusion crevice weight)
+    for a symbol against the agent's `anisotropic_vector`.
+    """
+    short_name = sym_id.partition("#")[2]
+    sig = str(meta.get("signature", ""))
+    doc = str(meta.get("docstring_summary") or meta.get("docstring") or "")
+    calls = [str(c) for c in _ray_outgoing_calls(meta)]
+    refs = [str(r) for r in meta.get("referenced_identifiers", [])]
+    haystack_name = f"{short_name} {sig}".lower()
+    haystack_body = f"{doc} {' '.join(calls)} {' '.join(refs)}".lower()
+    base_name = short_name.split(".")[-1]
+
+    diffuse_score = 0.0
+    base_lower = base_name.lower()
+    short_lower = short_name.lower()
+    for tok in vector_tokens:
+        if tok == base_lower or tok == short_lower:
+            diffuse_score += 12.0
+        elif tok in haystack_name:
+            diffuse_score += 4.0
+        if tok in haystack_body:
+            diffuse_score += 2.0
+
+    is_private_helper = base_name.startswith("_") and not base_name.startswith("__")
+    call_density = len(calls) + (0.25 * len(refs))
+    crevice_bonus = min(3.0, call_density * 0.15) if is_private_helper else min(1.5, call_density * 0.08)
+
+    specular_bonus = 0.0
+    if any(k in sig for k in ("unsafe", "'", "async", "&mut")):
+        specular_bonus += 1.5
+    if any(base_name.lower() in inv.lower() for inv in mod_invariants):
+        specular_bonus += 2.5
+
+    if vector_tokens and diffuse_score == 0.0:
+        return round(crevice_bonus * 0.1, 3)
+    return round(diffuse_score + crevice_bonus + specular_bonus, 3)
+
+
+def _vector_tokens(anisotropic_vector: str) -> List[str]:
+    return [t.lower() for t in re.split(r"[^a-zA-Z0-9_]+", anisotropic_vector) if len(t) >= 2]
+
+
+def lod_anisotropic_zoom(
+    target: str,
+    anisotropic_vector: str,
+    max_on_axis_symbols: int = 12,
+    hydrate_top_k_l3: int = 2,
+    byte_budget: int = 12000,
+    session_id: str = "default",
+    deduplicate_session_l3: bool = True,
+    max_l3_chars_per_symbol: int = 2400,
+) -> Dict[str, Any]:
+    """
+    Anisotropic module shader.
+
+    Views `mod://...` at a grazing angle given by `anisotropic_vector`. Symbols are ranked by
+    BRDF score instead of source order, so a private helper at ordinal 48 is promoted when it
+    matches the task vector. Top K symbols render at L3, the rest of the on-axis set stays at
+    L2, host-module invariants are pinned and recorded, and off-axis siblings collapse to a count.
+    """
+    data = load_container()
+    blueprints = data.get("l1_blueprints", {})
+    mod_id = target if target.startswith("mod://") else f"mod://{target}"
+    mod = blueprints.get(mod_id)
+    if not mod:
+        return {"error": f"Unknown module {mod_id}. Call lod_map() or lod_symbols() first."}
+
+    bundle = _host_l1_bundle(mod)
+    receipt = _record_session_l1_hydration(session_id, mod_id, bundle["digest"])
+    vector_tokens = _vector_tokens(anisotropic_vector)
+    l2_mechanics = mod.get("l2_mechanics", {})
+
+    scored_symbols = []
+    for sym_id, meta in l2_mechanics.items():
+        score = _compute_brdf_anisotropic_score(sym_id, meta, vector_tokens, bundle["invariant_texts"])
+        scored_symbols.append((score, sym_id, meta))
+    scored_symbols.sort(key=lambda item: (-item[0], _line_start(item[2]), item[1]))
+
+    on_axis = [item for item in scored_symbols if item[0] >= 1.0][:max_on_axis_symbols]
+    if not on_axis:
+        on_axis = scored_symbols[: min(5, len(scored_symbols))]
+
+    src_lines = _ray_source_lines(data, mod_id, mod) or []
+    rendered_symbols: Dict[str, Any] = {}
+    for idx, (score, sym_id, meta) in enumerate(on_axis):
+        short_name = sym_id.partition("#")[2]
+        entry: Dict[str, Any] = {
+            "brdf_score": score,
+            "signature": meta.get("signature"),
+            "lines": meta.get("lines"),
+            "outgoing_calls": _ray_outgoing_calls(meta)[:12],
+        }
+        if idx < hydrate_top_k_l3:
+            _assign_l3_text(
+                entry,
+                session_id,
+                sym_id,
+                _foveated_l3_source(src_lines, meta),
+                vector_tokens,
+                deduplicate_session_l3=deduplicate_session_l3,
+                max_l3_chars_per_symbol=max_l3_chars_per_symbol,
+            )
+        rendered_symbols[short_name] = entry
+        payload_probe = {
+            "target": mod_id,
+            "resolution": "ANISOTROPIC_SHADED_SLICE",
+            "anisotropic_vector": vector_tokens,
+            "session_id": session_id,
+            "l1_invariants": bundle["invariant_texts"],
+            "coupled_with": mod.get("coupled_with", []),
+            "on_axis_symbols_rendered": len(rendered_symbols),
+            "culled_off_axis_symbols": max(0, len(l2_mechanics) - len(rendered_symbols)),
+            "shaded_symbols": rendered_symbols,
+            "hydration_receipt": receipt,
+        }
+        over_budget = len(json.dumps(payload_probe)) > byte_budget
+        if over_budget and idx >= hydrate_top_k_l3:
+            rendered_symbols[short_name] = {"brdf_score": score, "truncated_by_byte_budget": True}
+            break
+        if over_budget and idx + 1 >= hydrate_top_k_l3:
+            break
+
+    return {
+        "target": mod_id,
+        "resolution": "ANISOTROPIC_SHADED_SLICE",
+        "anisotropic_vector": vector_tokens,
+        "session_id": session_id,
+        "l1_invariants": bundle["invariant_texts"],
+        "coupled_with": mod.get("coupled_with", []),
+        "on_axis_symbols_rendered": len(rendered_symbols),
+        "culled_off_axis_symbols": max(0, len(l2_mechanics) - len(rendered_symbols)),
+        "shaded_symbols": rendered_symbols,
+        "hydration_receipt": receipt,
+    }
+
+
+def lod_raycast(
+    origin: str,
+    direction: str = "both",
+    max_hops: int = 2,
+    ray_resolution: str = "L3",
+    anisotropic_vector: str = "",
+    byte_budget: int = 12000,
+    session_id: str = "default",
+    deduplicate_session_l3: bool = True,
+    max_l3_chars_per_symbol: int = 2400,
+) -> Dict[str, Any]:
+    """
+    Anisotropic Ray-Slicer: Shoots a ray from `origin` (sym:// ID or substring)
+    through the cross-file AST call graph. Hydrates L2/L3 strictly along the ray spine
+    while bundling host-module L1 invariants (DECLARED_RULE / HEURISTIC_HAZARD) and
+    culling off-axis sibling symbols.
+
+    Foveation: hop 0 and hop 1 render L3 source when `ray_resolution` is L3; hop 2+
+    stays at L2 signatures. Every touched module is recorded via
+    `_record_session_l1_hydration` so pre-edit Fog-of-War gates remain enforced for
+    modules the ray did not touch.
+    """
+    data = load_container()
+    blueprints = data.get("l1_blueprints", {})
+
+    sym_to_mod: Dict[str, str] = {}
+    sym_to_meta: Dict[str, Dict[str, Any]] = {}
+    short_name_to_syms: Dict[str, List[str]] = {}
+
+    for mod_id, mod_data in blueprints.items():
+        for sym_id, meta in mod_data.get("l2_mechanics", {}).items():
+            sym_to_mod[sym_id] = mod_id
+            sym_to_meta[sym_id] = meta
+            short_name = sym_id.partition("#")[2]
+            base_method = short_name.split(".")[-1]
+            short_name_to_syms.setdefault(short_name.lower(), []).append(sym_id)
+            if base_method.lower() != short_name.lower():
+                short_name_to_syms.setdefault(base_method.lower(), []).append(sym_id)
+
+    q = origin.strip().lower()
+    seed_syms = [
+        sym_id for sym_id in sym_to_meta
+        if q == sym_id.lower() or q in sym_id.partition("#")[2].lower()
+    ]
+    if not seed_syms:
+        return {"error": f"No symbol matching origin '{origin}'"}
+
+    visited_hops = {s: 0 for s in seed_syms[:5]}
+    ray_edges: List[Dict[str, Any]] = []
+    frontier = list(visited_hops.keys())
+
+    for hop in range(1, max_hops + 1):
+        next_frontier: List[str] = []
+        for curr_sym in frontier:
+            curr_meta = sym_to_meta[curr_sym]
+            curr_short = curr_sym.partition("#")[2].split(".")[-1].lower()
+
+            if direction in ("forward", "both"):
+                for called in _ray_outgoing_calls(curr_meta):
+                    callee_key = called.split(".")[-1].lower()
+                    for target_sym in short_name_to_syms.get(callee_key, []):
+                        if target_sym != curr_sym:
+                            ray_edges.append({"from": curr_sym, "to": target_sym, "hop": hop, "dir": "forward"})
+                            if target_sym not in visited_hops:
+                                visited_hops[target_sym] = hop
+                                next_frontier.append(target_sym)
+
+            if direction in ("backward", "both"):
+                for cand_sym, cand_meta in sym_to_meta.items():
+                    if cand_sym == curr_sym:
+                        continue
+                    calls_lower = {c.split(".")[-1].lower() for c in _ray_outgoing_calls(cand_meta)}
+                    refs_lower = {r.split(".")[-1].lower() for r in cand_meta.get("referenced_identifiers", [])}
+                    if curr_short in calls_lower or curr_short in refs_lower:
+                        ray_edges.append({"from": cand_sym, "to": curr_sym, "hop": hop, "dir": "backward"})
+                        if cand_sym not in visited_hops:
+                            visited_hops[cand_sym] = hop
+                            next_frontier.append(cand_sym)
+        frontier = next_frontier
+
+    touched_modules = {sym_to_mod[s] for s in visited_hops}
+    anisotropic_l1_invariants: Dict[str, Any] = {}
+
+    for mod_id in sorted(touched_modules):
+        mod_data = blueprints[mod_id]
+        total_syms = len(mod_data.get("l2_mechanics", {}))
+        on_ray_count = sum(1 for s in visited_hops if sym_to_mod[s] == mod_id)
+        bundle = _host_l1_bundle(mod_data)
+        receipt = _record_session_l1_hydration(session_id, mod_id, bundle["digest"])
+        anisotropic_l1_invariants[mod_id] = {
+            "invariants": bundle["invariant_texts"],
+            "on_ray_symbols": on_ray_count,
+            "culled_off_axis_symbols": max(0, total_syms - on_ray_count),
+            "hydration_receipt": receipt,
+        }
+
+    vector_tokens = _vector_tokens(anisotropic_vector)
+
+    def _sort_key(kv: Any) -> Any:
+        sym_id, hop_dist = kv
+        mod_invs = _host_l1_bundle(blueprints[sym_to_mod[sym_id]])["invariant_texts"]
+        brdf = _compute_brdf_anisotropic_score(sym_id, sym_to_meta[sym_id], vector_tokens, mod_invs)
+        span = sym_to_meta[sym_id].get("lines") or [0, 0]
+        length = int(span[-1]) - int(span[0]) if len(span) >= 2 else 0
+        # Shorter hop-1 bodies take L3 budget before a long callee crowds them out.
+        return (hop_dist, length if hop_dist else 0, -brdf, sym_id)
+
+    def _span_contains(outer: Any, inner: Any) -> bool:
+        if not isinstance(outer, (list, tuple)) or not isinstance(inner, (list, tuple)):
+            return False
+        if len(outer) < 2 or len(inner) < 2 or list(outer) == list(inner):
+            return False
+        return int(outer[0]) <= int(inner[0]) and int(outer[1]) >= int(inner[1])
+
+    enclosing_symbols = set()
+    for sym_id in visited_hops:
+        outer = sym_to_meta[sym_id].get("lines")
+        for other_id in visited_hops:
+            if other_id == sym_id or sym_to_mod[other_id] != sym_to_mod[sym_id]:
+                continue
+            outer_short = sym_id.partition("#")[2]
+            inner_short = other_id.partition("#")[2]
+            if inner_short.startswith(outer_short + ".") and _span_contains(outer, sym_to_meta[other_id].get("lines")):
+                enclosing_symbols.add(sym_id)
+
+    spine_symbols = {sym_id: hop for sym_id, hop in visited_hops.items() if sym_id not in enclosing_symbols}
+    spine_nodes: Dict[str, Any] = {}
+    want_l3 = ray_resolution.upper() == "L3"
+    l3_closed = False
+    for sym_id, hop_dist in sorted(spine_symbols.items(), key=_sort_key):
+        meta = sym_to_meta[sym_id]
+        mod_invs = _host_l1_bundle(blueprints[sym_to_mod[sym_id]])["invariant_texts"]
+        brdf = _compute_brdf_anisotropic_score(sym_id, meta, vector_tokens, mod_invs)
+        node_entry: Dict[str, Any] = {
+            "hop": hop_dist,
+            "brdf_score": brdf,
+            "signature": meta.get("signature"),
+            "lines": meta.get("lines"),
+            "outgoing_calls": _ray_outgoing_calls(meta)[:15],
+        }
+
+        # Foveated L3: origin and immediate neighbors, until the spine budget closes.
+        # Already-hydrated symbols keep a status token so the budget can reach later hops.
+        if want_l3 and hop_dist <= 1 and not l3_closed:
+            mod_id = sym_to_mod[sym_id]
+            _assign_l3_text(
+                node_entry,
+                session_id,
+                sym_id,
+                _foveated_l3_source(_ray_source_lines(data, mod_id, blueprints[mod_id]), meta),
+                vector_tokens,
+                deduplicate_session_l3=deduplicate_session_l3,
+                max_l3_chars_per_symbol=max_l3_chars_per_symbol,
+            )
+
+        spine_nodes[sym_id] = node_entry
+        ray_probe = {
+            "origin": origin,
+            "resolution": f"ANISOTROPIC_RAY_{ray_resolution.upper()}",
+            "anisotropic_vector": vector_tokens,
+            "session_id": session_id,
+            "touched_modules_l1_invariants": anisotropic_l1_invariants,
+            "ray_edges": ray_edges[:40],
+            "ray_spine": spine_nodes,
+        }
+        if len(json.dumps(ray_probe)) > byte_budget:
+            if hop_dist == 0:
+                continue
+            if "l3_source" in node_entry:
+                node_entry.pop("l3_source", None)
+                _unmark_l3_hydrated(session_id, sym_id)
+            node_entry["l3_deferred_by_byte_budget"] = True
+            spine_nodes[sym_id] = node_entry
+            ray_probe["ray_spine"] = spine_nodes
+            if len(json.dumps(ray_probe)) > byte_budget:
+                spine_nodes[sym_id] = {"hop": hop_dist, "brdf_score": brdf, "truncated_by_byte_budget": True}
+                break
+
+    return {
+        "origin": origin,
+        "resolution": f"ANISOTROPIC_RAY_{ray_resolution.upper()}",
+        "anisotropic_vector": vector_tokens,
+        "session_id": session_id,
+        "touched_modules_l1_invariants": anisotropic_l1_invariants,
+        "ray_edges": ray_edges[:40],
+        "ray_spine": spine_nodes,
+    }
+
+
+def lod_trace(
+    origin: str,
+    direction: str = "both",
+    max_hops: int = 2,
+    ray_resolution: str = "L3",
+    focus: Optional[str] = None,
+    byte_budget: int = 12000,
+    session_id: str = "default",
+    deduplicate_session_l3: bool = True,
+    max_l3_chars_per_symbol: int = 2400,
+) -> Dict[str, Any]:
+    """
+    Cross-File Foveated Call-Graph Tracer (Engine Alias: lod_raycast).
+    Traces execution paths across module boundaries, rendering L3 source on the
+    immediate spine and bundling host-module L1 invariants for MMU governance.
+    """
+    return lod_raycast(
+        origin=origin,
+        direction=direction,
+        max_hops=max_hops,
+        ray_resolution=ray_resolution,
+        anisotropic_vector=focus or "",
+        byte_budget=byte_budget,
+        session_id=session_id,
+        deduplicate_session_l3=deduplicate_session_l3,
+        max_l3_chars_per_symbol=max_l3_chars_per_symbol,
+    )
+
+
 # MipCode (`.mip` / `.mip.json`) First-Class MCP Tool Namespace (`mip.*` / `mip_*`)
 def mip_map(token_budget: int = 500, session_id: str = "default", workspace_dir: Optional[str] = None) -> Dict[str, Any]:
     """mip.map() — Mount the L0 World Map (top modules by centrality, global rules, and explicit L0 loss ledger)."""
@@ -1552,19 +2171,56 @@ def mip_symbols(query: str = "", kind: Optional[str] = None, language: Optional[
 def mip_zoom(
     target: str,
     level: str = "L1",
+    focus: Optional[str] = None,
+    max_on_axis_symbols: int = 12,
+    hydrate_top_k_l3: int = 2,
+    byte_budget: int = 12000,
     session_id: str = "default",
     token_budget: int = 1500,
     workspace_dir: Optional[str] = None,
-    compact_l2: bool = True
+    compact_l2: bool = True,
+    deduplicate_session_l3: bool = True,
+    max_l3_chars_per_symbol: int = 2400,
 ) -> Dict[str, Any]:
-    """mip.zoom() — Progressive L1/L2/L3 mipmap zoom with Stateful Fog-of-War gating and SHA-256 freshness verification."""
+    """mip.zoom() — Progressive L1/L2/L3 mipmap zoom with task-focused Anisotropic BRDF Shading."""
     return lod_zoom(
         target=target,
         level=level,
+        focus=focus,
+        max_on_axis_symbols=max_on_axis_symbols,
+        hydrate_top_k_l3=hydrate_top_k_l3,
+        byte_budget=byte_budget,
         session_id=session_id,
         token_budget=token_budget,
         workspace_dir=workspace_dir,
         compact_l2=compact_l2,
+        deduplicate_session_l3=deduplicate_session_l3,
+        max_l3_chars_per_symbol=max_l3_chars_per_symbol,
+    )
+
+
+def mip_trace(
+    origin: str,
+    direction: str = "both",
+    max_hops: int = 2,
+    ray_resolution: str = "L3",
+    focus: Optional[str] = None,
+    byte_budget: int = 12000,
+    session_id: str = "default",
+    deduplicate_session_l3: bool = True,
+    max_l3_chars_per_symbol: int = 2400,
+) -> Dict[str, Any]:
+    """mip.trace() — Cross-file foveated call-graph tracer with host-module L1 invariant bundling (Engine Alias: mip_raycast)."""
+    return lod_trace(
+        origin=origin,
+        direction=direction,
+        max_hops=max_hops,
+        ray_resolution=ray_resolution,
+        focus=focus,
+        byte_budget=byte_budget,
+        session_id=session_id,
+        deduplicate_session_l3=deduplicate_session_l3,
+        max_l3_chars_per_symbol=max_l3_chars_per_symbol,
     )
 
 
@@ -1644,6 +2300,54 @@ def mip_propose_delta(
     )
 
 
+def mip_raycast(
+    origin: str,
+    direction: str = "both",
+    max_hops: int = 2,
+    ray_resolution: str = "L3",
+    anisotropic_vector: str = "",
+    byte_budget: int = 12000,
+    session_id: str = "default",
+    deduplicate_session_l3: bool = True,
+    max_l3_chars_per_symbol: int = 2400,
+) -> Dict[str, Any]:
+    """mip.raycast() — Anisotropic call-graph ray with foveated L3 and host-module L1 invariant bundling."""
+    return lod_raycast(
+        origin=origin,
+        direction=direction,
+        max_hops=max_hops,
+        ray_resolution=ray_resolution,
+        anisotropic_vector=anisotropic_vector,
+        byte_budget=byte_budget,
+        session_id=session_id,
+        deduplicate_session_l3=deduplicate_session_l3,
+        max_l3_chars_per_symbol=max_l3_chars_per_symbol,
+    )
+
+
+def mip_anisotropic_zoom(
+    target: str,
+    anisotropic_vector: str,
+    max_on_axis_symbols: int = 12,
+    hydrate_top_k_l3: int = 2,
+    byte_budget: int = 12000,
+    session_id: str = "default",
+    deduplicate_session_l3: bool = True,
+    max_l3_chars_per_symbol: int = 2400,
+) -> Dict[str, Any]:
+    """mip.anisotropic_zoom() — BRDF-shaded module slice that promotes on-axis symbols past source order."""
+    return lod_anisotropic_zoom(
+        target=target,
+        anisotropic_vector=anisotropic_vector,
+        max_on_axis_symbols=max_on_axis_symbols,
+        hydrate_top_k_l3=hydrate_top_k_l3,
+        byte_budget=byte_budget,
+        session_id=session_id,
+        deduplicate_session_l3=deduplicate_session_l3,
+        max_l3_chars_per_symbol=max_l3_chars_per_symbol,
+    )
+
+
 # Support both MCP Python SDK v2 (MCPServer) and v1 (FastMCP)
 mcp_app = None
 try:
@@ -1661,15 +2365,21 @@ if mcp_app is not None:
     mcp_app.tool()(mip_map)
     mcp_app.tool()(mip_symbols)
     mcp_app.tool()(mip_zoom)
+    mcp_app.tool()(mip_trace)
     mcp_app.tool()(mip_blast)
     mcp_app.tool()(mip_guardrail)
     mcp_app.tool()(mip_verify_edit)
     mcp_app.tool()(mip_propose_delta)
+    mcp_app.tool()(mip_raycast)
+    mcp_app.tool()(mip_anisotropic_zoom)
     # Backward-compatible aliases (`lod_*`)
     mcp_app.tool()(lod_map)
     mcp_app.tool()(lod_symbols)
     mcp_app.tool()(lod_zoom)
+    mcp_app.tool()(lod_trace)
     mcp_app.tool()(lod_blast_radius)
+    mcp_app.tool()(lod_raycast)
+    mcp_app.tool()(lod_anisotropic_zoom)
     mcp_app.tool()(lod_propose_context_delta)
     mcp_app.tool()(lod_verify_edit_eligibility)
     mcp_app.tool()(lod_pre_edit_guardrail)
