@@ -1,0 +1,65 @@
+{
+  "transformation": "UTF-8/LF and machine-local run-root redaction",
+  "files": [
+    {
+      "file": "historical-replay-v2.md",
+      "source_sha256": "830fa53e26ccbd022b4bb848a9107ca2d5acdf18d20eae414283ce9e4131184a",
+      "preview_sha256": "c5a356e90cabff902f06538713af907a558b028b275f6c8712e2288e63bce83b"
+    },
+    {
+      "file": "historical-replay-v2.json",
+      "source_sha256": "10eb7125e93f338d19a958db7f552b0991d8dabd7b2ac7060b5a63e78236303e",
+      "preview_sha256": "fafb25e620b72391d689c80441b52cbe1fa744dbadf6f64668ed07ac3e8c406b"
+    },
+    {
+      "file": "natural-local-corpus-v2.md",
+      "source_sha256": "82f92d6f5856010ac8b4b0d97d53759a50e75b580812b7ae3cb7a8b133260868",
+      "preview_sha256": "0acd097d3769331b3a6dc479967cd1cbe9b5fec4683a31c067fd3b6b669560eb"
+    },
+    {
+      "file": "natural-local-corpus-v2.json",
+      "source_sha256": "373a0a5a60dd1a1be0f21e3b38bcf99eeada92a05b0b0c1a1bc1f51fdf83528f",
+      "preview_sha256": "5d3789a92831f1c61a4278ae666aee567f89331dd674303b3a1a231fa1202b36"
+    },
+    {
+      "file": "live-codex-paired-pilot-v2.md",
+      "source_sha256": "bcdc828e2797c4fa9408e35be05befa06a1eeb749a82c8d83a97fdf0badfbc19",
+      "preview_sha256": "bf1eb818c2572727154f086f27fcc2db64fda20e6ccda6f21d25bc417410f1ec"
+    },
+    {
+      "file": "live-codex-paired-pilot-v2.json",
+      "source_sha256": "ae28b29ca36043207a1b340857ce1aa2b3a65d6513758afa276a45d17192562c",
+      "preview_sha256": "2f91247ff2a32e7cece50aa270402b630c80acfb9530bbef6a3116e4afdbd839"
+    },
+    {
+      "file": "live-codex-oss-benchmark-v2.md",
+      "source_sha256": "cba1a7cfc3446113e58c3852eb61d3336f81fb6313d1be472c2174a7dcae2013",
+      "preview_sha256": "dd2fed8c85bae6d5a0bc28b106d0f85ed1ca26610fe13c153c4aba2c0459e15d"
+    },
+    {
+      "file": "live-codex-oss-benchmark-v2.json",
+      "source_sha256": "4d2465288922b25d1333874fe5829c0ca0f84576517d6b98d561d1eeede89739",
+      "preview_sha256": "41e85d99c0ece6a05d1a52def55e57172fc5dd9c12c0e001e94ebdf50bc7e8dc"
+    },
+    {
+      "file": "live-codex-reminder-ablation-v2.md",
+      "source_sha256": "1d184a81239908a3cf9a72d0105ae57994a02422d295225ba806cfe53991301f",
+      "preview_sha256": "1ee039eb212a58f50dd6eeac2a018d16efbb2aab5e197fbd6b690ca420774b26"
+    },
+    {
+      "file": "live-codex-reminder-ablation-v2.json",
+      "source_sha256": "de04788fa09008532a95eb9bb9627ad2c13377358fd24281d728c3be9f14c2be",
+      "preview_sha256": "f546fb8302441460d1bcba3d8b4ed0f2e967046125ea63a37ef890ff01c8a86c"
+    },
+    {
+      "file": "pytest-sys-monitoring-v2.md",
+      "source_sha256": "8b2881ca1febd7939f4f504be4f7255aa27403ddda1c503db502551b3c6b4369",
+      "preview_sha256": "2defb6d8a03fab6ab333848de0c4304523a667a54f63e92973ec7258f62164e9"
+    },
+    {
+      "file": "pytest-sys-monitoring-v2.json",
+      "source_sha256": "52bd8fbb49f32ab43c6402cad7db73473bb10456629d5d3b0b23e138e8e0113d",
+      "preview_sha256": "32c94358e40fe3bb368c52ddd2c5cd6320fdeed541f332062c118c8d19a713c1"
+    }
+  ]
+}

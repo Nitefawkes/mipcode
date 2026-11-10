@@ -1,0 +1,217 @@
+{
+  "SB01": {
+    "ticket": "Update checkout_quote so a partial crate is billed as a full crate. Shipping manifests must report the same rounded-up crate count. Make the shared calculation require an explicit keyword named partial so callers choose their policy. Preserve exact multiples and zero.",
+    "files": {
+      "warehouse.py": "def count_crates(quantity, size):\n    return quantity // size\n",
+      "sales.py": "from warehouse import count_crates as pack\n\ndef checkout_quote(quantity):\n    return pack(quantity, 6) * 4\n",
+      "shipping.py": "from warehouse import count_crates as allocate\n\ndef manifest_row(quantity):\n    return {'crates': allocate(quantity, 6)}\n",
+      "warehouse_old.py": "def count_crates(quantity, size):\n    return quantity // size\n",
+      "extras/utility_00.py": "def utility_00(value):\n    return value\n",
+      "extras/utility_01.py": "def utility_01(value):\n    return value\n",
+      "extras/utility_02.py": "def utility_02(value):\n    return value\n",
+      "extras/utility_03.py": "def utility_03(value):\n    return value\n",
+      "extras/utility_04.py": "def utility_04(value):\n    return value\n",
+      "extras/utility_05.py": "def utility_05(value):\n    return value\n",
+      "extras/utility_06.py": "def utility_06(value):\n    return value\n",
+      "extras/utility_07.py": "def utility_07(value):\n    return value\n",
+      "extras/utility_08.py": "def utility_08(value):\n    return value\n",
+      "extras/utility_09.py": "def utility_09(value):\n    return value\n",
+      "extras/utility_10.py": "def utility_10(value):\n    return value\n",
+      "extras/utility_11.py": "def utility_11(value):\n    return value\n",
+      "extras/utility_12.py": "def utility_12(value):\n    return value\n",
+      "extras/utility_13.py": "def utility_13(value):\n    return value\n",
+      "extras/utility_14.py": "def utility_14(value):\n    return value\n",
+      "extras/utility_15.py": "def utility_15(value):\n    return value\n",
+      "extras/utility_16.py": "def utility_16(value):\n    return value\n",
+      "extras/utility_17.py": "def utility_17(value):\n    return value\n",
+      "extras/utility_18.py": "def utility_18(value):\n    return value\n",
+      "extras/utility_19.py": "def utility_19(value):\n    return value\n",
+      "extras/utility_20.py": "def utility_20(value):\n    return value\n",
+      "extras/utility_21.py": "def utility_21(value):\n    return value\n",
+      "extras/utility_22.py": "def utility_22(value):\n    return value\n",
+      "extras/utility_23.py": "def utility_23(value):\n    return value\n"
+    },
+    "reference": {
+      "warehouse.py": "def count_crates(quantity, size, *, partial):\n    return (quantity + size - 1) // size if partial else quantity // size\n",
+      "sales.py": "from warehouse import count_crates as pack\n\ndef checkout_quote(quantity):\n    return pack(quantity, 6, partial=True) * 4\n",
+      "shipping.py": "from warehouse import count_crates as allocate\n\ndef manifest_row(quantity):\n    return {'crates': allocate(quantity, 6, partial=True)}\n"
+    },
+    "incomplete": {
+      "warehouse.py": "def count_crates(quantity, size, *, partial):\n    return (quantity + size - 1) // size if partial else quantity // size\n",
+      "sales.py": "from warehouse import count_crates as pack\n\ndef checkout_quote(quantity):\n    return pack(quantity, 6, partial=True) * 4\n"
+    },
+    "oracle": "from sales import checkout_quote\nfrom shipping import manifest_row\nfrom warehouse import count_crates\nimport inspect\nassert checkout_quote(7) == 8\nassert manifest_row(7) == {'crates': 2}\nassert manifest_row(12) == {'crates': 2}\nassert checkout_quote(0) == 0\nassert inspect.signature(count_crates).parameters['partial'].default is inspect.Parameter.empty\n",
+    "anchors": {
+      "sales.py": [
+        4
+      ],
+      "warehouse.py": [
+        1,
+        2
+      ],
+      "shipping.py": [
+        4
+      ]
+    }
+  },
+  "SB02": {
+    "ticket": "Keep dashboard_card at exactly its two existing fields. Extend the shared sample summary to carry the sample count as its third item and add that count to persisted batch records. Preserve the existing empty-input values.",
+    "files": {
+      "samples.py": "def summarize(samples):\n    return min(samples, default=None), max(samples, default=None)\n",
+      "display.py": "from samples import summarize as bounds\n\ndef dashboard_card(samples):\n    low, high = bounds(samples)\n    return {'low': low, 'high': high}\n",
+      "storage.py": "from samples import summarize as reduce_batch\n\ndef record(samples):\n    low, high = reduce_batch(samples)\n    return [low, high]\n",
+      "debug.py": "def summarize(values):\n    return ','.join(map(str, values))\n",
+      "extras/utility_00.py": "def utility_00(value):\n    return value\n",
+      "extras/utility_01.py": "def utility_01(value):\n    return value\n",
+      "extras/utility_02.py": "def utility_02(value):\n    return value\n",
+      "extras/utility_03.py": "def utility_03(value):\n    return value\n",
+      "extras/utility_04.py": "def utility_04(value):\n    return value\n",
+      "extras/utility_05.py": "def utility_05(value):\n    return value\n",
+      "extras/utility_06.py": "def utility_06(value):\n    return value\n",
+      "extras/utility_07.py": "def utility_07(value):\n    return value\n",
+      "extras/utility_08.py": "def utility_08(value):\n    return value\n",
+      "extras/utility_09.py": "def utility_09(value):\n    return value\n",
+      "extras/utility_10.py": "def utility_10(value):\n    return value\n",
+      "extras/utility_11.py": "def utility_11(value):\n    return value\n",
+      "extras/utility_12.py": "def utility_12(value):\n    return value\n",
+      "extras/utility_13.py": "def utility_13(value):\n    return value\n",
+      "extras/utility_14.py": "def utility_14(value):\n    return value\n",
+      "extras/utility_15.py": "def utility_15(value):\n    return value\n",
+      "extras/utility_16.py": "def utility_16(value):\n    return value\n",
+      "extras/utility_17.py": "def utility_17(value):\n    return value\n",
+      "extras/utility_18.py": "def utility_18(value):\n    return value\n",
+      "extras/utility_19.py": "def utility_19(value):\n    return value\n",
+      "extras/utility_20.py": "def utility_20(value):\n    return value\n",
+      "extras/utility_21.py": "def utility_21(value):\n    return value\n",
+      "extras/utility_22.py": "def utility_22(value):\n    return value\n",
+      "extras/utility_23.py": "def utility_23(value):\n    return value\n"
+    },
+    "reference": {
+      "samples.py": "def summarize(samples):\n    return min(samples, default=None), max(samples, default=None), len(samples)\n",
+      "display.py": "from samples import summarize as bounds\n\ndef dashboard_card(samples):\n    low, high, _ = bounds(samples)\n    return {'low': low, 'high': high}\n",
+      "storage.py": "from samples import summarize as reduce_batch\n\ndef record(samples):\n    low, high, count = reduce_batch(samples)\n    return [low, high, count]\n"
+    },
+    "incomplete": {
+      "samples.py": "def summarize(samples):\n    return min(samples, default=None), max(samples, default=None), len(samples)\n",
+      "display.py": "from samples import summarize as bounds\n\ndef dashboard_card(samples):\n    low, high, _ = bounds(samples)\n    return {'low': low, 'high': high}\n",
+      "storage.py": "from samples import summarize as reduce_batch\n\ndef record(samples):\n    low, high, _ = reduce_batch(samples)\n    return [low, high]\n"
+    },
+    "oracle": "from display import dashboard_card\nfrom samples import summarize\nfrom storage import record\nassert dashboard_card([2, 8]) == {'low': 2, 'high': 8}\nassert summarize([2, 8]) == (2, 8, 2)\nassert record([2, 8]) == [2, 8, 2]\nassert record([]) == [None, None, 0]\n",
+    "anchors": {
+      "display.py": [
+        4,
+        5
+      ],
+      "samples.py": [
+        1,
+        2
+      ],
+      "storage.py": [
+        4,
+        5
+      ]
+    }
+  },
+  "SB03": {
+    "ticket": "Have parse_rank raise InvalidRank for malformed inputs. Preserve the zero fallback for the priority index and the question-mark fallback in user-visible messages. Valid numbers should behave as before.",
+    "files": {
+      "ranks.py": "def parse_rank(text):\n    return int(text)\n",
+      "queueing.py": "from ranks import parse_rank as rank\n\ndef priority_index(text):\n    try:\n        return rank(text)\n    except ValueError:\n        return 0\n",
+      "labels.py": "from ranks import parse_rank as decode\n\ndef display_value(text):\n    try:\n        return str(decode(text))\n    except ValueError:\n        return '?'\n",
+      "extras/utility_00.py": "def utility_00(value):\n    return value\n",
+      "extras/utility_01.py": "def utility_01(value):\n    return value\n",
+      "extras/utility_02.py": "def utility_02(value):\n    return value\n",
+      "extras/utility_03.py": "def utility_03(value):\n    return value\n",
+      "extras/utility_04.py": "def utility_04(value):\n    return value\n",
+      "extras/utility_05.py": "def utility_05(value):\n    return value\n",
+      "extras/utility_06.py": "def utility_06(value):\n    return value\n",
+      "extras/utility_07.py": "def utility_07(value):\n    return value\n",
+      "extras/utility_08.py": "def utility_08(value):\n    return value\n",
+      "extras/utility_09.py": "def utility_09(value):\n    return value\n",
+      "extras/utility_10.py": "def utility_10(value):\n    return value\n",
+      "extras/utility_11.py": "def utility_11(value):\n    return value\n",
+      "extras/utility_12.py": "def utility_12(value):\n    return value\n",
+      "extras/utility_13.py": "def utility_13(value):\n    return value\n",
+      "extras/utility_14.py": "def utility_14(value):\n    return value\n",
+      "extras/utility_15.py": "def utility_15(value):\n    return value\n",
+      "extras/utility_16.py": "def utility_16(value):\n    return value\n",
+      "extras/utility_17.py": "def utility_17(value):\n    return value\n",
+      "extras/utility_18.py": "def utility_18(value):\n    return value\n",
+      "extras/utility_19.py": "def utility_19(value):\n    return value\n",
+      "extras/utility_20.py": "def utility_20(value):\n    return value\n",
+      "extras/utility_21.py": "def utility_21(value):\n    return value\n",
+      "extras/utility_22.py": "def utility_22(value):\n    return value\n",
+      "extras/utility_23.py": "def utility_23(value):\n    return value\n"
+    },
+    "reference": {
+      "ranks.py": "class InvalidRank(Exception):\n    pass\n\ndef parse_rank(text):\n    try:\n        return int(text)\n    except ValueError as exc:\n        raise InvalidRank(text) from exc\n",
+      "queueing.py": "from ranks import InvalidRank, parse_rank as rank\n\ndef priority_index(text):\n    try:\n        return rank(text)\n    except InvalidRank:\n        return 0\n",
+      "labels.py": "from ranks import InvalidRank, parse_rank as decode\n\ndef display_value(text):\n    try:\n        return str(decode(text))\n    except InvalidRank:\n        return '?'\n"
+    },
+    "incomplete": {
+      "ranks.py": "class InvalidRank(Exception):\n    pass\n\ndef parse_rank(text):\n    try:\n        return int(text)\n    except ValueError as exc:\n        raise InvalidRank(text) from exc\n",
+      "queueing.py": "from ranks import InvalidRank, parse_rank as rank\n\ndef priority_index(text):\n    try:\n        return rank(text)\n    except InvalidRank:\n        return 0\n"
+    },
+    "oracle": "import ranks\nfrom queueing import priority_index\nfrom labels import display_value\nassert priority_index('bad') == 0\nassert display_value('bad') == '?'\nassert display_value('42') == '42'\ntry:\n    ranks.parse_rank('bad')\nexcept getattr(ranks, 'InvalidRank', AssertionError):\n    pass\nelse:\n    raise AssertionError('expected InvalidRank')\n",
+    "anchors": {
+      "ranks.py": [
+        1,
+        2
+      ],
+      "queueing.py": [
+        5,
+        6,
+        7
+      ],
+      "labels.py": [
+        5,
+        6,
+        7
+      ]
+    }
+  },
+  "SB04": {
+    "ticket": "Update clamp_progress so percentages above 100 are capped at 100. Preserve the existing zero floor and fractional values inside the valid range.",
+    "files": {
+      "progress.py": "def clamp_progress(percent):\n    return max(0, percent)\n",
+      "debug.py": "def clamp_level(level):\n    return min(level, 1)\n",
+      "extras/utility_00.py": "def utility_00(value):\n    return value\n",
+      "extras/utility_01.py": "def utility_01(value):\n    return value\n",
+      "extras/utility_02.py": "def utility_02(value):\n    return value\n",
+      "extras/utility_03.py": "def utility_03(value):\n    return value\n",
+      "extras/utility_04.py": "def utility_04(value):\n    return value\n",
+      "extras/utility_05.py": "def utility_05(value):\n    return value\n",
+      "extras/utility_06.py": "def utility_06(value):\n    return value\n",
+      "extras/utility_07.py": "def utility_07(value):\n    return value\n",
+      "extras/utility_08.py": "def utility_08(value):\n    return value\n",
+      "extras/utility_09.py": "def utility_09(value):\n    return value\n",
+      "extras/utility_10.py": "def utility_10(value):\n    return value\n",
+      "extras/utility_11.py": "def utility_11(value):\n    return value\n",
+      "extras/utility_12.py": "def utility_12(value):\n    return value\n",
+      "extras/utility_13.py": "def utility_13(value):\n    return value\n",
+      "extras/utility_14.py": "def utility_14(value):\n    return value\n",
+      "extras/utility_15.py": "def utility_15(value):\n    return value\n",
+      "extras/utility_16.py": "def utility_16(value):\n    return value\n",
+      "extras/utility_17.py": "def utility_17(value):\n    return value\n",
+      "extras/utility_18.py": "def utility_18(value):\n    return value\n",
+      "extras/utility_19.py": "def utility_19(value):\n    return value\n",
+      "extras/utility_20.py": "def utility_20(value):\n    return value\n",
+      "extras/utility_21.py": "def utility_21(value):\n    return value\n",
+      "extras/utility_22.py": "def utility_22(value):\n    return value\n",
+      "extras/utility_23.py": "def utility_23(value):\n    return value\n"
+    },
+    "reference": {
+      "progress.py": "def clamp_progress(percent):\n    return min(100, max(0, percent))\n"
+    },
+    "incomplete": {
+      "progress.py": "def clamp_progress(percent):\n    return int(min(100, max(0, percent)))\n"
+    },
+    "oracle": "from progress import clamp_progress\nassert clamp_progress(175) == 100\nassert clamp_progress(-2) == 0\nassert clamp_progress(14.5) == 14.5\n",
+    "anchors": {
+      "progress.py": [
+        1,
+        2
+      ]
+    }
+  }
+}
