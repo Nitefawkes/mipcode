@@ -1,0 +1,350 @@
+{
+  "scope": "Research preview. Three constructed Python tasks, one episode per arm.",
+  "tasks": {
+    "LP01": "Preview rounding and thumbnail compatibility",
+    "LP02": "Route suffix with stable display and extended export",
+    "LP03": "Local filtering preserving empty strings"
+  },
+  "source_receipts": {
+    "live_evidence_seal_sha256": "b1be5be45e301cec8cabf4d0f3552e6fb1a91d0ecc557ad36530097c21075b3e",
+    "live_protocol_sha256": "40273b7b42185e20e38531ce311296b4da7fc6039f4ec13073877be97cbfe8cd",
+    "live_measurement_sha256": "b4cf157811223ea80c16104e7d5e090a284bd75e8d6970f48f71cd4eeb7d2a7c",
+    "offline_verification_sha256": "91ebb19811bfa3b6abea75bb31cf59dfede369d7ab5042d6e219b06779d1da93"
+  },
+  "compiler_commit": "b96209b1d617ad8b7ac8d9cfcfab397b52a8297e",
+  "live_harness_commit": "5a5b64f0c03b6017f78d5aa767755d48b1a11d79",
+  "protocol": {
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "medium",
+    "execution": "serial",
+    "brief_cap_utf8": 1024,
+    "calls": 10,
+    "response_utf8_bytes": 16000,
+    "word_limit": 350,
+    "wall_timeout_s": 180,
+    "mipdelta": "B write advisory in all arms; runtime observation disabled in all arms",
+    "gateway_schema_sha256": "693c1c074914656d56a2753a4e1e49ef32676b767fbbf027d1b44832d44f0a12",
+    "acceptance": "Successful CLI and usage receipt, only workspace tools, explicit nonempty finalize, sealed source match, word cap, visible and hidden pass",
+    "cost": "Total provider input plus output tokens including cached input; cached input, wall time, brief generation and bytes separate; no inferred invoice",
+    "restarts": "None after an episode starts; record errors"
+  },
+  "review": {
+    "LP01": {
+      "verdict": "PASS",
+      "reason": "The ticket specifies all oracle checks, including required keyword-only rounding, caller policies, zero, and exact integers. The reference satisfies them. The incomplete patch leaves cached_width calling without the required rounding argument. Signature inspection checks an explicit API requirement; imports use the supplied public APIs."
+    },
+    "LP02": {
+      "verdict": "PASS",
+      "reason": "The ticket specifies suffix parsing, None for absent sections, suffix-free labels, and three-field export rows. The reference satisfies visible and hidden checks. The incomplete patch omits the required third export field. The oracle uses only the supplied public APIs."
+    },
+    "LP03": {
+      "verdict": "PASS",
+      "reason": "All oracle behaviors follow from omitting only None while preserving empty strings, order, and custom separators. The reference satisfies visible and hidden checks. The incomplete patch incorrectly removes empty strings. The oracle imposes no implementation or filename constraints beyond the supplied public API."
+    }
+  },
+  "live_summary": {
+    "none": {
+      "accepted": 3,
+      "valid": 3,
+      "total_tokens": 288579,
+      "cached_input_tokens": 263936,
+      "wall_seconds_including_brief": 78.392,
+      "tool_bytes": 15193
+    },
+    "map": {
+      "accepted": 3,
+      "valid": 3,
+      "total_tokens": 322371,
+      "cached_input_tokens": 270592,
+      "wall_seconds_including_brief": 88.646,
+      "tool_bytes": 14701
+    },
+    "lod": {
+      "accepted": 3,
+      "valid": 3,
+      "total_tokens": 317516,
+      "cached_input_tokens": 270848,
+      "wall_seconds_including_brief": 86.16,
+      "tool_bytes": 10559
+    }
+  },
+  "episodes": [
+    {
+      "episode": "E01",
+      "task": "LP01",
+      "arm": "map",
+      "accepted": true,
+      "transport_valid": true,
+      "total_tokens": 122970,
+      "usage": {
+        "input_tokens": 122297,
+        "cached_input_tokens": 107008,
+        "output_tokens": 673,
+        "reasoning_output_tokens": 57
+      },
+      "meter": {
+        "bytes": 5644,
+        "calls": 10,
+        "denials": 0,
+        "refusals": 0
+      },
+      "wall_seconds": 33.316,
+      "brief_bytes": 986,
+      "brief_seconds": 0.0012603001669049263
+    },
+    {
+      "episode": "E02",
+      "task": "LP01",
+      "arm": "none",
+      "accepted": true,
+      "transport_valid": true,
+      "total_tokens": 91656,
+      "usage": {
+        "input_tokens": 90907,
+        "cached_input_tokens": 83328,
+        "output_tokens": 749,
+        "reasoning_output_tokens": 113
+      },
+      "meter": {
+        "bytes": 5382,
+        "calls": 10,
+        "denials": 0,
+        "refusals": 0
+      },
+      "wall_seconds": 27.182,
+      "brief_bytes": 0,
+      "brief_seconds": 8.100178092718124e-06
+    },
+    {
+      "episode": "E03",
+      "task": "LP01",
+      "arm": "lod",
+      "accepted": true,
+      "transport_valid": true,
+      "total_tokens": 104650,
+      "usage": {
+        "input_tokens": 103952,
+        "cached_input_tokens": 96896,
+        "output_tokens": 698,
+        "reasoning_output_tokens": 61
+      },
+      "meter": {
+        "bytes": 2837,
+        "calls": 9,
+        "denials": 0,
+        "refusals": 0
+      },
+      "wall_seconds": 30.356,
+      "brief_bytes": 1020,
+      "brief_seconds": 0.0011360999196767807
+    },
+    {
+      "episode": "E04",
+      "task": "LP02",
+      "arm": "none",
+      "accepted": true,
+      "transport_valid": true,
+      "total_tokens": 108542,
+      "usage": {
+        "input_tokens": 107689,
+        "cached_input_tokens": 99584,
+        "output_tokens": 853,
+        "reasoning_output_tokens": 72
+      },
+      "meter": {
+        "bytes": 6144,
+        "calls": 8,
+        "denials": 0,
+        "refusals": 0
+      },
+      "wall_seconds": 30.32,
+      "brief_bytes": 0,
+      "brief_seconds": 8.90018418431282e-06
+    },
+    {
+      "episode": "E05",
+      "task": "LP02",
+      "arm": "map",
+      "accepted": true,
+      "transport_valid": true,
+      "total_tokens": 92035,
+      "usage": {
+        "input_tokens": 91421,
+        "cached_input_tokens": 76544,
+        "output_tokens": 614,
+        "reasoning_output_tokens": 23
+      },
+      "meter": {
+        "bytes": 5325,
+        "calls": 10,
+        "denials": 0,
+        "refusals": 0
+      },
+      "wall_seconds": 26.409,
+      "brief_bytes": 977,
+      "brief_seconds": 0.0012662999797612429
+    },
+    {
+      "episode": "E06",
+      "task": "LP02",
+      "arm": "lod",
+      "accepted": true,
+      "transport_valid": true,
+      "total_tokens": 105880,
+      "usage": {
+        "input_tokens": 105275,
+        "cached_input_tokens": 91008,
+        "output_tokens": 605,
+        "reasoning_output_tokens": 28
+      },
+      "meter": {
+        "bytes": 3990,
+        "calls": 10,
+        "denials": 0,
+        "refusals": 0
+      },
+      "wall_seconds": 28.152,
+      "brief_bytes": 959,
+      "brief_seconds": 0.0014175998512655497
+    },
+    {
+      "episode": "E07",
+      "task": "LP03",
+      "arm": "none",
+      "accepted": true,
+      "transport_valid": true,
+      "total_tokens": 88381,
+      "usage": {
+        "input_tokens": 87972,
+        "cached_input_tokens": 81024,
+        "output_tokens": 409,
+        "reasoning_output_tokens": 26
+      },
+      "meter": {
+        "bytes": 3667,
+        "calls": 7,
+        "denials": 0,
+        "refusals": 0
+      },
+      "wall_seconds": 20.89,
+      "brief_bytes": 0,
+      "brief_seconds": 9.699957445263863e-06
+    },
+    {
+      "episode": "E08",
+      "task": "LP03",
+      "arm": "lod",
+      "accepted": true,
+      "transport_valid": true,
+      "total_tokens": 106986,
+      "usage": {
+        "input_tokens": 106329,
+        "cached_input_tokens": 82944,
+        "output_tokens": 657,
+        "reasoning_output_tokens": 57
+      },
+      "meter": {
+        "bytes": 3732,
+        "calls": 8,
+        "denials": 0,
+        "refusals": 0
+      },
+      "wall_seconds": 27.648,
+      "brief_bytes": 969,
+      "brief_seconds": 0.0010209998581558466
+    },
+    {
+      "episode": "E09",
+      "task": "LP03",
+      "arm": "map",
+      "accepted": true,
+      "transport_valid": true,
+      "total_tokens": 107366,
+      "usage": {
+        "input_tokens": 106680,
+        "cached_input_tokens": 87040,
+        "output_tokens": 686,
+        "reasoning_output_tokens": 63
+      },
+      "meter": {
+        "bytes": 3732,
+        "calls": 8,
+        "denials": 0,
+        "refusals": 0
+      },
+      "wall_seconds": 28.918,
+      "brief_bytes": 1021,
+      "brief_seconds": 0.0009385000448673964
+    }
+  ],
+  "offline_required_lines": {
+    "SB01": {
+      "required": 4,
+      "arms": {
+        "none": {
+          "present": 0,
+          "bytes": 0
+        },
+        "map": {
+          "present": 1,
+          "bytes": 982
+        },
+        "lod": {
+          "present": 4,
+          "bytes": 970
+        }
+      }
+    },
+    "SB02": {
+      "required": 6,
+      "arms": {
+        "none": {
+          "present": 0,
+          "bytes": 0
+        },
+        "map": {
+          "present": 2,
+          "bytes": 991
+        },
+        "lod": {
+          "present": 6,
+          "bytes": 959
+        }
+      }
+    },
+    "SB03": {
+      "required": 8,
+      "arms": {
+        "none": {
+          "present": 0,
+          "bytes": 0
+        },
+        "map": {
+          "present": 3,
+          "bytes": 996
+        },
+        "lod": {
+          "present": 8,
+          "bytes": 961
+        }
+      }
+    },
+    "SB04": {
+      "required": 2,
+      "arms": {
+        "none": {
+          "present": 0,
+          "bytes": 0
+        },
+        "map": {
+          "present": 1,
+          "bytes": 967
+        },
+        "lod": {
+          "present": 2,
+          "bytes": 969
+        }
+      }
+    }
+  }
+}

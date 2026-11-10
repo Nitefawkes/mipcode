@@ -164,7 +164,7 @@ The six new episodes sharpened two hypotheses:
 
 We stopped asking the agent to navigate through a separate structural tool catalog. The source anchors, caller graph, and selection logic are still useful research components. One experiment compiles a task brief before the agent starts, then gives the agent its usual search, read, edit, and test tools. The brief uses a fixed allowance and labels the exact source lines it includes. A separate direction would apply specific, executable architecture rules to a patch in CI.
 
-The [one-shot pilot](../experiments/one_shot/README.md) compares starting with the ticket alone, a simple symbol map with lexical excerpts, and a Semantic LOD brief with related source spans. Its offline preflight checks delivery and fixture behavior. It takes a live patch comparison to tell whether the extra context improves correctness or reduces total work.
+The [one-shot pilot](../experiments/one_shot/README.md) compares starting with the ticket alone, a simple symbol map with lexical excerpts, and a Semantic LOD brief with related source spans. Its offline preflight checks delivery and fixture behavior. In the subsequent [live pilot](../results/one_shot/README.md), each arm passed all three constructed tasks. Semantic LOD returned fewer tool bytes, and the no-brief arm used the fewest total provider tokens and had the lowest wall time. The pilot ran one episode per task and arm. We are keeping the compiler as an experiment alongside the advisory CLI.
 
 ---
 

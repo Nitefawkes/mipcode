@@ -28,6 +28,7 @@ The advisory points to `consumer.py:5` and reports `required_keyword_missing`. T
 
 - [Engineering article](docs/engineering_blog_post_mipdelta.md) explains the move from search tools to checks after edits and tests.
 - [Evidence index](results/v2_delta_readout/README.md) links the reports, data, and study limits.
+- [One-shot brief pilot](results/one_shot/README.md) compares no brief, a lexical map, and a Semantic LOD brief.
 - [Documentation index](docs/README.md) covers the preview and the earlier architecture.
 
 The paired evaluations cover 14 selected tasks. A generic reminder recovered five of six selected historical misses in a later diagnostic comparison. The added benefit of cross-file analysis over that reminder still needs a fresh comparison.
