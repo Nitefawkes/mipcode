@@ -1,0 +1,218 @@
+{
+  "OS01": {
+    "ticket": "Overnight bookings should bill the elapsed time across midnight. Make duration require an explicit day length so callers choose their clock. Both booking quotes and invoices use 24-hour days. Keep same-day behavior.",
+    "files": {
+      "span.py": "def duration(start, end):\n    return end - start\n",
+      "bookings.py": "from span import duration as elapsed\n\ndef booking_hours(start, end):\n    return elapsed(start, end)\n",
+      "statements.py": "from span import duration as width\n\ndef amount_due(start, end):\n    return width(start, end) * 8\n",
+      "diagnostics.py": "def duration(first, last):\n    return last - first\n",
+      "helpers/aux_00.py": "def utility_00(value):\n    return value\n",
+      "helpers/aux_01.py": "def utility_01(value):\n    return value\n",
+      "helpers/aux_02.py": "def utility_02(value):\n    return value\n",
+      "helpers/aux_03.py": "def utility_03(value):\n    return value\n",
+      "helpers/aux_04.py": "def utility_04(value):\n    return value\n",
+      "helpers/aux_05.py": "def utility_05(value):\n    return value\n",
+      "helpers/aux_06.py": "def utility_06(value):\n    return value\n",
+      "helpers/aux_07.py": "def utility_07(value):\n    return value\n",
+      "helpers/aux_08.py": "def utility_08(value):\n    return value\n",
+      "helpers/aux_09.py": "def utility_09(value):\n    return value\n",
+      "helpers/aux_10.py": "def utility_10(value):\n    return value\n",
+      "helpers/aux_11.py": "def utility_11(value):\n    return value\n",
+      "helpers/aux_12.py": "def utility_12(value):\n    return value\n",
+      "helpers/aux_13.py": "def utility_13(value):\n    return value\n",
+      "helpers/aux_14.py": "def utility_14(value):\n    return value\n",
+      "helpers/aux_15.py": "def utility_15(value):\n    return value\n",
+      "helpers/aux_16.py": "def utility_16(value):\n    return value\n",
+      "helpers/aux_17.py": "def utility_17(value):\n    return value\n",
+      "helpers/aux_18.py": "def utility_18(value):\n    return value\n",
+      "helpers/aux_19.py": "def utility_19(value):\n    return value\n",
+      "helpers/aux_20.py": "def utility_20(value):\n    return value\n",
+      "helpers/aux_21.py": "def utility_21(value):\n    return value\n",
+      "helpers/aux_22.py": "def utility_22(value):\n    return value\n",
+      "helpers/aux_23.py": "def utility_23(value):\n    return value\n"
+    },
+    "reference": {
+      "span.py": "def duration(start, end, *, day):\n    return (end - start) % day if end < start else end - start\n",
+      "bookings.py": "from span import duration as elapsed\n\ndef booking_hours(start, end):\n    return elapsed(start, end, day=24)\n",
+      "statements.py": "from span import duration as width\n\ndef amount_due(start, end):\n    return width(start, end, day=24) * 8\n"
+    },
+    "incomplete": {
+      "span.py": "def duration(start, end, *, day):\n    return (end - start) % day if end < start else end - start\n",
+      "bookings.py": "from span import duration as elapsed\n\ndef booking_hours(start, end):\n    return elapsed(start, end, day=24)\n"
+    },
+    "oracle": "from bookings import booking_hours\nfrom statements import amount_due\nfrom span import duration\nimport inspect\nassert booking_hours(22, 2) == 4\nassert amount_due(22, 2) == 32\nassert amount_due(2, 6) == 32\nassert inspect.signature(duration).parameters['day'].default is inspect.Parameter.empty\n",
+    "anchors": {
+      "span.py": [
+        1,
+        2
+      ],
+      "bookings.py": [
+        4
+      ],
+      "statements.py": [
+        4
+      ]
+    }
+  },
+  "OS02": {
+    "ticket": "A missing label should raise a domain-specific UnknownLabel from resolve_label. Preserve the printable receipt fallback and the feed summary fallback. A lookup that succeeds should keep the same result.",
+    "files": {
+      "lookup.py": "def resolve_label(labels, code):\n    return labels[code]\n",
+      "checkout.py": "from lookup import resolve_label as label_for\n\ndef print_receipt(labels, code):\n    try:\n        return label_for(labels, code)\n    except KeyError:\n        return \"(unlisted)\"\n",
+      "feed.py": "from lookup import resolve_label as render\n\ndef summarize(labels, code):\n    try:\n        return {\"label\": render(labels, code)}\n    except KeyError:\n        return {\"label\": None}\n",
+      "legacy.py": "def resolve_label(registry, key):\n    return registry.get(key)\n",
+      "helpers/aux_00.py": "def utility_00(value):\n    return value\n",
+      "helpers/aux_01.py": "def utility_01(value):\n    return value\n",
+      "helpers/aux_02.py": "def utility_02(value):\n    return value\n",
+      "helpers/aux_03.py": "def utility_03(value):\n    return value\n",
+      "helpers/aux_04.py": "def utility_04(value):\n    return value\n",
+      "helpers/aux_05.py": "def utility_05(value):\n    return value\n",
+      "helpers/aux_06.py": "def utility_06(value):\n    return value\n",
+      "helpers/aux_07.py": "def utility_07(value):\n    return value\n",
+      "helpers/aux_08.py": "def utility_08(value):\n    return value\n",
+      "helpers/aux_09.py": "def utility_09(value):\n    return value\n",
+      "helpers/aux_10.py": "def utility_10(value):\n    return value\n",
+      "helpers/aux_11.py": "def utility_11(value):\n    return value\n",
+      "helpers/aux_12.py": "def utility_12(value):\n    return value\n",
+      "helpers/aux_13.py": "def utility_13(value):\n    return value\n",
+      "helpers/aux_14.py": "def utility_14(value):\n    return value\n",
+      "helpers/aux_15.py": "def utility_15(value):\n    return value\n",
+      "helpers/aux_16.py": "def utility_16(value):\n    return value\n",
+      "helpers/aux_17.py": "def utility_17(value):\n    return value\n",
+      "helpers/aux_18.py": "def utility_18(value):\n    return value\n",
+      "helpers/aux_19.py": "def utility_19(value):\n    return value\n",
+      "helpers/aux_20.py": "def utility_20(value):\n    return value\n",
+      "helpers/aux_21.py": "def utility_21(value):\n    return value\n",
+      "helpers/aux_22.py": "def utility_22(value):\n    return value\n",
+      "helpers/aux_23.py": "def utility_23(value):\n    return value\n"
+    },
+    "reference": {
+      "lookup.py": "class UnknownLabel(LookupError):\n    pass\n\ndef resolve_label(labels, code):\n    try:\n        return labels[code]\n    except KeyError as exc:\n        raise UnknownLabel(code) from exc\n",
+      "checkout.py": "from lookup import resolve_label as label_for, UnknownLabel\n\ndef print_receipt(labels, code):\n    try:\n        return label_for(labels, code)\n    except UnknownLabel:\n        return \"(unlisted)\"\n",
+      "feed.py": "from lookup import resolve_label as render, UnknownLabel\n\ndef summarize(labels, code):\n    try:\n        return {\"label\": render(labels, code)}\n    except UnknownLabel:\n        return {\"label\": None}\n"
+    },
+    "incomplete": {
+      "lookup.py": "class UnknownLabel(LookupError):\n    pass\n\ndef resolve_label(labels, code):\n    try:\n        return labels[code]\n    except KeyError as exc:\n        raise UnknownLabel(code) from exc\n",
+      "checkout.py": "from lookup import resolve_label as label_for, UnknownLabel\n\ndef print_receipt(labels, code):\n    try:\n        return label_for(labels, code)\n    except UnknownLabel:\n        return \"(unlisted)\"\n"
+    },
+    "oracle": "from checkout import print_receipt\nfrom feed import summarize\nimport lookup\nassert print_receipt({}, \"x\") == \"(unlisted)\"\nassert summarize({}, \"x\") == {\"label\": None}\nassert summarize({\"x\":\"Red\"}, \"x\") == {\"label\":\"Red\"}\ntry:\n    lookup.resolve_label({}, \"x\")\nexcept getattr(lookup, \"UnknownLabel\", AssertionError):\n    pass\nelse:\n    raise AssertionError(\"domain exception required\")\n",
+    "anchors": {
+      "lookup.py": [
+        1,
+        2
+      ],
+      "checkout.py": [
+        5,
+        6,
+        7
+      ],
+      "feed.py": [
+        5,
+        6,
+        7
+      ]
+    }
+  },
+  "OS03": {
+    "ticket": "Extend measure to return the maximum as a third item. Keep the public summary response at exactly its old two fields. Include the maximum as the third export column. For empty values the maximum is None.",
+    "files": {
+      "stats.py": "def measure(values):\n    return sum(values), len(values)\n",
+      "api.py": "from stats import measure as collect\n\ndef public_summary(values):\n    total, count = collect(values)\n    return {\"total\": total, \"count\": count}\n",
+      "rows.py": "from stats import measure as sample\n\ndef export_row(values):\n    total, count = sample(values)\n    return [total, count]\n",
+      "metrics.py": "def measure(value):\n    return float(value)\n",
+      "helpers/aux_00.py": "def utility_00(value):\n    return value\n",
+      "helpers/aux_01.py": "def utility_01(value):\n    return value\n",
+      "helpers/aux_02.py": "def utility_02(value):\n    return value\n",
+      "helpers/aux_03.py": "def utility_03(value):\n    return value\n",
+      "helpers/aux_04.py": "def utility_04(value):\n    return value\n",
+      "helpers/aux_05.py": "def utility_05(value):\n    return value\n",
+      "helpers/aux_06.py": "def utility_06(value):\n    return value\n",
+      "helpers/aux_07.py": "def utility_07(value):\n    return value\n",
+      "helpers/aux_08.py": "def utility_08(value):\n    return value\n",
+      "helpers/aux_09.py": "def utility_09(value):\n    return value\n",
+      "helpers/aux_10.py": "def utility_10(value):\n    return value\n",
+      "helpers/aux_11.py": "def utility_11(value):\n    return value\n",
+      "helpers/aux_12.py": "def utility_12(value):\n    return value\n",
+      "helpers/aux_13.py": "def utility_13(value):\n    return value\n",
+      "helpers/aux_14.py": "def utility_14(value):\n    return value\n",
+      "helpers/aux_15.py": "def utility_15(value):\n    return value\n",
+      "helpers/aux_16.py": "def utility_16(value):\n    return value\n",
+      "helpers/aux_17.py": "def utility_17(value):\n    return value\n",
+      "helpers/aux_18.py": "def utility_18(value):\n    return value\n",
+      "helpers/aux_19.py": "def utility_19(value):\n    return value\n",
+      "helpers/aux_20.py": "def utility_20(value):\n    return value\n",
+      "helpers/aux_21.py": "def utility_21(value):\n    return value\n",
+      "helpers/aux_22.py": "def utility_22(value):\n    return value\n",
+      "helpers/aux_23.py": "def utility_23(value):\n    return value\n"
+    },
+    "reference": {
+      "stats.py": "def measure(values):\n    return sum(values), len(values), max(values, default=None)\n",
+      "api.py": "from stats import measure as collect\n\ndef public_summary(values):\n    total, count, _ = collect(values)\n    return {\"total\": total, \"count\": count}\n",
+      "rows.py": "from stats import measure as sample\n\ndef export_row(values):\n    total, count, maximum = sample(values)\n    return [total, count, maximum]\n"
+    },
+    "incomplete": {
+      "stats.py": "def measure(values):\n    return sum(values), len(values), max(values, default=None)\n",
+      "api.py": "from stats import measure as collect\n\ndef public_summary(values):\n    total, count, maximum = collect(values)\n    return {\"total\": total, \"count\": count, \"maximum\": maximum}\n",
+      "rows.py": "from stats import measure as sample\n\ndef export_row(values):\n    total, count, maximum = sample(values)\n    return [total, count, maximum]\n"
+    },
+    "oracle": "from stats import measure\nfrom api import public_summary\nfrom rows import export_row\nassert measure([3, 8]) == (11, 2, 8)\nassert public_summary([3, 8]) == {\"total\":11, \"count\":2}\nassert export_row([3, 8]) == [11, 2, 8]\nassert export_row([]) == [0, 0, None]\n",
+    "anchors": {
+      "stats.py": [
+        1,
+        2
+      ],
+      "api.py": [
+        4,
+        5
+      ],
+      "rows.py": [
+        4,
+        5
+      ]
+    }
+  },
+  "OS04": {
+    "ticket": "When extracting nonempty tags, skip entries that contain whitespace only. Keep surrounding whitespace on nonempty entries and preserve input order.",
+    "files": {
+      "tags.py": "def nonempty_tags(tags):\n    return [tag for tag in tags if tag]\n",
+      "notes.py": "def normalize_tags(tags):\n    return sorted(tags)\n",
+      "helpers/aux_00.py": "def utility_00(value):\n    return value\n",
+      "helpers/aux_01.py": "def utility_01(value):\n    return value\n",
+      "helpers/aux_02.py": "def utility_02(value):\n    return value\n",
+      "helpers/aux_03.py": "def utility_03(value):\n    return value\n",
+      "helpers/aux_04.py": "def utility_04(value):\n    return value\n",
+      "helpers/aux_05.py": "def utility_05(value):\n    return value\n",
+      "helpers/aux_06.py": "def utility_06(value):\n    return value\n",
+      "helpers/aux_07.py": "def utility_07(value):\n    return value\n",
+      "helpers/aux_08.py": "def utility_08(value):\n    return value\n",
+      "helpers/aux_09.py": "def utility_09(value):\n    return value\n",
+      "helpers/aux_10.py": "def utility_10(value):\n    return value\n",
+      "helpers/aux_11.py": "def utility_11(value):\n    return value\n",
+      "helpers/aux_12.py": "def utility_12(value):\n    return value\n",
+      "helpers/aux_13.py": "def utility_13(value):\n    return value\n",
+      "helpers/aux_14.py": "def utility_14(value):\n    return value\n",
+      "helpers/aux_15.py": "def utility_15(value):\n    return value\n",
+      "helpers/aux_16.py": "def utility_16(value):\n    return value\n",
+      "helpers/aux_17.py": "def utility_17(value):\n    return value\n",
+      "helpers/aux_18.py": "def utility_18(value):\n    return value\n",
+      "helpers/aux_19.py": "def utility_19(value):\n    return value\n",
+      "helpers/aux_20.py": "def utility_20(value):\n    return value\n",
+      "helpers/aux_21.py": "def utility_21(value):\n    return value\n",
+      "helpers/aux_22.py": "def utility_22(value):\n    return value\n",
+      "helpers/aux_23.py": "def utility_23(value):\n    return value\n"
+    },
+    "reference": {
+      "tags.py": "def nonempty_tags(tags):\n    return [tag for tag in tags if tag.strip()]\n"
+    },
+    "incomplete": {
+      "tags.py": "def nonempty_tags(tags):\n    return [tag.strip() for tag in tags if tag.strip()]\n"
+    },
+    "oracle": "from tags import nonempty_tags\nassert nonempty_tags([\"\", \"  \", \" a \", \"b\", \"\t\", \"a\"]) == [\" a \", \"b\", \"a\"]\n",
+    "anchors": {
+      "tags.py": [
+        1,
+        2
+      ]
+    }
+  }
+}
