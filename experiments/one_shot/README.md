@@ -15,3 +15,21 @@ For a future live pilot, use the same agent configuration and native tools for e
 ## Offline admission
 
 Verify source digests, deterministic rendering, exact physical anchors, budget compliance, and absence of private evaluator inputs in the compiler interface. Every pristine and incomplete variant must fail its acceptance check and every reference must pass. Compare required physical line coverage at startup separately from file names or signatures. Coverage is diagnostic and is not an admission threshold. No provider calls are part of this preflight.
+
+## Run the preflight
+
+From the repository root, run the following with Python 3.10 or later. Choose a new output directory for each run.
+
+```sh
+python experiments/one_shot/preflight.py ./artifacts/one-shot-preflight
+```
+
+The receipt includes the pinned fixture digest, per-file source digests, each brief hash, and missing physical lines by arm. The implementation reuses the existing Python fact parser and resolver. This first variant takes the best lexical seed, follows one hop of uniquely resolved static calls in either direction, and packs exact source spans before nearby declarations. It is a bounded pilot of the upstream approach.
+
+For a separate source snapshot with a plain-text ticket, install the candidate and run:
+
+```sh
+python -m mipdelta.brief path/to/snapshot --ticket path/to/ticket.txt --arm lod --max-bytes 1024
+```
+
+Use a source-only snapshot with evaluator data outside the source directory. The source directory should be stable while the brief is compiled.
