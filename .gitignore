@@ -14,3 +14,6 @@ build/
 dist/
 *.egg-info/
 .pytest_cache/
+
+# Local runtime observations
+.mipdelta/

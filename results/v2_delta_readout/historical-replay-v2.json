@@ -1,0 +1,1029 @@
+{
+  "schema": "mipdelta.historical-replay.v2",
+  "manifest_sha256": "4f5716986f88de11cbe8cf5b9426a840d93a4d093054a5c67d9229b441583281",
+  "external_pins_verified": 17,
+  "v1_directory_untouched": true,
+  "case_count": 10,
+  "v1_legacy_total_candidates": 53,
+  "v2_total_candidates": 10,
+  "candidate_reduction_percent": 81.13,
+  "adjudication_breakdown": {
+    "true_positive_adjudicated_defect": 3,
+    "diagnostic_relevant_off_frozen_predicate": 1,
+    "diagnostic_relevant_unforwarded_parameter": 4,
+    "diagnostic_relevant_nullable_truthiness": 2
+  },
+  "timing_ms": {
+    "cold_full_package_wall_median_ms": 388.02914996631444,
+    "cold_full_package_wall_p95_ms": 1118.8004999421537,
+    "warm_incremental_patch_wall_median_ms": 26.23620003578253,
+    "warm_incremental_patch_wall_p95_ms": 39.45700003532693,
+    "warm_incremental_per_file_wall_median_ms": 8.324712500325404,
+    "warm_incremental_per_file_wall_p95_ms": 31.492599984630942,
+    "warm_incremental_per_file_cpu_median_ms": 11.9140625,
+    "warm_incremental_per_file_cpu_p95_ms": 42.96875
+  },
+  "cases": [
+    {
+      "case_id": "T10-A-live",
+      "evidence_kind": "live_episode",
+      "cohort": "T09-T13",
+      "task_id": "T10",
+      "arm": "A",
+      "variant": null,
+      "package": "werkzeug",
+      "python_files": 52,
+      "changed_python_paths": [
+        "werkzeug/datastructures/headers.py",
+        "werkzeug/http.py",
+        "werkzeug/sansio/response.py",
+        "werkzeug/test.py"
+      ],
+      "patch_write_records": [
+        {
+          "path": "werkzeug/datastructures/headers.py",
+          "before_sha256": "fd58dc402acbc6334ac4f2fcc52a059c4267679b51735cdd2fdb2941fe1cef9f",
+          "after_sha256": "f46f2ca0fd18336204d82c6f0abfb5b59dfa884bca082171ff73d95985007084",
+          "before_bytes": 21554,
+          "after_bytes": 21625
+        },
+        {
+          "path": "werkzeug/http.py",
+          "before_sha256": "3d1a6322b6ef2088803259b1c15228f4c33168d5fcbd23929f9f2bc004e11163",
+          "after_sha256": "72fcc578342ddc27afb74aaf4c6b8d545d20e2ce6ac49d07cd33b5fe007a6f07",
+          "before_bytes": 44880,
+          "after_bytes": 45458
+        },
+        {
+          "path": "werkzeug/sansio/response.py",
+          "before_sha256": "f291367e21c3ae838e0ad0562568a0e0b9efdd5ced0f9b33912cde4042c895c4",
+          "after_sha256": "bd6552c8c8475d09c422a6ad60d65c8cf779b60e9bd958086f1f870b65e6a093",
+          "before_bytes": 27965,
+          "after_bytes": 28018
+        },
+        {
+          "path": "werkzeug/test.py",
+          "before_sha256": "d86d3c204c5dff1dd3d4febd9b3e7b2d8610aea937d67c669201d8e4ce476195",
+          "after_sha256": "394795a699bda0363c7aed38bcee9b325b7bbef155785304b99400d7b18fbd72",
+          "before_bytes": 52795,
+          "after_bytes": 52848
+        }
+      ],
+      "v1_legacy_candidate_count": 3,
+      "v2_candidate_count": 0,
+      "cold_full_package_cpu_ms": 375.0,
+      "cold_full_package_wall_ms": 388.5287999873981,
+      "incremental_metrics": {
+        "warmup_cpu_ms": 328.125,
+        "warmup_wall_ms": 332.32419996056706,
+        "custody_clean": true,
+        "custody_cpu_ms": 0.0,
+        "custody_wall_ms": 1.6139999497681856,
+        "changed_file_count": 4,
+        "replicates": 20,
+        "incremental_patch_wall_median_ms": 35.893899970687926,
+        "incremental_patch_wall_p95_ms": 42.270699981600046,
+        "incremental_per_file_wall_median_ms": 8.973474992671981,
+        "incremental_per_file_wall_p95_ms": 10.567674995400012,
+        "incremental_patch_amortized_cpu_ms": 46.09375,
+        "incremental_per_file_amortized_cpu_ms": 11.5234375,
+        "cross_file_triggered": true,
+        "candidate_calls_inspected": 8,
+        "parses_per_patch": 4,
+        "advisory_text": "",
+        "advisory_utf8_bytes": 0
+      },
+      "advisory_preview": "",
+      "advisory_utf8_bytes": 0,
+      "candidate_findings": [],
+      "witness_results": [
+        {
+          "id": "mimeaccept_negotiation",
+          "classification": "diagnostic_only",
+          "path": "werkzeug/datastructures/accept.py",
+          "start_line": 226,
+          "end_line": 252,
+          "outcome": "no_anchor_overlap",
+          "expected_action": null,
+          "matching_findings": [],
+          "source": "P02/P05 independent semantic review"
+        },
+        {
+          "id": "multipart_generated_header",
+          "classification": "known_static_gap",
+          "path": "werkzeug/sansio/multipart.py",
+          "start_line": 296,
+          "end_line": 310,
+          "outcome": "known_gap_not_detected",
+          "expected_action": null,
+          "matching_findings": [],
+          "source": "P02/P05 independent semantic review"
+        }
+      ]
+    },
+    {
+      "case_id": "T10-B-live",
+      "evidence_kind": "live_episode",
+      "cohort": "T09-T13",
+      "task_id": "T10",
+      "arm": "B",
+      "variant": null,
+      "package": "werkzeug",
+      "python_files": 52,
+      "changed_python_paths": [
+        "werkzeug/datastructures/headers.py",
+        "werkzeug/http.py",
+        "werkzeug/sansio/response.py",
+        "werkzeug/test.py"
+      ],
+      "patch_write_records": [
+        {
+          "path": "werkzeug/datastructures/headers.py",
+          "before_sha256": "fd58dc402acbc6334ac4f2fcc52a059c4267679b51735cdd2fdb2941fe1cef9f",
+          "after_sha256": "4d327342a7c803fc512b583e2a69565246722c00379ecfa48968a8b29280b20a",
+          "before_bytes": 21554,
+          "after_bytes": 21608
+        },
+        {
+          "path": "werkzeug/http.py",
+          "before_sha256": "3d1a6322b6ef2088803259b1c15228f4c33168d5fcbd23929f9f2bc004e11163",
+          "after_sha256": "a814443ac5627e8be9c4e7a1941cf96133425316505b38c31cbe486d18379e28",
+          "before_bytes": 44880,
+          "after_bytes": 45488
+        },
+        {
+          "path": "werkzeug/sansio/response.py",
+          "before_sha256": "f291367e21c3ae838e0ad0562568a0e0b9efdd5ced0f9b33912cde4042c895c4",
+          "after_sha256": "bd6552c8c8475d09c422a6ad60d65c8cf779b60e9bd958086f1f870b65e6a093",
+          "before_bytes": 27965,
+          "after_bytes": 28018
+        },
+        {
+          "path": "werkzeug/test.py",
+          "before_sha256": "d86d3c204c5dff1dd3d4febd9b3e7b2d8610aea937d67c669201d8e4ce476195",
+          "after_sha256": "394795a699bda0363c7aed38bcee9b325b7bbef155785304b99400d7b18fbd72",
+          "before_bytes": 52795,
+          "after_bytes": 52848
+        }
+      ],
+      "v1_legacy_candidate_count": 3,
+      "v2_candidate_count": 0,
+      "cold_full_package_cpu_ms": 359.375,
+      "cold_full_package_wall_ms": 368.2574999984354,
+      "incremental_metrics": {
+        "warmup_cpu_ms": 312.5,
+        "warmup_wall_ms": 303.2920000841841,
+        "custody_clean": true,
+        "custody_cpu_ms": 0.0,
+        "custody_wall_ms": 1.6018000897020102,
+        "changed_file_count": 4,
+        "replicates": 20,
+        "incremental_patch_wall_median_ms": 39.45700003532693,
+        "incremental_patch_wall_p95_ms": 50.770799978636205,
+        "incremental_per_file_wall_median_ms": 9.864250008831732,
+        "incremental_per_file_wall_p95_ms": 12.692699994659051,
+        "incremental_patch_amortized_cpu_ms": 49.21875,
+        "incremental_per_file_amortized_cpu_ms": 12.3046875,
+        "cross_file_triggered": true,
+        "candidate_calls_inspected": 8,
+        "parses_per_patch": 4,
+        "advisory_text": "",
+        "advisory_utf8_bytes": 0
+      },
+      "advisory_preview": "",
+      "advisory_utf8_bytes": 0,
+      "candidate_findings": [],
+      "witness_results": [
+        {
+          "id": "mimeaccept_negotiation",
+          "classification": "diagnostic_only",
+          "path": "werkzeug/datastructures/accept.py",
+          "start_line": 226,
+          "end_line": 252,
+          "outcome": "no_anchor_overlap",
+          "expected_action": null,
+          "matching_findings": [],
+          "source": "P02/P05 independent semantic review"
+        },
+        {
+          "id": "multipart_generated_header",
+          "classification": "known_static_gap",
+          "path": "werkzeug/sansio/multipart.py",
+          "start_line": 296,
+          "end_line": 310,
+          "outcome": "known_gap_not_detected",
+          "expected_action": null,
+          "matching_findings": [],
+          "source": "P02/P05 independent semantic review"
+        }
+      ]
+    },
+    {
+      "case_id": "T11-A-live",
+      "evidence_kind": "live_episode",
+      "cohort": "T09-T13",
+      "task_id": "T11",
+      "arm": "A",
+      "variant": null,
+      "package": "werkzeug",
+      "python_files": 52,
+      "changed_python_paths": [
+        "werkzeug/datastructures/auth.py",
+        "werkzeug/datastructures/cache_control.py",
+        "werkzeug/http.py",
+        "werkzeug/sansio/response.py"
+      ],
+      "patch_write_records": [
+        {
+          "path": "werkzeug/datastructures/auth.py",
+          "before_sha256": "65ca9dafcfae529abafdcce0d7aef64b65ed846d146a48541cebae9a6ceacfae",
+          "after_sha256": "5cecbcf8e716ee8dc68c94aae59cf9f36a8b2dfa49ca05b0c884eeec864d3fcb",
+          "before_bytes": 10055,
+          "after_bytes": 10081
+        },
+        {
+          "path": "werkzeug/datastructures/cache_control.py",
+          "before_sha256": "861fb49e58fc0960d3ad6703be9acc9261d9f075bf01fa38f39def9742ee154e",
+          "after_sha256": "b6d74a5b7c6ff1ad72f6b85802edcf82706124db12cbe8bd96c98a02cee3e913",
+          "before_bytes": 9697,
+          "after_bytes": 9710
+        },
+        {
+          "path": "werkzeug/http.py",
+          "before_sha256": "3d1a6322b6ef2088803259b1c15228f4c33168d5fcbd23929f9f2bc004e11163",
+          "after_sha256": "5c49f6da040f4e3a0f14a96b4704388ccb1f383053df85beec099523717be6b9",
+          "before_bytes": 44880,
+          "after_bytes": 45599
+        },
+        {
+          "path": "werkzeug/sansio/response.py",
+          "before_sha256": "f291367e21c3ae838e0ad0562568a0e0b9efdd5ced0f9b33912cde4042c895c4",
+          "after_sha256": "cd8039352aac50ec2f96755104035c8d3d65c2e356437c61d076918fe18768c0",
+          "before_bytes": 27965,
+          "after_bytes": 28158
+        }
+      ],
+      "v1_legacy_candidate_count": 6,
+      "v2_candidate_count": 0,
+      "cold_full_package_cpu_ms": 375.0,
+      "cold_full_package_wall_ms": 387.5294999452308,
+      "incremental_metrics": {
+        "warmup_cpu_ms": 296.875,
+        "warmup_wall_ms": 300.9410999948159,
+        "custody_clean": true,
+        "custody_cpu_ms": 0.0,
+        "custody_wall_ms": 1.690699951723218,
+        "changed_file_count": 4,
+        "replicates": 20,
+        "incremental_patch_wall_median_ms": 22.973950020968914,
+        "incremental_patch_wall_p95_ms": 27.751000015996397,
+        "incremental_per_file_wall_median_ms": 5.7434875052422285,
+        "incremental_per_file_wall_p95_ms": 6.937750003999099,
+        "incremental_patch_amortized_cpu_ms": 32.03125,
+        "incremental_per_file_amortized_cpu_ms": 8.0078125,
+        "cross_file_triggered": true,
+        "candidate_calls_inspected": 10,
+        "parses_per_patch": 4,
+        "advisory_text": "",
+        "advisory_utf8_bytes": 0
+      },
+      "advisory_preview": "",
+      "advisory_utf8_bytes": 0,
+      "candidate_findings": [],
+      "witness_results": [
+        {
+          "id": "descriptor_dump_header_bindings",
+          "classification": "adjudicated_action",
+          "path": "werkzeug/sansio/response.py",
+          "start_line": 713,
+          "end_line": 735,
+          "outcome": "correct_abstention",
+          "expected_action": "abstain",
+          "matching_findings": [],
+          "source": "P09 accepted wrapper supplies strict=... at each descriptor"
+        }
+      ]
+    },
+    {
+      "case_id": "T11-B-live",
+      "evidence_kind": "live_episode",
+      "cohort": "T09-T13",
+      "task_id": "T11",
+      "arm": "B",
+      "variant": null,
+      "package": "werkzeug",
+      "python_files": 52,
+      "changed_python_paths": [
+        "werkzeug/datastructures/auth.py",
+        "werkzeug/datastructures/cache_control.py",
+        "werkzeug/http.py",
+        "werkzeug/sansio/response.py"
+      ],
+      "patch_write_records": [
+        {
+          "path": "werkzeug/datastructures/auth.py",
+          "before_sha256": "65ca9dafcfae529abafdcce0d7aef64b65ed846d146a48541cebae9a6ceacfae",
+          "after_sha256": "5cecbcf8e716ee8dc68c94aae59cf9f36a8b2dfa49ca05b0c884eeec864d3fcb",
+          "before_bytes": 10055,
+          "after_bytes": 10081
+        },
+        {
+          "path": "werkzeug/datastructures/cache_control.py",
+          "before_sha256": "861fb49e58fc0960d3ad6703be9acc9261d9f075bf01fa38f39def9742ee154e",
+          "after_sha256": "b6d74a5b7c6ff1ad72f6b85802edcf82706124db12cbe8bd96c98a02cee3e913",
+          "before_bytes": 9697,
+          "after_bytes": 9710
+        },
+        {
+          "path": "werkzeug/http.py",
+          "before_sha256": "3d1a6322b6ef2088803259b1c15228f4c33168d5fcbd23929f9f2bc004e11163",
+          "after_sha256": "1cfc994fe594c7d9db88bef66bdfe1d037e06934544c6873cebbd498d6cd4295",
+          "before_bytes": 44880,
+          "after_bytes": 45608
+        },
+        {
+          "path": "werkzeug/sansio/response.py",
+          "before_sha256": "f291367e21c3ae838e0ad0562568a0e0b9efdd5ced0f9b33912cde4042c895c4",
+          "after_sha256": "c7b46c8e9135bb4a200519281b8aa7c51b30a4c8581be9fdb0b2375533f1f134",
+          "before_bytes": 27965,
+          "after_bytes": 27978
+        }
+      ],
+      "v1_legacy_candidate_count": 6,
+      "v2_candidate_count": 3,
+      "cold_full_package_cpu_ms": 328.125,
+      "cold_full_package_wall_ms": 326.3868000358343,
+      "incremental_metrics": {
+        "warmup_cpu_ms": 328.125,
+        "warmup_wall_ms": 333.5561000276357,
+        "custody_clean": true,
+        "custody_cpu_ms": 0.0,
+        "custody_wall_ms": 2.1492999512702227,
+        "changed_file_count": 4,
+        "replicates": 20,
+        "incremental_patch_wall_median_ms": 25.572350074071437,
+        "incremental_patch_wall_p95_ms": 35.268599982373416,
+        "incremental_per_file_wall_median_ms": 6.393087518517859,
+        "incremental_per_file_wall_p95_ms": 8.817149995593354,
+        "incremental_patch_amortized_cpu_ms": 33.59375,
+        "incremental_per_file_amortized_cpu_ms": 8.3984375,
+        "cross_file_triggered": true,
+        "candidate_calls_inspected": 7,
+        "parses_per_patch": 4,
+        "advisory_text": "[mip-delta] werkzeug/sansio/response.py:713 callback_binding_review[static] dump_header; werkzeug/sansio/response.py:720 callback_binding_review[static] dump_header; werkzeug/sansio/response.py:732 callback_binding_review[static] dump_header",
+        "advisory_utf8_bytes": 241
+      },
+      "advisory_preview": "[mip-delta] werkzeug/sansio/response.py:713 callback_binding_review[static] dump_header; werkzeug/sansio/response.py:720 callback_binding_review[static] dump_header; werkzeug/sansio/response.py:732 callback_binding_review[static] dump_header",
+      "advisory_utf8_bytes": 241,
+      "candidate_findings": [
+        {
+          "detector": "callback_binding_review",
+          "symbol": "dump_header",
+          "path": "werkzeug/sansio/response.py",
+          "start_line": 713,
+          "end_line": 713,
+          "confidence": "candidate",
+          "resolution_source": "static_ast",
+          "evidence": [
+            "changed callable dump_header is passed as a value"
+          ],
+          "adjudication": "true_positive_adjudicated_defect",
+          "rationale": "Direct dump_header callback passed to header_property at response.py:713-735 without strict=True wrapper (confirmed by P08 blind review)."
+        },
+        {
+          "detector": "callback_binding_review",
+          "symbol": "dump_header",
+          "path": "werkzeug/sansio/response.py",
+          "start_line": 720,
+          "end_line": 720,
+          "confidence": "candidate",
+          "resolution_source": "static_ast",
+          "evidence": [
+            "changed callable dump_header is passed as a value"
+          ],
+          "adjudication": "true_positive_adjudicated_defect",
+          "rationale": "Direct dump_header callback passed to header_property at response.py:713-735 without strict=True wrapper (confirmed by P08 blind review)."
+        },
+        {
+          "detector": "callback_binding_review",
+          "symbol": "dump_header",
+          "path": "werkzeug/sansio/response.py",
+          "start_line": 732,
+          "end_line": 732,
+          "confidence": "candidate",
+          "resolution_source": "static_ast",
+          "evidence": [
+            "changed callable dump_header is passed as a value"
+          ],
+          "adjudication": "true_positive_adjudicated_defect",
+          "rationale": "Direct dump_header callback passed to header_property at response.py:713-735 without strict=True wrapper (confirmed by P08 blind review)."
+        }
+      ],
+      "witness_results": [
+        {
+          "id": "descriptor_dump_header_bindings",
+          "classification": "adjudicated_action",
+          "path": "werkzeug/sansio/response.py",
+          "start_line": 713,
+          "end_line": 735,
+          "outcome": "actionable_warning_found",
+          "expected_action": "warn",
+          "matching_findings": [
+            {
+              "detector": "callback_binding_review",
+              "symbol": "dump_header",
+              "path": "werkzeug/sansio/response.py",
+              "start_line": 713,
+              "end_line": 713,
+              "confidence": "candidate",
+              "resolution_source": "static_ast",
+              "evidence": [
+                "changed callable dump_header is passed as a value"
+              ]
+            },
+            {
+              "detector": "callback_binding_review",
+              "symbol": "dump_header",
+              "path": "werkzeug/sansio/response.py",
+              "start_line": 720,
+              "end_line": 720,
+              "confidence": "candidate",
+              "resolution_source": "static_ast",
+              "evidence": [
+                "changed callable dump_header is passed as a value"
+              ]
+            },
+            {
+              "detector": "callback_binding_review",
+              "symbol": "dump_header",
+              "path": "werkzeug/sansio/response.py",
+              "start_line": 732,
+              "end_line": 732,
+              "confidence": "candidate",
+              "resolution_source": "static_ast",
+              "evidence": [
+                "changed callable dump_header is passed as a value"
+              ]
+            }
+          ],
+          "source": "P08 review identifies three direct dump_header descriptor bindings"
+        }
+      ]
+    },
+    {
+      "case_id": "T35-E05-live",
+      "evidence_kind": "live_episode",
+      "cohort": "T34-T38-stage1",
+      "task_id": "T35",
+      "arm": "A",
+      "variant": null,
+      "package": "platformdirs",
+      "python_files": 8,
+      "changed_python_paths": [
+        "platformdirs/__init__.py",
+        "platformdirs/android.py",
+        "platformdirs/api.py"
+      ],
+      "patch_write_records": [
+        {
+          "path": "platformdirs/__init__.py",
+          "before_sha256": "99509f32604ce2adb896aeb7dfa5775499dc77168e7a0238a904a64028e44791",
+          "after_sha256": "2ee3057220979310d1b625ec5fb611363026334b1b9e6b1b6a3f94fc183501d1",
+          "before_bytes": 22284,
+          "after_bytes": 25124
+        },
+        {
+          "path": "platformdirs/android.py",
+          "before_sha256": "915e682f75770d9e9664abbdc85890ba9bf5f32a7f8e5495d82847d5398f71db",
+          "after_sha256": "2c01d6a63fc2b52ddad098cf0d54dcb0225fde0f11ed022c6236c1ff6324d3a0",
+          "before_bytes": 9007,
+          "after_bytes": 9111
+        },
+        {
+          "path": "platformdirs/api.py",
+          "before_sha256": "d9d7d40cd6c45de0e10ca6abaad479358ee852291467845986cde8cecb668414",
+          "after_sha256": "0669864608f69291b5870fe4a5ae6e02e5d58fd0bc72ea937cd5764cb47fdd79",
+          "before_bytes": 9246,
+          "after_bytes": 9789
+        }
+      ],
+      "v1_legacy_candidate_count": 0,
+      "v2_candidate_count": 0,
+      "cold_full_package_cpu_ms": 31.25,
+      "cold_full_package_wall_ms": 33.421500003896654,
+      "incremental_metrics": {
+        "warmup_cpu_ms": 15.625,
+        "warmup_wall_ms": 22.993399994447827,
+        "custody_clean": true,
+        "custody_cpu_ms": 0.0,
+        "custody_wall_ms": 0.30429998878389597,
+        "changed_file_count": 3,
+        "replicates": 20,
+        "incremental_patch_wall_median_ms": 9.669050050433725,
+        "incremental_patch_wall_p95_ms": 11.622200021520257,
+        "incremental_per_file_wall_median_ms": 3.2230166834779084,
+        "incremental_per_file_wall_p95_ms": 3.8740666738400855,
+        "incremental_patch_amortized_cpu_ms": 10.15625,
+        "incremental_per_file_amortized_cpu_ms": 3.3854166666666665,
+        "cross_file_triggered": true,
+        "candidate_calls_inspected": 15,
+        "parses_per_patch": 3,
+        "advisory_text": "",
+        "advisory_utf8_bytes": 0
+      },
+      "advisory_preview": "",
+      "advisory_utf8_bytes": 0,
+      "candidate_findings": [],
+      "witness_results": [
+        {
+          "id": "parent_directory_umask_behavior",
+          "classification": "posthoc_behavior_diagnostic",
+          "path": "platformdirs/api.py",
+          "start_line": 95,
+          "end_line": 110,
+          "outcome": "no_anchor_overlap",
+          "expected_action": null,
+          "matching_findings": [],
+          "source": "T35 ticket and postrun parent-mode diagnostic; not a causal warning label"
+        }
+      ]
+    },
+    {
+      "case_id": "T35-E06-live",
+      "evidence_kind": "live_episode",
+      "cohort": "T34-T38-stage1",
+      "task_id": "T35",
+      "arm": "B",
+      "variant": null,
+      "package": "platformdirs",
+      "python_files": 8,
+      "changed_python_paths": [
+        "platformdirs/__init__.py",
+        "platformdirs/android.py",
+        "platformdirs/api.py",
+        "platformdirs/unix.py",
+        "platformdirs/windows.py"
+      ],
+      "patch_write_records": [
+        {
+          "path": "platformdirs/__init__.py",
+          "before_sha256": "99509f32604ce2adb896aeb7dfa5775499dc77168e7a0238a904a64028e44791",
+          "after_sha256": "2ee3057220979310d1b625ec5fb611363026334b1b9e6b1b6a3f94fc183501d1",
+          "before_bytes": 22284,
+          "after_bytes": 25124
+        },
+        {
+          "path": "platformdirs/android.py",
+          "before_sha256": "915e682f75770d9e9664abbdc85890ba9bf5f32a7f8e5495d82847d5398f71db",
+          "after_sha256": "7e5504996490539ad52034a035351962b33b834adf99196cf8d21b60f9206342",
+          "before_bytes": 9007,
+          "after_bytes": 9247
+        },
+        {
+          "path": "platformdirs/api.py",
+          "before_sha256": "d9d7d40cd6c45de0e10ca6abaad479358ee852291467845986cde8cecb668414",
+          "after_sha256": "03e049c2ff7c377a04655ab5dc7c2de53f6cb2135d23449c0cbad3dcb1d99fa4",
+          "before_bytes": 9246,
+          "after_bytes": 9696
+        },
+        {
+          "path": "platformdirs/unix.py",
+          "before_sha256": "b913c9591c9012dbfbc8e4af53de2b526b1b968e572832c0d52cc5839e646cad",
+          "after_sha256": "c01713d4d5eb08d894f71a57b317e4164423dbc03d5502b55eb99222c0d1c5bd",
+          "before_bytes": 10393,
+          "after_bytes": 10472
+        },
+        {
+          "path": "platformdirs/windows.py",
+          "before_sha256": "205a62a21501c313ed0b39722b036dc725b8264f2169ae96f28e7d99fac35d5a",
+          "after_sha256": "21bfc86940d562e7822a03fe655ce525391e406b75635db267d43c75182960bf",
+          "before_bytes": 10125,
+          "after_bytes": 10204
+        }
+      ],
+      "v1_legacy_candidate_count": 0,
+      "v2_candidate_count": 0,
+      "cold_full_package_cpu_ms": 62.5,
+      "cold_full_package_wall_ms": 54.408300085924566,
+      "incremental_metrics": {
+        "warmup_cpu_ms": 15.625,
+        "warmup_wall_ms": 22.620499948970973,
+        "custody_clean": true,
+        "custody_cpu_ms": 0.0,
+        "custody_wall_ms": 0.2559999702498317,
+        "changed_file_count": 5,
+        "replicates": 20,
+        "incremental_patch_wall_median_ms": 13.754200015682727,
+        "incremental_patch_wall_p95_ms": 20.33489989116788,
+        "incremental_per_file_wall_median_ms": 2.7508400031365454,
+        "incremental_per_file_wall_p95_ms": 4.066979978233576,
+        "incremental_patch_amortized_cpu_ms": 17.96875,
+        "incremental_per_file_amortized_cpu_ms": 3.59375,
+        "cross_file_triggered": true,
+        "candidate_calls_inspected": 15,
+        "parses_per_patch": 5,
+        "advisory_text": "",
+        "advisory_utf8_bytes": 0
+      },
+      "advisory_preview": "",
+      "advisory_utf8_bytes": 0,
+      "candidate_findings": [],
+      "witness_results": [
+        {
+          "id": "parent_directory_umask_behavior",
+          "classification": "posthoc_behavior_diagnostic",
+          "path": "platformdirs/api.py",
+          "start_line": 95,
+          "end_line": 110,
+          "outcome": "no_anchor_overlap",
+          "expected_action": null,
+          "matching_findings": [],
+          "source": "T35 ticket and postrun parent-mode diagnostic; not a causal warning label"
+        }
+      ]
+    },
+    {
+      "case_id": "T44-definition-only-source-only",
+      "evidence_kind": "source_only_diagnostic",
+      "cohort": "prospective-v2-canonical02",
+      "task_id": "T44",
+      "arm": null,
+      "variant": "definition_only",
+      "package": "docutils",
+      "python_files": 129,
+      "changed_python_paths": [
+        "docutils/utils/__init__.py"
+      ],
+      "patch_write_records": [
+        {
+          "path": "docutils/utils/__init__.py",
+          "before_sha256": "4e8639dfcea82f762a614e74b4da0ecf4596c72cc79802ff3c6d78ae50f92f30",
+          "after_sha256": "208a8f6027ef4ed08e2eb10eefdff789b8f1178510d83955362a338f830e820c"
+        }
+      ],
+      "v1_legacy_candidate_count": 2,
+      "v2_candidate_count": 1,
+      "cold_full_package_cpu_ms": 750.0,
+      "cold_full_package_wall_ms": 777.26480003912,
+      "incremental_metrics": {
+        "warmup_cpu_ms": 875.0,
+        "warmup_wall_ms": 897.931499988772,
+        "custody_clean": true,
+        "custody_cpu_ms": 0.0,
+        "custody_wall_ms": 4.196799942292273,
+        "changed_file_count": 1,
+        "replicates": 20,
+        "incremental_patch_wall_median_ms": 7.675950007978827,
+        "incremental_patch_wall_p95_ms": 11.805999907664955,
+        "incremental_per_file_wall_median_ms": 7.675950007978827,
+        "incremental_per_file_wall_p95_ms": 11.805999907664955,
+        "incremental_patch_amortized_cpu_ms": 20.3125,
+        "incremental_per_file_amortized_cpu_ms": 20.3125,
+        "cross_file_triggered": true,
+        "candidate_calls_inspected": 8,
+        "parses_per_patch": 1,
+        "advisory_text": "[mip-delta] docutils/utils/__init__.py:181 state_field_review[static] Reporter.notify_observers",
+        "advisory_utf8_bytes": 95
+      },
+      "advisory_preview": "[mip-delta] docutils/utils/__init__.py:181 state_field_review[static] Reporter.notify_observers",
+      "advisory_utf8_bytes": 95,
+      "candidate_findings": [
+        {
+          "detector": "state_field_review",
+          "symbol": "Reporter.notify_observers",
+          "path": "docutils/utils/__init__.py",
+          "start_line": 181,
+          "end_line": 183,
+          "confidence": "candidate",
+          "resolution_source": "static_ast",
+          "evidence": [
+            "writer Reporter.attach_observer adds self._observer_minimum_levels; Reporter.notify_observers reads self.observers",
+            "writer Reporter.detach_observer adds self._observer_minimum_levels; Reporter.notify_observers reads self.observers"
+          ],
+          "adjudication": "diagnostic_relevant_off_frozen_predicate",
+          "rationale": "Identifies parallel self._observer_minimum_levels written in attach/detach but unread in notify_observers (T44 root-cause target; off v1 frozen predicate)."
+        }
+      ],
+      "witness_results": [
+        {
+          "id": "observer_threshold_state_symmetry",
+          "classification": "unsupported_predicate_abstention",
+          "path": "docutils/utils/__init__.py",
+          "start_line": 159,
+          "end_line": 183,
+          "outcome": "off_predicate_candidate_not_scored",
+          "expected_action": null,
+          "matching_findings": [
+            {
+              "detector": "state_field_review",
+              "symbol": "Reporter.notify_observers",
+              "path": "docutils/utils/__init__.py",
+              "start_line": 181,
+              "end_line": 183,
+              "confidence": "candidate",
+              "resolution_source": "static_ast",
+              "evidence": [
+                "writer Reporter.attach_observer adds self._observer_minimum_levels; Reporter.notify_observers reads self.observers",
+                "writer Reporter.detach_observer adds self._observer_minimum_levels; Reporter.notify_observers reads self.observers"
+              ]
+            }
+          ],
+          "source": "independent T44 source-only eligibility review"
+        }
+      ]
+    },
+    {
+      "case_id": "T45-definition-only-source-only",
+      "evidence_kind": "source_only_diagnostic",
+      "cohort": "prospective-v2-canonical02",
+      "task_id": "T45",
+      "arm": null,
+      "variant": "definition_only",
+      "package": "rdflib",
+      "python_files": 136,
+      "changed_python_paths": [
+        "rdflib/graph.py"
+      ],
+      "patch_write_records": [
+        {
+          "path": "rdflib/graph.py",
+          "before_sha256": "0ca332c06bccbc16833fcf91f75557ac9c96e5a33ad2d7a2e1aa3f2d3c2cfc42",
+          "after_sha256": "532f0edd11a0e0c77a10746daf5ec726b505d24e54003125d06a007bbeba64d3"
+        }
+      ],
+      "v1_legacy_candidate_count": 12,
+      "v2_candidate_count": 3,
+      "cold_full_package_cpu_ms": 859.375,
+      "cold_full_package_wall_ms": 878.4830999793485,
+      "incremental_metrics": {
+        "warmup_cpu_ms": 1031.25,
+        "warmup_wall_ms": 1024.2984999204054,
+        "custody_clean": true,
+        "custody_cpu_ms": 0.0,
+        "custody_wall_ms": 5.3949999855831265,
+        "changed_file_count": 1,
+        "replicates": 20,
+        "incremental_patch_wall_median_ms": 26.900049997493625,
+        "incremental_patch_wall_p95_ms": 33.13019999768585,
+        "incremental_per_file_wall_median_ms": 26.900049997493625,
+        "incremental_per_file_wall_p95_ms": 33.13019999768585,
+        "incremental_patch_amortized_cpu_ms": 42.96875,
+        "incremental_per_file_amortized_cpu_ms": 42.96875,
+        "cross_file_triggered": true,
+        "candidate_calls_inspected": 108,
+        "parses_per_patch": 1,
+        "advisory_text": "[mip-delta] rdflib/graph.py:1527 parameter_sink_review[static] Graph.parse; rdflib/graph.py:2439 parameter_sink_review[static] ConjunctiveGraph.parse; rdflib/graph.py:2788 parameter_sink_review[static] Dataset.parse",
+        "advisory_utf8_bytes": 215
+      },
+      "advisory_preview": "[mip-delta] rdflib/graph.py:1527 parameter_sink_review[static] Graph.parse; rdflib/graph.py:2439 parameter_sink_review[static] ConjunctiveGraph.parse; rdflib/graph.py:2788 parameter_sink_review[static] Dataset.parse",
+      "advisory_utf8_bytes": 215,
+      "candidate_findings": [
+        {
+          "detector": "parameter_sink_review",
+          "symbol": "Graph.parse",
+          "path": "rdflib/graph.py",
+          "start_line": 1527,
+          "end_line": 1675,
+          "confidence": "candidate",
+          "resolution_source": "static_ast",
+          "evidence": [
+            "new parameter base_iri is not read in the function body; verify its intended behavioral sink"
+          ],
+          "adjudication": "diagnostic_relevant_unforwarded_parameter",
+          "rationale": "Newly added base_iri parameter is accepted in signature without being read or forwarded in method body."
+        },
+        {
+          "detector": "parameter_sink_review",
+          "symbol": "ConjunctiveGraph.parse",
+          "path": "rdflib/graph.py",
+          "start_line": 2439,
+          "end_line": 2514,
+          "confidence": "candidate",
+          "resolution_source": "static_ast",
+          "evidence": [
+            "new parameter base_iri is not read in the function body; verify its intended behavioral sink"
+          ],
+          "adjudication": "diagnostic_relevant_unforwarded_parameter",
+          "rationale": "Newly added base_iri parameter is accepted in signature without being read or forwarded in method body."
+        },
+        {
+          "detector": "parameter_sink_review",
+          "symbol": "Dataset.parse",
+          "path": "rdflib/graph.py",
+          "start_line": 2788,
+          "end_line": 2848,
+          "confidence": "candidate",
+          "resolution_source": "static_ast",
+          "evidence": [
+            "new parameter base_iri is not read in the function body; verify its intended behavioral sink"
+          ],
+          "adjudication": "diagnostic_relevant_unforwarded_parameter",
+          "rationale": "Newly added base_iri parameter is accepted in signature without being read or forwarded in method body."
+        }
+      ],
+      "witness_results": [
+        {
+          "id": "base_iri_forwarding",
+          "classification": "unsupported_predicate_abstention",
+          "path": "rdflib/graph.py",
+          "start_line": 1627,
+          "end_line": 1650,
+          "outcome": "off_predicate_candidate_not_scored",
+          "expected_action": null,
+          "matching_findings": [
+            {
+              "detector": "parameter_sink_review",
+              "symbol": "Graph.parse",
+              "path": "rdflib/graph.py",
+              "start_line": 1527,
+              "end_line": 1675,
+              "confidence": "candidate",
+              "resolution_source": "static_ast",
+              "evidence": [
+                "new parameter base_iri is not read in the function body; verify its intended behavioral sink"
+              ]
+            }
+          ],
+          "source": "independent T45 relevance review"
+        }
+      ]
+    },
+    {
+      "case_id": "T45-missed-seam-source-only",
+      "evidence_kind": "source_only_diagnostic",
+      "cohort": "prospective-v2-canonical02",
+      "task_id": "T45",
+      "arm": null,
+      "variant": "missed_seam",
+      "package": "rdflib",
+      "python_files": 136,
+      "changed_python_paths": [
+        "rdflib/graph.py"
+      ],
+      "patch_write_records": [
+        {
+          "path": "rdflib/graph.py",
+          "before_sha256": "0ca332c06bccbc16833fcf91f75557ac9c96e5a33ad2d7a2e1aa3f2d3c2cfc42",
+          "after_sha256": "2334673d4dde57b09f9aede3a276708b3c0a63d30c0a642d6467bbd0678844f5"
+        }
+      ],
+      "v1_legacy_candidate_count": 10,
+      "v2_candidate_count": 1,
+      "cold_full_package_cpu_ms": 1078.125,
+      "cold_full_package_wall_ms": 1118.8004999421537,
+      "incremental_metrics": {
+        "warmup_cpu_ms": 1125.0,
+        "warmup_wall_ms": 1124.938299995847,
+        "custody_clean": true,
+        "custody_cpu_ms": 0.0,
+        "custody_wall_ms": 5.069000064395368,
+        "changed_file_count": 1,
+        "replicates": 20,
+        "incremental_patch_wall_median_ms": 31.492599984630942,
+        "incremental_patch_wall_p95_ms": 38.033399963751435,
+        "incremental_per_file_wall_median_ms": 31.492599984630942,
+        "incremental_per_file_wall_p95_ms": 38.033399963751435,
+        "incremental_patch_amortized_cpu_ms": 35.9375,
+        "incremental_per_file_amortized_cpu_ms": 35.9375,
+        "cross_file_triggered": true,
+        "candidate_calls_inspected": 144,
+        "parses_per_patch": 1,
+        "advisory_text": "[mip-delta] rdflib/graph.py:2444 parameter_sink_review[static] ConjunctiveGraph.parse",
+        "advisory_utf8_bytes": 85
+      },
+      "advisory_preview": "[mip-delta] rdflib/graph.py:2444 parameter_sink_review[static] ConjunctiveGraph.parse",
+      "advisory_utf8_bytes": 85,
+      "candidate_findings": [
+        {
+          "detector": "parameter_sink_review",
+          "symbol": "ConjunctiveGraph.parse",
+          "path": "rdflib/graph.py",
+          "start_line": 2444,
+          "end_line": 2519,
+          "confidence": "candidate",
+          "resolution_source": "static_ast",
+          "evidence": [
+            "new parameter base_iri is not read in the function body; verify its intended behavioral sink"
+          ],
+          "adjudication": "diagnostic_relevant_unforwarded_parameter",
+          "rationale": "Newly added base_iri parameter is accepted in signature without being read or forwarded in method body."
+        }
+      ],
+      "witness_results": [
+        {
+          "id": "conjunctive_graph_parse_forwarding",
+          "classification": "unsupported_predicate_abstention",
+          "path": "rdflib/graph.py",
+          "start_line": 1627,
+          "end_line": 1650,
+          "outcome": "abstained",
+          "expected_action": null,
+          "matching_findings": [],
+          "source": "independent T45 relevance review"
+        }
+      ]
+    },
+    {
+      "case_id": "T45-invariant-break-source-only",
+      "evidence_kind": "source_only_diagnostic",
+      "cohort": "prospective-v2-canonical02",
+      "task_id": "T45",
+      "arm": null,
+      "variant": "invariant_break",
+      "package": "rdflib",
+      "python_files": 136,
+      "changed_python_paths": [
+        "rdflib/graph.py"
+      ],
+      "patch_write_records": [
+        {
+          "path": "rdflib/graph.py",
+          "before_sha256": "0ca332c06bccbc16833fcf91f75557ac9c96e5a33ad2d7a2e1aa3f2d3c2cfc42",
+          "after_sha256": "34bb6c03b273991e84427eec97360425abc08d239da3183c9bfaff8673c15f58"
+        }
+      ],
+      "v1_legacy_candidate_count": 11,
+      "v2_candidate_count": 2,
+      "cold_full_package_cpu_ms": 921.875,
+      "cold_full_package_wall_ms": 966.3161999778822,
+      "incremental_metrics": {
+        "warmup_cpu_ms": 1078.125,
+        "warmup_wall_ms": 1101.9995000679046,
+        "custody_clean": true,
+        "custody_cpu_ms": 0.0,
+        "custody_wall_ms": 6.113499985076487,
+        "changed_file_count": 1,
+        "replicates": 20,
+        "incremental_patch_wall_median_ms": 27.408050023950636,
+        "incremental_patch_wall_p95_ms": 30.7359000435099,
+        "incremental_per_file_wall_median_ms": 27.408050023950636,
+        "incremental_per_file_wall_p95_ms": 30.7359000435099,
+        "incremental_patch_amortized_cpu_ms": 30.46875,
+        "incremental_per_file_amortized_cpu_ms": 30.46875,
+        "cross_file_triggered": true,
+        "candidate_calls_inspected": 180,
+        "parses_per_patch": 1,
+        "advisory_text": "[mip-delta] rdflib/graph.py:1627 parameter_truthiness_review[static] Graph.parse; rdflib/graph.py:2500 parameter_truthiness_review[static] ConjunctiveGraph.parse",
+        "advisory_utf8_bytes": 161
+      },
+      "advisory_preview": "[mip-delta] rdflib/graph.py:1627 parameter_truthiness_review[static] Graph.parse; rdflib/graph.py:2500 parameter_truthiness_review[static] ConjunctiveGraph.parse",
+      "advisory_utf8_bytes": 161,
+      "candidate_findings": [
+        {
+          "detector": "parameter_truthiness_review",
+          "symbol": "Graph.parse",
+          "path": "rdflib/graph.py",
+          "start_line": 1627,
+          "end_line": 1627,
+          "confidence": "candidate",
+          "resolution_source": "static_ast",
+          "evidence": [
+            "new or changed None-default parameter base_iri is tested as a bare truth value"
+          ],
+          "adjudication": "diagnostic_relevant_nullable_truthiness",
+          "rationale": "Newly added None-default parameter base_iri tested via bare `if base_iri:` which conflates empty string base IRI '' with None."
+        },
+        {
+          "detector": "parameter_truthiness_review",
+          "symbol": "ConjunctiveGraph.parse",
+          "path": "rdflib/graph.py",
+          "start_line": 2500,
+          "end_line": 2500,
+          "confidence": "candidate",
+          "resolution_source": "static_ast",
+          "evidence": [
+            "new or changed None-default parameter base_iri is tested as a bare truth value"
+          ],
+          "adjudication": "diagnostic_relevant_nullable_truthiness",
+          "rationale": "Newly added None-default parameter base_iri tested via bare `if base_iri:` which conflates empty string base IRI '' with None."
+        }
+      ],
+      "witness_results": [
+        {
+          "id": "nullable_base_iri_truthiness",
+          "classification": "unsupported_predicate_abstention",
+          "path": "rdflib/graph.py",
+          "start_line": 1627,
+          "end_line": 1650,
+          "outcome": "off_predicate_candidate_not_scored",
+          "expected_action": null,
+          "matching_findings": [
+            {
+              "detector": "parameter_truthiness_review",
+              "symbol": "Graph.parse",
+              "path": "rdflib/graph.py",
+              "start_line": 1627,
+              "end_line": 1627,
+              "confidence": "candidate",
+              "resolution_source": "static_ast",
+              "evidence": [
+                "new or changed None-default parameter base_iri is tested as a bare truth value"
+              ]
+            }
+          ],
+          "source": "independent T45 relevance review"
+        }
+      ]
+    }
+  ]
+}

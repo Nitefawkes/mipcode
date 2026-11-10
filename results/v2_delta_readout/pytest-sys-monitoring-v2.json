@@ -1,0 +1,413 @@
+{
+  "schema": "mipdelta.pytest-sys-monitoring-benchmark.v2",
+  "python": "3.12.6 (tags/v3.12.6:a4a2d2b, Sep  6 2024, 20:11:23) [MSC v.1940 64 bit (AMD64)]",
+  "suites_evaluated": 3,
+  "all_suites_result_parity": true,
+  "multiprocess_child_opt_in": {
+    "returncode": 0,
+    "distinct_pids_captured": 2,
+    "process_shards_collected": 2,
+    "parent_and_child_receivers_observed": [
+      "ChildReceiver.execute",
+      "ParentReceiver.run"
+    ],
+    "verified": true
+  },
+  "summary_overhead_percent": {
+    "disable_k1_median_across_suites": 4.39,
+    "disable_k1_range": [
+      -1.57,
+      8.03
+    ],
+    "disable_k8_median_across_suites": 6.05,
+    "disable_k8_range": [
+      4.12,
+      10.79
+    ],
+    "local_unbounded_median_across_suites": 61.67,
+    "local_unbounded_range": [
+      15.68,
+      62.25
+    ]
+  },
+  "suites": [
+    {
+      "suite": "tomlkit",
+      "head_sha": "d7def7dbcc59b3b2d11cc73114c31d1f616523a8",
+      "targets_count": 10,
+      "passed_tests": 544,
+      "skipped_tests": 0,
+      "modes": {
+        "baseline": {
+          "replicates": 5,
+          "wall_median_seconds": 4.172823400003836,
+          "wall_p95_seconds": 4.559157100040466,
+          "wall_samples_seconds": [
+            4.1728,
+            4.1151,
+            3.8141,
+            4.3534,
+            4.5592
+          ],
+          "all_returncodes_zero": true,
+          "test_counts": {
+            "passed": 544,
+            "failed": 0,
+            "error": 0,
+            "skipped": 0,
+            "xfailed": 0
+          },
+          "process_shards_collected": 0,
+          "distinct_pids": 0,
+          "total_callbacks": 0,
+          "target_callbacks": 0,
+          "unique_observed_edges": 0,
+          "sites_with_receiver_type": 0,
+          "polymorphic_receiver_sites": 0
+        },
+        "disable_k1": {
+          "replicates": 5,
+          "wall_median_seconds": 4.507903199992143,
+          "wall_p95_seconds": 4.692358900094405,
+          "wall_samples_seconds": [
+            4.5612,
+            4.1946,
+            4.171,
+            4.6924,
+            4.5079
+          ],
+          "all_returncodes_zero": true,
+          "test_counts": {
+            "passed": 544,
+            "failed": 0,
+            "error": 0,
+            "skipped": 0,
+            "xfailed": 0
+          },
+          "process_shards_collected": 1,
+          "distinct_pids": 1,
+          "total_callbacks": 18838,
+          "target_callbacks": 3284,
+          "unique_observed_edges": 3283,
+          "sites_with_receiver_type": 1921,
+          "polymorphic_receiver_sites": 0,
+          "median_overhead_percent": 8.03,
+          "p95_overhead_percent": 2.92,
+          "result_parity_with_baseline": true
+        },
+        "disable_k8": {
+          "replicates": 5,
+          "wall_median_seconds": 4.344539000070654,
+          "wall_p95_seconds": 4.586422199965455,
+          "wall_samples_seconds": [
+            4.3576,
+            4.1642,
+            4.5864,
+            4.3445,
+            4.2863
+          ],
+          "all_returncodes_zero": true,
+          "test_counts": {
+            "passed": 544,
+            "failed": 0,
+            "error": 0,
+            "skipped": 0,
+            "xfailed": 0
+          },
+          "process_shards_collected": 1,
+          "distinct_pids": 1,
+          "total_callbacks": 28335,
+          "target_callbacks": 12781,
+          "unique_observed_edges": 3376,
+          "sites_with_receiver_type": 1921,
+          "polymorphic_receiver_sites": 62,
+          "median_overhead_percent": 4.12,
+          "p95_overhead_percent": 0.6,
+          "result_parity_with_baseline": true
+        },
+        "local_unbounded": {
+          "replicates": 5,
+          "wall_median_seconds": 6.746070199995302,
+          "wall_p95_seconds": 7.202882800018415,
+          "wall_samples_seconds": [
+            7.2029,
+            6.8327,
+            6.6767,
+            6.7461,
+            6.4787
+          ],
+          "all_returncodes_zero": true,
+          "test_counts": {
+            "passed": 544,
+            "failed": 0,
+            "error": 0,
+            "skipped": 0,
+            "xfailed": 0
+          },
+          "process_shards_collected": 1,
+          "distinct_pids": 1,
+          "total_callbacks": 1114603,
+          "target_callbacks": 1099049,
+          "unique_observed_edges": 3468,
+          "sites_with_receiver_type": 1921,
+          "polymorphic_receiver_sites": 89,
+          "median_overhead_percent": 61.67,
+          "p95_overhead_percent": 57.99,
+          "result_parity_with_baseline": true
+        }
+      }
+    },
+    {
+      "suite": "packaging",
+      "head_sha": "ae4946b30f8ae5226e92500722e55618e91f9864",
+      "targets_count": 11,
+      "passed_tests": 9443,
+      "skipped_tests": 1,
+      "modes": {
+        "baseline": {
+          "replicates": 5,
+          "wall_median_seconds": 14.161733399960212,
+          "wall_p95_seconds": 14.812817899975926,
+          "wall_samples_seconds": [
+            14.1095,
+            14.1617,
+            14.8128,
+            14.4059,
+            13.9591
+          ],
+          "all_returncodes_zero": true,
+          "test_counts": {
+            "passed": 9443,
+            "failed": 0,
+            "error": 0,
+            "skipped": 1,
+            "xfailed": 0
+          },
+          "process_shards_collected": 0,
+          "distinct_pids": 0,
+          "total_callbacks": 0,
+          "target_callbacks": 0,
+          "unique_observed_edges": 0,
+          "sites_with_receiver_type": 0,
+          "polymorphic_receiver_sites": 0
+        },
+        "disable_k1": {
+          "replicates": 5,
+          "wall_median_seconds": 14.78317509999033,
+          "wall_p95_seconds": 15.154660900007002,
+          "wall_samples_seconds": [
+            15.1547,
+            14.6314,
+            14.7677,
+            14.7832,
+            14.911
+          ],
+          "all_returncodes_zero": true,
+          "test_counts": {
+            "passed": 9443,
+            "failed": 0,
+            "error": 0,
+            "skipped": 1,
+            "xfailed": 0
+          },
+          "process_shards_collected": 1,
+          "distinct_pids": 1,
+          "total_callbacks": 21233,
+          "target_callbacks": 5014,
+          "unique_observed_edges": 5007,
+          "sites_with_receiver_type": 2112,
+          "polymorphic_receiver_sites": 0,
+          "median_overhead_percent": 4.39,
+          "p95_overhead_percent": 2.31,
+          "result_parity_with_baseline": true
+        },
+        "disable_k8": {
+          "replicates": 5,
+          "wall_median_seconds": 15.69010220002383,
+          "wall_p95_seconds": 15.996296899975277,
+          "wall_samples_seconds": [
+            14.6855,
+            15.3156,
+            15.6901,
+            15.7957,
+            15.9963
+          ],
+          "all_returncodes_zero": true,
+          "test_counts": {
+            "passed": 9443,
+            "failed": 0,
+            "error": 0,
+            "skipped": 1,
+            "xfailed": 0
+          },
+          "process_shards_collected": 1,
+          "distinct_pids": 1,
+          "total_callbacks": 33613,
+          "target_callbacks": 17394,
+          "unique_observed_edges": 5052,
+          "sites_with_receiver_type": 2114,
+          "polymorphic_receiver_sites": 4,
+          "median_overhead_percent": 10.79,
+          "p95_overhead_percent": 7.99,
+          "result_parity_with_baseline": true
+        },
+        "local_unbounded": {
+          "replicates": 5,
+          "wall_median_seconds": 22.977928199921735,
+          "wall_p95_seconds": 24.328554300009273,
+          "wall_samples_seconds": [
+            22.9916,
+            24.3286,
+            22.9779,
+            22.5638,
+            21.9031
+          ],
+          "all_returncodes_zero": true,
+          "test_counts": {
+            "passed": 9443,
+            "failed": 0,
+            "error": 0,
+            "skipped": 1,
+            "xfailed": 0
+          },
+          "process_shards_collected": 1,
+          "distinct_pids": 1,
+          "total_callbacks": 4277454,
+          "target_callbacks": 4261235,
+          "unique_observed_edges": 5081,
+          "sites_with_receiver_type": 2116,
+          "polymorphic_receiver_sites": 9,
+          "median_overhead_percent": 62.25,
+          "p95_overhead_percent": 64.24,
+          "result_parity_with_baseline": true
+        }
+      }
+    },
+    {
+      "suite": "click",
+      "head_sha": "2247b35ea1c47c727d7a06e51fa280e12a863ff6",
+      "targets_count": 41,
+      "passed_tests": 2155,
+      "skipped_tests": 46,
+      "modes": {
+        "baseline": {
+          "replicates": 5,
+          "wall_median_seconds": 9.784453699947335,
+          "wall_p95_seconds": 9.945080999983475,
+          "wall_samples_seconds": [
+            9.8249,
+            8.8355,
+            8.9711,
+            9.9451,
+            9.7845
+          ],
+          "all_returncodes_zero": true,
+          "test_counts": {
+            "passed": 2155,
+            "failed": 0,
+            "error": 0,
+            "skipped": 46,
+            "xfailed": 1
+          },
+          "process_shards_collected": 0,
+          "distinct_pids": 0,
+          "total_callbacks": 0,
+          "target_callbacks": 0,
+          "unique_observed_edges": 0,
+          "sites_with_receiver_type": 0,
+          "polymorphic_receiver_sites": 0
+        },
+        "disable_k1": {
+          "replicates": 5,
+          "wall_median_seconds": 9.63122119999025,
+          "wall_p95_seconds": 9.73541490000207,
+          "wall_samples_seconds": [
+            9.6312,
+            9.7354,
+            9.6611,
+            9.4951,
+            9.594
+          ],
+          "all_returncodes_zero": true,
+          "test_counts": {
+            "passed": 2155,
+            "failed": 0,
+            "error": 0,
+            "skipped": 46,
+            "xfailed": 1
+          },
+          "process_shards_collected": 3,
+          "distinct_pids": 3,
+          "total_callbacks": 26214,
+          "target_callbacks": 7555,
+          "unique_observed_edges": 7119,
+          "sites_with_receiver_type": 3487,
+          "polymorphic_receiver_sites": 6,
+          "median_overhead_percent": -1.57,
+          "p95_overhead_percent": -2.11,
+          "result_parity_with_baseline": true
+        },
+        "disable_k8": {
+          "replicates": 5,
+          "wall_median_seconds": 10.376898199901916,
+          "wall_p95_seconds": 12.51151199999731,
+          "wall_samples_seconds": [
+            12.5115,
+            10.4177,
+            10.311,
+            10.0178,
+            10.3769
+          ],
+          "all_returncodes_zero": true,
+          "test_counts": {
+            "passed": 2155,
+            "failed": 0,
+            "error": 0,
+            "skipped": 46,
+            "xfailed": 1
+          },
+          "process_shards_collected": 3,
+          "distinct_pids": 3,
+          "total_callbacks": 39863,
+          "target_callbacks": 21205,
+          "unique_observed_edges": 7312,
+          "sites_with_receiver_type": 3492,
+          "polymorphic_receiver_sites": 88,
+          "median_overhead_percent": 6.05,
+          "p95_overhead_percent": 25.81,
+          "result_parity_with_baseline": true
+        },
+        "local_unbounded": {
+          "replicates": 5,
+          "wall_median_seconds": 11.319112700060941,
+          "wall_p95_seconds": 12.002895599929616,
+          "wall_samples_seconds": [
+            11.712,
+            11.0081,
+            11.3191,
+            11.0707,
+            12.0029
+          ],
+          "all_returncodes_zero": true,
+          "test_counts": {
+            "passed": 2155,
+            "failed": 0,
+            "error": 0,
+            "skipped": 46,
+            "xfailed": 1
+          },
+          "process_shards_collected": 3,
+          "distinct_pids": 3,
+          "total_callbacks": 714454,
+          "target_callbacks": 695795,
+          "unique_observed_edges": 8217,
+          "sites_with_receiver_type": 3504,
+          "polymorphic_receiver_sites": 206,
+          "median_overhead_percent": 15.68,
+          "p95_overhead_percent": 20.69,
+          "result_parity_with_baseline": true
+        }
+      }
+    }
+  ]
+}
