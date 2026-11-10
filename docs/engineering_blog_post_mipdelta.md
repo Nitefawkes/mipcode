@@ -1,12 +1,12 @@
-# We Tried to Beat `ripgrep` for Coding Agents. Hereâ€™s Why We Stoppedâ€”and What Worked Instead.
+# We Tried to Beat `ripgrep` for Coding Agents. Here’s Why We Stopped—and What Worked Instead.
 
 For months, we were convinced that coding agents needed a better way to search code.
 
 If you watch an LLM work inside a repository using `ripgrep` (`rg`) and file reads, it looks clumsy at first. It greps for a function name, gets forty hits, reads three files it doesn't need, and eventually finds the right call site. As systems engineers, our instinct was obvious: *give the model a structural index*. Let it query call graphs, symbol definitions, and impact trees directly through custom tools (`mip_open`, `mip_impact`, `mip_refs`).
 
-Then we ran controlled, head-to-head benchmarks against plain `rg` + `read_file`â€”and got humbled.
+Then we ran controlled, head-to-head benchmarks against plain `rg` + `read_file`—and got humbled.
 
-On routine single-file edits in our evaluations, a frontier model armed with nothing but `rg` and `read_file` was already fast, cheap, and accurate. Worse, giving the agent our custom structural tools introduced what we came to call the **local-edit tax**. When you hand an agent extra navigation tools, it often uses themâ€”or spends tokens deciding whether to use themâ€”even on a three-line local bugfix. We were adding friction to ordinary edits in order to help on cross-file contract changes.
+On routine single-file edits in our evaluations, a frontier model armed with nothing but `rg` and `read_file` was already fast, cheap, and accurate. Worse, giving the agent our custom structural tools introduced what we came to call the **local-edit tax**. When you hand an agent extra navigation tools, it often uses them—or spends tokens deciding whether to use them—even on a three-line local bugfix. We were adding friction to ordinary edits in order to help on cross-file contract changes.
 
 We had a choice: keep tweaking tool descriptions hoping to beat `rg` at search, or read the failure transcripts and figure out what was actually going wrong.
 
@@ -39,7 +39,7 @@ Across our evaluated contract-change tasks, we targeted four recurring forms of 
 3. **Callback & Descriptor Tables:** Adding a required keyword-only argument (`*, strict: bool`) to `dump_header` in `werkzeug/http.py`, catching direct `dump_header(...)` calls, and missing `header_property(..., dump_func=dump_header)` bindings in `werkzeug/sansio/response.py` where `dump_header` is passed as a bare function reference.
 4. **Dynamic Plugin Dispatch & Chained Attributes:** Changing `NTSerializer.serialize` or `OptionValidator.validate` when callers invoke it dynamically through a plugin registry (`plugin.serialize(...)`, `v.validate(...)`) or a multi-hop attribute chain (`self.session.token_store.issue(...)`).
 
-Even more telling: in our dynamic plugin tasks, **running the existing unit test suite didn't save the agent.** When the agent ran the configured unit test after editing `NTSerializer.serialize`, the existing tests called `exporter.serialize("nt", triples)` using the old default arguments. The test command returned `exit_code=0`. Seeing green tests convinced the agent it was doneâ€”even though passing the new `base_iri` argument through `GraphExporter.serialize` crashed with `TypeError`.
+Even more telling: in our dynamic plugin tasks, **running the existing unit test suite didn't save the agent.** When the agent ran the configured unit test after editing `NTSerializer.serialize`, the existing tests called `exporter.serialize("nt", triples)` using the old default arguments. The test command returned `exit_code=0`. Seeing green tests convinced the agent it was done—even though passing the new `base_iri` argument through `GraphExporter.serialize` crashed with `TypeError`.
 
 ---
 
@@ -50,7 +50,7 @@ Once we reframed the problem as *premature completion after a contract-changing 
 1. **Remove all custom `mip_*` search tools from the agent's prompt.** Let the agent use regular `rg`, `read`, `write`, and `test`.
 2. **Attach a delta detector (`mipdelta`) to the `write` and `test` responses.** Every time the agent writes a file, compare the AST of the file *before* the edit to the AST *after* the edit against a warm in-memory symbol index.
 3. **If the edit doesn't change a tracked contract, emit nothing (`0` bytes).** If a function's signature, return shape, raised exceptions, and class state fields haven't drifted in a way that triggers our detectors, the tool output is untouched.
-4. **If the edit *does* open a candidate cross-file seam, append a single line (`<= 250` UTF-8 bytes of advisory text per response) to the `write` or `test` response.** Name the affected consumer's file, line number, detector, provenance tag (`[static]`, `[rt-obs]`, or `[type-cand]`), andâ€”when a single seam is flagged and fits the byte capâ€”the specific mismatch evidence.
+4. **If the edit *does* open a candidate cross-file seam, append a single line (`<= 250` UTF-8 bytes of advisory text per response) to the `write` or `test` response.** Name the affected consumer's file, line number, detector, provenance tag (`[static]`, `[rt-obs]`, or `[type-cand]`), and—when a single seam is flagged and fits the byte cap—the specific mismatch evidence.
 
 For that `packaging` failure above, the moment the agent wrote `packaging/_parser.py`, the `write` response came back with `197` extra bytes at the bottom:
 
@@ -103,12 +103,12 @@ To keep synthetic mechanism checks clearly separated from real OSS source trees,
 
 | Task Group & Provenance | Tasks (`Episodes`) | Arm A (`rg` Control) Oracle Pass | Arm B (`+ mipdelta`) Oracle Pass | Arm B Advisory Bytes (Episode Totals) | Flagged Files Subsequently Edited in Arm B |
 | :--- | ---: | ---: | ---: | ---: | ---: |
-| **Constructed Local-Edit Pilot (`L01`â€“`L02`)** | `2` (`4`) | `2 / 2` | `2 / 2` | `0` B | `0 / 0` (silent) |
+| **Constructed Local-Edit Pilot (`L01`–`L02`)** | `2` (`4`) | `2 / 2` | `2 / 2` | `0` B | `0 / 0` (silent) |
 | **Real-OSS Local-Edit Commits (`OSS01` `platformdirs`, `OSS02` `werkzeug`)** | `2` (`4`) | `2 / 2` | `2 / 2` | `0` B | `0 / 0` (silent) |
-| **Constructed Static Contract Pilot (`L03`â€“`L06`)** | `4` (`8`) | `2 / 4` | **`4 / 4`** | `89â€“213` B (`3` tasks) | `3 / 3` triggered (`L04` pre-satisfied) |
-| **Real-OSS Static Contract Tasks (`OSS03` `werkzeug` 52 files, `OSS04` `packaging` 22 files)** | `2` (`4`) | `1 / 2` | **`2 / 2`** | `197â€“241` B | `2 / 2` triggered |
-| **Constructed Runtime `sys.monitoring` Tasks (`OSS05` `rdflib_pkg`, `OSS06` `cli_pkg`)** | `2` (`4`) | `0 / 2` | **`2 / 2`** | `197â€“430` B | `2 / 2` triggered |
-| **Stub-Typed `[type-cand]` Tasks (`OSS07` real 109-file `docutils` + added `.pyi`; `OSS08` constructed `web_pkg`)** | `2` (`4`) | `1 / 2` | **`2 / 2`** | `158â€“202` B | `2 / 2` triggered |
+| **Constructed Static Contract Pilot (`L03`–`L06`)** | `4` (`8`) | `2 / 4` | **`4 / 4`** | `89–213` B (`3` tasks) | `3 / 3` triggered (`L04` pre-satisfied) |
+| **Real-OSS Static Contract Tasks (`OSS03` `werkzeug` 52 files, `OSS04` `packaging` 22 files)** | `2` (`4`) | `1 / 2` | **`2 / 2`** | `197–241` B | `2 / 2` triggered |
+| **Constructed Runtime `sys.monitoring` Tasks (`OSS05` `rdflib_pkg`, `OSS06` `cli_pkg`)** | `2` (`4`) | `0 / 2` | **`2 / 2`** | `197–430` B | `2 / 2` triggered |
+| **Stub-Typed `[type-cand]` Tasks (`OSS07` real 109-file `docutils` + added `.pyi`; `OSS08` constructed `web_pkg`)** | `2` (`4`) | `1 / 2` | **`2 / 2`** | `158–202` B | `2 / 2` triggered |
 | **Aggregate Across Evaluated Tasks** | **`14` (`28`)** | **`8 / 14`** | **`14 / 14`** | **`0` B on local edits** | **`9 / 9` triggered tasks** |
 
 The advisory column sums advisory-text bytes across each episode, not the size of one response. In `OSS05`, **430 B = two 215 B advisories**, delivered on separate `test` responses at sequences 3 and 10; `OSS06` delivered one 197 B advisory on its sequence 4 `test` response. Each advisory is individually below the 250 B cap. These figures exclude JSON framing; the gateway separately bounds added serialized wire bytes to 350 B.
@@ -129,7 +129,7 @@ On the two large OSS source trees where both arms passed (`OSS03` `werkzeug` and
 
 After looking at those 14 paired tasks, a skeptical reviewer asked the sharpest question of the project:
 
-> *How much of Arm B's advantage comes from `mipdelta`'s cross-file engineâ€”and how much comes purely from interrupting premature completion after a contract change?*
+> *How much of Arm B's advantage comes from `mipdelta`'s cross-file engine—and how much comes purely from interrupting premature completion after a contract change?*
 
 To find out, we built **Arm R (`Generic Contract Reminder`)** ([`live-codex-reminder-ablation-v2.md`](../results/v2_delta_readout/live-codex-reminder-ablation-v2.md)). Arm R uses no repository index, no `.pyi` stubs, and no `sys.monitoring`. Instead, when a `write` modifies a function's parameters, return tuple arity, `None` return, raised exceptions, or state fields in the edited file alone, Arm R attaches a generic 189-byte reminder:
 
@@ -147,7 +147,7 @@ We ran Arm R on all **6 discordant tasks** (`L05`, `L06`, `OSS04`, `OSS05`, `OSS
 | `OSS05-rdflib-runtime-plugin-serializer` | `3` (`[rt-obs]`) | **`FAIL`** (`4`, `1,256`) | **`FAIL`** (`8`, `5,045`) | **`PASS`** (`11`, `5,555`) |
 | `OSS06-click-runtime-command-loader` | `3` (`[rt-obs]`) | **`FAIL`** (`5`, `1,952`) | **`PASS`** (`11`, `6,331`) | **`PASS`** (`8`, `3,509`) |
 | `OSS08-web-stub-session-chain` | `4` (`[type-cand]`) | **`FAIL`** (`3`, `746`) | **`PASS`** (`7`, `3,032`) | **`PASS`** (`6`, `2,005`) |
-| **Discordant Cohort Totals (`6` Tasks)** | **Strata 2â€“4** | **`0 / 6` (`0.0%`)** | **`5 / 6` (`83.3%`)** | **`6 / 6` (`100.0%`)** |
+| **Discordant Cohort Totals (`6` Tasks)** | **Strata 2–4** | **`0 / 6` (`0.0%`)** | **`5 / 6` (`83.3%`)** | **`6 / 6` (`100.0%`)** |
 
 The six new episodes sharpened two hypotheses:
 
