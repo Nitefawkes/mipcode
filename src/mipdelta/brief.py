@@ -13,6 +13,8 @@ from .resolve import build_index, resolve_call_with_provenance
 
 ARMS = ("none", "map", "lod")
 DEFAULT_MAX_BYTES = 1024
+MAX_BRIDGE_CALLEES = 2
+MAX_SIBLING_CALLERS = 4
 _WORDS = re.compile(r"[a-z0-9]{3,}")
 
 
@@ -57,6 +59,13 @@ def _map_spans(ranked: list[FunctionFact], lines: dict[str, list[str]], terms: s
             yield Span(fn.path, max(fn.line + 1, line - 1), min(fn.end_line, line + 1), "literal match")
 
 
+def _related_spans(fn: FunctionFact, relation: str, line: int):
+    yield Span(fn.path, fn.line, fn.end_line, f"L3 {relation} at line {line}")
+    if fn.end_line > fn.line:
+        start, end = max(fn.line, line - 1), min(fn.end_line, line + 1)
+        yield Span(fn.path, start, end, f"L3 {relation} window")
+
+
 def _lod_spans(ranked: list[FunctionFact], facts):
     if not ranked:
         return
@@ -65,27 +74,46 @@ def _lod_spans(ranked: list[FunctionFact], facts):
     yield Span(seed.path, seed.line, seed.end_line, "L3 task seed")
     positions = {_key(fn): position for position, fn in enumerate(ranked)}
     functions = {_key(fn): fn for fn in ranked}
-    neighbors = {}
+    seed_key = _key(seed)
+    incoming = {}
+    callees = set()
     for path in sorted(facts):
         for call in facts[path].calls:
             owner = path, call.owner_function
+            if owner not in functions:
+                continue
             resolved = resolve_call_with_provenance(call, facts[path], index)
             if len(resolved) != 1:
                 continue
             target, provenance = resolved[0]
-            if provenance != "static_ast":
-                continue
             target_key = _key(target)
-            if target_key == _key(seed) and owner in functions and owner != target_key:
-                neighbors[owner] = ("static caller", call.line)
-            elif owner == _key(seed) and target_key != owner and target_key in functions:
-                neighbors.setdefault(target_key, ("static callee", target.line))
+            if provenance != "static_ast" or target_key == owner or target_key not in functions:
+                continue
+            incoming.setdefault(target_key, {})[owner] = call.line
+            if owner == seed_key:
+                callees.add(target_key)
 
-    for key, (relation, line) in sorted(neighbors.items(), key=lambda pair: positions[pair[0]]):
-        fn = functions[key]
-        yield Span(fn.path, fn.line, fn.end_line, f"L3 {relation} at line {line}")
-        if fn.end_line > fn.line:
-            yield Span(fn.path, max(fn.line, line - 1), min(fn.end_line, line + 1), f"L3 {relation} window")
+    direct = {key: ("static caller", line) for key, line in incoming.get(seed_key, {}).items()}
+    for key in callees:
+        direct.setdefault(key, ("static callee", functions[key].line))
+    for key in sorted(direct, key=positions.__getitem__):
+        relation, line = direct[key]
+        yield from _related_spans(functions[key], relation, line)
+
+    # A seed wrapper can lead to other callers of the same resolved callee.
+    # This is one outgoing edge and one incoming edge, with no recursive expansion.
+    seen = {seed_key, *direct}
+    bridges = sorted(callees, key=positions.__getitem__)[:MAX_BRIDGE_CALLEES]
+    siblings = {}
+    for bridge in bridges:
+        for key, line in incoming.get(bridge, {}).items():
+            if key not in seen:
+                siblings.setdefault(key, (bridge, line))
+    for key in sorted(siblings, key=positions.__getitem__)[:MAX_SIBLING_CALLERS]:
+        bridge, line = siblings[key]
+        callee = functions[bridge]
+        yield from _related_spans(functions[key], f"sibling via {callee.path}:{callee.line}", line)
+
     for fn in ranked[1:]:
         yield Span(fn.path, fn.line, fn.line, "L2 declaration")
 

@@ -52,13 +52,48 @@ def verify_brief(files, brief, spans):
     return delivered
 
 
+EXPECTED_FAILURES = {
+    "SB01": ("AssertionError", "TypeError"),
+    "SB02": ("AssertionError", "AssertionError"),
+    "SB03": ("ValueError", "InvalidRank"),
+    "SB04": ("AssertionError", "AssertionError"),
+}
+
+
+def verify_sibling_bounds():
+    files = {
+        "seed.py": "from core import first, second, third\n"
+                   "def preview():\n    return first(), second(), third()\n",
+        "core.py": "def first():\n    return 1\n"
+                   "def second():\n    return 2\n"
+                   "def third():\n    return 3\n",
+        "decoy.py": "def first():\n    return 4\n",
+        "homonym.py": "from decoy import first\ndef wrong():\n    return first()\n",
+        "third_party.py": "from core import third\ndef beyond_bound():\n    return third()\n",
+    }
+    for n in range(7):
+        files[f"alt{n}.py"] = f"from core import first\ndef other{n}():\n    return first()\n"
+    # Large wire budget isolates the graph bounds from normal wire fitting.
+    _, spans = compile_brief(files, "preview", "lod", 10_000)
+    siblings = [span for span in spans if span.label.startswith("L3 sibling")]
+    assert len({span.path for span in siblings}) == 4
+    assert all(span.path.startswith("alt") and "core.py:1" in span.label for span in siblings)
+    sparse = {path: text for path, text in files.items() if not path.startswith("alt")}
+    sparse["second_party.py"] = "from core import second\ndef another():\n    return second()\n"
+    _, spans = compile_brief(sparse, "preview", "lod", 10_000)
+    assert {span.path for span in spans if span.label.startswith("L3 sibling")} == {"second_party.py"}
+
+
 def main() -> None:
     path = Path(__file__).with_name("fixtures.json")
     cases = json.loads(path.read_bytes())
+    assert set(cases) == set(EXPECTED_FAILURES)
+    verify_sibling_bounds()
     results = {
         "fixture_sha256": digest(path.read_bytes()),
         "byte_cap": DEFAULT_MAX_BYTES,
         "scope": "Offline initial source delivery and fixture behavior only",
+        "sibling_bounds_and_homonyms_checked": True,
         "tasks": {},
     }
     output = Path(sys.argv[1])
@@ -74,11 +109,8 @@ def main() -> None:
             "incomplete": run_oracle(case, case["incomplete"]),
         }
         assert checks["reference"]["exit_code"] == 0, (ident, checks)
-        for variant in ("pristine", "incomplete"):
-            failure = checks[variant]
-            assert failure["exit_code"] == 1 and failure["exception"] in {
-                "AssertionError", "TypeError", "UnknownLabel", "KeyError",
-            }, (ident, checks)
+        for variant, expected in zip(("pristine", "incomplete"), EXPECTED_FAILURES[ident]):
+            assert checks[variant] == {"exit_code": 1, "exception": expected}, (ident, checks)
 
         task = {
             "oracle": checks,
