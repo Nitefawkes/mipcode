@@ -73,6 +73,8 @@ class CallFact:
     unpack_target_arity: int | None = None
     result_dereferenced: bool = False
     enclosing_caught_exceptions: tuple[str, ...] = ()
+    _ast_node: ast.Call | None = field(default=None, repr=False, compare=False)
+    _result_consumer: ast.AST | None = field(default=None, repr=False, compare=False)
 
 
 @dataclass
@@ -103,6 +105,10 @@ class FunctionFact:
     return_allows_none: bool = False
     raised_exceptions: frozenset[str] = frozenset()
     _ast_node: ast.AST | None = field(default=None, repr=False, compare=False)
+
+    @property
+    def is_async(self) -> bool:
+        return isinstance(self._ast_node, ast.AsyncFunctionDef)
 
     @property
     def body_dump(self) -> str:

@@ -1,0 +1,145 @@
+"""Exercise the command with real repositories and subprocess exit status."""
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+
+import pytest
+
+
+def _git(root, *args):
+    subprocess.run(["git", "-C", str(root), *args], check=True, capture_output=True)
+
+
+def _check(root, *args):
+    env = {**os.environ, "PYTHONPATH": str(Path(__file__).resolve().parents[1] / "src")}
+    return subprocess.run(
+        [sys.executable, "-B", "-m", "mipdelta.cli", "--root", str(root), *args],
+        env=env,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+
+@pytest.fixture
+def repo(tmp_path):
+    root = tmp_path / "repo"
+    (root / "pkg").mkdir(parents=True)
+    (root / "pkg" / "__init__.py").write_text("", encoding="utf-8")
+    (root / "pkg" / "provider.py").write_text("def encode(value):\n    return value\n", encoding="utf-8")
+    (root / "pkg" / "caller.py").write_text(
+        "from pkg.provider import encode as convert\n\nconvert(1)\n",
+        encoding="utf-8",
+    )
+    _git(root, "init", "-q")
+    _git(root, "add", ".")
+    _git(root, "-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid",
+         "commit", "-qm", "baseline")
+    return root
+
+
+def test_git_check_in_package_keeps_repository_paths_and_imports(repo):
+    (repo / "pkg" / "provider.py").write_text(
+        "def encode(value, *, required):\n    return value + required\n", encoding="utf-8"
+    )
+    # An untracked source outside the requested scope must not enter the analysis.
+    (repo / "outside.py").write_text("def broken(:\n", encoding="utf-8")
+    result = _check(repo / "pkg", "--check-git", "--json", "--fail-on-findings")
+    assert result.returncode == 1, result.stderr
+    data = json.loads(result.stdout)
+    assert data["changed_paths"] == ["pkg/provider.py"]
+    assert [(f["detector"], f["path"], f["start_line"]) for f in data["findings"]] == [
+        ("required_keyword_missing", "pkg/caller.py", 3),
+    ]
+
+
+def test_git_check_rejects_invalid_baseline_even_when_clean(repo):
+    result = _check(repo, "--check-git", "--base-ref", "not-a-revision", "--fail-on-findings", "--json")
+    assert result.returncode == 2
+    data = json.loads(result.stdout)
+    assert "not-a-revision" in data["error"]
+    assert "findings" not in data
+
+
+def test_git_check_rejects_non_repository(tmp_path, monkeypatch):
+    monkeypatch.setenv("GIT_CEILING_DIRECTORIES", str(tmp_path.parent.resolve()))
+    result = _check(tmp_path, "--check-git", "--fail-on-findings")
+    assert result.returncode == 2
+    assert "Git" in result.stderr
+    assert result.stdout == ""
+
+
+@pytest.mark.parametrize("path", ["pkg/provider.py", "pkg/provider.pyi", "pkg/caller.py"])
+def test_git_check_reports_invalid_source_instead_of_an_empty_result(repo, path):
+    (repo / path).write_text("def broken(:\n", encoding="utf-8")
+    result = _check(repo, "--check-git")
+    assert result.returncode == 2
+    assert path in result.stderr and "line 1" in result.stderr
+    assert result.stdout == ""
+
+
+def test_git_check_rejects_invalid_baseline_source(repo):
+    path = repo / "pkg" / "provider.py"
+    path.write_text("def broken(:\n", encoding="utf-8")
+    _git(repo, "add", ".")
+    _git(repo, "-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid",
+         "commit", "-qm", "unparseable baseline")
+    path.write_text("def encode(value):\n    return value\n", encoding="utf-8")
+    result = _check(repo, "--check-git")
+    assert result.returncode == 2
+    assert "pkg/provider.py" in result.stderr and "line 1" in result.stderr
+
+
+@pytest.mark.parametrize("source", ["def encode(:\n", "def encode(x, x): return x\n"])
+def test_candidate_syntax_error_reports_the_logical_path(repo, tmp_path, source):
+    candidate = tmp_path / "candidate.txt"
+    candidate.write_text(source, encoding="utf-8")
+    result = _check(repo, "--write-path", "pkg/provider.py", "--candidate-file", str(candidate), "--json")
+    assert result.returncode == 2
+    assert "pkg/provider.py" in json.loads(result.stdout)["error"]
+    assert (repo / "pkg" / "provider.py").read_text(encoding="utf-8").startswith("def encode(value)")
+
+
+def test_clean_repository_is_still_silent(repo):
+    result = _check(repo, "--check-git", "--fail-on-findings")
+    assert (result.returncode, result.stdout, result.stderr) == (0, "", "")
+
+
+def test_git_check_excludes_untracked_ignored_python_sources(repo):
+    (repo / ".gitignore").write_text("scratch.py\n", encoding="utf-8")
+    (repo / "scratch.py").write_text("def broken(:\n", encoding="utf-8")
+    (repo / "pkg" / "provider.py").write_text(
+        "def encode(value, policy): return policy(value)\n", encoding="utf-8"
+    )
+    result = _check(repo, "--check-git", "--fail-on-findings")
+    assert result.returncode == 1, result.stderr
+    assert "pkg/caller.py:3 call_signature_review[static] encode" in result.stdout
+
+
+@pytest.mark.parametrize("rename", [False, True], ids=["deleted", "renamed"])
+def test_git_check_reports_call_to_removed_file(repo, rename):
+    provider = repo / "pkg" / "provider.py"
+    if rename:
+        provider.rename(provider.with_name("replacement.py"))
+    else:
+        provider.unlink()
+    result = _check(repo, "--check-git", "--json", "--fail-on-findings")
+    assert result.returncode == 1, result.stderr
+    data = json.loads(result.stdout)
+    expected_paths = ["pkg/provider.py", "pkg/replacement.py"] if rename else ["pkg/provider.py"]
+    assert data["changed_paths"] == expected_paths
+    assert [(f["detector"], f["path"], f["start_line"]) for f in data["findings"]] == [
+        ("removed_callable_review", "pkg/caller.py", 3),
+    ]
+
+
+def test_candidate_check_reports_missing_required_positional(repo, tmp_path):
+    candidate = tmp_path / "candidate.txt"
+    candidate.write_text("def encode(value, policy):\n    return policy(value)\n", encoding="utf-8")
+    result = _check(repo, "--write-path", "pkg/provider.py", "--candidate-file", str(candidate),
+                    "--fail-on-findings")
+    assert result.returncode == 1, result.stderr
+    assert "pkg/caller.py:3 call_signature_review[static] encode" in result.stdout
+    assert "missing a required argument: 'policy'" in result.stdout

@@ -11,10 +11,13 @@ from .resolve import (
     resolve_call_with_provenance,
     value_refers_to_target,
 )
+from .signatures import call_head_is_parameter, signature_review_reason
 from .stubs import parse_stub_tree
 
 _DETECTOR_PRIORITY = {
     "required_keyword_missing": 1,
+    "call_signature_review": 1,
+    "removed_callable_review": 1,
     "callback_binding_review": 2,
     "override_signature_review": 3,
     "return_contract_review": 4,
@@ -157,30 +160,40 @@ def analyze_changed_files_in_index(
     """Core incremental delta analyzer operating strictly on mutated files + MutableResolutionIndex."""
     findings: list[Finding] = []
     changed_fns: list[tuple[FunctionFact | None, FunctionFact]] = []
+    removed_fns: list[FunctionFact] = []
     changed_nullable_params: dict[tuple[str, str], set[str]] = {}
     added_optional_parameters: list[tuple[FunctionFact, str]] = []
     added_parameters: list[tuple[FunctionFact, str]] = []
     cross_file_triggered = False
     candidate_calls_inspected = 0
 
-    for path in sorted(after_changed):
+    removed_paths = before_changed.keys() - index.files.keys()
+    for path in sorted(after_changed.keys() | removed_paths):
         old_file = before_changed.get(path)
-        new_file = after_changed[path]
+        new_file = after_changed.get(path)
+        if new_file is not None and new_file.parse_error is not None:
+            # Editors can temporarily submit incomplete source to DeltaSession.
+            continue
         old_map = old_file.functions if old_file else {}
-        new_map = new_file.functions
+        new_map = new_file.functions if new_file else {}
 
         for qualname in sorted(old_map.keys() | new_map.keys()):
             old = old_map.get(qualname)
             new = new_map.get(qualname)
+            if new is None and old is not None:
+                removed_fns.append(old)
+                cross_file_triggered = True
+                continue
             if new and (
                 old is None
                 or old.parameters != new.parameters
+                or old.is_async != new.is_async
                 or (old.source_slice != new.source_slice and old.body_dump != new.body_dump)
             ):
                 changed_fns.append((old, new))
                 old_params = _parameter_map(old)
                 new_params = _parameter_map(new)
-                if old is not None and old.parameters != new.parameters:
+                if old is not None and (old.parameters != new.parameters or old.is_async != new.is_async):
                     cross_file_triggered = True
                 elif old is None and _required_kwonly(new):
                     cross_file_triggered = True
@@ -201,17 +214,52 @@ def analyze_changed_files_in_index(
                     if prior is None and name not in {"self", "cls"}:
                         added_parameters.append((new, name))
 
+    before_index: MutableResolutionIndex | None = None
+    for old in removed_fns:
+        new_file = index.files.get(old.path)
+        replacement_import = new_file.imports.get(old.name) if new_file and old.qualname == old.name else None
+        if replacement_import and replacement_import[1] and replacement_import[0] != old.module:
+            # A direct re-export keeps the original import name available.
+            continue
+        for caller_facts, call in index.calls_for_callee(old.name):
+            candidate_calls_inspected += 1
+            if call_head_is_parameter(call, caller_facts):
+                continue
+            current = resolve_call_with_provenance(call, caller_facts, index)
+            if any(fn.module == old.module and fn.qualname == old.qualname for fn, _ in current):
+                continue
+            if before_index is None:
+                previous_files = {
+                    path: facts for path, facts in index.files.items() if path not in before_changed
+                }
+                previous_files.update({path: facts for path, facts in before_changed.items() if facts is not None})
+                before_index = build_index(previous_files)
+            resolved = resolve_call_with_provenance(call, caller_facts, before_index)
+            if resolved != ((old, "static_ast"),):
+                continue
+            findings.append(
+                Finding(
+                    "removed_callable_review",
+                    old.qualname,
+                    caller_facts.path,
+                    call.line,
+                    call.line,
+                    "candidate",
+                    (f"previous declaration at {old.path}:{old.line} was removed; review this call",),
+                    "static_ast",
+                )
+            )
+
     for old, new in changed_fns:
         old_required = _required_kwonly(old)
         required_added = _required_kwonly(new) - old_required
+        signature_changed = old is not None and (old.parameters != new.parameters or old.is_async != new.is_async)
 
-        # 1. Required keyword missing at resolved callers
-        if required_added:
+        # 1. Check the changed signature at resolved calls.
+        if required_added or signature_changed:
             cross_file_triggered = True
             for caller_facts, call in index.calls_for_callee(new.name):
                 candidate_calls_inspected += 1
-                if call.has_kwargs:
-                    continue
                 resolved = resolve_call_with_provenance(call, caller_facts, index)
                 matched_prov = next(
                     (prov for target, prov in resolved if target.path == new.path and target.qualname == new.qualname),
@@ -219,7 +267,7 @@ def analyze_changed_files_in_index(
                 )
                 if matched_prov is None:
                     continue
-                missing = required_added - set(call.keyword_names)
+                missing = required_added - set(call.keyword_names) if not call.has_kwargs else set()
                 if missing:
                     names = ", ".join(sorted(missing))
                     findings.append(
@@ -234,6 +282,28 @@ def analyze_changed_files_in_index(
                             matched_prov,
                         )
                     )
+                elif old is not None and signature_changed and len(resolved) == 1:
+                    reason = signature_review_reason(
+                        old,
+                        new,
+                        call,
+                        caller_facts,
+                        before_changed.get(caller_facts.path, caller_facts),
+                        matched_prov,
+                    )
+                    if reason:
+                        findings.append(
+                            Finding(
+                                "call_signature_review",
+                                new.qualname,
+                                caller_facts.path,
+                                call.line,
+                                call.line,
+                                "candidate",
+                                (reason,),
+                                matched_prov,
+                            )
+                        )
 
         # 2. First-class callable / descriptor value bindings
         if old and old.parameters != new.parameters:

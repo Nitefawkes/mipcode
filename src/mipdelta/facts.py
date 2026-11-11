@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import ast
+from dataclasses import replace
 from pathlib import PurePosixPath
 
 from .model import CallFact, ClassFact, FileFacts, FunctionFact, ParameterFact
@@ -181,6 +182,7 @@ def _call_fact(
     unpack_target_arity: int | None = None,
     result_dereferenced: bool = False,
     enclosing_caught_exceptions: tuple[str, ...] = (),
+    result_consumer: ast.AST | None = None,
 ) -> CallFact | None:
     chain = dotted(node.func)
     constructed = None
@@ -261,13 +263,45 @@ def _call_fact(
         unpack_target_arity,
         result_dereferenced,
         enclosing_caught_exceptions,
+        node,
+        result_consumer,
     )
 
 
-class _FunctionScanner(ast.NodeVisitor):
+class _CallContextScanner(ast.NodeVisitor):
+    def __init__(self) -> None:
+        self._result_consumers: dict[int, ast.AST] = {}
+
+    def visit_Await(self, node: ast.Await) -> None:
+        if isinstance(node.value, ast.Call):
+            self._result_consumers[id(node.value)] = node
+        self.generic_visit(node)
+
+    def visit_AsyncFor(self, node: ast.AsyncFor) -> None:
+        if isinstance(node.iter, ast.Call):
+            self._result_consumers[id(node.iter)] = node
+        self.generic_visit(node)
+
+    def visit_comprehension(self, node: ast.comprehension) -> None:
+        if node.is_async and isinstance(node.iter, ast.Call):
+            self._result_consumers[id(node.iter)] = node
+        self.generic_visit(node)
+
+    def visit_Call(self, node: ast.Call) -> None:
+        for arg in node.args:
+            if isinstance(arg, ast.Call):
+                self._result_consumers[id(arg)] = node
+        for keyword in node.keywords:
+            if isinstance(keyword.value, ast.Call):
+                self._result_consumers[id(keyword.value)] = node
+        self.generic_visit(node)
+
+
+class _FunctionScanner(_CallContextScanner):
     """Single-pass intra-function fact collector (eliminating secondary ast.parse passes)."""
 
     def __init__(self) -> None:
+        super().__init__()
         self.reads: set[str] = set()
         self.writes: set[str] = set()
         self.calls: list[ast.Call] = []
@@ -424,38 +458,21 @@ class _FunctionScanner(ast.NodeVisitor):
             if merged:
                 self.call_caught_exceptions[id(node)] = tuple(sorted(merged))
         self.calls.append(node)
-        self.generic_visit(node)
+        super().visit_Call(node)
 
 
 def _shift_call(call: CallFact, line_delta: int) -> CallFact:
-    return CallFact(
-        call.path,
-        call.line + line_delta,
-        call.owner_function,
-        call.callee_name,
-        call.callee_chain,
-        call.receiver_name,
-        call.constructed_receiver,
-        call.positional_count,
-        call.keyword_names,
-        call.value_names,
-        call.callback_wrapped_keywords,
-        call.has_varargs,
-        call.has_kwargs,
-        call.receiver_chain,
-        call.unpack_target_arity,
-        call.result_dereferenced,
-        call.enclosing_caught_exceptions,
-    )
+    return replace(call, line=call.line + line_delta)
 
 
-class _ModuleScanner(ast.NodeVisitor):
+class _ModuleScanner(_CallContextScanner):
     def __init__(
         self,
         path: str,
         source_lines: list[str] | None = None,
         prior_facts: FileFacts | None = None,
     ) -> None:
+        super().__init__()
         self.path = path.replace("\\", "/")
         self.module = module_name(path)
         self.source_lines = source_lines or []
@@ -484,10 +501,15 @@ class _ModuleScanner(ast.NodeVisitor):
             self.imports[item.asname or item.name] = (base, item.name)
 
     def visit_Call(self, node: ast.Call) -> None:
-        row = _call_fact(node, self.path, ".".join(self.function_stack) or None)
+        row = _call_fact(
+            node,
+            self.path,
+            ".".join(self.function_stack) or None,
+            result_consumer=self._result_consumers.get(id(node)),
+        )
         if row:
             self.calls.append(row)
-        self.generic_visit(node)
+        super().visit_Call(node)
 
     def visit_ClassDef(self, node: ast.ClassDef) -> None:
         qual = ".".join([*self.class_stack, node.name])
@@ -586,6 +608,7 @@ class _ModuleScanner(ast.NodeVisitor):
                 unpack_target_arity=local.call_unpack_arity.get(cid),
                 result_dereferenced=(cid in local.dereferenced_calls),
                 enclosing_caught_exceptions=local.call_caught_exceptions.get(cid, ()),
+                result_consumer=local._result_consumers.get(cid),
             )
             if row:
                 own_calls_list.append(row)
