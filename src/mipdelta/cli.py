@@ -34,10 +34,24 @@ class AnalysisError(ValueError):
 
 
 class _CheckingCache(FactCache):
+    """Fail on unparsable sources under review; record and skip other unparsable files.
+
+    Repositories carry templates, legacy scripts, and deliberately invalid fixtures.
+    Those files contribute no facts, and they must not hide a result for the change.
+    """
+
+    def __init__(self, required_paths: Iterable[str] = ()) -> None:
+        super().__init__()
+        self._required = {self.normalize_path(path) for path in required_paths}
+        self.skipped: set[str] = set()
+
     def load_source(self, source: SourceFile, *, prior_facts: FileFacts | None = None) -> FileFacts:
         facts = super().load_source(source, prior_facts=prior_facts)
         if facts.parse_error is not None:
-            raise AnalysisError(f"Cannot parse {source.path}: {facts.parse_error}")
+            path = self.normalize_path(source.path)
+            if path in self._required:
+                raise AnalysisError(f"Cannot parse {source.path}: {facts.parse_error}")
+            self.skipped.add(path)
         return facts
 
 
@@ -169,6 +183,13 @@ def _reconstruct_git_baseline(
     return before_files
 
 
+def _note_skipped(skipped: list[str], as_json: bool) -> None:
+    # JSON callers read the list from the payload. Text mode keeps stdout for the advisory.
+    if skipped and not as_json:
+        shown = ", ".join(skipped[:3]) + (f" (+{len(skipped) - 3})" if len(skipped) > 3 else "")
+        print(f"mip-delta: skipped {len(skipped)} unparsable unchanged file(s): {shown}", file=sys.stderr)
+
+
 def _report_error(error: Exception, as_json: bool) -> int:
     if as_json:
         print(json.dumps({"status": "error", "error": str(error)}))
@@ -194,6 +215,7 @@ def _run_git_check(
     runtime_edges = _load_runtime_edges(runtime_dir)
 
     raw_findings = []
+    skipped: list[str] = []
     if changed_paths:
         tracked = _git_python_paths(root, top, "ls-files", "--cached", "-z")
         after_files = _read_sources(top, tracked | untracked)
@@ -202,7 +224,7 @@ def _run_git_check(
             for files in (before_files, after_files):
                 if path in files:
                     _check_source_syntax(path, files[path])
-        cache = _CheckingCache()
+        cache = _CheckingCache(changed_paths)
         _check_stubs(before_files, cache)
         stubs = _check_stubs(after_files, cache)
         raw_findings = analyze_delta(
@@ -212,6 +234,7 @@ def _run_git_check(
             stub_files=stubs,
             runtime_edges=runtime_edges,
         )
+        skipped = sorted(cache.skipped)
     ranked = tuple(rank_findings(raw_findings))
     advisory = format_advisory(ranked, max_bytes=max_bytes) if ranked else ""
     wall_ms = round((time.perf_counter() - t0) * 1000.0, 3)
@@ -220,6 +243,7 @@ def _run_git_check(
         payload = {
             "base_ref": base_ref,
             "changed_paths": changed_paths,
+            "skipped_unparsed_paths": skipped,
             "runtime_edges_loaded": len(runtime_edges),
             "advisory_text": advisory,
             "advisory_utf8_bytes": len(advisory.encode("utf-8")),
@@ -240,6 +264,7 @@ def _run_git_check(
         print(json.dumps(payload, indent=2))
     elif advisory:
         print(advisory)
+    _note_skipped(skipped, as_json)
 
     if fail_on_findings and ranked:
         return 1
@@ -363,7 +388,7 @@ def main_cli(argv: list[str] | None = None) -> int:
         new_text = _decode_source(args.write_path, args.candidate_file.read_bytes())
         _check_source_syntax(args.write_path, new_text)
         files = _load_python_tree(root)
-        cache = _CheckingCache()
+        cache = _CheckingCache([args.write_path])
         stubs = _check_stubs(files, cache)
         session = DeltaSession.from_workspace(
             {p: text for p, text in files.items() if not p.endswith(".pyi")},
@@ -382,6 +407,7 @@ def main_cli(argv: list[str] | None = None) -> int:
             "before_sha256": res.before_sha256,
             "after_sha256": res.after_sha256,
             "content_changed": res.content_changed,
+            "skipped_unparsed_paths": sorted(cache.skipped),
             "cross_file_triggered": res.cross_file_triggered,
             "parses_executed": res.parses_executed,
             "candidate_calls_inspected": res.candidate_calls_inspected,
@@ -404,6 +430,7 @@ def main_cli(argv: list[str] | None = None) -> int:
         print(json.dumps(payload, indent=2))
     elif res.advisory_text:
         print(res.advisory_text)
+    _note_skipped(sorted(cache.skipped), args.json)
     return 1 if (args.fail_on_findings and res.ranked_findings) else 0
 
 

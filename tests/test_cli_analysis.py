@@ -143,3 +143,61 @@ def test_candidate_check_reports_missing_required_positional(repo, tmp_path):
     assert result.returncode == 1, result.stderr
     assert "pkg/caller.py:3 call_signature_review[static] encode" in result.stdout
     assert "missing a required argument: 'policy'" in result.stdout
+
+
+_UNPARSABLE = {
+    "legacy/py2_script.py": 'print "legacy"\n',
+    "templates/skeleton.py": "def {{ name }}():\n    pass\n",
+    "templates/skeleton.pyi": "def {{ name }}() -> None: ...\n",
+}
+
+
+@pytest.fixture
+def repo_with_unparsable_files(repo):
+    for name, text in _UNPARSABLE.items():
+        (repo / name).parent.mkdir(exist_ok=True)
+        (repo / name).write_text(text, encoding="utf-8")
+    _git(repo, "add", ".")
+    _git(repo, "-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid",
+         "commit", "-qm", "unparsable bystanders")
+    return repo
+
+
+def test_git_check_skips_unchanged_unparsable_files(repo_with_unparsable_files):
+    repo = repo_with_unparsable_files
+    (repo / "pkg" / "provider.py").write_text(
+        "def encode(value, policy): return policy(value)\n", encoding="utf-8"
+    )
+    result = _check(repo, "--check-git", "--fail-on-findings")
+    assert result.returncode == 1, result.stderr
+    assert "pkg/caller.py:3 call_signature_review[static] encode" in result.stdout
+    assert "skipped 3 unparsable unchanged file(s)" in result.stderr
+    assert "legacy/py2_script.py" in result.stderr
+
+    data = json.loads(_check(repo, "--check-git", "--json").stdout)
+    assert data["skipped_unparsed_paths"] == sorted(_UNPARSABLE)
+    assert [f["path"] for f in data["findings"]] == ["pkg/caller.py"]
+
+
+def test_candidate_check_skips_unparsable_bystanders(repo_with_unparsable_files, tmp_path):
+    repo = repo_with_unparsable_files
+    candidate = tmp_path / "candidate.txt"
+    candidate.write_text("def encode(value, policy):\n    return policy(value)\n", encoding="utf-8")
+    result = _check(repo, "--write-path", "pkg/provider.py", "--candidate-file", str(candidate),
+                    "--fail-on-findings")
+    assert result.returncode == 1, result.stderr
+    assert "pkg/caller.py:3 call_signature_review[static] encode" in result.stdout
+    assert "skipped 3 unparsable unchanged file(s)" in result.stderr
+
+
+def test_git_check_still_rejects_an_edit_to_an_unparsable_file(repo_with_unparsable_files):
+    repo = repo_with_unparsable_files
+    (repo / "legacy" / "py2_script.py").write_text('print "edited"\n', encoding="utf-8")
+    result = _check(repo, "--check-git")
+    assert result.returncode == 2
+    assert "legacy/py2_script.py" in result.stderr
+
+
+def test_clean_repository_with_unparsable_files_is_silent(repo_with_unparsable_files):
+    result = _check(repo_with_unparsable_files, "--check-git", "--fail-on-findings")
+    assert (result.returncode, result.stdout, result.stderr) == (0, "", "")
