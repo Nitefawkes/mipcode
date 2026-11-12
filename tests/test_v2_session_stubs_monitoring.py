@@ -1,4 +1,5 @@
 from pathlib import Path
+import sys
 import tempfile
 import unittest
 
@@ -74,6 +75,7 @@ class SessionStubsAndMonitoringTests(unittest.TestCase):
         self.assertEqual(with_stubs[0].path, "pkg/parser.py")
         self.assertEqual(with_stubs[0].resolution_source, "static_type_candidate")
 
+    @unittest.skipUnless(sys.version_info >= (3, 12), "sys.monitoring requires Python 3.12 or later")
     def test_sys_monitoring_scoped_collector_disable_modes_and_runtime_resolution(self):
         with tempfile.TemporaryDirectory() as tmp:
             mod_path = Path(tmp) / "dyn_pkg.py"

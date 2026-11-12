@@ -116,6 +116,7 @@ class GatewayIntegrationTests(unittest.TestCase):
             self.assertEqual(fin["status"], "FINALIZED")
             self.assertEqual(fin["changed_files"], 2)
 
+    @unittest.skipUnless(sys.version_info >= (3, 12), "sys.monitoring requires Python 3.12 or later")
     def test_test_tool_ingests_sys_monitoring_shards_and_resolves_dynamic_dispatch_on_next_write(self):
         with tempfile.TemporaryDirectory() as tmp:
             initial = {
@@ -163,6 +164,7 @@ class GatewayIntegrationTests(unittest.TestCase):
             self.assertIn("impact", w_res)
             self.assertIn("required_keyword_missing[rt-obs]", w_res["impact"])
 
+    @unittest.skipUnless(sys.version_info >= (3, 12), "sys.monitoring requires Python 3.12 or later")
     def test_write_before_test_emits_new_rt_obs_advisory_on_test_response(self):
         with tempfile.TemporaryDirectory() as tmp:
             initial = {
@@ -288,6 +290,7 @@ class GatewayIntegrationTests(unittest.TestCase):
             self.assertEqual(fin["status"], "ERROR")
             self.assertEqual(fin["code"], "OUT_OF_BAND_CHANGE")
 
+    @unittest.skipUnless(sys.version_info >= (3, 12), "sys.monitoring requires Python 3.12 or later")
     def test_cli_check_git_and_run_pytest_drop_in_hook(self):
         import io
         import subprocess
