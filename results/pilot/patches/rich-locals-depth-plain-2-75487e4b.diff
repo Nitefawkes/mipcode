@@ -1,0 +1,203 @@
+diff --git a/rich/scope.py b/rich/scope.py
+index 92653d0..03c0f53 100644
+--- a/rich/scope.py
++++ b/rich/scope.py
+@@ -8,7 +8,7 @@ from .table import Table
+ from .text import Text, TextType
+ 
+ if TYPE_CHECKING:
+-    from .console import ConsoleRenderable
++    from .console import ConsoleRenderable, OverflowMethod
+ 
+ 
+ def render_scope(
+@@ -19,6 +19,8 @@ def render_scope(
+     indent_guides: bool = False,
+     max_length: Optional[int] = None,
+     max_string: Optional[int] = None,
++    max_depth: Optional[int] = None,
++    overflow: Optional["OverflowMethod"] = None,
+ ) -> "ConsoleRenderable":
+     """Render python variables in a given scope.
+ 
+@@ -30,6 +32,8 @@ def render_scope(
+         max_length (int, optional): Maximum length of containers before abbreviating, or None for no abbreviation.
+             Defaults to None.
+         max_string (int, optional): Maximum length of string before truncating, or None to disable. Defaults to None.
++        max_depth (int, optional): Maximum depth of nested data structures, or None for no limit. Defaults to None.
++        overflow (OverflowMethod, optional): Overflow method for values, or None for default. Defaults to None.
+ 
+     Returns:
+         ConsoleRenderable: A renderable object.
+@@ -57,6 +61,8 @@ def render_scope(
+                 indent_guides=indent_guides,
+                 max_length=max_length,
+                 max_string=max_string,
++                max_depth=max_depth,
++                overflow=overflow,
+             ),
+         )
+     return Panel.fit(
+diff --git a/rich/traceback.py b/rich/traceback.py
+index eb3a74d..8aa3e6d 100644
+--- a/rich/traceback.py
++++ b/rich/traceback.py
+@@ -34,6 +34,7 @@ from .console import (
+     ConsoleOptions,
+     ConsoleRenderable,
+     Group,
++    OverflowMethod,
+     RenderResult,
+     group,
+ )
+@@ -91,6 +92,8 @@ def install(
+     show_locals: bool = False,
+     locals_max_length: int = LOCALS_MAX_LENGTH,
+     locals_max_string: int = LOCALS_MAX_STRING,
++    locals_max_depth: Optional[int] = None,
++    locals_overflow: Optional[OverflowMethod] = None,
+     locals_hide_dunder: bool = True,
+     locals_hide_sunder: Optional[bool] = None,
+     indent_guides: bool = True,
+@@ -114,6 +117,10 @@ def install(
+         locals_max_length (int, optional): Maximum length of containers before abbreviating, or None for no abbreviation.
+             Defaults to 10.
+         locals_max_string (int, optional): Maximum length of string before truncating, or None to disable. Defaults to 80.
++        locals_max_depth (int, optional): Maximum depth of nested data structures in locals, or None to disable.
++            Defaults to None.
++        locals_overflow (OverflowMethod, optional): How to handle overflowing text in locals, or None for default.
++            Defaults to None.
+         locals_hide_dunder (bool, optional): Hide locals prefixed with double underscore. Defaults to True.
+         locals_hide_sunder (bool, optional): Hide locals prefixed with single underscore. Defaults to False.
+         indent_guides (bool, optional): Enable indent guides in code and locals. Defaults to True.
+@@ -148,6 +155,8 @@ def install(
+             show_locals=show_locals,
+             locals_max_length=locals_max_length,
+             locals_max_string=locals_max_string,
++            locals_max_depth=locals_max_depth,
++            locals_overflow=locals_overflow,
+             locals_hide_dunder=locals_hide_dunder,
+             locals_hide_sunder=bool(locals_hide_sunder),
+             indent_guides=indent_guides,
+@@ -268,6 +277,10 @@ class Traceback:
+         locals_max_length (int, optional): Maximum length of containers before abbreviating, or None for no abbreviation.
+             Defaults to 10.
+         locals_max_string (int, optional): Maximum length of string before truncating, or None to disable. Defaults to 80.
++        locals_max_depth (int, optional): Maximum depth of nested data structures in locals, or None to disable.
++            Defaults to None.
++        locals_overflow (OverflowMethod, optional): How to handle overflowing text in locals, or None for default.
++            Defaults to None.
+         locals_hide_dunder (bool, optional): Hide locals prefixed with double underscore. Defaults to True.
+         locals_hide_sunder (bool, optional): Hide locals prefixed with single underscore. Defaults to False.
+         suppress (Sequence[Union[str, ModuleType]]): Optional sequence of modules or paths to exclude from traceback.
+@@ -295,6 +308,8 @@ class Traceback:
+         show_locals: bool = False,
+         locals_max_length: int = LOCALS_MAX_LENGTH,
+         locals_max_string: int = LOCALS_MAX_STRING,
++        locals_max_depth: Optional[int] = None,
++        locals_overflow: Optional[OverflowMethod] = None,
+         locals_hide_dunder: bool = True,
+         locals_hide_sunder: bool = False,
+         indent_guides: bool = True,
+@@ -308,7 +323,11 @@ class Traceback:
+                     "Value for 'trace' required if not called in except: block"
+                 )
+             trace = self.extract(
+-                exc_type, exc_value, traceback, show_locals=show_locals
++                exc_type,
++                exc_value,
++                traceback,
++                show_locals=show_locals,
++                locals_max_depth=locals_max_depth,
+             )
+         self.trace = trace
+         self.width = width
+@@ -320,6 +339,8 @@ class Traceback:
+         self.indent_guides = indent_guides
+         self.locals_max_length = locals_max_length
+         self.locals_max_string = locals_max_string
++        self.locals_max_depth = locals_max_depth
++        self.locals_overflow = locals_overflow
+         self.locals_hide_dunder = locals_hide_dunder
+         self.locals_hide_sunder = locals_hide_sunder
+ 
+@@ -351,6 +372,8 @@ class Traceback:
+         show_locals: bool = False,
+         locals_max_length: int = LOCALS_MAX_LENGTH,
+         locals_max_string: int = LOCALS_MAX_STRING,
++        locals_max_depth: Optional[int] = None,
++        locals_overflow: Optional[OverflowMethod] = None,
+         locals_hide_dunder: bool = True,
+         locals_hide_sunder: bool = False,
+         indent_guides: bool = True,
+@@ -373,6 +396,10 @@ class Traceback:
+             locals_max_length (int, optional): Maximum length of containers before abbreviating, or None for no abbreviation.
+                 Defaults to 10.
+             locals_max_string (int, optional): Maximum length of string before truncating, or None to disable. Defaults to 80.
++            locals_max_depth (int, optional): Maximum depth of nested data structures in locals, or None to disable.
++                Defaults to None.
++            locals_overflow (OverflowMethod, optional): How to handle overflowing text in locals, or None for default.
++                Defaults to None.
+             locals_hide_dunder (bool, optional): Hide locals prefixed with double underscore. Defaults to True.
+             locals_hide_sunder (bool, optional): Hide locals prefixed with single underscore. Defaults to False.
+             suppress (Iterable[Union[str, ModuleType]]): Optional sequence of modules or paths to exclude from traceback.
+@@ -388,6 +415,7 @@ class Traceback:
+             show_locals=show_locals,
+             locals_max_length=locals_max_length,
+             locals_max_string=locals_max_string,
++            locals_max_depth=locals_max_depth,
+             locals_hide_dunder=locals_hide_dunder,
+             locals_hide_sunder=locals_hide_sunder,
+         )
+@@ -403,6 +431,8 @@ class Traceback:
+             indent_guides=indent_guides,
+             locals_max_length=locals_max_length,
+             locals_max_string=locals_max_string,
++            locals_max_depth=locals_max_depth,
++            locals_overflow=locals_overflow,
+             locals_hide_dunder=locals_hide_dunder,
+             locals_hide_sunder=locals_hide_sunder,
+             suppress=suppress,
+@@ -419,6 +449,7 @@ class Traceback:
+         show_locals: bool = False,
+         locals_max_length: int = LOCALS_MAX_LENGTH,
+         locals_max_string: int = LOCALS_MAX_STRING,
++        locals_max_depth: Optional[int] = None,
+         locals_hide_dunder: bool = True,
+         locals_hide_sunder: bool = False,
+         _visited_exceptions: Optional[Set[BaseException]] = None,
+@@ -433,6 +464,8 @@ class Traceback:
+             locals_max_length (int, optional): Maximum length of containers before abbreviating, or None for no abbreviation.
+                 Defaults to 10.
+             locals_max_string (int, optional): Maximum length of string before truncating, or None to disable. Defaults to 80.
++            locals_max_depth (int, optional): Maximum depth of nested data structures in locals, or None to disable.
++                Defaults to None.
+             locals_hide_dunder (bool, optional): Hide locals prefixed with double underscore. Defaults to True.
+             locals_hide_sunder (bool, optional): Hide locals prefixed with single underscore. Defaults to False.
+ 
+@@ -480,6 +513,8 @@ class Traceback:
+                                 exception.__traceback__,
+                                 show_locals=show_locals,
+                                 locals_max_length=locals_max_length,
++                                locals_max_string=locals_max_string,
++                                locals_max_depth=locals_max_depth,
+                                 locals_hide_dunder=locals_hide_dunder,
+                                 locals_hide_sunder=locals_hide_sunder,
+                                 _visited_exceptions=grouped_exceptions,
+@@ -560,6 +595,7 @@ class Traceback:
+                                 value,
+                                 max_length=locals_max_length,
+                                 max_string=locals_max_string,
++                                max_depth=locals_max_depth,
+                             )
+                             for key, value in get_locals(frame_summary.f_locals.items())
+                             if not (inspect.isfunction(value) or inspect.isclass(value))
+@@ -754,6 +790,8 @@ class Traceback:
+                     indent_guides=self.indent_guides,
+                     max_length=self.locals_max_length,
+                     max_string=self.locals_max_string,
++                    max_depth=self.locals_max_depth,
++                    overflow=self.locals_overflow,
+                 )
+ 
+         exclude_frames: Optional[range] = None

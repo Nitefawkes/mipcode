@@ -1,0 +1,259 @@
+[
+ {
+  "episode": "httpx-http1-plain-1-618bdd40",
+  "task_id": "httpx-http1",
+  "arm": "plain",
+  "rep": 1,
+  "model": "claude-opus-5-5",
+  "cost_usd": 0.2847,
+  "turns": 15,
+  "edit_calls": 8,
+  "wall_seconds": 39.0,
+  "stop_hook_blocks": 0,
+  "permission_denials": 1,
+  "terminal_reason": "completed",
+  "changed_files": [
+   "httpx/_client.py",
+   "httpx/_transports/default.py",
+   "setup.py"
+  ],
+  "grader_a": {
+   "label": "covered",
+   "confidence": "high",
+   "deciding_lines": "patch.diff L93-100 (AsyncClient.__init__ proxy comprehension): '+                http1=http1,' passed to self._init_proxy_transport(...); L123-138 (AsyncClient._init_proxy_transport): '+        http1: bool = True,' and '+            http1=http1,' in the AsyncHTTPTransport(..., proxy=proxy) call.",
+   "rationale": "The user's http1 flows from AsyncClient.__init__ into _init_proxy_transport and into the AsyncHTTPTransport constructed with proxy=, so proxy transports get http1=False when requested. The sync proxy path is handled identically (L21-28, L51-66).",
+   "implementation_complete": true,
+   "implementation_note": "Same as P01 (constructors, transport builders, HTTPTransport/AsyncHTTPTransport, httpcore>=0.13.3), plus an http1 entry in the AsyncClient docstring.",
+   "other_defects": [
+    "Also forwards http1=http1 into httpcore.SyncHTTPProxy/AsyncHTTPProxy in the transports' proxy branch (patch L159-166, L183-190); if httpcore 0.13.3's proxy classes do not accept http1, proxied transports would raise TypeError. Not verified against httpcore source.",
+    "http1 documented in the AsyncClient docstring but not in the Client docstring (inconsistent docs, minor).",
+    "No tests added (minor)."
+   ]
+  },
+  "grader_b": {
+   "label": "covered",
+   "confidence": "high",
+   "deciding_lines": "patch.diff lines 93-100 (AsyncClient.__init__ proxy mounts): '+                http1=http1,' passed to self._init_proxy_transport(proxy, ...); lines 123-138 (AsyncClient._init_proxy_transport): '+        http1: bool = True,' and '+            http1=http1,' inside 'return AsyncHTTPTransport(..., http1=http1, http2=http2, ..., proxy=proxy)'.",
+   "rationale": "AsyncClient forwards http1 into _init_proxy_transport, which passes it to AsyncHTTPTransport alongside proxy=proxy, so AsyncClient(http1=False, http2=True, proxies=...) builds proxy transports with http1=False. The sync proxy path is handled the same way (patch lines 21-28, 51-66).",
+   "implementation_complete": true,
+   "implementation_note": "Same code changes as a full implementation: http1 on both clients, all four transport builders, both transport classes, and the httpcore>=0.13.3 bump; also adds an http1 entry to the AsyncClient docstring.",
+   "other_defects": [
+    "Transports forward http1 into httpcore.SyncHTTPProxy / AsyncHTTPProxy (patch lines 163 and 187), which upstream did not do; unverified whether httpcore 0.13.3 proxy classes accept http1 (TypeError risk for any proxy configuration if not).",
+    "http1 docstring added to AsyncClient but not to Client (inconsistent docs); no tests (minor)."
+   ]
+  },
+  "final_label": "covered"
+ },
+ {
+  "episode": "httpx-http1-plain-2-b3b7a335",
+  "task_id": "httpx-http1",
+  "arm": "plain",
+  "rep": 2,
+  "model": "claude-opus-5-5",
+  "cost_usd": 0.254,
+  "turns": 14,
+  "edit_calls": 7,
+  "wall_seconds": 35.5,
+  "stop_hook_blocks": 0,
+  "permission_denials": 0,
+  "terminal_reason": "completed",
+  "changed_files": [
+   "httpx/_client.py",
+   "httpx/_transports/default.py",
+   "setup.py"
+  ],
+  "grader_a": {
+   "label": "covered",
+   "confidence": "high",
+   "deciding_lines": "patch.diff L83-90 (AsyncClient.__init__ proxy comprehension): '+                http1=http1,' passed to self._init_proxy_transport(proxy, ...); L113-126 (AsyncClient._init_proxy_transport): '+        http1: bool = True,' in signature and '+            http1=http1,' inside 'return AsyncHTTPTransport(verify=verify, cert=cert, http1=http1, http2=http2, ...)' with proxy=proxy (unchanged parent line).",
+   "rationale": "AsyncClient.__init__ forwards the user's http1 into _init_proxy_transport, and that method forwards it to the AsyncHTTPTransport built with proxy=proxy, so AsyncClient(http1=False, http2=True, proxies=...) builds proxy transports with http1=False. The sync proxy path (L21-28, L51-66) is handled identically, so the sync path was not omitted either.",
+   "implementation_complete": true,
+   "implementation_note": "Adds http1 to Client/AsyncClient constructors, _init_transport, _init_proxy_transport, HTTPTransport/AsyncHTTPTransport (forwarded to httpcore pools), and bumps httpcore to >=0.13.3.",
+   "other_defects": [
+    "Also forwards http1=http1 into httpcore.SyncHTTPProxy/AsyncHTTPProxy in the transports' proxy branch (patch L150-156, L173-180); upstream did not do this at this commit, and if httpcore 0.13.3's HTTPProxy classes do not accept an http1 keyword, constructing any proxied transport would raise TypeError. Not verified against httpcore source.",
+    "No docstring update for http1 in Client/AsyncClient and no tests added (minor)."
+   ]
+  },
+  "grader_b": {
+   "label": "covered",
+   "confidence": "high",
+   "deciding_lines": "patch.diff lines 83-90 (AsyncClient.__init__ proxy mounts): '+                http1=http1,' passed to self._init_proxy_transport(proxy, ...); lines 113-128 (AsyncClient._init_proxy_transport): '+        http1: bool = True,' in the signature and '+            http1=http1,' inside 'return AsyncHTTPTransport(verify=verify, cert=cert, http1=http1, http2=http2, ...)'.",
+   "rationale": "The user's http1 value flows AsyncClient.__init__ -> _init_proxy_transport -> AsyncHTTPTransport(..., http1=http1, proxy=proxy), so every async proxy transport is built with the user's value. The sync proxy path is handled identically (patch lines 21-28 and 51-66), so neither proxy path is omitted.",
+   "implementation_complete": true,
+   "implementation_note": "Adds http1 to Client, AsyncClient, both _init_transport and _init_proxy_transport pairs, HTTPTransport and AsyncHTTPTransport, and bumps httpcore to >=0.13.3,<0.14.0 in setup.py.",
+   "other_defects": [
+    "The transports also forward http1 into httpcore.SyncHTTPProxy / AsyncHTTPProxy in the proxy branch (patch lines 153 and 177); upstream deliberately did not, and I could not verify that httpcore 0.13.3's proxy classes accept an http1 keyword. If they do not, constructing any proxy transport would raise TypeError (unverified).",
+    "No docstring for http1 on Client or AsyncClient, and no tests added (minor)."
+   ]
+  },
+  "final_label": "covered"
+ },
+ {
+  "episode": "httpx-redirects-plain-1-23995bda",
+  "task_id": "httpx-redirects",
+  "arm": "plain",
+  "rep": 1,
+  "model": "claude-opus-5-5",
+  "cost_usd": 0.3036,
+  "turns": 18,
+  "edit_calls": 7,
+  "wall_seconds": 40.8,
+  "stop_hook_blocks": 0,
+  "permission_denials": 2,
+  "terminal_reason": "completed",
+  "changed_files": [
+   "httpx/_client.py"
+  ],
+  "grader_a": {
+   "label": "covered",
+   "confidence": "high",
+   "deciding_lines": "patch.diff L30-45 (Client.__init__): '+        allow_redirects: bool = True,' and '+            allow_redirects=allow_redirects,' in super().__init__(...); L157-172 (AsyncClient.__init__): same two lines; L5-17 (BaseClient.__init__): '+        allow_redirects: bool = True,' and '+        self.allow_redirects = allow_redirects'; L77-81 / L204-208 (Client.send / AsyncClient.send): 'allow_redirects = (self.allow_redirects if isinstance(allow_redirects, UseClientDefault) else allow_redirects)'.",
+   "rationale": "Both public constructors accept allow_redirects and forward it to BaseClient, which stores it as client.allow_redirects. All per-request methods default to USE_CLIENT_DEFAULT, request()/stream() pass the sentinel through to send() (parent _client.py lines 786, 830, 1482, 1527), and send() resolves it against self.allow_redirects before _send_handling_auth uses it, so explicit per-request values still win.",
+   "implementation_complete": true,
+   "implementation_note": "Implements the client-level setting in BaseClient, both constructors, both send() methods and all ten request methods in each client, with docstring entries.",
+   "other_defects": [
+    "No tests added (minor)."
+   ]
+  },
+  "grader_b": {
+   "label": "covered",
+   "confidence": "high",
+   "deciding_lines": "patch.diff lines 30-45 (Client.__init__): '+        allow_redirects: bool = True,' and '+            allow_redirects=allow_redirects,' in super().__init__(...); lines 157-172 (AsyncClient.__init__): same two additions; lines 5-17 (BaseClient.__init__): '+        allow_redirects: bool = True,' and '+        self.allow_redirects = allow_redirects'; lines 77-81 and 204-208 (Client.send / AsyncClient.send): 'allow_redirects = (self.allow_redirects if isinstance(allow_redirects, UseClientDefault) else allow_redirects)'.",
+   "rationale": "Both public constructors accept allow_redirects and forward it to BaseClient, which stores client.allow_redirects; send() in both clients resolves USE_CLIENT_DEFAULT against it, and all request methods now default to USE_CLIENT_DEFAULT and pass the value through to send() (parent forwarding at httpx/_client.py@ee24e67 e.g. 786, 830, 875, 1482, 1572). An explicit per-request value still takes precedence.",
+   "implementation_complete": true,
+   "implementation_note": "Constructor option, stored attribute, USE_CLIENT_DEFAULT per-request default on request/stream/send/get/options/head/post/put/patch/delete, and resolution in send() are all present for both clients.",
+   "other_defects": [
+    "No tests added (minor)."
+   ]
+  },
+  "final_label": "covered"
+ },
+ {
+  "episode": "httpx-redirects-plain-2-d9086f66",
+  "task_id": "httpx-redirects",
+  "arm": "plain",
+  "rep": 2,
+  "model": "claude-opus-5-5",
+  "cost_usd": 0.2883,
+  "turns": 19,
+  "edit_calls": 7,
+  "wall_seconds": 42.5,
+  "stop_hook_blocks": 0,
+  "permission_denials": 4,
+  "terminal_reason": "completed",
+  "changed_files": [
+   "httpx/_client.py"
+  ],
+  "grader_a": {
+   "label": "covered",
+   "confidence": "high",
+   "deciding_lines": "patch.diff L30-45 (Client.__init__): '+        allow_redirects: bool = True,' and '+            allow_redirects=allow_redirects,' in super().__init__(...); L157-172 (AsyncClient.__init__): same two lines; L13-17 (BaseClient.__init__): '+        self.allow_redirects = allow_redirects'; L77-81 / L204-208 (Client.send / AsyncClient.send): 'self.allow_redirects if isinstance(allow_redirects, UseClientDefault) else allow_redirects'.",
+   "rationale": "Both public constructors accept and forward allow_redirects to BaseClient, which exposes it as client.allow_redirects. Per-request methods default to USE_CLIENT_DEFAULT and pass it through to send(), which resolves it against the client value before use, while explicit per-request values take precedence.",
+   "implementation_complete": true,
+   "implementation_note": "Functionally identical to P02: BaseClient, both constructors, both send() methods and all request methods in both clients, with docstring entries.",
+   "other_defects": [
+    "No tests added (minor)."
+   ]
+  },
+  "grader_b": {
+   "label": "covered",
+   "confidence": "high",
+   "deciding_lines": "patch.diff lines 30-45 (Client.__init__): '+        allow_redirects: bool = True,' and '+            allow_redirects=allow_redirects,' in super().__init__(...); lines 157-172 (AsyncClient.__init__): same additions; lines 13-17 (BaseClient.__init__): '+        self.allow_redirects = allow_redirects'; lines 77-81 and 204-208 (send in both clients): 'self.allow_redirects if isinstance(allow_redirects, UseClientDefault) else allow_redirects'.",
+   "rationale": "Both public constructors accept and forward allow_redirects to BaseClient, which exposes client.allow_redirects, and both send() methods fall back to it when the per-request argument is USE_CLIENT_DEFAULT. All per-request entry points now default to USE_CLIENT_DEFAULT and pass through to send(), so client-level False is honoured and an explicit per-request True overrides it.",
+   "implementation_complete": true,
+   "implementation_note": "Code is functionally identical to a complete implementation (constructors, BaseClient storage, USE_CLIENT_DEFAULT defaults on all ten methods per client, resolution in send), differing from P02 only in docstring wording.",
+   "other_defects": [
+    "No tests added (minor)."
+   ]
+  },
+  "final_label": "covered"
+ },
+ {
+  "episode": "rich-locals-depth-plain-1-6cf01907",
+  "task_id": "rich-locals-depth",
+  "arm": "plain",
+  "rep": 1,
+  "model": "claude-opus-5-5",
+  "cost_usd": 0.476,
+  "turns": 32,
+  "edit_calls": 20,
+  "wall_seconds": 68.7,
+  "stop_hook_blocks": 0,
+  "permission_denials": 0,
+  "terminal_reason": "completed",
+  "changed_files": [
+   "rich/scope.py",
+   "rich/traceback.py"
+  ],
+  "grader_a": {
+   "label": "covered",
+   "confidence": "high",
+   "deciding_lines": "patch.diff L105-112 (Traceback.__init__, trace is None branch): 'trace = self.extract(exc_type, exc_value, traceback, show_locals=show_locals, +locals_max_depth=locals_max_depth,)'; L186-191 (Traceback.extract): 'pretty.traverse(value, max_length=locals_max_length, max_string=locals_max_string, +max_depth=locals_max_depth,)'; L144-148 (from_exception): '+            locals_max_depth=locals_max_depth,' to cls.extract.",
+   "rationale": "The direct-construction path now forwards locals_max_depth into extract, which passes it to pretty.traverse, so Traceback(show_locals=True, locals_max_depth=1) truncates nested locals the same way from_exception does. The pre-existing options (locals_max_length, locals_max_string, locals_hide_dunder, locals_hide_sunder) are still not forwarded in that __init__ extract call; this does not affect the label.",
+   "implementation_complete": true,
+   "implementation_note": "Adds locals_max_depth and locals_overflow to install(), Traceback.__init__ (stored on self), from_exception (forwarded to extract and cls), extract (to traverse and the recursive group call), and render_scope/Pretty at render time, with docstrings.",
+   "other_defects": [
+    "Pre-existing gap left in place: Traceback.__init__'s extract call still drops locals_max_length/max_string/hide_dunder/hide_sunder, and the recursive extract call for exception groups still omits locals_max_string.",
+    "No CHANGELOG entry or tests added (minor)."
+   ]
+  },
+  "grader_b": {
+   "label": "covered",
+   "confidence": "high",
+   "deciding_lines": "patch.diff lines 105-112 (Traceback.__init__, trace is None branch): 'trace = self.extract(exc_type, exc_value, traceback, show_locals=show_locals, locals_max_depth=locals_max_depth,)'; lines 186-191 (Traceback.extract): 'pretty.traverse(value, max_length=locals_max_length, max_string=locals_max_string, max_depth=locals_max_depth,)'; line 148 (from_exception): '+            locals_max_depth=locals_max_depth,' passed to cls.extract.",
+   "rationale": "The direct-construction path now forwards locals_max_depth into extract, which passes it as max_depth to pretty.traverse, the same place from_exception's value reaches, so Traceback(show_locals=True, locals_max_depth=1) truncates like from_exception. The pre-existing options (locals_max_length, locals_max_string, locals_hide_dunder, locals_hide_sunder) are still not forwarded in that __init__ call.",
+   "implementation_complete": true,
+   "implementation_note": "Both options added to install(), Traceback.__init__, from_exception, extract (depth only, including the nested exception-group recursion), stored on self, and passed as max_depth/overflow through render_scope to Pretty.",
+   "other_defects": [
+    "Pre-existing gap left: the __init__ extract call still drops locals_max_length/locals_max_string/locals_hide_dunder/locals_hide_sunder (not introduced by the patch).",
+    "Render-time max_depth passed to render_scope/Pretty is ineffective for Node values (harmless redundancy).",
+    "No tests or CHANGELOG entry (minor)."
+   ]
+  },
+  "final_label": "covered"
+ },
+ {
+  "episode": "rich-locals-depth-plain-2-75487e4b",
+  "task_id": "rich-locals-depth",
+  "arm": "plain",
+  "rep": 2,
+  "model": "claude-opus-5-5",
+  "cost_usd": 0.5664,
+  "turns": 33,
+  "edit_calls": 20,
+  "wall_seconds": 84.3,
+  "stop_hook_blocks": 0,
+  "permission_denials": 2,
+  "terminal_reason": "completed",
+  "changed_files": [
+   "rich/scope.py",
+   "rich/traceback.py"
+  ],
+  "grader_a": {
+   "label": "covered",
+   "confidence": "high",
+   "deciding_lines": "patch.diff L105-112 (Traceback.__init__, trace is None branch): 'trace = self.extract(exc_type, exc_value, traceback, show_locals=show_locals, +locals_max_depth=locals_max_depth,)'; L187-192 (Traceback.extract): '+                                max_depth=locals_max_depth,' in pretty.traverse(...); L144-151 (from_exception): '+            locals_max_depth=locals_max_depth,' to cls.extract.",
+   "rationale": "locals_max_depth reaches pretty.traverse for both the directly constructed Traceback and from_exception/install, so the direct-construction rendering truncates identically. Like the upstream author's shape otherwise, the agent did not forward the pre-existing locals_* options in the __init__ extract call; this does not affect the label.",
+   "implementation_complete": true,
+   "implementation_note": "Adds both options to install(), Traceback.__init__, from_exception, extract (traverse and recursive group call), and render_scope/Pretty, with docstrings; also fixes the recursive group extract call to forward locals_max_string.",
+   "other_defects": [
+    "Pre-existing gap left in place: Traceback.__init__'s extract call still drops locals_max_length/max_string/hide_dunder/hide_sunder.",
+    "No CHANGELOG entry or tests added (minor)."
+   ]
+  },
+  "grader_b": {
+   "label": "covered",
+   "confidence": "high",
+   "deciding_lines": "patch.diff lines 105-112 (Traceback.__init__, trace is None branch): 'trace = self.extract(exc_type, exc_value, traceback, show_locals=show_locals, locals_max_depth=locals_max_depth,)'; lines 187-192 (Traceback.extract): 'pretty.traverse(value, max_length=locals_max_length, max_string=locals_max_string, max_depth=locals_max_depth,)'; line 148 (from_exception): '+            locals_max_depth=locals_max_depth,'.",
+   "rationale": "The directly constructed Traceback forwards locals_max_depth into extract and on to pretty.traverse, matching the from_exception path, so depth truncation applies for both construction modes. The older locals_* options are still not forwarded in the __init__ extract call (pre-existing gap).",
+   "implementation_complete": true,
+   "implementation_note": "Both options added to install(), Traceback.__init__, from_exception, extract and render_scope, stored on self and used at render; also fixes the nested exception-group extract call to forward locals_max_string and locals_max_depth.",
+   "other_defects": [
+    "Pre-existing gap left: the __init__ extract call still drops locals_max_length/locals_max_string/locals_hide_dunder/locals_hide_sunder.",
+    "New parameters inserted between locals_max_string and locals_hide_dunder rather than appended; harmless because all signatures are keyword-only.",
+    "No tests or CHANGELOG entry (minor)."
+   ]
+  },
+  "final_label": "covered"
+ }
+]

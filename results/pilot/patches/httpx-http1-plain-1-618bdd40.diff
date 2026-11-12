@@ -1,0 +1,203 @@
+diff --git a/httpx/_client.py b/httpx/_client.py
+index 6cae4f3..dffb8e6 100644
+--- a/httpx/_client.py
++++ b/httpx/_client.py
+@@ -606,6 +606,7 @@ class Client(BaseClient):
+         cookies: CookieTypes = None,
+         verify: VerifyTypes = True,
+         cert: CertTypes = None,
++        http1: bool = True,
+         http2: bool = False,
+         proxies: ProxiesTypes = None,
+         mounts: typing.Mapping[str, BaseTransport] = None,
+@@ -645,6 +646,7 @@ class Client(BaseClient):
+         self._transport = self._init_transport(
+             verify=verify,
+             cert=cert,
++            http1=http1,
+             http2=http2,
+             limits=limits,
+             transport=transport,
+@@ -658,6 +660,7 @@ class Client(BaseClient):
+                 proxy,
+                 verify=verify,
+                 cert=cert,
++                http1=http1,
+                 http2=http2,
+                 limits=limits,
+                 trust_env=trust_env,
+@@ -675,6 +678,7 @@ class Client(BaseClient):
+         self,
+         verify: VerifyTypes = True,
+         cert: CertTypes = None,
++        http1: bool = True,
+         http2: bool = False,
+         limits: Limits = DEFAULT_LIMITS,
+         transport: BaseTransport = None,
+@@ -688,7 +692,12 @@ class Client(BaseClient):
+             return WSGITransport(app=app)
+ 
+         return HTTPTransport(
+-            verify=verify, cert=cert, http2=http2, limits=limits, trust_env=trust_env
++            verify=verify,
++            cert=cert,
++            http1=http1,
++            http2=http2,
++            limits=limits,
++            trust_env=trust_env,
+         )
+ 
+     def _init_proxy_transport(
+@@ -696,6 +705,7 @@ class Client(BaseClient):
+         proxy: Proxy,
+         verify: VerifyTypes = True,
+         cert: CertTypes = None,
++        http1: bool = True,
+         http2: bool = False,
+         limits: Limits = DEFAULT_LIMITS,
+         trust_env: bool = True,
+@@ -703,6 +713,7 @@ class Client(BaseClient):
+         return HTTPTransport(
+             verify=verify,
+             cert=cert,
++            http1=http1,
+             http2=http2,
+             limits=limits,
+             trust_env=trust_env,
+@@ -1266,6 +1277,9 @@ class AsyncClient(BaseClient):
+     to authenticate the client. Either a path to an SSL certificate file, or
+     two-tuple of (certificate file, key file), or a three-tuple of (certificate
+     file, key file, password).
++    * **http1** - *(optional)* A boolean indicating if HTTP/1.1 support should be
++    enabled. Defaults to `True`. Set to `False` together with `http2=True` to
++    use HTTP/2 with prior knowledge.
+     * **http2** - *(optional)* A boolean indicating if HTTP/2 support should be
+     enabled. Defaults to `False`.
+     * **proxies** - *(optional)* A dictionary mapping HTTP protocols to proxy
+@@ -1294,6 +1308,7 @@ class AsyncClient(BaseClient):
+         cookies: CookieTypes = None,
+         verify: VerifyTypes = True,
+         cert: CertTypes = None,
++        http1: bool = True,
+         http2: bool = False,
+         proxies: ProxiesTypes = None,
+         mounts: typing.Mapping[str, AsyncBaseTransport] = None,
+@@ -1333,6 +1348,7 @@ class AsyncClient(BaseClient):
+         self._transport = self._init_transport(
+             verify=verify,
+             cert=cert,
++            http1=http1,
+             http2=http2,
+             limits=limits,
+             transport=transport,
+@@ -1347,6 +1363,7 @@ class AsyncClient(BaseClient):
+                 proxy,
+                 verify=verify,
+                 cert=cert,
++                http1=http1,
+                 http2=http2,
+                 limits=limits,
+                 trust_env=trust_env,
+@@ -1363,6 +1380,7 @@ class AsyncClient(BaseClient):
+         self,
+         verify: VerifyTypes = True,
+         cert: CertTypes = None,
++        http1: bool = True,
+         http2: bool = False,
+         limits: Limits = DEFAULT_LIMITS,
+         transport: AsyncBaseTransport = None,
+@@ -1376,7 +1394,12 @@ class AsyncClient(BaseClient):
+             return ASGITransport(app=app)
+ 
+         return AsyncHTTPTransport(
+-            verify=verify, cert=cert, http2=http2, limits=limits, trust_env=trust_env
++            verify=verify,
++            cert=cert,
++            http1=http1,
++            http2=http2,
++            limits=limits,
++            trust_env=trust_env,
+         )
+ 
+     def _init_proxy_transport(
+@@ -1384,6 +1407,7 @@ class AsyncClient(BaseClient):
+         proxy: Proxy,
+         verify: VerifyTypes = True,
+         cert: CertTypes = None,
++        http1: bool = True,
+         http2: bool = False,
+         limits: Limits = DEFAULT_LIMITS,
+         trust_env: bool = True,
+@@ -1391,6 +1415,7 @@ class AsyncClient(BaseClient):
+         return AsyncHTTPTransport(
+             verify=verify,
+             cert=cert,
++            http1=http1,
+             http2=http2,
+             limits=limits,
+             trust_env=trust_env,
+diff --git a/httpx/_transports/default.py b/httpx/_transports/default.py
+index 3874221..715ec89 100644
+--- a/httpx/_transports/default.py
++++ b/httpx/_transports/default.py
+@@ -116,6 +116,7 @@ class HTTPTransport(BaseTransport):
+         self,
+         verify: VerifyTypes = True,
+         cert: CertTypes = None,
++        http1: bool = True,
+         http2: bool = False,
+         limits: Limits = DEFAULT_LIMITS,
+         trust_env: bool = True,
+@@ -133,6 +134,7 @@ class HTTPTransport(BaseTransport):
+                 max_connections=limits.max_connections,
+                 max_keepalive_connections=limits.max_keepalive_connections,
+                 keepalive_expiry=limits.keepalive_expiry,
++                http1=http1,
+                 http2=http2,
+                 uds=uds,
+                 local_address=local_address,
+@@ -148,6 +150,7 @@ class HTTPTransport(BaseTransport):
+                 max_connections=limits.max_connections,
+                 max_keepalive_connections=limits.max_keepalive_connections,
+                 keepalive_expiry=limits.keepalive_expiry,
++                http1=http1,
+                 http2=http2,
+                 backend=backend,
+             )
+@@ -211,6 +214,7 @@ class AsyncHTTPTransport(AsyncBaseTransport):
+         self,
+         verify: VerifyTypes = True,
+         cert: CertTypes = None,
++        http1: bool = True,
+         http2: bool = False,
+         limits: Limits = DEFAULT_LIMITS,
+         trust_env: bool = True,
+@@ -228,6 +232,7 @@ class AsyncHTTPTransport(AsyncBaseTransport):
+                 max_connections=limits.max_connections,
+                 max_keepalive_connections=limits.max_keepalive_connections,
+                 keepalive_expiry=limits.keepalive_expiry,
++                http1=http1,
+                 http2=http2,
+                 uds=uds,
+                 local_address=local_address,
+@@ -243,6 +248,7 @@ class AsyncHTTPTransport(AsyncBaseTransport):
+                 max_connections=limits.max_connections,
+                 max_keepalive_connections=limits.max_keepalive_connections,
+                 keepalive_expiry=limits.keepalive_expiry,
++                http1=http1,
+                 http2=http2,
+                 backend=backend,
+             )
+diff --git a/setup.py b/setup.py
+index ee529c8..6b06a4a 100644
+--- a/setup.py
++++ b/setup.py
+@@ -59,7 +59,7 @@ setup(
+         "certifi",
+         "sniffio",
+         "rfc3986[idna2008]>=1.3,<2",
+-        "httpcore>=0.13.0,<0.14.0",
++        "httpcore>=0.13.3,<0.14.0",
+         "async_generator; python_version < '3.7'"
+     ],
+     extras_require={
