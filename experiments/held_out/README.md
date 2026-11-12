@@ -72,6 +72,8 @@ The harness is developed and debugged on the five tuned repositories only. It is
 
 **Type-checker baseline.** A type checker is run on the same mutated trees, and on the complete trees for comparison. Each ground-truth site is then one of: reported by both, by `mip-delta` only, by the type checker only, or by neither. This shows what the check adds to a tool that projects may already run. The baseline was not built when this plan was committed, so the choice of type checker and its configuration will be recorded with the results.
 
+**Amendment, made after the recall run and before the baseline ran on the held-out repositories.** The baseline is mypy with a fixed configuration, described in the [protocol](../recall_mutation/README.md). While it was being built on the tuned repositories, it became clear that mypy reports a removed name at the `import` line and then treats the name as `Any`, so the call itself is silent. The comparison therefore credits mypy with a site when a new error is on the call's lines or on the stale file's import of that name. The stricter count, on the call's lines only, is reported beside it. Any new error anywhere in the stale file is not counted as a hit, because unrelated errors make that measure noisy.
+
 ## Limits known in advance
 
 - The constructed omissions are signature changes and removals. Recall on them is an upper bound for omissions in general. Return-shape and exception changes are not covered.
