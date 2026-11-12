@@ -1,0 +1,2455 @@
+{
+  "schema": "mip-delta recall-mutation corpus v1",
+  "materialization": "Tree M is the tree of `commit` with the file at `stale_path` replaced by the blob `stale_blob` (the parent's version of that file). Every other path is exactly as in `commit`. Line numbers of sites refer to the `stale_blob` text, which is also the text of that file in M.",
+  "repository": "mkdocs",
+  "head": "2862536793b3c67d9d83c33e0dd6d50a791928f8",
+  "limit": 800,
+  "opt_in_detectors": [],
+  "wall_seconds": 63.0,
+  "counts": {
+    "changed_definitions_removed": 84,
+    "changed_definitions_signature": 124,
+    "commits_changing_production_python": 435,
+    "commits_examined": 800,
+    "commits_with_changed_definitions": 61,
+    "commits_with_mutations": 18,
+    "mutations": 23,
+    "sites": 30
+  },
+  "mutations": [
+    {
+      "id": "mkdocs:a3e60f138508:mkdocs/config/config_options.py",
+      "repository": "mkdocs",
+      "commit": "a3e60f138508485f63cab20047de0ba72f32b7e6",
+      "parent": "d6449f90808b50979694a3e91b49b532f3bf785d",
+      "subject": "Paths in config file are relative to the config file. (#1376)",
+      "stale_path": "mkdocs/config/config_options.py",
+      "stale_blob": "9a7eb0b6c22d8801a9d97d27ede971cda017d5e2",
+      "commit_blob": "30da2a2ae48fe8e7f9e339e4eb5d646963690eac",
+      "other_changed_python_paths": [
+        "mkdocs/config/base.py",
+        "mkdocs/plugins.py",
+        "mkdocs/tests/build_tests.py",
+        "mkdocs/tests/config/base_tests.py",
+        "mkdocs/tests/config/config_options_tests.py",
+        "mkdocs/tests/config/config_tests.py",
+        "mkdocs/tests/plugin_tests.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "mkdocs/plugins.py",
+            "qualname": "BasePlugin.load_config",
+            "name": "load_config",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 45,
+            "new_line": 45,
+            "is_method": true,
+            "old_parameters": "(self, options)",
+            "new_parameters": "(self, options, config_file_path=...)",
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "options",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "options",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "config_file_path",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 657,
+          "end_line": 657,
+          "call_line": 657,
+          "call_text": "plugin.load_config(config)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "Plugins.load_plugin",
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 2,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "mkdocs:e5c2459fdf58:mkdocs/__main__.py",
+      "repository": "mkdocs",
+      "commit": "e5c2459fdf58e55237fef914ac67a968c68d2a3f",
+      "parent": "ee37665418a8c1a20eff6041fe17d0d107dde07c",
+      "subject": "Warn users deploying with older version. (#1467)",
+      "stale_path": "mkdocs/__main__.py",
+      "stale_blob": "8c231180fe4dec6eee238f8235dd74e116f0cf29",
+      "commit_blob": "a3f7cdaebdd254c111bb612e39ae7081fc268ace",
+      "other_changed_python_paths": [
+        "mkdocs/commands/gh_deploy.py",
+        "mkdocs/tests/base.py",
+        "mkdocs/tests/cli_tests.py",
+        "mkdocs/tests/gh_deploy_tests.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "mkdocs/commands/gh_deploy.py",
+            "qualname": "gh_deploy",
+            "name": "gh_deploy",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 52,
+            "new_line": 80,
+            "is_method": false,
+            "old_parameters": "(config, message=..., force=...)",
+            "new_parameters": "(config, message=..., force=..., ignore_version=...)",
+            "old_parameter_list": [
+              [
+                "config",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "message",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "force",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "config",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "message",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "force",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "ignore_version",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 185,
+          "end_line": 185,
+          "call_line": 185,
+          "call_text": "gh_deploy.gh_deploy(cfg, message=message, force=force)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "gh_deploy_command",
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "mkdocs:34ef3ca6d039:mkdocs/commands/build.py",
+      "repository": "mkdocs",
+      "commit": "34ef3ca6d0390959080ce93a695361eea1649272",
+      "parent": "3f0e4464a787ad5ce5a235d7ae988a2d8f53f077",
+      "subject": "Internal Refactor of Pages, Files, and Navigation (#1504)",
+      "stale_path": "mkdocs/commands/build.py",
+      "stale_blob": "d8a5cd27d64826f09ed10911a4b1c3d02b96bcfc",
+      "commit_blob": "df31d6efc9a64ab57b2c135f4979bc726377cc81",
+      "other_changed_python_paths": [
+        "mkdocs/config/base.py",
+        "mkdocs/config/config_options.py",
+        "mkdocs/config/defaults.py",
+        "mkdocs/contrib/search/search_index.py",
+        "mkdocs/nav.py",
+        "mkdocs/plugins.py",
+        "mkdocs/structure/__init__.py",
+        "mkdocs/structure/files.py",
+        "mkdocs/structure/nav.py",
+        "mkdocs/structure/pages.py",
+        "mkdocs/structure/toc.py",
+        "mkdocs/tests/base.py",
+        "mkdocs/tests/build_tests.py",
+        "mkdocs/tests/config/base_tests.py",
+        "mkdocs/tests/config/config_options_tests.py",
+        "mkdocs/tests/config/config_tests.py",
+        "mkdocs/tests/nav_tests.py",
+        "mkdocs/tests/search_tests.py",
+        "mkdocs/tests/structure/__init__.py",
+        "mkdocs/tests/structure/file_tests.py",
+        "mkdocs/tests/structure/nav_tests.py",
+        "mkdocs/tests/structure/page_tests.py",
+        "mkdocs/tests/structure/toc_tests.py",
+        "mkdocs/tests/toc_tests.py",
+        "mkdocs/tests/utils/utils_tests.py",
+        "mkdocs/utils/__init__.py",
+        "setup.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "mkdocs/utils/__init__.py",
+            "qualname": "create_media_urls",
+            "name": "create_media_urls",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 288,
+            "new_line": 301,
+            "is_method": false,
+            "old_parameters": "(nav, path_list)",
+            "new_parameters": "(path_list, page=..., base=...)",
+            "old_parameter_list": [
+              [
+                "nav",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "path_list",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "path_list",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "page",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "base",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 42,
+          "end_line": 42,
+          "call_line": 42,
+          "call_text": "utils.create_media_urls(nav, config['extra_javascript'])",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "get_context",
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "mkdocs/utils/__init__.py",
+            "qualname": "create_media_urls",
+            "name": "create_media_urls",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 288,
+            "new_line": 301,
+            "is_method": false,
+            "old_parameters": "(nav, path_list)",
+            "new_parameters": "(path_list, page=..., base=...)",
+            "old_parameter_list": [
+              [
+                "nav",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "path_list",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "path_list",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "page",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "base",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 44,
+          "end_line": 44,
+          "call_line": 44,
+          "call_text": "utils.create_media_urls(nav, config['extra_css'])",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "get_context",
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "mkdocs/nav.py",
+            "qualname": "URLContext.make_relative",
+            "name": "make_relative",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 103,
+            "new_line": null,
+            "is_method": true,
+            "old_parameters": "(self, url)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "url",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 53,
+          "end_line": 53,
+          "call_line": 53,
+          "call_text": "nav.url_context.make_relative('/')",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "get_context",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "mkdocs/nav.py",
+            "qualname": "SiteNavigation.walk_pages",
+            "name": "walk_pages",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 57,
+            "new_line": null,
+            "is_method": true,
+            "old_parameters": "(self)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 240,
+          "end_line": 240,
+          "call_line": 240,
+          "call_text": "site_navigation.walk_pages()",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "build_pages",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "mkdocs:34ef3ca6d039:mkdocs/utils/__init__.py",
+      "repository": "mkdocs",
+      "commit": "34ef3ca6d0390959080ce93a695361eea1649272",
+      "parent": "3f0e4464a787ad5ce5a235d7ae988a2d8f53f077",
+      "subject": "Internal Refactor of Pages, Files, and Navigation (#1504)",
+      "stale_path": "mkdocs/utils/__init__.py",
+      "stale_blob": "2a927e02ae49018fd28a37c7c159f6972ed101a4",
+      "commit_blob": "0f2b4367c1ab53c7a2c4da88f5863644307a8c18",
+      "other_changed_python_paths": [
+        "mkdocs/commands/build.py",
+        "mkdocs/config/base.py",
+        "mkdocs/config/config_options.py",
+        "mkdocs/config/defaults.py",
+        "mkdocs/contrib/search/search_index.py",
+        "mkdocs/nav.py",
+        "mkdocs/plugins.py",
+        "mkdocs/structure/__init__.py",
+        "mkdocs/structure/files.py",
+        "mkdocs/structure/nav.py",
+        "mkdocs/structure/pages.py",
+        "mkdocs/structure/toc.py",
+        "mkdocs/tests/base.py",
+        "mkdocs/tests/build_tests.py",
+        "mkdocs/tests/config/base_tests.py",
+        "mkdocs/tests/config/config_options_tests.py",
+        "mkdocs/tests/config/config_tests.py",
+        "mkdocs/tests/nav_tests.py",
+        "mkdocs/tests/search_tests.py",
+        "mkdocs/tests/structure/__init__.py",
+        "mkdocs/tests/structure/file_tests.py",
+        "mkdocs/tests/structure/nav_tests.py",
+        "mkdocs/tests/structure/page_tests.py",
+        "mkdocs/tests/structure/toc_tests.py",
+        "mkdocs/tests/toc_tests.py",
+        "mkdocs/tests/utils/utils_tests.py",
+        "setup.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "mkdocs/nav.py",
+            "qualname": "URLContext.make_relative",
+            "name": "make_relative",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 103,
+            "new_line": null,
+            "is_method": true,
+            "old_parameters": "(self, url)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "url",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 303,
+          "end_line": 303,
+          "call_line": 303,
+          "call_text": "nav.url_context.make_relative('/')",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "create_media_urls",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "mkdocs:da92f72ec868:mkdocs/structure/pages.py",
+      "repository": "mkdocs",
+      "commit": "da92f72ec8683fdd27b7ce48c7863a33508b25d7",
+      "parent": "5c261d250f78afcca5da88168c76a7bf4750ef44",
+      "subject": "Add support for YAML meta data. (#1542)",
+      "stale_path": "mkdocs/structure/pages.py",
+      "stale_blob": "77086ed71d9a193e27f5d07bd6135892210f90df",
+      "commit_blob": "994141ed5374451e8158788b2f412d7900797207",
+      "other_changed_python_paths": [
+        "mkdocs/tests/utils/utils_tests.py",
+        "mkdocs/utils/meta.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "mkdocs/utils/meta.py",
+            "qualname": "transformer",
+            "name": "transformer",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 104,
+            "new_line": null,
+            "is_method": false,
+            "old_parameters": "(key=...)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "key",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 22,
+          "end_line": 22,
+          "call_line": 22,
+          "call_text": "meta.transformer()",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "mkdocs:da92f72ec868:mkdocs/utils/meta.py",
+      "repository": "mkdocs",
+      "commit": "da92f72ec8683fdd27b7ce48c7863a33508b25d7",
+      "parent": "5c261d250f78afcca5da88168c76a7bf4750ef44",
+      "subject": "Add support for YAML meta data. (#1542)",
+      "stale_path": "mkdocs/utils/meta.py",
+      "stale_blob": "b976d9af384ea5674075e7dca7b5ebc00cf056ce",
+      "commit_blob": "fc8ffa547a81b187a272cbedfe79e20a143417db",
+      "other_changed_python_paths": [
+        "mkdocs/structure/pages.py",
+        "mkdocs/tests/utils/utils_tests.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "mkdocs/structure/pages.py",
+            "qualname": "default",
+            "name": "default",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 23,
+            "new_line": null,
+            "is_method": false,
+            "old_parameters": "(value)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "value",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 87,
+          "end_line": 87,
+          "call_line": 87,
+          "call_text": "self.default(value)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "TransformerCollection.transform",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "mkdocs:79ebb89759d5:mkdocs/commands/build.py",
+      "repository": "mkdocs",
+      "commit": "79ebb89759d51a52fb4f60ccde18098bd1daab62",
+      "parent": "cc03fd05876ad7ff14dfeff55832dc0dd7f0bf06",
+      "subject": "Refactor event arguments (#1703)",
+      "stale_path": "mkdocs/commands/build.py",
+      "stale_blob": "b4fc6d221d680c086d921307f0ab2c0090db4a2f",
+      "commit_blob": "c43b489d0b739b4468f4ba07931f840ca36b78d3",
+      "other_changed_python_paths": [
+        "mkdocs/plugins.py",
+        "mkdocs/structure/pages.py",
+        "mkdocs/tests/plugin_tests.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "mkdocs/plugins.py",
+            "qualname": "PluginCollection.run_event",
+            "name": "run_event",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 84,
+            "new_line": 84,
+            "is_method": true,
+            "old_parameters": "(self, name, item, **kwargs)",
+            "new_parameters": "(self, name, item=..., **kwargs)",
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "name",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "item",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "kwargs",
+                "var_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "name",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "item",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "kwargs",
+                "var_keyword",
+                false
+              ]
+            ]
+          },
+          "line": 245,
+          "end_line": 245,
+          "call_line": 245,
+          "call_text": "config['plugins'].run_event('pre_build', config)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "build",
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "mkdocs/plugins.py",
+            "qualname": "PluginCollection.run_event",
+            "name": "run_event",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 84,
+            "new_line": 84,
+            "is_method": true,
+            "old_parameters": "(self, name, item, **kwargs)",
+            "new_parameters": "(self, name, item=..., **kwargs)",
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "name",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "item",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "kwargs",
+                "var_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "name",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "item",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "kwargs",
+                "var_keyword",
+                false
+              ]
+            ]
+          },
+          "line": 301,
+          "end_line": 301,
+          "call_line": 301,
+          "call_text": "config['plugins'].run_event('post_build', config)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "build",
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "mkdocs:79ebb89759d5:mkdocs/structure/pages.py",
+      "repository": "mkdocs",
+      "commit": "79ebb89759d51a52fb4f60ccde18098bd1daab62",
+      "parent": "cc03fd05876ad7ff14dfeff55832dc0dd7f0bf06",
+      "subject": "Refactor event arguments (#1703)",
+      "stale_path": "mkdocs/structure/pages.py",
+      "stale_blob": "6327d28f639f6e703bffe77be672b307fe67559e",
+      "commit_blob": "b032d7799b8475b874cdbf749696c2e3d2cd1239",
+      "other_changed_python_paths": [
+        "mkdocs/commands/build.py",
+        "mkdocs/plugins.py",
+        "mkdocs/tests/plugin_tests.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "mkdocs/plugins.py",
+            "qualname": "PluginCollection.run_event",
+            "name": "run_event",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 84,
+            "new_line": 84,
+            "is_method": true,
+            "old_parameters": "(self, name, item, **kwargs)",
+            "new_parameters": "(self, name, item=..., **kwargs)",
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "name",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "item",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "kwargs",
+                "var_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "name",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "item",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "kwargs",
+                "var_keyword",
+                false
+              ]
+            ]
+          },
+          "line": 126,
+          "end_line": 126,
+          "call_line": 126,
+          "call_text": "config['plugins'].run_event('page_read_source', None, config=config, page=self)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "Page.read_source",
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "mkdocs:c9032bd6bfde:mkdocs/structure/files.py",
+      "repository": "mkdocs",
+      "commit": "c9032bd6bfde09ead2f4f879e85590d7cd6e68a6",
+      "parent": "a308bdc05733e1968bee46d485ff773587291f25",
+      "subject": "Drop Python 2.7.",
+      "stale_path": "mkdocs/structure/files.py",
+      "stale_blob": "013a51b27755f13a11b291401ca29e82c9e3f209",
+      "commit_blob": "b10dd4b3305ac6494325812b264c23ece45db19e",
+      "other_changed_python_paths": [
+        "mkdocs/__init__.py",
+        "mkdocs/__main__.py",
+        "mkdocs/commands/build.py",
+        "mkdocs/commands/gh_deploy.py",
+        "mkdocs/commands/new.py",
+        "mkdocs/commands/serve.py",
+        "mkdocs/config/base.py",
+        "mkdocs/config/config_options.py",
+        "mkdocs/config/defaults.py",
+        "mkdocs/contrib/search/__init__.py",
+        "mkdocs/contrib/search/search_index.py",
+        "mkdocs/exceptions.py",
+        "mkdocs/plugins.py",
+        "mkdocs/structure/nav.py",
+        "mkdocs/structure/pages.py",
+        "mkdocs/structure/toc.py",
+        "mkdocs/tests/base.py",
+        "mkdocs/tests/build_tests.py",
+        "mkdocs/tests/cli_tests.py",
+        "mkdocs/tests/config/base_tests.py",
+        "mkdocs/tests/config/config_options_tests.py",
+        "mkdocs/tests/config/config_tests.py",
+        "mkdocs/tests/gh_deploy_tests.py",
+        "mkdocs/tests/integration.py",
+        "mkdocs/tests/new_tests.py",
+        "mkdocs/tests/plugin_tests.py",
+        "mkdocs/tests/search_tests.py",
+        "mkdocs/tests/structure/file_tests.py",
+        "mkdocs/tests/structure/nav_tests.py",
+        "mkdocs/tests/structure/page_tests.py",
+        "mkdocs/tests/structure/toc_tests.py",
+        "mkdocs/tests/theme_tests.py",
+        "mkdocs/tests/utils/ghp_import_tests.py",
+        "mkdocs/tests/utils/utils_tests.py",
+        "mkdocs/theme.py",
+        "mkdocs/utils/__init__.py",
+        "mkdocs/utils/ghp_import.py",
+        "setup.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "mkdocs/utils/__init__.py",
+            "qualname": "urlquote",
+            "name": "urlquote",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 48,
+            "new_line": null,
+            "is_method": false,
+            "old_parameters": "(path)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "path",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 170,
+          "end_line": 170,
+          "call_line": 170,
+          "call_text": "utils.urlquote(url)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "File._get_url",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "mkdocs:f70a48ee20f0:mkdocs/__main__.py",
+      "repository": "mkdocs",
+      "commit": "f70a48ee20f025bab32047689f9072e8d380528f",
+      "parent": "d8f8e5be3c053ca4d083558bd575b1f83f0d04e2",
+      "subject": "Add --use-directory-urls/--no-directory-urls to command line options",
+      "stale_path": "mkdocs/__main__.py",
+      "stale_blob": "f8939fc04d8604e648b676d0c7408acce54ddacb",
+      "commit_blob": "a1cc793c09ee5321192ffc6ef87ade761085d106",
+      "other_changed_python_paths": [
+        "mkdocs/commands/serve.py",
+        "mkdocs/tests/cli_tests.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "mkdocs/commands/serve.py",
+            "qualname": "serve",
+            "name": "serve",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 105,
+            "new_line": 105,
+            "is_method": false,
+            "old_parameters": "(config_file=..., dev_addr=..., strict=..., theme=..., theme_dir=..., livereload=...)",
+            "new_parameters": "(config_file=..., dev_addr=..., strict=..., theme=..., theme_dir=..., livereload=..., **kwargs)",
+            "old_parameter_list": [
+              [
+                "config_file",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "dev_addr",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "strict",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "theme",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "theme_dir",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "livereload",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "config_file",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "dev_addr",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "strict",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "theme",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "theme_dir",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "livereload",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "kwargs",
+                "var_keyword",
+                false
+              ]
+            ]
+          },
+          "line": 130,
+          "end_line": 137,
+          "call_line": 130,
+          "call_text": "serve.serve(\n            config_file=config_file,\n            dev_addr=dev_addr,\n            strict=strict,\n            theme=theme,\n            theme_dir=theme_dir,\n            livereload=livereload\n        )",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "serve_command",
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "mkdocs:37e645d62310:mkdocs/structure/pages.py",
+      "repository": "mkdocs",
+      "commit": "37e645d62310978bfbef948dffc15348500dc00c",
+      "parent": "44f3ae212d85a60750769df0e9fa8022274166c8",
+      "subject": "Use toc_tokens to generate the TOC",
+      "stale_path": "mkdocs/structure/pages.py",
+      "stale_blob": "62623b05c199852418becd98bff0d22344af3f88",
+      "commit_blob": "afc35a1aea50fe7c7f0ca021f8677f9d84d19383",
+      "other_changed_python_paths": [
+        "mkdocs/contrib/search/search_index.py",
+        "mkdocs/structure/toc.py",
+        "mkdocs/tests/base.py",
+        "mkdocs/tests/config/config_tests.py",
+        "mkdocs/tests/structure/toc_tests.py",
+        "mkdocs/tests/theme_tests.py",
+        "setup.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "mkdocs/structure/toc.py",
+            "qualname": "get_toc",
+            "name": "get_toc",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 11,
+            "new_line": 10,
+            "is_method": false,
+            "old_parameters": "(toc_html)",
+            "new_parameters": "(toc_tokens)",
+            "old_parameter_list": [
+              [
+                "toc_html",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "toc_tokens",
+                "positional_or_keyword",
+                false
+              ]
+            ]
+          },
+          "line": 184,
+          "end_line": 184,
+          "call_line": 184,
+          "call_text": "get_toc(getattr(md, 'toc', ''))",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "Page.render",
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "mkdocs:5c2b4f135360:mkdocs/__main__.py",
+      "repository": "mkdocs",
+      "commit": "5c2b4f13536009852046c89aadd63ac46eacbaaa",
+      "parent": "56f98cb72264136aa017020c56885b49ba64a9b7",
+      "subject": "Update ghp_import dependency to 1.0",
+      "stale_path": "mkdocs/__main__.py",
+      "stale_blob": "d8d56abae7f0b13365f7edcf14b4fc0998fd21e7",
+      "commit_blob": "5d9c6aecc8ead84fd65770af7475ccc7041882a2",
+      "other_changed_python_paths": [
+        "mkdocs/commands/gh_deploy.py",
+        "mkdocs/tests/gh_deploy_tests.py",
+        "mkdocs/tests/utils/ghp_import_tests.py",
+        "mkdocs/utils/ghp_import.py",
+        "setup.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "mkdocs/commands/gh_deploy.py",
+            "qualname": "gh_deploy",
+            "name": "gh_deploy",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 86,
+            "new_line": 86,
+            "is_method": false,
+            "old_parameters": "(config, message=..., force=..., ignore_version=...)",
+            "new_parameters": "(config, message=..., force=..., ignore_version=..., shell=...)",
+            "old_parameter_list": [
+              [
+                "config",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "message",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "force",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "ignore_version",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "config",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "message",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "force",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "ignore_version",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "shell",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 182,
+          "end_line": 182,
+          "call_line": 182,
+          "call_text": "gh_deploy.gh_deploy(cfg, message=message, force=force, ignore_version=ignore_version)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "gh_deploy_command",
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "mkdocs:5c2b4f135360:mkdocs/commands/gh_deploy.py",
+      "repository": "mkdocs",
+      "commit": "5c2b4f13536009852046c89aadd63ac46eacbaaa",
+      "parent": "56f98cb72264136aa017020c56885b49ba64a9b7",
+      "subject": "Update ghp_import dependency to 1.0",
+      "stale_path": "mkdocs/commands/gh_deploy.py",
+      "stale_blob": "a9c04d8b3b6012177b0d1acc31ff04531fa60693",
+      "commit_blob": "63d352217651e2da32813090b4fa965b0e64b0f0",
+      "other_changed_python_paths": [
+        "mkdocs/__main__.py",
+        "mkdocs/tests/gh_deploy_tests.py",
+        "mkdocs/tests/utils/ghp_import_tests.py",
+        "mkdocs/utils/ghp_import.py",
+        "setup.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "mkdocs/utils/ghp_import.py",
+            "qualname": "ghp_import",
+            "name": "ghp_import",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 160,
+            "new_line": null,
+            "is_method": false,
+            "old_parameters": "(directory, message, remote=..., branch=..., force=...)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "directory",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "message",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "remote",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "branch",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "force",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 106,
+          "end_line": 107,
+          "call_line": 106,
+          "call_text": "ghp_import.ghp_import(config['site_dir'], message, remote_name,\n                                          remote_branch, force)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "gh_deploy",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "mkdocs:82fcf3115ab9:mkdocs/__main__.py",
+      "repository": "mkdocs",
+      "commit": "82fcf3115ab9c2e1c9fa8d41a90b0ae3eb307080",
+      "parent": "fa52d3ae71251ae1c760cbe9b31caced816573d1",
+      "subject": "Support custom directories to watch when running mkdocs serve (#2642)",
+      "stale_path": "mkdocs/__main__.py",
+      "stale_blob": "4afd164b14f213bdedc1c49b5574188aaec7cecb",
+      "commit_blob": "33758c661ebc118b770a3c9c8c2b655306642f24",
+      "other_changed_python_paths": [
+        "mkdocs/commands/serve.py",
+        "mkdocs/config/config_options.py",
+        "mkdocs/config/defaults.py",
+        "mkdocs/livereload/__init__.py",
+        "mkdocs/tests/cli_tests.py",
+        "mkdocs/tests/config/config_options_tests.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "mkdocs/commands/serve.py",
+            "qualname": "serve",
+            "name": "serve",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 15,
+            "new_line": 15,
+            "is_method": false,
+            "old_parameters": "(config_file=..., dev_addr=..., strict=..., theme=..., theme_dir=..., livereload=..., watch_theme=..., **kwargs)",
+            "new_parameters": "(config_file=..., dev_addr=..., strict=..., theme=..., theme_dir=..., livereload=..., watch_theme=..., watch=..., **kwargs)",
+            "old_parameter_list": [
+              [
+                "config_file",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "dev_addr",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "strict",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "theme",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "theme_dir",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "livereload",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "watch_theme",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "kwargs",
+                "var_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "config_file",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "dev_addr",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "strict",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "theme",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "theme_dir",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "livereload",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "watch_theme",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "watch",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "kwargs",
+                "var_keyword",
+                false
+              ]
+            ]
+          },
+          "line": 177,
+          "end_line": 177,
+          "call_line": 177,
+          "call_text": "serve.serve(dev_addr=dev_addr, livereload=livereload, **kwargs)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "serve_command",
+          "binding": "unknown",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 2,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "mkdocs:052ba868ad56:mkdocs/__main__.py",
+      "repository": "mkdocs",
+      "commit": "052ba868ad564f5f413a7d6f83d0b5ae7ae42d92",
+      "parent": "ec9b583b02376b909c10889fef780cdf2f25a23d",
+      "subject": "Add --no-history option to not push parent history for gh_deploy (#2594)",
+      "stale_path": "mkdocs/__main__.py",
+      "stale_blob": "2f1944d3a35051b71b66208035e085c44c73266c",
+      "commit_blob": "bcbff4f2c317ba8c8075c94661dbb5e0cad043f7",
+      "other_changed_python_paths": [
+        "mkdocs/commands/gh_deploy.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "mkdocs/commands/gh_deploy.py",
+            "qualname": "gh_deploy",
+            "name": "gh_deploy",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 87,
+            "new_line": 87,
+            "is_method": false,
+            "old_parameters": "(config, message=..., force=..., ignore_version=..., shell=...)",
+            "new_parameters": "(config, message=..., force=..., no_history=..., ignore_version=..., shell=...)",
+            "old_parameter_list": [
+              [
+                "config",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "message",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "force",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "ignore_version",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "shell",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "config",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "message",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "force",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "no_history",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "ignore_version",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "shell",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 214,
+          "end_line": 214,
+          "call_line": 214,
+          "call_text": "gh_deploy.gh_deploy(cfg, message=message, force=force, ignore_version=ignore_version, shell=shell)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "gh_deploy_command",
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "mkdocs:f37ce51da197:mkdocs/commands/build.py",
+      "repository": "mkdocs",
+      "commit": "f37ce51da197dd83e1c64fe1f091c99b503ef94e",
+      "parent": "67e0e4e052086bfcfd68d839104563fdc33bd8d0",
+      "subject": "Serve excluded files in `mkdocs serve` + new `not_in_nav` config",
+      "stale_path": "mkdocs/commands/build.py",
+      "stale_blob": "cc53ff54a267f969649cc643c91203b427f2db7f",
+      "commit_blob": "82bec232eadae9279f41fc70a27739a875399c67",
+      "other_changed_python_paths": [
+        "mkdocs/config/defaults.py",
+        "mkdocs/structure/files.py",
+        "mkdocs/structure/nav.py",
+        "mkdocs/structure/pages.py",
+        "mkdocs/tests/structure/file_tests.py",
+        "mkdocs/tests/structure/nav_tests.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "mkdocs/structure/files.py",
+            "qualname": "Files.documentation_pages",
+            "name": "documentation_pages",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 80,
+            "new_line": 112,
+            "is_method": true,
+            "old_parameters": "(self)",
+            "new_parameters": "(self, *, inclusion=...)",
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "inclusion",
+                "keyword_only",
+                true
+              ]
+            ]
+          },
+          "line": 305,
+          "end_line": 305,
+          "call_line": 305,
+          "call_text": "files.documentation_pages()",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "build",
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "mkdocs/structure/files.py",
+            "qualname": "Files.copy_static_files",
+            "name": "copy_static_files",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 74,
+            "new_line": 101,
+            "is_method": true,
+            "old_parameters": "(self, dirty=...)",
+            "new_parameters": "(self, dirty=..., *, inclusion=...)",
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "dirty",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "dirty",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "inclusion",
+                "keyword_only",
+                true
+              ]
+            ]
+          },
+          "line": 317,
+          "end_line": 317,
+          "call_line": 317,
+          "call_text": "files.copy_static_files(dirty=dirty)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "build",
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "mkdocs/structure/files.py",
+            "qualname": "Files.documentation_pages",
+            "name": "documentation_pages",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 80,
+            "new_line": 112,
+            "is_method": true,
+            "old_parameters": "(self)",
+            "new_parameters": "(self, *, inclusion=...)",
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "inclusion",
+                "keyword_only",
+                true
+              ]
+            ]
+          },
+          "line": 326,
+          "end_line": 326,
+          "call_line": 326,
+          "call_text": "files.documentation_pages()",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "build",
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "mkdocs:f37ce51da197:mkdocs/structure/nav.py",
+      "repository": "mkdocs",
+      "commit": "f37ce51da197dd83e1c64fe1f091c99b503ef94e",
+      "parent": "67e0e4e052086bfcfd68d839104563fdc33bd8d0",
+      "subject": "Serve excluded files in `mkdocs serve` + new `not_in_nav` config",
+      "stale_path": "mkdocs/structure/nav.py",
+      "stale_blob": "cdf1d1697942d64cd04cdcb540384c81c8733e37",
+      "commit_blob": "1a47a7b7e13e92faba768e5b97fcc4a4dff40c7d",
+      "other_changed_python_paths": [
+        "mkdocs/commands/build.py",
+        "mkdocs/config/defaults.py",
+        "mkdocs/structure/files.py",
+        "mkdocs/structure/pages.py",
+        "mkdocs/tests/structure/file_tests.py",
+        "mkdocs/tests/structure/nav_tests.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "mkdocs/structure/files.py",
+            "qualname": "Files.documentation_pages",
+            "name": "documentation_pages",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 80,
+            "new_line": 112,
+            "is_method": true,
+            "old_parameters": "(self)",
+            "new_parameters": "(self, *, inclusion=...)",
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "inclusion",
+                "keyword_only",
+                true
+              ]
+            ]
+          },
+          "line": 150,
+          "end_line": 150,
+          "call_line": 150,
+          "call_text": "files.documentation_pages()",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "get_navigation",
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "mkdocs/structure/files.py",
+            "qualname": "Files.documentation_pages",
+            "name": "documentation_pages",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 80,
+            "new_line": 112,
+            "is_method": true,
+            "old_parameters": "(self)",
+            "new_parameters": "(self, *, inclusion=...)",
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "inclusion",
+                "keyword_only",
+                true
+              ]
+            ]
+          },
+          "line": 162,
+          "end_line": 162,
+          "call_line": 162,
+          "call_text": "files.documentation_pages()",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "get_navigation",
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "mkdocs:930ae26a5543:mkdocs/__main__.py",
+      "repository": "mkdocs",
+      "commit": "930ae26a55436f7e1706d6076befb2853c8a0285",
+      "parent": "f37ce51da197dd83e1c64fe1f091c99b503ef94e",
+      "subject": "New flag `mkdocs serve --clean` - simulate a pure `mkdocs build` and then serve",
+      "stale_path": "mkdocs/__main__.py",
+      "stale_blob": "84e7d3f086b52f17b4182ecafa776855a59ab189",
+      "commit_blob": "a13e93785884859588f26e9337942dd08c2ac279",
+      "other_changed_python_paths": [
+        "mkdocs/commands/serve.py",
+        "mkdocs/plugins.py",
+        "mkdocs/tests/cli_tests.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "mkdocs/commands/serve.py",
+            "qualname": "serve",
+            "name": "serve",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 21,
+            "new_line": 21,
+            "is_method": false,
+            "old_parameters": "(config_file=..., dev_addr=..., strict=..., theme=..., theme_dir=..., livereload=..., watch_theme=..., watch=..., **kwargs)",
+            "new_parameters": "(config_file=..., dev_addr=..., strict=..., theme=..., theme_dir=..., livereload=..., build_type=..., watch_theme=..., watch=..., **kwargs)",
+            "old_parameter_list": [
+              [
+                "config_file",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "dev_addr",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "strict",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "theme",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "theme_dir",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "livereload",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "watch_theme",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "watch",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "kwargs",
+                "var_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "config_file",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "dev_addr",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "strict",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "theme",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "theme_dir",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "livereload",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "build_type",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "watch_theme",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "watch",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "kwargs",
+                "var_keyword",
+                false
+              ]
+            ]
+          },
+          "line": 234,
+          "end_line": 234,
+          "call_line": 234,
+          "call_text": "serve.serve(dev_addr=dev_addr, livereload=livereload, watch=watch, **kwargs)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "serve_command",
+          "binding": "unknown",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 2,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "mkdocs:d107e6d32c1d:mkdocs/commands/build.py",
+      "repository": "mkdocs",
+      "commit": "d107e6d32c1d9cdb59f4f58a1f6371d377d6d18f",
+      "parent": "a94a014e016343170daabb1eedf7d8c126ded4dc",
+      "subject": "When `nav` config is not specified, apply file inclusion",
+      "stale_path": "mkdocs/commands/build.py",
+      "stale_blob": "e8af54fbbef5bf568e9017a8db30a27f153ec678",
+      "commit_blob": "4a21a3da706a0883f8ceedf92c3312ffeeb44dc4",
+      "other_changed_python_paths": [
+        "mkdocs/structure/files.py",
+        "mkdocs/structure/nav.py",
+        "mkdocs/tests/structure/nav_tests.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "mkdocs/structure/files.py",
+            "qualname": "_set_exclusions",
+            "name": "_set_exclusions",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 325,
+            "new_line": null,
+            "is_method": false,
+            "old_parameters": "(files, config)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "files",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "config",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 297,
+          "end_line": 297,
+          "call_line": 297,
+          "call_text": "_set_exclusions(files._files, config)",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "build",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "removed_callable_review"
+          ],
+          "site_hit_symbols": [
+            "_set_exclusions"
+          ],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        }
+      ],
+      "new_findings_in_stale_file": [
+        {
+          "detector": "removed_callable_review",
+          "symbol": "_set_exclusions",
+          "path": "mkdocs/commands/build.py",
+          "line": 297,
+          "anchor": "build"
+        }
+      ],
+      "collateral": []
+    },
+    {
+      "id": "mkdocs:35fb2c720352:mkdocs/__main__.py",
+      "repository": "mkdocs",
+      "commit": "35fb2c720352bd9c65b41c1781c93ea09ef84486",
+      "parent": "8aafea1742722be692637e6027150aa92f06cbbf",
+      "subject": "Move code to external mkdocs-get-deps dependency (#3477)",
+      "stale_path": "mkdocs/__main__.py",
+      "stale_blob": "baf67adc21aeb6afcb47a470ba4c406ab4c4c73d",
+      "commit_blob": "0df2069be8b6acd69c7c0a0a96f3e326688d33ca",
+      "other_changed_python_paths": [
+        "mkdocs/commands/get_deps.py",
+        "mkdocs/tests/get_deps_tests.py",
+        "mkdocs/utils/cache.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "mkdocs/commands/get_deps.py",
+            "qualname": "get_deps",
+            "name": "get_deps",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 90,
+            "new_line": null,
+            "is_method": false,
+            "old_parameters": "(projects_file_url, config_file_path=...)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "projects_file_url",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "config_file_path",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 342,
+          "end_line": 342,
+          "call_line": 342,
+          "call_text": "get_deps.get_deps(projects_file_url=projects_file, config_file_path=config_file)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "get_deps_command",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "mkdocs:8035d78dad55:mkdocs/commands/serve.py",
+      "repository": "mkdocs",
+      "commit": "8035d78dad55ff6ea4ebffad43b0a0a2a9586e7d",
+      "parent": "646987da4502becf346bfaabb6ba40934307399b",
+      "subject": "Refactor serve URL handling, pass only the URL to `build` (#3501)",
+      "stale_path": "mkdocs/commands/serve.py",
+      "stale_blob": "dc472a66cbe7917ea0cd64c82c90209c941aa5bb",
+      "commit_blob": "d6e73b167542edf54672cf1ee91c3645174cb987",
+      "other_changed_python_paths": [
+        "mkdocs/commands/build.py",
+        "mkdocs/livereload/__init__.py",
+        "mkdocs/tests/build_tests.py",
+        "mkdocs/tests/livereload_tests.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "mkdocs/commands/build.py",
+            "qualname": "build",
+            "name": "build",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 250,
+            "new_line": 248,
+            "is_method": false,
+            "old_parameters": "(config, live_server=..., dirty=...)",
+            "new_parameters": "(config, *, serve_url=..., dirty=...)",
+            "old_parameter_list": [
+              [
+                "config",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "live_server",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "dirty",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "config",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "serve_url",
+                "keyword_only",
+                true
+              ],
+              [
+                "dirty",
+                "keyword_only",
+                true
+              ]
+            ]
+          },
+          "line": 64,
+          "end_line": 64,
+          "call_line": 64,
+          "call_text": "build(config, live_server=None if is_clean else server, dirty=is_dirty)",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "serve.builder",
+          "binding": "breaking",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "call_signature_review"
+          ],
+          "site_hit_symbols": [
+            "build"
+          ],
+          "file_hit_detectors": [
+            "call_signature_review"
+          ]
+        }
+      ],
+      "new_findings_in_stale_file": [
+        {
+          "detector": "call_signature_review",
+          "symbol": "build",
+          "path": "mkdocs/commands/serve.py",
+          "line": 64,
+          "anchor": "serve.builder"
+        }
+      ],
+      "collateral": []
+    },
+    {
+      "id": "mkdocs:df2dffd8a62f:mkdocs/commands/serve.py",
+      "repository": "mkdocs",
+      "commit": "df2dffd8a62f312e98987998af3114f3e1e552fb",
+      "parent": "8035d78dad55ff6ea4ebffad43b0a0a2a9586e7d",
+      "subject": "New flag `serve --open` to open the site in a browser (#3500)",
+      "stale_path": "mkdocs/commands/serve.py",
+      "stale_blob": "d6e73b167542edf54672cf1ee91c3645174cb987",
+      "commit_blob": "889d80668eb807c118fed36f2d943adfc814ff78",
+      "other_changed_python_paths": [
+        "mkdocs/__main__.py",
+        "mkdocs/livereload/__init__.py",
+        "mkdocs/tests/cli_tests.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "mkdocs/livereload/__init__.py",
+            "qualname": "LiveReloadServer.serve",
+            "name": "serve",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 171,
+            "new_line": 172,
+            "is_method": true,
+            "old_parameters": "(self)",
+            "new_parameters": "(self, *, open_in_browser=...)",
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "open_in_browser",
+                "keyword_only",
+                true
+              ]
+            ]
+          },
+          "line": 102,
+          "end_line": 102,
+          "call_line": 102,
+          "call_text": "server.serve()",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "serve",
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 2,
+          "name_defined_in_stale_file": true,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "mkdocs:ccf011db793c:mkdocs/commands/build.py",
+      "repository": "mkdocs",
+      "commit": "ccf011db793c968bf2cee80c3e8f1f66fd2b3189",
+      "parent": "64cab0d77f94583211a3b76a3c35530a269caf2e",
+      "subject": "Make sitemap.xml.gz slightly more reproducible (#3460)",
+      "stale_path": "mkdocs/commands/build.py",
+      "stale_blob": "2c9e97931d968811c1726355dcc0198eabec73c8",
+      "commit_blob": "2eec30aad8f873a82243e721745b66b23e0d0258",
+      "other_changed_python_paths": [
+        "mkdocs/structure/pages.py",
+        "mkdocs/tests/build_tests.py",
+        "mkdocs/utils/__init__.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "mkdocs/utils/__init__.py",
+            "qualname": "get_build_timestamp",
+            "name": "get_build_timestamp",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 47,
+            "new_line": 47,
+            "is_method": false,
+            "old_parameters": "()",
+            "new_parameters": "(*, pages=...)",
+            "old_parameter_list": [],
+            "new_parameter_list": [
+              [
+                "pages",
+                "keyword_only",
+                true
+              ]
+            ]
+          },
+          "line": 113,
+          "end_line": 113,
+          "call_line": 113,
+          "call_text": "utils.get_build_timestamp()",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "_build_theme_template",
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    }
+  ]
+}

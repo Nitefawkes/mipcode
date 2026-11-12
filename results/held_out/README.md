@@ -71,8 +71,64 @@ The first two causes are resolution limits. The tuned replay had removed several
 
 The replay records whether a report disappeared within 25 commits. The readers found that signal unreliable. Most "resolving" commits were unrelated edits, and the genuine upstream fixes above arrived after the 25-commit window or have not arrived.
 
+## Study 2: recall on constructed omissions
+
+The [stale-file mutation harness](../../experiments/recall_mutation/README.md) built 81 mutations from 63 commits, with 205 ground-truth sites. No mutation failed analysis, and no finding appeared outside a stale file.
+
+**Outcome on the primary measure: 5 of 6 sites (83%), above the 70% bar, on a sample too small to support a conclusion.** Only four commits had a call that cannot bind to the new signature and a function name defined once. The larger strata are more informative.
+
+| Stratum | Sites | Reported by `mip-delta` | Commits (with a report) |
+| --- | ---: | ---: | ---: |
+| Call cannot bind, name unique (primary) | 6 | 5 (83%) | 4 (3) |
+| Definition removed, name unique | 75 | 62 (83%) | 28 (22) |
+| Call cannot bind, name ambiguous | 55 | 6 (11%) | 5 (1) |
+| Definition removed, name ambiguous | 18 | 4 (22%) | 3 (2) |
+| Call still binds | 48 | 4 (8%) | 27 (3) |
+| Call uses unpacking | 3 | 0 | 3 (0) |
+| **All** | 205 | 81 (40%) | 63 (29) |
+
+### Recall follows the form of the call
+
+Across the sites where the call cannot bind or the definition was removed:
+
+| Call form | Reported | Missed |
+| --- | ---: | ---: |
+| Bare name, `f(x)` | 68 | 20 |
+| Attribute, `obj.f(x)` or `module.f(x)` | 9 | 57 |
+
+In the unique-name strata the split is complete. All 67 bare-name sites were reported and all 14 attribute sites were missed. The misses include method calls on an instance attribute (`self._timer.sync_start()`), on a parameter (`site_navigation.walk_pages()`), and calls through a module (`utils.urlquote(url)`). A quiet result therefore says little about method calls and module-qualified calls.
+
+The ambiguous rows are weaker evidence. All 55 sites where the call cannot bind and the name is ambiguous come from httpx, and 32 of them from one commit that changed several methods named `request`. Matching by name alone attaches each call to every one of them.
+
+### What the check adds to mypy
+
+mypy 2.4.1 ran on the same 81 mutated trees with a fixed configuration: no project settings, no installed dependencies, `--check-untyped-defs`. All 205 sites completed. A site counts for mypy when a new error is on the call's lines or on the stale file's import of the name, as fixed in the plan before this run.
+
+| Stratum | Sites | Both | `mip-delta` only | mypy only | Neither |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Cannot bind or removed, name unique | 81 | 65 | 2 | 5 | 9 |
+| Cannot bind or removed, all | 154 | 66 | 11 | 29 | 48 |
+| All sites | 205 | 68 | 13 | 31 | 93 |
+
+On these omissions mypy reports as much as `mip-delta` or more: 70 of 81 against 67 of 81 in the unique-name strata, and 95 of 154 against 77 of 154 overall. `mip-delta` alone reports 2 of the 81 unique-name sites.
+
+Counting only errors on the call's own lines, mypy reports 8 of those 81 sites. The difference is where each tool points. For a removed name, mypy reports the import and is silent at the call, and `mip-delta` reports each call.
+
+All five repositories are typed, which favors mypy. A project's own mypy run, with its settings and dependencies installed, would see more than this one does.
+
+## Reading the two studies together
+
+- **Where a type checker already covers the ground, the check adds little.** Stale calls to changed or removed functions are what the recall corpus contains, and mypy reports about as many of them.
+- **The real omissions in Study 1 are a kind a type checker does not report.** A new optional parameter that one layer accepts and does not forward is type-correct. Nine of the ten real omissions came from `delegating_wrapper_review`, `override_signature_review`, and `parameter_sink_review`.
+- **The two noisiest detectors overlap most with the type checker.** `removed_callable_review` produced 23 of the 53 false reports in Study 1 and 67 of the 81 recall hits here, nearly all of which mypy also reports. `callback_binding_review` was wrong on 11 of 12 sites.
+- **Name resolution is the limit on both sides.** It reads a rebound or renamed name as removed, and it does not follow method or module-qualified calls.
+
+These readings come from five typed repositories and constructed omissions. They describe where to look next. They are not a measurement of how the check behaves in an agent's session.
+
 ## Notes on the run
 
 - The rich clone's head is a merge commit. The replay's last commit is `364ce24a3be6`, the last non-merge commit.
 - The readers and the third read are model judgments made from the commit diffs and the source. The rich `Traceback` finding was also checked by parsing the file at the replayed head.
 - [Replay data](replay/) holds one report per repository. [adjudication.json](adjudication.json) holds every site with both readers' labels, their reasons, and the final label.
+- [Recall corpora](recall/) hold every mutation and site with its strata and `mip-delta` result. [mypy results](typecheck/) hold the same sites with mypy's new errors, the exact command, and the mypy and Python versions.
+- The recall harness and the mypy baseline were built and debugged on the five tuned repositories. Each ran once on the held-out repositories.
