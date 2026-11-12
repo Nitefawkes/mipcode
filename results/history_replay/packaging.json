@@ -1,0 +1,14 @@
+{
+  "repository": "packaging",
+  "head": "ae4946b30f8a",
+  "commits_replayed": 349,
+  "horizon_commits": 25,
+  "wall_seconds": 39.1,
+  "commits_changing_production_python": 261,
+  "contract_changing_commits": 52,
+  "contract_changing_commits_silent": 52,
+  "contract_changing_commits_flagged": 0,
+  "local_commits_flagged": 0,
+  "analysis_errors": 0,
+  "flagged_commits": []
+}

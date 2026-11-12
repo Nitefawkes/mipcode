@@ -38,11 +38,14 @@ mip-delta --root examples/contract-delta/before --write-path formatter.py --cand
 
 The advisory points to `consumer.py:5` and reports `required_keyword_missing`. The [usage guide](docs/usage.md) covers Git checks and observing calls during tests.
 
+A reported site stays open until a later edit resolves it. With `--ledger`, repeated checks name each site once, `--open` lists what remains, and `--waive` records an intentional one. The usage guide also shows how to [run the check as Claude Code hooks](docs/usage.md#run-as-claude-code-hooks), where it adds new sites after an edit and lists open ones before the agent finishes.
+
 ## Research and development
 
 - [Engineering article](docs/engineering_blog_post_mipdelta.md) explains the move from search tools to checks after edits and tests.
 - [Evidence index](results/v2_delta_readout/README.md) links the reports, data, and study limits.
 - [One-shot brief pilot](results/one_shot/README.md) compares no brief, a lexical map, and a Semantic LOD brief.
+- [History replay](results/history_replay/README.md) runs the check over 2,944 upstream commits without a model and counts reports on complete changes.
 - [Documentation index](docs/README.md) covers the preview and the earlier architecture.
 
 The paired evaluations cover 14 selected tasks. A generic reminder recovered five of six selected historical misses in a later diagnostic comparison. The added benefit of cross-file analysis over that reminder still needs a fresh comparison.

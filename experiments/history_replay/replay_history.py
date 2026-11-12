@@ -129,10 +129,6 @@ def is_support_path(path: str) -> bool:
     return path.lower().split("/")[0] in {"docs", "doc", "examples", "benchmarks", "scripts", "tasks"}
 
 
-class _Cache(FactCache):
-    """Unparsable historical files contribute no facts."""
-
-
 def site_key(finding: Finding, anchor: str) -> tuple[str, str, str, str]:
     return (finding.detector, finding.symbol, finding.path, anchor)
 
@@ -176,7 +172,7 @@ def resolution(
 
 def replay_repository(repo: Path, horizon: int, limit: int | None) -> dict[str, Any]:
     reader = GitReader(repo)
-    cache = _Cache()
+    cache = FactCache()
     started = time.perf_counter()
     try:
         commits = reader.commits()
@@ -184,6 +180,7 @@ def replay_repository(repo: Path, horizon: int, limit: int | None) -> dict[str, 
             commits = commits[-limit:]
         counts: Counter[str] = Counter()
         flagged: list[dict[str, Any]] = []
+        parses_at_last_clear = 0
         for position, (sha, parent, subject) in enumerate(commits):
             before_blobs, after_blobs = reader.python_blobs(parent), reader.python_blobs(sha)
             changed = [
@@ -192,6 +189,10 @@ def replay_repository(repo: Path, horizon: int, limit: int | None) -> dict[str, 
             if not any(not is_test_path(p) and not is_support_path(p) for p in changed):
                 continue
             counts["commits_changing_production_python"] += 1
+            if cache.stats.parses - parses_at_last_clear > 4000:
+                # Parsed files keep their syntax trees; bound memory on long histories.
+                cache.clear()
+                parses_at_last_clear = cache.stats.parses
             try:
                 cross_file, rows = analyze(reader, cache, parent, sha)
             except (RecursionError, ValueError):

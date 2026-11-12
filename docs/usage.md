@@ -58,6 +58,24 @@ The hooks use `CLAUDE_PROJECT_DIR` as the workspace and keep one ledger per sess
 
 Other agent harnesses can call `mip-delta --check-git --ledger PATH` after edits and add `--open` before finishing.
 
+## Run before a commit
+
+With [pre-commit](https://pre-commit.com), a local hook fails the commit while unwaived sites are open:
+
+```yaml
+repos:
+  - repo: local
+    hooks:
+      - id: mip-delta
+        name: mip-delta contract check
+        entry: mip-delta --check-git --fail-on-findings --ledger .mipdelta/ledger.json
+        language: system
+        pass_filenames: false
+        types: [python]
+```
+
+The check compares the working tree with `HEAD`, so it also sees changes that are not staged.
+
 ## Check a merge
 
 Two branches can merge without a textual conflict and still disagree. One changes a function's contract and updates its callers. The other adds a caller that uses the old contract. After merging, compare the merged tree with the merge base:

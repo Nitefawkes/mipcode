@@ -1,0 +1,73 @@
+{
+  "repository": "tomlkit",
+  "head": "d7def7dbcc59",
+  "commits_replayed": 410,
+  "horizon_commits": 25,
+  "wall_seconds": 47.8,
+  "commits_changing_production_python": 260,
+  "contract_changing_commits": 51,
+  "contract_changing_commits_silent": 49,
+  "contract_changing_commits_flagged": 2,
+  "local_commits_flagged": 0,
+  "analysis_errors": 0,
+  "flagged_commits": [
+    {
+      "commit": "be2050ef3202",
+      "subject": "Merge the changes from maintained fork",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "delegating_wrapper_review",
+          "symbol": "Container._replace_at",
+          "path": "tomlkit/container.py",
+          "line": 620,
+          "anchor": "Container._replace_at",
+          "provenance": "static_ast",
+          "evidence": "delegating wrapper Container._replace_at calls Container._previous_item_with_index without forwarding optional parameter idx",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        },
+        {
+          "detector": "parameter_truthiness_review",
+          "symbol": "Array.add_line",
+          "path": "tomlkit/items.py",
+          "line": 918,
+          "anchor": "Array.add_line",
+          "provenance": "static_ast",
+          "evidence": "new or changed None-default parameter comment is tested as a bare truth value",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        }
+      ]
+    },
+    {
+      "commit": "6b5f079099d4",
+      "subject": "Render an emptied array of tables as an empty array (#567)",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "delegating_wrapper_review",
+          "symbol": "Container._render_table",
+          "path": "tomlkit/container.py",
+          "line": 777,
+          "anchor": "Container._render_table",
+          "provenance": "static_ast",
+          "evidence": "delegating wrapper Container._render_table calls _header_less_aots without forwarding optional parameter prefix",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        },
+        {
+          "detector": "delegating_wrapper_review",
+          "symbol": "Container._render_aot_table",
+          "path": "tomlkit/container.py",
+          "line": 841,
+          "anchor": "Container._render_aot_table",
+          "provenance": "static_ast",
+          "evidence": "delegating wrapper Container._render_aot_table calls _header_less_aots without forwarding optional parameter prefix",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        }
+      ]
+    }
+  ]
+}

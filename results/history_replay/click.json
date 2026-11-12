@@ -1,0 +1,122 @@
+{
+  "repository": "click",
+  "head": "9f0bcdf0d868",
+  "commits_replayed": 1020,
+  "horizon_commits": 25,
+  "wall_seconds": 126.0,
+  "commits_changing_production_python": 457,
+  "contract_changing_commits": 115,
+  "contract_changing_commits_silent": 110,
+  "contract_changing_commits_flagged": 5,
+  "local_commits_flagged": 0,
+  "analysis_errors": 0,
+  "flagged_commits": [
+    {
+      "commit": "8d49e146ab8c",
+      "subject": "mark more messages for translation",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "parameter_truthiness_review",
+          "symbol": "pause",
+          "path": "src/click/termui.py",
+          "line": 758,
+          "anchor": "pause",
+          "provenance": "static_ast",
+          "evidence": "new or changed None-default parameter info is tested as a bare truth value",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        },
+        {
+          "detector": "parameter_truthiness_review",
+          "symbol": "pause",
+          "path": "src/click/termui.py",
+          "line": 765,
+          "anchor": "pause",
+          "provenance": "static_ast",
+          "evidence": "new or changed None-default parameter info is tested as a bare truth value",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        }
+      ]
+    },
+    {
+      "commit": "5e08ef168951",
+      "subject": "use positional-only arg instead of `__self`",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "callback_binding_review",
+          "symbol": "Group.result_callback.decorator.function",
+          "path": "src/click/core.py",
+          "line": 1681,
+          "anchor": "Group.result_callback.decorator",
+          "provenance": "static_ast",
+          "evidence": "changed callable function is passed as a value",
+          "resolved_after_commits": 4,
+          "resolved_by": "site_function_edit",
+          "resolving_commit": "525c5f1f284b",
+          "resolving_subject": "update project files"
+        }
+      ]
+    },
+    {
+      "commit": "831c8f0948af",
+      "subject": "Add NoSuchCommand exception with suggestions for misspelled commands (#3228)",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "parameter_truthiness_review",
+          "symbol": "NoSuchCommand.__init__",
+          "path": "src/click/exceptions.py",
+          "line": 267,
+          "anchor": "NoSuchCommand.__init__",
+          "provenance": "static_ast",
+          "evidence": "new or changed None-default parameter possibilities is tested as a bare truth value",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        }
+      ]
+    },
+    {
+      "commit": "684b3f5b5150",
+      "subject": "Add help parameter to arguments",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "parameter_truthiness_review",
+          "symbol": "Argument.__init__",
+          "path": "src/click/core.py",
+          "line": 3498,
+          "anchor": "Argument.__init__",
+          "provenance": "static_ast",
+          "evidence": "new or changed None-default parameter help is tested as a bare truth value",
+          "resolved_after_commits": 1,
+          "resolved_by": "site_function_edit",
+          "resolving_commit": "9f9ae4538cea",
+          "resolving_subject": "Accept ZFS error-message for non-UTF-8 names"
+        }
+      ]
+    },
+    {
+      "commit": "405a5481e4db",
+      "subject": "Move common `help` argument from `Option` and `Argument` to `Parameter`",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "parameter_truthiness_review",
+          "symbol": "Parameter.__init__",
+          "path": "src/click/core.py",
+          "line": 2395,
+          "anchor": "Parameter.__init__",
+          "provenance": "static_ast",
+          "evidence": "new or changed None-default parameter help is tested as a bare truth value",
+          "resolved_after_commits": 1,
+          "resolved_by": "site_function_edit",
+          "resolving_commit": "05f6fd0df4ec",
+          "resolving_subject": "Always return a help record for an `Argument`"
+        }
+      ]
+    }
+  ]
+}

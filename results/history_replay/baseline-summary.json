@@ -1,0 +1,51 @@
+{
+  "totals": {
+    "commits_replayed": 2944,
+    "commits_changing_production_python": 1653,
+    "contract_changing_commits": 464,
+    "contract_changing_commits_silent": 397,
+    "contract_changing_commits_flagged": 67,
+    "local_commits_flagged": 5,
+    "analysis_errors": 0
+  },
+  "sites_by_detector": {
+    "callback_binding_review": {
+      "sites": 28,
+      "open_at_horizon": 10,
+      "site_edit": 18
+    },
+    "delegating_wrapper_review": {
+      "sites": 3,
+      "open_at_horizon": 3
+    },
+    "exception_contract_review": {
+      "sites": 7,
+      "open_at_horizon": 6,
+      "site_edit": 1
+    },
+    "override_signature_review": {
+      "sites": 2,
+      "open_at_horizon": 1,
+      "site_edit": 1
+    },
+    "parameter_sink_review": {
+      "sites": 211,
+      "open_at_horizon": 77,
+      "site_edit": 134
+    },
+    "parameter_truthiness_review": {
+      "sites": 19,
+      "open_at_horizon": 6,
+      "site_edit": 13
+    },
+    "removed_callable_review": {
+      "sites": 182,
+      "open_at_horizon": 3,
+      "site_edit": 179
+    },
+    "state_field_review": {
+      "sites": 5,
+      "site_edit": 5
+    }
+  }
+}
