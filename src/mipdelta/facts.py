@@ -174,6 +174,24 @@ def _value_names(node: ast.AST, *, in_lambda: bool = False) -> tuple[str, ...]:
     return tuple(found)
 
 
+def _adapter_keywords(value: ast.expr) -> list[tuple[str, tuple[str, ...]]]:
+    """Keywords a lambda or functools.partial supplies to the callable it wraps."""
+    rows: list[tuple[str, tuple[str, ...]]] = []
+    if isinstance(value, ast.Lambda):
+        for nested in ast.walk(value.body):
+            if isinstance(nested, ast.Call):
+                nested_chain = dotted(nested.func)
+                if nested_chain:
+                    rows.append((nested_chain[-1], tuple(arg.arg for arg in nested.keywords if arg.arg)))
+    elif isinstance(value, ast.Call):
+        fn_chain = dotted(value.func)
+        if fn_chain and fn_chain[-1] == "partial" and value.args:
+            target_chain = dotted(value.args[0])
+            if target_chain:
+                rows.append((target_chain[-1], tuple(arg.arg for arg in value.keywords if arg.arg)))
+    return rows
+
+
 def _call_fact(
     node: ast.Call,
     path: str,
@@ -183,6 +201,7 @@ def _call_fact(
     result_dereferenced: bool = False,
     enclosing_caught_exceptions: tuple[str, ...] = (),
     result_consumer: ast.AST | None = None,
+    under_broad_except: bool = False,
 ) -> CallFact | None:
     chain = dotted(node.func)
     constructed = None
@@ -222,28 +241,12 @@ def _call_fact(
             vals.extend(_value_names(arg.value))
         else:
             vals.extend(_value_names(arg))
+            callback_wrapped_keywords.extend(_adapter_keywords(arg))
     for kw in node.keywords:
         if kw.arg is None:
             has_kwargs = True
         vals.extend(_value_names(kw.value))
-        if isinstance(kw.value, ast.Lambda):
-            for nested in ast.walk(kw.value.body):
-                if isinstance(nested, ast.Call):
-                    nested_chain = dotted(nested.func)
-                    if nested_chain:
-                        callback_wrapped_keywords.append((
-                            nested_chain[-1],
-                            tuple(arg.arg for arg in nested.keywords if arg.arg),
-                        ))
-        elif isinstance(kw.value, ast.Call):
-            fn_chain = dotted(kw.value.func)
-            if fn_chain and fn_chain[-1] == "partial" and kw.value.args:
-                target_chain = dotted(kw.value.args[0])
-                if target_chain:
-                    callback_wrapped_keywords.append((
-                        target_chain[-1],
-                        tuple(arg.arg for arg in kw.value.keywords if arg.arg),
-                    ))
+        callback_wrapped_keywords.extend(_adapter_keywords(kw.value))
     pos_count = sum(1 for arg in node.args if not isinstance(arg, ast.Starred))
     return CallFact(
         path,
@@ -265,6 +268,7 @@ def _call_fact(
         enclosing_caught_exceptions,
         node,
         result_consumer,
+        under_broad_except,
     )
 
 
@@ -320,6 +324,7 @@ class _FunctionScanner(_CallContextScanner):
         self.dereferenced_vars: set[str] = set()
         self.guarded_vars: set[str] = set()
         self.call_caught_exceptions: dict[int, tuple[str, ...]] = {}
+        self.calls_under_broad_except: set[int] = set()
         self._try_caught_stack: list[tuple[str, ...]] = []
 
     def visit_FunctionDef(self, node: ast.FunctionDef) -> None:
@@ -450,7 +455,9 @@ class _FunctionScanner(_CallContextScanner):
             and node.func.attr in {"append", "extend", "add", "update", "insert", "remove", "discard", "clear"}
         ):
             self.writes.add(node.func.value.attr)
-        if self._try_caught_stack and None not in self._try_caught_stack:
+        if None in self._try_caught_stack:
+            self.calls_under_broad_except.add(id(node))
+        elif self._try_caught_stack:
             merged: set[str] = set()
             for c in self._try_caught_stack:
                 if c:
@@ -609,6 +616,7 @@ class _ModuleScanner(_CallContextScanner):
                 result_dereferenced=(cid in local.dereferenced_calls),
                 enclosing_caught_exceptions=local.call_caught_exceptions.get(cid, ()),
                 result_consumer=local._result_consumers.get(cid),
+                under_broad_except=(cid in local.calls_under_broad_except),
             )
             if row:
                 own_calls_list.append(row)

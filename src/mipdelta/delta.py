@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import builtins
 from typing import Iterable, Mapping
 
 from .cache import FactCache
@@ -62,13 +63,152 @@ def _has_kwarg(function: FunctionFact | None) -> bool:
     return bool(function and any(p.kind == "kwarg" for p in function.parameters))
 
 
-def _field_stem(name: str) -> str:
-    name = name.lstrip("_")
-    for suffix in ("_minimum_levels", "_thresholds", "_limits", "_levels", "_policies"):
-        if name.endswith(suffix):
-            name = name[: -len(suffix)]
+def _field_tokens(name: str) -> tuple[str, ...]:
+    return tuple(
+        token[:-1] if len(token) > 3 and token.endswith("s") else token
+        for token in name.strip("_").lower().split("_")
+        if token
+    )
+
+
+def _is_plural(name: str) -> bool:
+    return name.rstrip("_").lower().endswith("s")
+
+
+def _fields_share_stem(added: str, existing: str) -> bool:
+    """Two attributes look like parallel state: limits/limit, or observers/_observer_minimum_levels."""
+    first, second = _field_tokens(added), _field_tokens(existing)
+    if not first or not second:
+        return False
+    if first == second:
+        return True
+    shorter, longer = sorted((first, second), key=len)
+    # A longer name extending a collection's name is treated as a parallel collection.
+    return longer[: len(shorter)] == shorter and _is_plural(added) and _is_plural(existing)
+
+
+_BUILTIN_EXCEPTION_ANCESTORS = {
+    name: frozenset(base.__name__ for base in value.__mro__ if base is not object)
+    for name, value in vars(builtins).items()
+    if isinstance(value, type) and issubclass(value, BaseException)
+}
+_MAX_EXCEPTION_HOPS = 2
+
+
+def _exception_ancestors(name: str, index: MutableResolutionIndex) -> tuple[frozenset[str], bool]:
+    """Class names an exception is an instance of, and whether every base was resolved."""
+    seen: set[str] = set()
+    resolved = True
+    pending = [name]
+    while pending:
+        current = pending.pop()
+        if current in seen:
+            continue
+        seen.add(current)
+        classes = index.classes_by_short.get(current)
+        if classes:
+            # A workspace class shadows a builtin of the same name.
+            for cls in classes.values():
+                pending.extend(base.split(".")[-1] for base in cls.bases)
+        elif current in _BUILTIN_EXCEPTION_ANCESTORS:
+            seen |= _BUILTIN_EXCEPTION_ANCESTORS[current]
+        else:
+            resolved = False
+    return frozenset(seen), resolved
+
+
+def _uncaught_exceptions(
+    raised: Iterable[str], caught: Iterable[str], index: MutableResolutionIndex
+) -> list[str]:
+    """Raised names that no handler accepts. Abstains where the class relationship is unknown."""
+    handlers: set[str] = set()
+    handlers_in_workspace = True
+    for name in caught:
+        if name in index.classes_by_short:
+            handlers.add(name)
+            continue
+        handlers_in_workspace = False
+        # IOError and EnvironmentError are aliases whose class name is OSError.
+        handlers.add(getattr(builtins, name).__name__ if name in _BUILTIN_EXCEPTION_ANCESTORS else name)
+    uncaught = []
+    for name in sorted(raised):
+        ancestors, resolved = _exception_ancestors(name, index)
+        if ancestors & handlers:
+            continue
+        if not resolved and not handlers_in_workspace:
+            # An external exception may derive from an external or builtin handler class.
+            continue
+        uncaught.append(name)
+    return uncaught
+
+
+def _exception_contract_findings(
+    old: FunctionFact, new: FunctionFact, index: MutableResolutionIndex
+) -> tuple[list[Finding], int]:
+    """Narrow handlers that a newly raised exception passes, at the call and up to two callers above it."""
+    added = new.raised_exceptions - old.raised_exceptions
+    if not added:
+        return [], 0
+    added_params = set(_parameter_map(new)) - set(_parameter_map(old))
+    findings: list[Finding] = []
+    inspected = 0
+    visited = {(new.path, new.qualname)}
+    frontier: list[tuple[FunctionFact, frozenset[str]]] = [(new, frozenset(added))]
+    for hop in range(_MAX_EXCEPTION_HOPS + 1):
+        next_frontier: list[tuple[FunctionFact, frozenset[str]]] = []
+        for target, exceptions in frontier:
+            for caller_facts, call in index.calls_for_callee(target.name):
+                inspected += 1
+                if call.under_broad_except:
+                    continue
+                resolved = resolve_call_with_provenance(call, caller_facts, index)
+                provenance = next(
+                    (prov for item, prov in resolved if item.path == target.path and item.qualname == target.qualname),
+                    None,
+                )
+                if provenance is None:
+                    continue
+                if hop and (provenance != "static_ast" or len(resolved) != 1):
+                    # Propagation follows only calls with one source-resolved target.
+                    continue
+                effective = set(exceptions)
+                if hop == 0 and added_params and not (added_params & set(call.keyword_names)) and not call.has_kwargs:
+                    effective -= {"ValueError", "TypeError"}
+                if not effective:
+                    continue
+                caught = call.enclosing_caught_exceptions
+                uncaught = _uncaught_exceptions(effective, caught, index) if caught else sorted(effective)
+                if not uncaught:
+                    continue
+                if caught:
+                    names = ", ".join(uncaught)
+                    handlers = ", ".join(caught)
+                    detail = (
+                        f"{new.qualname} newly raises {names}, bypassing caller try/except ({handlers})"
+                        if hop == 0
+                        else f"{new.qualname} newly raises {names}, which propagates through "
+                        f"{target.qualname} past caller try/except ({handlers})"
+                    )
+                    findings.append(
+                        Finding(
+                            "exception_contract_review",
+                            new.qualname,
+                            caller_facts.path,
+                            call.line,
+                            call.line,
+                            "candidate",
+                            (detail,),
+                            provenance,
+                        )
+                    )
+                owner = caller_facts.functions.get(call.owner_function or "")
+                if hop < _MAX_EXCEPTION_HOPS and owner is not None and (owner.path, owner.qualname) not in visited:
+                    visited.add((owner.path, owner.qualname))
+                    next_frontier.append((owner, frozenset(uncaught)))
+        frontier = next_frontier
+        if not frontier:
             break
-    return name[:-1] if name.endswith("s") else name
+    return findings, inspected
 
 
 def deduplicate_findings(findings: Iterable[Finding]) -> list[Finding]:
@@ -419,7 +559,7 @@ def analyze_changed_files_in_index(
                         for field in added_fields
                         for read in sibling.field_reads
                         if field != read
-                        and _field_stem(field) == _field_stem(read)
+                        and _fields_share_stem(field, read)
                         and read not in sibling.field_writes
                         and field not in sibling.field_reads
                         and field not in sibling.field_writes
@@ -498,50 +638,12 @@ def analyze_changed_files_in_index(
                             )
                         )
 
-        # 4c. Exception contract review: newly raised exception type bypassing narrow caller try/except handler
-        if old is not None:
-            added_raises = new.raised_exceptions - old.raised_exceptions
-            if added_raises:
-                cross_file_triggered = True
-                added_param_names = set(_parameter_map(new)) - set(_parameter_map(old))
-                for caller_facts, call in index.calls_for_callee(new.name):
-                    candidate_calls_inspected += 1
-                    if not call.enclosing_caught_exceptions:
-                        continue
-                    resolved = resolve_call_with_provenance(call, caller_facts, index)
-                    matched_prov = next(
-                        (prov for item, prov in resolved if item.path == new.path and item.qualname == new.qualname),
-                        None,
-                    )
-                    if matched_prov is None:
-                        continue
-                    effective_raises = set(added_raises)
-                    if added_param_names and not (added_param_names & set(call.keyword_names)) and not call.has_kwargs:
-                        effective_raises -= {"ValueError", "TypeError"}
-                    if not effective_raises:
-                        continue
-                    caught_set = set(call.enclosing_caught_exceptions)
-                    for caught_name in list(caught_set):
-                        for sub in index.subclasses_of(caught_name):
-                            caught_set.add(sub.name)
-                    uncaught = sorted(effective_raises - caught_set)
-                    if uncaught:
-                        exc_list = ", ".join(uncaught)
-                        caught_list = ", ".join(call.enclosing_caught_exceptions)
-                        findings.append(
-                            Finding(
-                                "exception_contract_review",
-                                new.qualname,
-                                caller_facts.path,
-                                call.line,
-                                call.line,
-                                "candidate",
-                                (
-                                    f"{new.qualname} newly raises {exc_list}, bypassing caller try/except ({caught_list})",
-                                ),
-                                matched_prov,
-                            )
-                        )
+        # 4c. Exception contract review: a newly raised exception passes a narrow caller handler
+        if old is not None and new.raised_exceptions - old.raised_exceptions:
+            cross_file_triggered = True
+            exception_findings, inspected = _exception_contract_findings(old, new, index)
+            findings.extend(exception_findings)
+            candidate_calls_inspected += inspected
 
     # 5. Optional parameter forwarding: tightened v2 delegating-wrapper check (vs legacy all-callers mode)
     for target, parameter in added_optional_parameters:

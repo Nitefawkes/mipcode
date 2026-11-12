@@ -75,6 +75,7 @@ class CallFact:
     enclosing_caught_exceptions: tuple[str, ...] = ()
     _ast_node: ast.Call | None = field(default=None, repr=False, compare=False)
     _result_consumer: ast.AST | None = field(default=None, repr=False, compare=False)
+    under_broad_except: bool = False
 
 
 @dataclass
@@ -169,3 +170,5 @@ class WriteDeltaResult:
     advisory_utf8_bytes: int
     cpu_seconds: float
     wall_seconds: float
+    discharged_findings: tuple[Finding, ...] = ()
+    open_obligations: int = 0
