@@ -1,0 +1,632 @@
+{
+  "schema": "mip-delta recall-mutation corpus v1",
+  "materialization": "Tree M is the tree of `commit` with the file at `stale_path` replaced by the blob `stale_blob` (the parent's version of that file). Every other path is exactly as in `commit`. Line numbers of sites refer to the `stale_blob` text, which is also the text of that file in M.",
+  "repository": "rich",
+  "head": "364ce24a3be6bb1e525a952c935b2532f06f7c7e",
+  "limit": 800,
+  "opt_in_detectors": [],
+  "wall_seconds": 68.9,
+  "counts": {
+    "changed_definitions_removed": 11,
+    "changed_definitions_signature": 42,
+    "commits_changing_production_python": 395,
+    "commits_examined": 800,
+    "commits_with_changed_definitions": 32,
+    "commits_with_mutations": 4,
+    "mutations": 4,
+    "sites": 5
+  },
+  "mutations": [
+    {
+      "id": "rich:5104bf283e7c:rich/logging.py",
+      "repository": "rich",
+      "commit": "5104bf283e7ceab3e28e9915bb3231ef064113fc",
+      "parent": "2eb5cbfd46b41617a4b3a906955bcda17d88fb75",
+      "subject": "add code_width in traceback",
+      "stale_path": "rich/logging.py",
+      "stale_blob": "96859934e9a3e9b5b4b43329a9323edbf6042cf8",
+      "commit_blob": "2e97fa164ff47bc5eaa55eb239f4786214d784cb",
+      "other_changed_python_paths": [
+        "rich/traceback.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "rich/traceback.py",
+            "qualname": "Traceback.from_exception",
+            "name": "from_exception",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 293,
+            "new_line": 299,
+            "is_method": true,
+            "old_parameters": "(cls, exc_type, exc_value, traceback, *, width=..., extra_lines=..., theme=..., word_wrap=..., show_locals=..., locals_max_length=..., locals_max_string=..., locals_hide_dunder=..., locals_hide_sunder=..., indent_guides=..., suppress=..., max_frames=...)",
+            "new_parameters": "(cls, exc_type, exc_value, traceback, *, width=..., code_width=..., extra_lines=..., theme=..., word_wrap=..., show_locals=..., locals_max_length=..., locals_max_string=..., locals_hide_dunder=..., locals_hide_sunder=..., indent_guides=..., suppress=..., max_frames=...)",
+            "old_parameter_list": [
+              [
+                "cls",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "exc_type",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "exc_value",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "traceback",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "width",
+                "keyword_only",
+                true
+              ],
+              [
+                "extra_lines",
+                "keyword_only",
+                true
+              ],
+              [
+                "theme",
+                "keyword_only",
+                true
+              ],
+              [
+                "word_wrap",
+                "keyword_only",
+                true
+              ],
+              [
+                "show_locals",
+                "keyword_only",
+                true
+              ],
+              [
+                "locals_max_length",
+                "keyword_only",
+                true
+              ],
+              [
+                "locals_max_string",
+                "keyword_only",
+                true
+              ],
+              [
+                "locals_hide_dunder",
+                "keyword_only",
+                true
+              ],
+              [
+                "locals_hide_sunder",
+                "keyword_only",
+                true
+              ],
+              [
+                "indent_guides",
+                "keyword_only",
+                true
+              ],
+              [
+                "suppress",
+                "keyword_only",
+                true
+              ],
+              [
+                "max_frames",
+                "keyword_only",
+                true
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "cls",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "exc_type",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "exc_value",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "traceback",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "width",
+                "keyword_only",
+                true
+              ],
+              [
+                "code_width",
+                "keyword_only",
+                true
+              ],
+              [
+                "extra_lines",
+                "keyword_only",
+                true
+              ],
+              [
+                "theme",
+                "keyword_only",
+                true
+              ],
+              [
+                "word_wrap",
+                "keyword_only",
+                true
+              ],
+              [
+                "show_locals",
+                "keyword_only",
+                true
+              ],
+              [
+                "locals_max_length",
+                "keyword_only",
+                true
+              ],
+              [
+                "locals_max_string",
+                "keyword_only",
+                true
+              ],
+              [
+                "locals_hide_dunder",
+                "keyword_only",
+                true
+              ],
+              [
+                "locals_hide_sunder",
+                "keyword_only",
+                true
+              ],
+              [
+                "indent_guides",
+                "keyword_only",
+                true
+              ],
+              [
+                "suppress",
+                "keyword_only",
+                true
+              ],
+              [
+                "max_frames",
+                "keyword_only",
+                true
+              ]
+            ]
+          },
+          "line": 138,
+          "end_line": 150,
+          "call_line": 138,
+          "call_text": "Traceback.from_exception(\n                exc_type,\n                exc_value,\n                exc_traceback,\n                width=self.tracebacks_width,\n                extra_lines=self.tracebacks_extra_lines,\n                theme=self.tracebacks_theme,\n                word_wrap=self.tracebacks_word_wrap,\n                show_locals=self.tracebacks_show_locals,\n                locals_max_length",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "RichHandler.emit",
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "rich:59b1aca63bf9:rich/_wrap.py",
+      "repository": "rich",
+      "commit": "59b1aca63bf9ec69ada93af960d8b2a7bd920477",
+      "parent": "b32e42bda00c6275d4e18dcbe298268094359549",
+      "subject": "Fix double-width characters disappearing when wrapping (#3180)",
+      "stale_path": "rich/_wrap.py",
+      "stale_blob": "c45f193f74ad7385c84f3b935663198415cfaa4b",
+      "commit_blob": "2e94ff6f43adfb6a6900a3a2147781e91220b189",
+      "other_changed_python_paths": [
+        "rich/cells.py",
+        "tests/test_cells.py",
+        "tests/test_text.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "rich/cells.py",
+            "qualname": "chop_cells",
+            "name": "chop_cells",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 124,
+            "new_line": 124,
+            "is_method": false,
+            "old_parameters": "(text, max_size, position=...)",
+            "new_parameters": "(text, width)",
+            "old_parameter_list": [
+              [
+                "text",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "max_size",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "position",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "text",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "width",
+                "positional_or_keyword",
+                false
+              ]
+            ]
+          },
+          "line": 30,
+          "end_line": 30,
+          "call_line": 30,
+          "call_text": "chop_cells(word, max_size=width, position=0)",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "divide_line",
+          "binding": "breaking",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "call_signature_review"
+          ],
+          "site_hit_symbols": [
+            "chop_cells"
+          ],
+          "file_hit_detectors": [
+            "call_signature_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "rich/cells.py",
+            "qualname": "chop_cells",
+            "name": "chop_cells",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 124,
+            "new_line": 124,
+            "is_method": false,
+            "old_parameters": "(text, max_size, position=...)",
+            "new_parameters": "(text, width)",
+            "old_parameter_list": [
+              [
+                "text",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "max_size",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "position",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "text",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "width",
+                "positional_or_keyword",
+                false
+              ]
+            ]
+          },
+          "line": 56,
+          "end_line": 56,
+          "call_line": 56,
+          "call_text": "chop_cells(\"abcdefghijklmnopqrstuvwxyz\", 10, position=2)",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "",
+          "binding": "breaking",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "call_signature_review"
+          ],
+          "site_hit_symbols": [
+            "chop_cells"
+          ],
+          "file_hit_detectors": [
+            "call_signature_review"
+          ]
+        }
+      ],
+      "new_findings_in_stale_file": [
+        {
+          "detector": "call_signature_review",
+          "symbol": "chop_cells",
+          "path": "rich/_wrap.py",
+          "line": 30,
+          "anchor": "divide_line"
+        },
+        {
+          "detector": "call_signature_review",
+          "symbol": "chop_cells",
+          "path": "rich/_wrap.py",
+          "line": 56,
+          "anchor": ""
+        }
+      ],
+      "collateral": []
+    },
+    {
+      "id": "rich:63b27f7afe3c:rich/traceback.py",
+      "repository": "rich",
+      "commit": "63b27f7afe3c013b1489bd900f9b4e35faf1a56f",
+      "parent": "9499295751de4c7e2d3349ed7d4cccbc81169903",
+      "subject": "style before",
+      "stale_path": "rich/traceback.py",
+      "stale_blob": "2bcce7d387fe56b86e184e9cac5c8b61c8162b69",
+      "commit_blob": "2d49b6f0a5de5189da871d7a21b3f70cac1f6523",
+      "other_changed_python_paths": [
+        "rich/syntax.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "rich/syntax.py",
+            "qualname": "Syntax.stylize_range",
+            "name": "stylize_range",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 537,
+            "new_line": 537,
+            "is_method": true,
+            "old_parameters": "(self, style, start, end, before=...)",
+            "new_parameters": "(self, style, start, end, style_before=...)",
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "style",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "start",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "end",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "before",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "style",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "start",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "end",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "style_before",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 750,
+          "end_line": 755,
+          "call_line": 750,
+          "call_text": "syntax.stylize_range(\n                            style=\"traceback.error_range\",\n                            start=start,\n                            end=end,\n                            before=True,\n                        )",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "Traceback._render_stack",
+          "binding": "breaking",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "rich:e8e797d19d84:rich/traceback.py",
+      "repository": "rich",
+      "commit": "e8e797d19d84fc1c580e90e84c00bf6747b6a0d7",
+      "parent": "f82a399d584092f0195d0f68add0c03531e02c84",
+      "subject": "feat: Traceback - Expose more locals rendering options",
+      "stale_path": "rich/traceback.py",
+      "stale_blob": "c32baaca128c8ae032b9f8e9c882d4c63ed99e9a",
+      "commit_blob": "66eaecaae94bd7c41bf2d901187d389e323969dc",
+      "other_changed_python_paths": [
+        "rich/scope.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "rich/scope.py",
+            "qualname": "render_scope",
+            "name": "render_scope",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 14,
+            "new_line": 14,
+            "is_method": false,
+            "old_parameters": "(scope, *, title=..., sort_keys=..., indent_guides=..., max_length=..., max_string=...)",
+            "new_parameters": "(scope, *, title=..., sort_keys=..., indent_guides=..., max_length=..., max_string=..., max_depth=..., overflow=...)",
+            "old_parameter_list": [
+              [
+                "scope",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "title",
+                "keyword_only",
+                true
+              ],
+              [
+                "sort_keys",
+                "keyword_only",
+                true
+              ],
+              [
+                "indent_guides",
+                "keyword_only",
+                true
+              ],
+              [
+                "max_length",
+                "keyword_only",
+                true
+              ],
+              [
+                "max_string",
+                "keyword_only",
+                true
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "scope",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "title",
+                "keyword_only",
+                true
+              ],
+              [
+                "sort_keys",
+                "keyword_only",
+                true
+              ],
+              [
+                "indent_guides",
+                "keyword_only",
+                true
+              ],
+              [
+                "max_length",
+                "keyword_only",
+                true
+              ],
+              [
+                "max_string",
+                "keyword_only",
+                true
+              ],
+              [
+                "max_depth",
+                "keyword_only",
+                true
+              ],
+              [
+                "overflow",
+                "keyword_only",
+                true
+              ]
+            ]
+          },
+          "line": 751,
+          "end_line": 757,
+          "call_line": 751,
+          "call_text": "render_scope(\n                    frame.locals,\n                    title=\"locals\",\n                    indent_guides=self.indent_guides,\n                    max_length=self.locals_max_length,\n                    max_string=self.locals_max_string,\n                )",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "Traceback._render_stack.render_locals",
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    }
+  ]
+}

@@ -1,0 +1,1639 @@
+{
+  "schema": "mip-delta recall-mutation corpus v1",
+  "materialization": "Tree M is the tree of `commit` with the file at `stale_path` replaced by the blob `stale_blob` (the parent's version of that file). Every other path is exactly as in `commit`. Line numbers of sites refer to the `stale_blob` text, which is also the text of that file in M.",
+  "repository": "attrs",
+  "head": "9d9f94a043de7fc4012459853a4ed597a5577855",
+  "limit": 800,
+  "opt_in_detectors": [],
+  "wall_seconds": 51.3,
+  "counts": {
+    "changed_definitions_removed": 28,
+    "changed_definitions_signature": 21,
+    "commits_changing_production_python": 184,
+    "commits_examined": 800,
+    "commits_with_changed_definitions": 23,
+    "commits_with_mutations": 5,
+    "definitions_skipped_duplicate_qualname": 2,
+    "mutations": 7,
+    "sites": 17
+  },
+  "mutations": [
+    {
+      "id": "attrs:e18b5f340a79:src/attr/_funcs.py",
+      "repository": "attrs",
+      "commit": "e18b5f340a793432312a5f7e709b99439520d98e",
+      "parent": "a22e98c6cb57f7b9c1b84214ed59509264861475",
+      "subject": "Remove various obsolete _compat helpers (#941)",
+      "stale_path": "src/attr/_funcs.py",
+      "stale_blob": "69a3cf6d8c6a21d520a2bbc1978ccff9a4f6e120",
+      "commit_blob": "a982d7cb562e0a182f39d63fb23e0ef7eda096d8",
+      "other_changed_python_paths": [
+        "src/attr/_cmp.py",
+        "src/attr/_compat.py",
+        "src/attr/_make.py",
+        "src/attr/filters.py",
+        "tests/test_compat.py",
+        "tests/test_funcs.py",
+        "tests/test_functional.py",
+        "tests/test_validators.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "src/attr/_compat.py",
+            "qualname": "iteritems",
+            "name": "iteritems",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 49,
+            "new_line": null,
+            "is_method": false,
+            "old_parameters": "(d)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "d",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 109,
+          "end_line": 109,
+          "call_line": 109,
+          "call_text": "iteritems(v)",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "asdict",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "removed_callable_review"
+          ],
+          "site_hit_symbols": [
+            "iteritems"
+          ],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "src/attr/_compat.py",
+            "qualname": "iteritems",
+            "name": "iteritems",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 49,
+            "new_line": null,
+            "is_method": false,
+            "old_parameters": "(d)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "d",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 181,
+          "end_line": 181,
+          "call_line": 181,
+          "call_text": "iteritems(val)",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "_asdict_anything",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "removed_callable_review"
+          ],
+          "site_hit_symbols": [
+            "iteritems"
+          ],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "src/attr/_compat.py",
+            "qualname": "iteritems",
+            "name": "iteritems",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 49,
+            "new_line": null,
+            "is_method": false,
+            "old_parameters": "(d)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "d",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 280,
+          "end_line": 280,
+          "call_line": 280,
+          "call_text": "iteritems(v)",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "astuple",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "removed_callable_review"
+          ],
+          "site_hit_symbols": [
+            "iteritems"
+          ],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "src/attr/_compat.py",
+            "qualname": "iteritems",
+            "name": "iteritems",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 49,
+            "new_line": null,
+            "is_method": false,
+            "old_parameters": "(d)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "d",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 331,
+          "end_line": 331,
+          "call_line": 331,
+          "call_text": "iteritems(changes)",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "assoc",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "removed_callable_review"
+          ],
+          "site_hit_symbols": [
+            "iteritems"
+          ],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        }
+      ],
+      "new_findings_in_stale_file": [
+        {
+          "detector": "removed_callable_review",
+          "symbol": "iteritems",
+          "path": "src/attr/_funcs.py",
+          "line": 109,
+          "anchor": "asdict"
+        },
+        {
+          "detector": "removed_callable_review",
+          "symbol": "iteritems",
+          "path": "src/attr/_funcs.py",
+          "line": 181,
+          "anchor": "_asdict_anything"
+        },
+        {
+          "detector": "removed_callable_review",
+          "symbol": "iteritems",
+          "path": "src/attr/_funcs.py",
+          "line": 280,
+          "anchor": "astuple"
+        },
+        {
+          "detector": "removed_callable_review",
+          "symbol": "iteritems",
+          "path": "src/attr/_funcs.py",
+          "line": 331,
+          "anchor": "assoc"
+        }
+      ],
+      "collateral": []
+    },
+    {
+      "id": "attrs:e18b5f340a79:src/attr/_make.py",
+      "repository": "attrs",
+      "commit": "e18b5f340a793432312a5f7e709b99439520d98e",
+      "parent": "a22e98c6cb57f7b9c1b84214ed59509264861475",
+      "subject": "Remove various obsolete _compat helpers (#941)",
+      "stale_path": "src/attr/_make.py",
+      "stale_blob": "ab3f0bedc331aa94934dbdb4ac82409543907090",
+      "commit_blob": "4d1afe3fc8a445e7244b48f60512f453d4720361",
+      "other_changed_python_paths": [
+        "src/attr/_cmp.py",
+        "src/attr/_compat.py",
+        "src/attr/_funcs.py",
+        "src/attr/filters.py",
+        "tests/test_compat.py",
+        "tests/test_funcs.py",
+        "tests/test_functional.py",
+        "tests/test_validators.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "src/attr/_compat.py",
+            "qualname": "metadata_proxy",
+            "name": "metadata_proxy",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 56,
+            "new_line": null,
+            "is_method": false,
+            "old_parameters": "(d)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "d",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 51,
+          "end_line": 51,
+          "call_line": 51,
+          "call_text": "metadata_proxy({})",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "removed_callable_review"
+          ],
+          "site_hit_symbols": [
+            "metadata_proxy"
+          ],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "src/attr/_compat.py",
+            "qualname": "iteritems",
+            "name": "iteritems",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 49,
+            "new_line": null,
+            "is_method": false,
+            "old_parameters": "(d)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "d",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 507,
+          "end_line": 507,
+          "call_line": 507,
+          "call_text": "iteritems(these)",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "_transform_attrs",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "removed_callable_review"
+          ],
+          "site_hit_symbols": [
+            "iteritems"
+          ],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "src/attr/_compat.py",
+            "qualname": "iteritems",
+            "name": "iteritems",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 49,
+            "new_line": null,
+            "is_method": false,
+            "old_parameters": "(d)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "d",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 798,
+          "end_line": 798,
+          "call_line": 798,
+          "call_text": "iteritems(self._cls_dict)",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "_ClassBuilder._create_slots_class",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "removed_callable_review"
+          ],
+          "site_hit_symbols": [
+            "iteritems"
+          ],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "src/attr/_compat.py",
+            "qualname": "iteritems",
+            "name": "iteritems",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 49,
+            "new_line": null,
+            "is_method": false,
+            "old_parameters": "(d)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "d",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 853,
+          "end_line": 853,
+          "call_line": 853,
+          "call_text": "iteritems(existing_slots)",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "_ClassBuilder._create_slots_class",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "removed_callable_review"
+          ],
+          "site_hit_symbols": [
+            "iteritems"
+          ],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "src/attr/_compat.py",
+            "qualname": "isclass",
+            "name": "isclass",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 42,
+            "new_line": null,
+            "is_method": false,
+            "old_parameters": "(klass)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "klass",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 1991,
+          "end_line": 1991,
+          "call_line": 1991,
+          "call_text": "isclass(cls)",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "fields",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "removed_callable_review"
+          ],
+          "site_hit_symbols": [
+            "isclass"
+          ],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "src/attr/_compat.py",
+            "qualname": "isclass",
+            "name": "isclass",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 42,
+            "new_line": null,
+            "is_method": false,
+            "old_parameters": "(klass)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "klass",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 2019,
+          "end_line": 2019,
+          "call_line": 2019,
+          "call_text": "isclass(cls)",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "fields_dict",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "removed_callable_review"
+          ],
+          "site_hit_symbols": [
+            "isclass"
+          ],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "src/attr/_compat.py",
+            "qualname": "metadata_proxy",
+            "name": "metadata_proxy",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 56,
+            "new_line": null,
+            "is_method": false,
+            "old_parameters": "(d)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "d",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 2545,
+          "end_line": 2545,
+          "call_line": 2545,
+          "call_text": "metadata_proxy(metadata)",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "Attribute.__init__",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "removed_callable_review"
+          ],
+          "site_hit_symbols": [
+            "metadata_proxy"
+          ],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "src/attr/_compat.py",
+            "qualname": "metadata_proxy",
+            "name": "metadata_proxy",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 56,
+            "new_line": null,
+            "is_method": false,
+            "old_parameters": "(d)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "d",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 2631,
+          "end_line": 2631,
+          "call_line": 2631,
+          "call_text": "metadata_proxy(value)",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "Attribute._setattrs",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "removed_callable_review"
+          ],
+          "site_hit_symbols": [
+            "metadata_proxy"
+          ],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        }
+      ],
+      "new_findings_in_stale_file": [
+        {
+          "detector": "removed_callable_review",
+          "symbol": "metadata_proxy",
+          "path": "src/attr/_make.py",
+          "line": 51,
+          "anchor": ""
+        },
+        {
+          "detector": "removed_callable_review",
+          "symbol": "iteritems",
+          "path": "src/attr/_make.py",
+          "line": 507,
+          "anchor": "_transform_attrs"
+        },
+        {
+          "detector": "removed_callable_review",
+          "symbol": "iteritems",
+          "path": "src/attr/_make.py",
+          "line": 798,
+          "anchor": "_ClassBuilder._create_slots_class"
+        },
+        {
+          "detector": "removed_callable_review",
+          "symbol": "iteritems",
+          "path": "src/attr/_make.py",
+          "line": 853,
+          "anchor": "_ClassBuilder._create_slots_class"
+        },
+        {
+          "detector": "removed_callable_review",
+          "symbol": "isclass",
+          "path": "src/attr/_make.py",
+          "line": 1991,
+          "anchor": "fields"
+        },
+        {
+          "detector": "removed_callable_review",
+          "symbol": "isclass",
+          "path": "src/attr/_make.py",
+          "line": 2019,
+          "anchor": "fields_dict"
+        },
+        {
+          "detector": "removed_callable_review",
+          "symbol": "metadata_proxy",
+          "path": "src/attr/_make.py",
+          "line": 2545,
+          "anchor": "Attribute.__init__"
+        },
+        {
+          "detector": "removed_callable_review",
+          "symbol": "metadata_proxy",
+          "path": "src/attr/_make.py",
+          "line": 2631,
+          "anchor": "Attribute._setattrs"
+        }
+      ],
+      "collateral": []
+    },
+    {
+      "id": "attrs:e18b5f340a79:src/attr/filters.py",
+      "repository": "attrs",
+      "commit": "e18b5f340a793432312a5f7e709b99439520d98e",
+      "parent": "a22e98c6cb57f7b9c1b84214ed59509264861475",
+      "subject": "Remove various obsolete _compat helpers (#941)",
+      "stale_path": "src/attr/filters.py",
+      "stale_blob": "e7432e4a8d9135a984c36f0b8034d384128a365a",
+      "commit_blob": "baa25e946528defd865c1bff849612b96a3a681d",
+      "other_changed_python_paths": [
+        "src/attr/_cmp.py",
+        "src/attr/_compat.py",
+        "src/attr/_funcs.py",
+        "src/attr/_make.py",
+        "tests/test_compat.py",
+        "tests/test_funcs.py",
+        "tests/test_functional.py",
+        "tests/test_validators.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "src/attr/_compat.py",
+            "qualname": "isclass",
+            "name": "isclass",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 42,
+            "new_line": null,
+            "is_method": false,
+            "old_parameters": "(klass)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "klass",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 17,
+          "end_line": 17,
+          "call_line": 17,
+          "call_text": "isclass(cls)",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "_split_what",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "removed_callable_review"
+          ],
+          "site_hit_symbols": [
+            "isclass"
+          ],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        }
+      ],
+      "new_findings_in_stale_file": [
+        {
+          "detector": "removed_callable_review",
+          "symbol": "isclass",
+          "path": "src/attr/filters.py",
+          "line": 17,
+          "anchor": "_split_what"
+        }
+      ],
+      "collateral": []
+    },
+    {
+      "id": "attrs:ee3ecb112f6a:src/attr/_next_gen.py",
+      "repository": "attrs",
+      "commit": "ee3ecb112f6af7f131a518058b2d0a7793edaa06",
+      "parent": "69aca6c130d98dacc31888607fa62fd28004cc2b",
+      "subject": "Add Attribute.alias (#950)",
+      "stale_path": "src/attr/_next_gen.py",
+      "stale_blob": "260519f1c2f9376b29f80245ee44d0aa89ea849d",
+      "commit_blob": "79e8a44dc6128f06ad5395b795afe110a59f9e0e",
+      "other_changed_python_paths": [
+        "src/attr/_funcs.py",
+        "src/attr/_make.py",
+        "tests/test_functional.py",
+        "tests/test_hooks.py",
+        "tests/test_make.py",
+        "tests/typing_example.py",
+        "tests/utils.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "src/attr/_make.py",
+            "qualname": "attrib",
+            "name": "attrib",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 89,
+            "new_line": 89,
+            "is_method": false,
+            "old_parameters": "(default=..., validator=..., repr=..., cmp=..., hash=..., init=..., metadata=..., type=..., converter=..., factory=..., kw_only=..., eq=..., order=..., on_setattr=...)",
+            "new_parameters": "(default=..., validator=..., repr=..., cmp=..., hash=..., init=..., metadata=..., type=..., converter=..., factory=..., kw_only=..., eq=..., order=..., on_setattr=..., alias=...)",
+            "old_parameter_list": [
+              [
+                "default",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "validator",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "repr",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "cmp",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "hash",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "init",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "metadata",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "type",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "converter",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "factory",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "kw_only",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "eq",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "order",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "on_setattr",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "default",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "validator",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "repr",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "cmp",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "hash",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "init",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "metadata",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "type",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "converter",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "factory",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "kw_only",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "eq",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "order",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "on_setattr",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "alias",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 179,
+          "end_line": 192,
+          "call_line": 179,
+          "call_text": "attrib(\n        default=default,\n        validator=validator,\n        repr=repr,\n        hash=hash,\n        init=init,\n        metadata=metadata,\n        converter=converter,\n        factory=factory,\n        kw_only=kw_only,\n        eq=eq,\n        order=order,\n        on_setattr=on_setattr,\n    )",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "field",
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "attrs:0f6a9b475349:src/attr/_next_gen.py",
+      "repository": "attrs",
+      "commit": "0f6a9b47534912189db1200aeb7c9fb19348311e",
+      "parent": "67dc8cc261a5ef64f576ce73f2281cc9021d8fb4",
+      "subject": "Add unsafe_hash alias for class-wide hash (#1065)",
+      "stale_path": "src/attr/_next_gen.py",
+      "stale_blob": "79e8a44dc6128f06ad5395b795afe110a59f9e0e",
+      "commit_blob": "c59d8486a089a339ce7ca7b9a49f141dc84f61cd",
+      "other_changed_python_paths": [
+        "docs/conf.py",
+        "src/attr/_make.py",
+        "tests/dataclass_transform_example.py",
+        "tests/test_functional.py",
+        "tests/typing_example.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "src/attr/_make.py",
+            "qualname": "attrs",
+            "name": "attrs",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 1196,
+            "new_line": 1196,
+            "is_method": false,
+            "old_parameters": "(maybe_cls=..., these=..., repr_ns=..., repr=..., cmp=..., hash=..., init=..., slots=..., frozen=..., weakref_slot=..., str=..., auto_attribs=..., kw_only=..., cache_hash=..., auto_exc=..., eq=..., order=..., auto_detect=..., collect_by_mro=..., getstate_setstate=..., on_setattr=..., field_transformer=..., match_args=...)",
+            "new_parameters": "(maybe_cls=..., these=..., repr_ns=..., repr=..., cmp=..., hash=..., init=..., slots=..., frozen=..., weakref_slot=..., str=..., auto_attribs=..., kw_only=..., cache_hash=..., auto_exc=..., eq=..., order=..., auto_detect=..., collect_by_mro=..., getstate_setstate=..., on_setattr=..., field_transformer=..., match_args=..., unsafe_hash=...)",
+            "old_parameter_list": [
+              [
+                "maybe_cls",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "these",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "repr_ns",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "repr",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "cmp",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "hash",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "init",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "slots",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "frozen",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "weakref_slot",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "str",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "auto_attribs",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "kw_only",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "cache_hash",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "auto_exc",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "eq",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "order",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "auto_detect",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "collect_by_mro",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "getstate_setstate",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "on_setattr",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "field_transformer",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "match_args",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "maybe_cls",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "these",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "repr_ns",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "repr",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "cmp",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "hash",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "init",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "slots",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "frozen",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "weakref_slot",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "str",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "auto_attribs",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "kw_only",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "cache_hash",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "auto_exc",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "eq",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "order",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "auto_detect",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "collect_by_mro",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "getstate_setstate",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "on_setattr",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "field_transformer",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "match_args",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "unsafe_hash",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 87,
+          "end_line": 109,
+          "call_line": 87,
+          "call_text": "attrs(\n            maybe_cls=cls,\n            these=these,\n            repr=repr,\n            hash=hash,\n            init=init,\n            slots=slots,\n            frozen=frozen,\n            weakref_slot=weakref_slot,\n            str=str,\n            auto_attribs=auto_attribs,\n            kw_only=kw_only,\n            cache_hash=cache_hash,\n            auto_exc=auto_exc,\n            eq=eq,\n       ",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "define.do_it",
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "attrs:74007f67d203:src/attr/_cmp.py",
+      "repository": "attrs",
+      "commit": "74007f67d203f902e88bdecba169786bf44a8aa2",
+      "parent": "e048efcb395443608d184a149c0adbca166cb833",
+      "subject": "ClassBuilder: eval only once (#1407)",
+      "stale_path": "src/attr/_cmp.py",
+      "stale_blob": "f367bb3a78301a41c11b6fc8edd4b34002eb2199",
+      "commit_blob": "09bab491f83ef4d15129f34b5f5a9e69bb34d63c",
+      "other_changed_python_paths": [
+        "src/attr/_make.py",
+        "tests/test_cmp.py",
+        "tests/test_dunders.py",
+        "tests/test_make.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "src/attr/_make.py",
+            "qualname": "_make_ne",
+            "name": "_make_ne",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 1575,
+            "new_line": null,
+            "is_method": false,
+            "old_parameters": "()",
+            "new_parameters": null,
+            "old_parameter_list": [],
+            "new_parameter_list": null
+          },
+          "line": 74,
+          "end_line": 74,
+          "call_line": 74,
+          "call_text": "_make_ne()",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "cmp_using",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "removed_callable_review"
+          ],
+          "site_hit_symbols": [
+            "_make_ne"
+          ],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        }
+      ],
+      "new_findings_in_stale_file": [
+        {
+          "detector": "removed_callable_review",
+          "symbol": "_make_ne",
+          "path": "src/attr/_cmp.py",
+          "line": 74,
+          "anchor": "cmp_using"
+        }
+      ],
+      "collateral": []
+    },
+    {
+      "id": "attrs:6e3786c59927:src/attr/_next_gen.py",
+      "repository": "attrs",
+      "commit": "6e3786c599279f24e91b0d57ef448f7a85d7a69f",
+      "parent": "af349876f4fb5df2b71a3f4878239b775bc89230",
+      "subject": "Make `kw_only=True` behavior consistent with dataclasses (#1457)",
+      "stale_path": "src/attr/_next_gen.py",
+      "stale_blob": "4f4b23e5eca65e53afa707892c9f2e7329424926",
+      "commit_blob": "e5fc732a1397313f34ada96c87ba0c7e5d9c118b",
+      "other_changed_python_paths": [
+        "src/attr/_make.py",
+        "tests/test_make.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "src/attr/_make.py",
+            "qualname": "attrs",
+            "name": "attrs",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 1330,
+            "new_line": 1342,
+            "is_method": false,
+            "old_parameters": "(maybe_cls=..., these=..., repr_ns=..., repr=..., cmp=..., hash=..., init=..., slots=..., frozen=..., weakref_slot=..., str=..., auto_attribs=..., kw_only=..., cache_hash=..., auto_exc=..., eq=..., order=..., auto_detect=..., collect_by_mro=..., getstate_setstate=..., on_setattr=..., field_transformer=..., match_args=..., unsafe_hash=...)",
+            "new_parameters": "(maybe_cls=..., these=..., repr_ns=..., repr=..., cmp=..., hash=..., init=..., slots=..., frozen=..., weakref_slot=..., str=..., auto_attribs=..., kw_only=..., cache_hash=..., auto_exc=..., eq=..., order=..., auto_detect=..., collect_by_mro=..., getstate_setstate=..., on_setattr=..., field_transformer=..., match_args=..., unsafe_hash=..., force_kw_only=...)",
+            "old_parameter_list": [
+              [
+                "maybe_cls",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "these",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "repr_ns",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "repr",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "cmp",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "hash",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "init",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "slots",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "frozen",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "weakref_slot",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "str",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "auto_attribs",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "kw_only",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "cache_hash",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "auto_exc",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "eq",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "order",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "auto_detect",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "collect_by_mro",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "getstate_setstate",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "on_setattr",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "field_transformer",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "match_args",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "unsafe_hash",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "maybe_cls",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "these",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "repr_ns",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "repr",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "cmp",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "hash",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "init",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "slots",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "frozen",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "weakref_slot",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "str",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "auto_attribs",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "kw_only",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "cache_hash",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "auto_exc",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "eq",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "order",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "auto_detect",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "collect_by_mro",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "getstate_setstate",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "on_setattr",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "field_transformer",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "match_args",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "unsafe_hash",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "force_kw_only",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 346,
+          "end_line": 369,
+          "call_line": 346,
+          "call_text": "attrs(\n            maybe_cls=cls,\n            these=these,\n            repr=repr,\n            hash=hash,\n            unsafe_hash=unsafe_hash,\n            init=init,\n            slots=slots,\n            frozen=frozen,\n            weakref_slot=weakref_slot,\n            str=str,\n            auto_attribs=auto_attribs,\n            kw_only=kw_only,\n            cache_hash=cache_hash,\n            auto_exc",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "define.do_it",
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    }
+  ]
+}

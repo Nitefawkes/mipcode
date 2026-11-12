@@ -1,0 +1,912 @@
+{
+  "schema": "mip-delta recall-mutation typecheck baseline v1",
+  "repository": "attrs",
+  "corpus_schema": "mip-delta recall-mutation corpus v1",
+  "corpus_head": "9d9f94a043de7fc4012459853a4ed597a5577855",
+  "max_mutations": null,
+  "wall_seconds": 13.2,
+  "commits": [
+    {
+      "commit": "0f6a9b47534912189db1200aeb7c9fb19348311e",
+      "mutations": 1,
+      "targets": {
+        "src/attr": {
+          "status": "ok",
+          "seconds": 1.81,
+          "errors": 14,
+          "errors_by_code": {
+            "var-annotated": 4,
+            "attr-defined": 4,
+            "misc": 3,
+            "assignment": 2,
+            "call-arg": 1
+          }
+        }
+      },
+      "files": 63,
+      "unwritable_files": []
+    },
+    {
+      "commit": "6e3786c599279f24e91b0d57ef448f7a85d7a69f",
+      "mutations": 1,
+      "targets": {
+        "src/attr": {
+          "status": "ok",
+          "seconds": 1.65,
+          "errors": 78,
+          "errors_by_code": {
+            "attr-defined": 55,
+            "assignment": 8,
+            "misc": 6,
+            "var-annotated": 3,
+            "method-assign": 2,
+            "arg-type": 2,
+            "return-value": 1,
+            "call-arg": 1
+          }
+        }
+      },
+      "files": 65,
+      "unwritable_files": []
+    },
+    {
+      "commit": "74007f67d203f902e88bdecba169786bf44a8aa2",
+      "mutations": 1,
+      "targets": {
+        "src/attr": {
+          "status": "ok",
+          "seconds": 1.38,
+          "errors": 72,
+          "errors_by_code": {
+            "attr-defined": 51,
+            "assignment": 6,
+            "misc": 6,
+            "var-annotated": 3,
+            "method-assign": 2,
+            "arg-type": 2,
+            "return-value": 1,
+            "call-arg": 1
+          }
+        }
+      },
+      "files": 64,
+      "unwritable_files": []
+    },
+    {
+      "commit": "e18b5f340a793432312a5f7e709b99439520d98e",
+      "mutations": 3,
+      "targets": {
+        "src/attr": {
+          "status": "ok",
+          "seconds": 1.32,
+          "errors": 21,
+          "errors_by_code": {
+            "name-defined": 5,
+            "misc": 4,
+            "var-annotated": 4,
+            "attr-defined": 4,
+            "assignment": 3,
+            "call-arg": 1
+          }
+        }
+      },
+      "files": 60,
+      "unwritable_files": []
+    },
+    {
+      "commit": "ee3ecb112f6af7f131a518058b2d0a7793edaa06",
+      "mutations": 1,
+      "targets": {
+        "src/attr": {
+          "status": "ok",
+          "seconds": 1.33,
+          "errors": 14,
+          "errors_by_code": {
+            "var-annotated": 4,
+            "attr-defined": 4,
+            "misc": 3,
+            "assignment": 2,
+            "call-arg": 1
+          }
+        }
+      },
+      "files": 63,
+      "unwritable_files": []
+    }
+  ],
+  "mutations": [
+    {
+      "id": "attrs:0f6a9b475349:src/attr/_next_gen.py",
+      "commit": "0f6a9b47534912189db1200aeb7c9fb19348311e",
+      "parent": "67dc8cc261a5ef64f576ce73f2281cc9021d8fb4",
+      "stale_path": "src/attr/_next_gen.py",
+      "stale_blob": "79e8a44dc6128f06ad5395b795afe110a59f9e0e",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "src/attr",
+      "seconds": 0.72,
+      "errors_commit": 14,
+      "errors_mutated": 14,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "src/attr/_make.py",
+          "definition_qualname": "attrs",
+          "line": 87,
+          "end_line": 109,
+          "call_line": 87,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            86,
+            109
+          ]
+        }
+      ]
+    },
+    {
+      "id": "attrs:6e3786c59927:src/attr/_next_gen.py",
+      "commit": "6e3786c599279f24e91b0d57ef448f7a85d7a69f",
+      "parent": "af349876f4fb5df2b71a3f4878239b775bc89230",
+      "stale_path": "src/attr/_next_gen.py",
+      "stale_blob": "4f4b23e5eca65e53afa707892c9f2e7329424926",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "src/attr",
+      "seconds": 0.45,
+      "errors_commit": 78,
+      "errors_mutated": 78,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "src/attr/_make.py",
+          "definition_qualname": "attrs",
+          "line": 346,
+          "end_line": 369,
+          "call_line": 346,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            345,
+            369
+          ]
+        }
+      ]
+    },
+    {
+      "id": "attrs:74007f67d203:src/attr/_cmp.py",
+      "commit": "74007f67d203f902e88bdecba169786bf44a8aa2",
+      "parent": "e048efcb395443608d184a149c0adbca166cb833",
+      "stale_path": "src/attr/_cmp.py",
+      "stale_blob": "f367bb3a78301a41c11b6fc8edd4b34002eb2199",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "src/attr",
+      "seconds": 0.44,
+      "errors_commit": 72,
+      "errors_mutated": 72,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "src/attr/_make.py",
+          "definition_qualname": "_make_ne",
+          "line": 74,
+          "end_line": 74,
+          "call_line": 74,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            13,
+            109
+          ]
+        }
+      ]
+    },
+    {
+      "id": "attrs:e18b5f340a79:src/attr/_funcs.py",
+      "commit": "e18b5f340a793432312a5f7e709b99439520d98e",
+      "parent": "a22e98c6cb57f7b9c1b84214ed59509264861475",
+      "stale_path": "src/attr/_funcs.py",
+      "stale_blob": "69a3cf6d8c6a21d520a2bbc1978ccff9a4f6e120",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "src/attr",
+      "seconds": 0.49,
+      "errors_commit": 21,
+      "errors_mutated": 22,
+      "new_errors_in_stale_file": [
+        {
+          "path": "src/attr/_funcs.py",
+          "line": 6,
+          "column": 1,
+          "code": "attr-defined",
+          "message": "Module \"attr._compat\" has no attribute \"iteritems\""
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "src/attr/_compat.py",
+          "definition_qualname": "iteritems",
+          "line": 109,
+          "end_line": 109,
+          "call_line": 109,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": true,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [
+            {
+              "line": 6,
+              "code": "attr-defined",
+              "message": "Module \"attr._compat\" has no attribute \"iteritems\""
+            }
+          ],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            11,
+            115
+          ]
+        },
+        {
+          "index": 1,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "src/attr/_compat.py",
+          "definition_qualname": "iteritems",
+          "line": 181,
+          "end_line": 181,
+          "call_line": 181,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": true,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [
+            {
+              "line": 6,
+              "code": "attr-defined",
+              "message": "Module \"attr._compat\" has no attribute \"iteritems\""
+            }
+          ],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            118,
+            188
+          ]
+        },
+        {
+          "index": 2,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "src/attr/_compat.py",
+          "definition_qualname": "iteritems",
+          "line": 280,
+          "end_line": 280,
+          "call_line": 280,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": true,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [
+            {
+              "line": 6,
+              "code": "attr-defined",
+              "message": "Module \"attr._compat\" has no attribute \"iteritems\""
+            }
+          ],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            191,
+            288
+          ]
+        },
+        {
+          "index": 3,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "src/attr/_compat.py",
+          "definition_qualname": "iteritems",
+          "line": 331,
+          "end_line": 331,
+          "call_line": 331,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": true,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [
+            {
+              "line": 6,
+              "code": "attr-defined",
+              "message": "Module \"attr._compat\" has no attribute \"iteritems\""
+            }
+          ],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            303,
+            340
+          ]
+        }
+      ]
+    },
+    {
+      "id": "attrs:e18b5f340a79:src/attr/_make.py",
+      "commit": "e18b5f340a793432312a5f7e709b99439520d98e",
+      "parent": "a22e98c6cb57f7b9c1b84214ed59509264861475",
+      "stale_path": "src/attr/_make.py",
+      "stale_blob": "ab3f0bedc331aa94934dbdb4ac82409543907090",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "src/attr",
+      "seconds": 0.57,
+      "errors_commit": 21,
+      "errors_mutated": 24,
+      "new_errors_in_stale_file": [
+        {
+          "path": "src/attr/_make.py",
+          "line": 13,
+          "column": 1,
+          "code": "attr-defined",
+          "message": "Module \"attr._compat\" has no attribute \"isclass\""
+        },
+        {
+          "path": "src/attr/_make.py",
+          "line": 13,
+          "column": 1,
+          "code": "attr-defined",
+          "message": "Module \"attr._compat\" has no attribute \"iteritems\""
+        },
+        {
+          "path": "src/attr/_make.py",
+          "line": 13,
+          "column": 1,
+          "code": "attr-defined",
+          "message": "Module \"attr._compat\" has no attribute \"metadata_proxy\""
+        },
+        {
+          "path": "src/attr/_make.py",
+          "line": 13,
+          "column": 1,
+          "code": "attr-defined",
+          "message": "Module \"attr._compat\" has no attribute \"new_class\""
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "src/attr/_compat.py",
+          "definition_qualname": "metadata_proxy",
+          "line": 51,
+          "end_line": 51,
+          "call_line": 51,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": true,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [
+            {
+              "line": 13,
+              "code": "attr-defined",
+              "message": "Module \"attr._compat\" has no attribute \"metadata_proxy\""
+            }
+          ],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": null
+        },
+        {
+          "index": 1,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "src/attr/_compat.py",
+          "definition_qualname": "iteritems",
+          "line": 507,
+          "end_line": 507,
+          "call_line": 507,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": true,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [
+            {
+              "line": 13,
+              "code": "attr-defined",
+              "message": "Module \"attr._compat\" has no attribute \"iteritems\""
+            }
+          ],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            490,
+            596
+          ]
+        },
+        {
+          "index": 2,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "src/attr/_compat.py",
+          "definition_qualname": "iteritems",
+          "line": 798,
+          "end_line": 798,
+          "call_line": 798,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": true,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [
+            {
+              "line": 13,
+              "code": "attr-defined",
+              "message": "Module \"attr._compat\" has no attribute \"iteritems\""
+            }
+          ],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            792,
+            896
+          ]
+        },
+        {
+          "index": 3,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "src/attr/_compat.py",
+          "definition_qualname": "iteritems",
+          "line": 853,
+          "end_line": 853,
+          "call_line": 853,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": true,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [
+            {
+              "line": 13,
+              "code": "attr-defined",
+              "message": "Module \"attr._compat\" has no attribute \"iteritems\""
+            }
+          ],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            792,
+            896
+          ]
+        },
+        {
+          "index": 4,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "src/attr/_compat.py",
+          "definition_qualname": "isclass",
+          "line": 1991,
+          "end_line": 1991,
+          "call_line": 1991,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": true,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [
+            {
+              "line": 13,
+              "code": "attr-defined",
+              "message": "Module \"attr._compat\" has no attribute \"isclass\""
+            }
+          ],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            1973,
+            1998
+          ]
+        },
+        {
+          "index": 5,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "src/attr/_compat.py",
+          "definition_qualname": "isclass",
+          "line": 2019,
+          "end_line": 2019,
+          "call_line": 2019,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": true,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [
+            {
+              "line": 13,
+              "code": "attr-defined",
+              "message": "Module \"attr._compat\" has no attribute \"isclass\""
+            }
+          ],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            2001,
+            2026
+          ]
+        },
+        {
+          "index": 6,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "src/attr/_compat.py",
+          "definition_qualname": "metadata_proxy",
+          "line": 2545,
+          "end_line": 2545,
+          "call_line": 2545,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": true,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [
+            {
+              "line": 13,
+              "code": "attr-defined",
+              "message": "Module \"attr._compat\" has no attribute \"metadata_proxy\""
+            }
+          ],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            2502,
+            2553
+          ]
+        },
+        {
+          "index": 7,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "src/attr/_compat.py",
+          "definition_qualname": "metadata_proxy",
+          "line": 2631,
+          "end_line": 2631,
+          "call_line": 2631,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": true,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [
+            {
+              "line": 13,
+              "code": "attr-defined",
+              "message": "Module \"attr._compat\" has no attribute \"metadata_proxy\""
+            }
+          ],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            2623,
+            2634
+          ]
+        }
+      ]
+    },
+    {
+      "id": "attrs:e18b5f340a79:src/attr/filters.py",
+      "commit": "e18b5f340a793432312a5f7e709b99439520d98e",
+      "parent": "a22e98c6cb57f7b9c1b84214ed59509264861475",
+      "stale_path": "src/attr/filters.py",
+      "stale_blob": "e7432e4a8d9135a984c36f0b8034d384128a365a",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "src/attr",
+      "seconds": 0.62,
+      "errors_commit": 21,
+      "errors_mutated": 21,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "src/attr/_compat.py",
+          "definition_qualname": "isclass",
+          "line": 17,
+          "end_line": 17,
+          "call_line": 17,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            12,
+            19
+          ]
+        }
+      ]
+    },
+    {
+      "id": "attrs:ee3ecb112f6a:src/attr/_next_gen.py",
+      "commit": "ee3ecb112f6af7f131a518058b2d0a7793edaa06",
+      "parent": "69aca6c130d98dacc31888607fa62fd28004cc2b",
+      "stale_path": "src/attr/_next_gen.py",
+      "stale_blob": "260519f1c2f9376b29f80245ee44d0aa89ea849d",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "src/attr",
+      "seconds": 0.43,
+      "errors_commit": 14,
+      "errors_mutated": 14,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "src/attr/_make.py",
+          "definition_qualname": "attrib",
+          "line": 179,
+          "end_line": 192,
+          "call_line": 179,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            158,
+            192
+          ]
+        }
+      ]
+    }
+  ],
+  "environment": {
+    "mypy_version": "mypy 2.4.1 (compiled: yes)",
+    "python_version": "3.12.6",
+    "command": [
+      "python.exe",
+      "-I",
+      "-X",
+      "utf8",
+      "-m",
+      "mypy",
+      "--config-file",
+      "{config}",
+      "--cache-dir",
+      "{cache}",
+      "--no-site-packages",
+      "--ignore-missing-imports",
+      "--check-untyped-defs",
+      "--no-error-summary",
+      "--hide-error-context",
+      "--no-color-output",
+      "--show-column-numbers",
+      "--show-error-codes",
+      "--no-pretty",
+      "{target}"
+    ],
+    "config_file_contents": "[mypy]\n",
+    "incremental": true,
+    "timeout_seconds": 300.0,
+    "corpora": [
+      {
+        "repository": "attrs",
+        "sha256": "08d695e30812a1767abb3ebb3f1a77a247bfcb5f46314dddc963dfd92e321304"
+      },
+      {
+        "repository": "httpx",
+        "sha256": "8cca55075dac770cd299a2243b01d4be3380eb37387652ffb11796e2903409c2"
+      },
+      {
+        "repository": "marshmallow",
+        "sha256": "5609c8133d7a8d500218427d0e312291d5fa6491feaa97590aec1ee2b315c020"
+      },
+      {
+        "repository": "rich",
+        "sha256": "df1fff43103f05b6c114aa0ce650938d754a1ee4133cb97b3b024db96c942544"
+      },
+      {
+        "repository": "mkdocs",
+        "sha256": "d533e3529b034b3fdd19dfda561b1b9932344cdec5a586f3c887ddd427f859fb"
+      }
+    ]
+  }
+}

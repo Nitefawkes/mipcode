@@ -1,0 +1,407 @@
+{
+  "schema": "mip-delta recall-mutation typecheck baseline v1",
+  "repository": "rich",
+  "corpus_schema": "mip-delta recall-mutation corpus v1",
+  "corpus_head": "364ce24a3be6bb1e525a952c935b2532f06f7c7e",
+  "max_mutations": null,
+  "wall_seconds": 16.5,
+  "commits": [
+    {
+      "commit": "5104bf283e7ceab3e28e9915bb3231ef064113fc",
+      "mutations": 1,
+      "targets": {
+        "rich": {
+          "status": "ok",
+          "seconds": 2.36,
+          "errors": 5,
+          "errors_by_code": {
+            "union-attr": 3,
+            "empty-body": 1,
+            "return-value": 1
+          }
+        }
+      },
+      "files": 191,
+      "unwritable_files": []
+    },
+    {
+      "commit": "59b1aca63bf9ec69ada93af960d8b2a7bd920477",
+      "mutations": 1,
+      "targets": {
+        "rich": {
+          "status": "ok",
+          "seconds": 2.3,
+          "errors": 5,
+          "errors_by_code": {
+            "union-attr": 3,
+            "empty-body": 1,
+            "return-value": 1
+          }
+        }
+      },
+      "files": 191,
+      "unwritable_files": []
+    },
+    {
+      "commit": "63b27f7afe3c013b1489bd900f9b4e35faf1a56f",
+      "mutations": 1,
+      "targets": {
+        "rich": {
+          "status": "ok",
+          "seconds": 2.6,
+          "errors": 6,
+          "errors_by_code": {
+            "union-attr": 3,
+            "empty-body": 1,
+            "return-value": 1,
+            "assignment": 1
+          }
+        }
+      },
+      "files": 191,
+      "unwritable_files": []
+    },
+    {
+      "commit": "e8e797d19d84fc1c580e90e84c00bf6747b6a0d7",
+      "mutations": 1,
+      "targets": {
+        "rich": {
+          "status": "ok",
+          "seconds": 2.32,
+          "errors": 0,
+          "errors_by_code": {}
+        }
+      },
+      "files": 191,
+      "unwritable_files": []
+    }
+  ],
+  "mutations": [
+    {
+      "id": "rich:5104bf283e7c:rich/logging.py",
+      "commit": "5104bf283e7ceab3e28e9915bb3231ef064113fc",
+      "parent": "2eb5cbfd46b41617a4b3a906955bcda17d88fb75",
+      "stale_path": "rich/logging.py",
+      "stale_blob": "96859934e9a3e9b5b4b43329a9323edbf6042cf8",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "rich",
+      "seconds": 0.49,
+      "errors_commit": 5,
+      "errors_mutated": 5,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "rich/traceback.py",
+          "definition_qualname": "Traceback.from_exception",
+          "line": 138,
+          "end_line": 150,
+          "call_line": 138,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            126,
+            172
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rich:59b1aca63bf9:rich/_wrap.py",
+      "commit": "59b1aca63bf9ec69ada93af960d8b2a7bd920477",
+      "parent": "b32e42bda00c6275d4e18dcbe298268094359549",
+      "stale_path": "rich/_wrap.py",
+      "stale_blob": "c45f193f74ad7385c84f3b935663198415cfaa4b",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "rich",
+      "seconds": 1.25,
+      "errors_commit": 5,
+      "errors_mutated": 8,
+      "new_errors_in_stale_file": [
+        {
+          "path": "rich/_wrap.py",
+          "line": 30,
+          "column": 37,
+          "code": "call-arg",
+          "message": "Unexpected keyword argument \"max_size\" for \"chop_cells\""
+        },
+        {
+          "path": "rich/_wrap.py",
+          "line": 30,
+          "column": 37,
+          "code": "call-arg",
+          "message": "Unexpected keyword argument \"position\" for \"chop_cells\""
+        },
+        {
+          "path": "rich/_wrap.py",
+          "line": 56,
+          "column": 11,
+          "code": "call-arg",
+          "message": "Unexpected keyword argument \"position\" for \"chop_cells\""
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "rich/cells.py",
+          "definition_qualname": "chop_cells",
+          "line": 30,
+          "end_line": 30,
+          "call_line": 30,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 30,
+              "code": "call-arg",
+              "message": "Unexpected keyword argument \"max_size\" for \"chop_cells\""
+            },
+            {
+              "line": 30,
+              "code": "call-arg",
+              "message": "Unexpected keyword argument \"position\" for \"chop_cells\""
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "call-arg"
+          ],
+          "tc_file_hit_codes": [
+            "call-arg"
+          ],
+          "enclosing_function_span": [
+            20,
+            48
+          ]
+        },
+        {
+          "index": 1,
+          "binding": "breaking",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "rich/cells.py",
+          "definition_qualname": "chop_cells",
+          "line": 56,
+          "end_line": 56,
+          "call_line": 56,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 56,
+              "code": "call-arg",
+              "message": "Unexpected keyword argument \"position\" for \"chop_cells\""
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "call-arg"
+          ],
+          "tc_file_hit_codes": [
+            "call-arg"
+          ],
+          "enclosing_function_span": null
+        }
+      ]
+    },
+    {
+      "id": "rich:63b27f7afe3c:rich/traceback.py",
+      "commit": "63b27f7afe3c013b1489bd900f9b4e35faf1a56f",
+      "parent": "9499295751de4c7e2d3349ed7d4cccbc81169903",
+      "stale_path": "rich/traceback.py",
+      "stale_blob": "2bcce7d387fe56b86e184e9cac5c8b61c8162b69",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "rich",
+      "seconds": 1.47,
+      "errors_commit": 6,
+      "errors_mutated": 7,
+      "new_errors_in_stale_file": [
+        {
+          "path": "rich/traceback.py",
+          "line": 750,
+          "column": 25,
+          "code": "call-arg",
+          "message": "Unexpected keyword argument \"before\" for \"stylize_range\" of \"Syntax\""
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "rich/syntax.py",
+          "definition_qualname": "Syntax.stylize_range",
+          "line": 750,
+          "end_line": 755,
+          "call_line": 750,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 750,
+              "code": "call-arg",
+              "message": "Unexpected keyword argument \"before\" for \"stylize_range\" of \"Syntax\""
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "call-arg"
+          ],
+          "tc_file_hit_codes": [
+            "call-arg"
+          ],
+          "enclosing_function_span": [
+            645,
+            766
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rich:e8e797d19d84:rich/traceback.py",
+      "commit": "e8e797d19d84fc1c580e90e84c00bf6747b6a0d7",
+      "parent": "f82a399d584092f0195d0f68add0c03531e02c84",
+      "stale_path": "rich/traceback.py",
+      "stale_blob": "c32baaca128c8ae032b9f8e9c882d4c63ed99e9a",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "rich",
+      "seconds": 1.29,
+      "errors_commit": 0,
+      "errors_mutated": 0,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "rich/scope.py",
+          "definition_qualname": "render_scope",
+          "line": 751,
+          "end_line": 757,
+          "call_line": 751,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            749,
+            757
+          ]
+        }
+      ]
+    }
+  ],
+  "environment": {
+    "mypy_version": "mypy 2.4.1 (compiled: yes)",
+    "python_version": "3.12.6",
+    "command": [
+      "python.exe",
+      "-I",
+      "-X",
+      "utf8",
+      "-m",
+      "mypy",
+      "--config-file",
+      "{config}",
+      "--cache-dir",
+      "{cache}",
+      "--no-site-packages",
+      "--ignore-missing-imports",
+      "--check-untyped-defs",
+      "--no-error-summary",
+      "--hide-error-context",
+      "--no-color-output",
+      "--show-column-numbers",
+      "--show-error-codes",
+      "--no-pretty",
+      "{target}"
+    ],
+    "config_file_contents": "[mypy]\n",
+    "incremental": true,
+    "timeout_seconds": 300.0,
+    "corpora": [
+      {
+        "repository": "attrs",
+        "sha256": "08d695e30812a1767abb3ebb3f1a77a247bfcb5f46314dddc963dfd92e321304"
+      },
+      {
+        "repository": "httpx",
+        "sha256": "8cca55075dac770cd299a2243b01d4be3380eb37387652ffb11796e2903409c2"
+      },
+      {
+        "repository": "marshmallow",
+        "sha256": "5609c8133d7a8d500218427d0e312291d5fa6491feaa97590aec1ee2b315c020"
+      },
+      {
+        "repository": "rich",
+        "sha256": "df1fff43103f05b6c114aa0ce650938d754a1ee4133cb97b3b024db96c942544"
+      },
+      {
+        "repository": "mkdocs",
+        "sha256": "d533e3529b034b3fdd19dfda561b1b9932344cdec5a586f3c887ddd427f859fb"
+      }
+    ]
+  }
+}

@@ -1,0 +1,333 @@
+{
+  "repository": "attrs",
+  "head": "9d9f94a043de",
+  "commits_replayed": 800,
+  "horizon_commits": 25,
+  "opt_in_detectors": [],
+  "wall_seconds": 168.4,
+  "commits_changing_production_python": 184,
+  "contract_changing_commits": 52,
+  "contract_changing_commits_silent": 45,
+  "contract_changing_commits_flagged": 7,
+  "local_commits_flagged": 0,
+  "analysis_errors": 0,
+  "flagged_commits": [
+    {
+      "commit": "980c8b04f59d",
+      "subject": "Drop Python 2.7 (#936)",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "removed_callable_review",
+          "symbol": "new_class",
+          "path": "src/attr/_cmp.py",
+          "line": 82,
+          "anchor": "cmp_using",
+          "provenance": "static_ast",
+          "evidence": "previous declaration at src/attr/_compat.py:37 was removed; review this call",
+          "resolved_after_commits": 3,
+          "resolved_by": "site_function_edit",
+          "resolving_commit": "e18b5f340a79",
+          "resolving_subject": "Remove various obsolete _compat helpers (#941)"
+        },
+        {
+          "detector": "removed_callable_review",
+          "symbol": "new_class",
+          "path": "src/attr/_make.py",
+          "line": 2924,
+          "anchor": "make_class",
+          "provenance": "static_ast",
+          "evidence": "previous declaration at src/attr/_compat.py:37 was removed; review this call",
+          "resolved_after_commits": 3,
+          "resolved_by": "site_function_edit",
+          "resolving_commit": "e18b5f340a79",
+          "resolving_subject": "Remove various obsolete _compat helpers (#941)"
+        }
+      ]
+    },
+    {
+      "commit": "0f6a9b475349",
+      "subject": "Add unsafe_hash alias for class-wide hash (#1065)",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "callback_binding_review",
+          "symbol": "attrs",
+          "path": "src/attr/_make.py",
+          "line": 1780,
+          "anchor": "_make_order.attrs_to_tuple",
+          "provenance": "static_ast",
+          "evidence": "changed callable attrs is passed as a value",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        },
+        {
+          "detector": "callback_binding_review",
+          "symbol": "define",
+          "path": "src/attr/_next_gen.py",
+          "line": 159,
+          "anchor": "",
+          "provenance": "static_ast",
+          "evidence": "changed callable define is passed as a value",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        }
+      ]
+    },
+    {
+      "commit": "deb97638a7d0",
+      "subject": "Refactor setters determination into function",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "removed_callable_review",
+          "symbol": "_attrs_to_init_script.fmt_setter_with_converter",
+          "path": "src/attr/_make.py",
+          "line": 2361,
+          "anchor": "_attrs_to_init_script",
+          "provenance": "static_ast",
+          "evidence": "previous declaration at src/attr/_make.py:2302 was removed; review this call",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        },
+        {
+          "detector": "removed_callable_review",
+          "symbol": "_attrs_to_init_script.fmt_setter",
+          "path": "src/attr/_make.py",
+          "line": 2372,
+          "anchor": "_attrs_to_init_script",
+          "provenance": "static_ast",
+          "evidence": "previous declaration at src/attr/_make.py:2296 was removed; review this call",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        },
+        {
+          "detector": "removed_callable_review",
+          "symbol": "_attrs_to_init_script.fmt_setter_with_converter",
+          "path": "src/attr/_make.py",
+          "line": 2381,
+          "anchor": "_attrs_to_init_script",
+          "provenance": "static_ast",
+          "evidence": "previous declaration at src/attr/_make.py:2302 was removed; review this call",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        },
+        {
+          "detector": "removed_callable_review",
+          "symbol": "_attrs_to_init_script.fmt_setter",
+          "path": "src/attr/_make.py",
+          "line": 2392,
+          "anchor": "_attrs_to_init_script",
+          "provenance": "static_ast",
+          "evidence": "previous declaration at src/attr/_make.py:2296 was removed; review this call",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        },
+        {
+          "detector": "removed_callable_review",
+          "symbol": "_attrs_to_init_script.fmt_setter_with_converter",
+          "path": "src/attr/_make.py",
+          "line": 2407,
+          "anchor": "_attrs_to_init_script",
+          "provenance": "static_ast",
+          "evidence": "previous declaration at src/attr/_make.py:2302 was removed; review this call",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        },
+        {
+          "detector": "removed_callable_review",
+          "symbol": "_attrs_to_init_script.fmt_setter",
+          "path": "src/attr/_make.py",
+          "line": 2415,
+          "anchor": "_attrs_to_init_script",
+          "provenance": "static_ast",
+          "evidence": "previous declaration at src/attr/_make.py:2296 was removed; review this call",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        },
+        {
+          "detector": "removed_callable_review",
+          "symbol": "_attrs_to_init_script.fmt_setter_with_converter",
+          "path": "src/attr/_make.py",
+          "line": 2429,
+          "anchor": "_attrs_to_init_script",
+          "provenance": "static_ast",
+          "evidence": "previous declaration at src/attr/_make.py:2302 was removed; review this call",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        },
+        {
+          "detector": "removed_callable_review",
+          "symbol": "_attrs_to_init_script.fmt_setter_with_converter",
+          "path": "src/attr/_make.py",
+          "line": 2436,
+          "anchor": "_attrs_to_init_script",
+          "provenance": "static_ast",
+          "evidence": "previous declaration at src/attr/_make.py:2302 was removed; review this call",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        },
+        {
+          "detector": "removed_callable_review",
+          "symbol": "_attrs_to_init_script.fmt_setter",
+          "path": "src/attr/_make.py",
+          "line": 2447,
+          "anchor": "_attrs_to_init_script",
+          "provenance": "static_ast",
+          "evidence": "previous declaration at src/attr/_make.py:2296 was removed; review this call",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        },
+        {
+          "detector": "removed_callable_review",
+          "symbol": "_attrs_to_init_script.fmt_setter",
+          "path": "src/attr/_make.py",
+          "line": 2452,
+          "anchor": "_attrs_to_init_script",
+          "provenance": "static_ast",
+          "evidence": "previous declaration at src/attr/_make.py:2296 was removed; review this call",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        },
+        {
+          "detector": "removed_callable_review",
+          "symbol": "_attrs_to_init_script.fmt_setter_with_converter",
+          "path": "src/attr/_make.py",
+          "line": 2467,
+          "anchor": "_attrs_to_init_script",
+          "provenance": "static_ast",
+          "evidence": "previous declaration at src/attr/_make.py:2302 was removed; review this call",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        },
+        {
+          "detector": "removed_callable_review",
+          "symbol": "_attrs_to_init_script.fmt_setter",
+          "path": "src/attr/_make.py",
+          "line": 2475,
+          "anchor": "_attrs_to_init_script",
+          "provenance": "static_ast",
+          "evidence": "previous declaration at src/attr/_make.py:2296 was removed; review this call",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        }
+      ]
+    },
+    {
+      "commit": "f5683b852b1e",
+      "subject": "converters: allow wrapping and passing self and fields (#1267)",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "callback_binding_review",
+          "symbol": "pipe.pipe_converter",
+          "path": "src/attr/_make.py",
+          "line": 3343,
+          "anchor": "pipe",
+          "provenance": "static_ast",
+          "evidence": "changed callable pipe_converter is passed as a value",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        }
+      ]
+    },
+    {
+      "commit": "1e07f4689748",
+      "subject": "Make attrs.converters.pipe only return a Converter instance if one is passed (#1380)",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "callback_binding_review",
+          "symbol": "pipe.pipe_converter",
+          "path": "src/attr/_make.py",
+          "line": 2975,
+          "anchor": "pipe",
+          "provenance": "static_ast",
+          "evidence": "changed callable pipe_converter is passed as a value",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        }
+      ]
+    },
+    {
+      "commit": "74007f67d203",
+      "subject": "ClassBuilder: eval only once (#1407)",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "removed_callable_review",
+          "symbol": "_ClassBuilder._add_method_dunders",
+          "path": "src/attr/_make.py",
+          "line": 995,
+          "anchor": "_ClassBuilder.add_str",
+          "provenance": "static_ast",
+          "evidence": "previous declaration at src/attr/_make.py:1131 was removed; review this call",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        },
+        {
+          "detector": "removed_callable_review",
+          "symbol": "_ClassBuilder._add_method_dunders",
+          "path": "src/attr/_make.py",
+          "line": 1084,
+          "anchor": "_ClassBuilder.add_replace",
+          "provenance": "static_ast",
+          "evidence": "previous declaration at src/attr/_make.py:1131 was removed; review this call",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        },
+        {
+          "detector": "removed_callable_review",
+          "symbol": "_ClassBuilder._add_method_dunders",
+          "path": "src/attr/_make.py",
+          "line": 1139,
+          "anchor": "_ClassBuilder.add_order",
+          "provenance": "static_ast",
+          "evidence": "previous declaration at src/attr/_make.py:1131 was removed; review this call",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        },
+        {
+          "detector": "removed_callable_review",
+          "symbol": "_ClassBuilder._add_method_dunders",
+          "path": "src/attr/_make.py",
+          "line": 1172,
+          "anchor": "_ClassBuilder.add_setattr",
+          "provenance": "static_ast",
+          "evidence": "previous declaration at src/attr/_make.py:1131 was removed; review this call",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        }
+      ]
+    },
+    {
+      "commit": "6e3786c59927",
+      "subject": "Make `kw_only=True` behavior consistent with dataclasses (#1457)",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "callback_binding_review",
+          "symbol": "attrs",
+          "path": "src/attr/_make.py",
+          "line": 1745,
+          "anchor": "_make_order.attrs_to_tuple",
+          "provenance": "static_ast",
+          "evidence": "changed callable attrs is passed as a value",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        },
+        {
+          "detector": "callback_binding_review",
+          "symbol": "define",
+          "path": "src/attr/_next_gen.py",
+          "line": 434,
+          "anchor": "",
+          "provenance": "static_ast",
+          "evidence": "changed callable define is passed as a value",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        }
+      ]
+    }
+  ]
+}

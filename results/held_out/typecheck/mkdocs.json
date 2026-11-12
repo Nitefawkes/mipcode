@@ -1,0 +1,2197 @@
+{
+  "schema": "mip-delta recall-mutation typecheck baseline v1",
+  "repository": "mkdocs",
+  "corpus_schema": "mip-delta recall-mutation corpus v1",
+  "corpus_head": "2862536793b3c67d9d83c33e0dd6d50a791928f8",
+  "max_mutations": null,
+  "wall_seconds": 61.0,
+  "commits": [
+    {
+      "commit": "052ba868ad564f5f413a7d6f83d0b5ae7ae42d92",
+      "mutations": 1,
+      "targets": {
+        "mkdocs": {
+          "status": "ok",
+          "seconds": 2.31,
+          "errors": 109,
+          "errors_by_code": {
+            "attr-defined": 45,
+            "has-type": 16,
+            "assignment": 9,
+            "union-attr": 9,
+            "var-annotated": 7,
+            "func-returns-value": 4,
+            "call-overload": 4,
+            "index": 4,
+            "method-assign": 4,
+            "arg-type": 3,
+            "str-bytes-safe": 1,
+            "valid-type": 1,
+            "misc": 1,
+            "override": 1
+          }
+        }
+      },
+      "files": 59,
+      "unwritable_files": []
+    },
+    {
+      "commit": "34ef3ca6d0390959080ce93a695361eea1649272",
+      "mutations": 2,
+      "targets": {
+        "mkdocs": {
+          "status": "ok",
+          "seconds": 2.09,
+          "errors": 88,
+          "errors_by_code": {
+            "attr-defined": 28,
+            "no-redef": 11,
+            "var-annotated": 9,
+            "union-attr": 9,
+            "index": 5,
+            "call-overload": 5,
+            "assignment": 5,
+            "arg-type": 3,
+            "method-assign": 3,
+            "valid-type": 2,
+            "misc": 2,
+            "str-format": 2,
+            "func-returns-value": 1,
+            "name-defined": 1,
+            "str-bytes-safe": 1,
+            "override": 1
+          }
+        }
+      },
+      "files": 54,
+      "unwritable_files": []
+    },
+    {
+      "commit": "35fb2c720352bd9c65b41c1781c93ea09ef84486",
+      "mutations": 1,
+      "targets": {
+        "mkdocs": {
+          "status": "ok",
+          "seconds": 2.72,
+          "errors": 142,
+          "errors_by_code": {
+            "arg-type": 45,
+            "union-attr": 35,
+            "var-annotated": 20,
+            "attr-defined": 15,
+            "call-arg": 8,
+            "assignment": 6,
+            "index": 5,
+            "method-assign": 4,
+            "return-value": 2,
+            "func-returns-value": 1,
+            "misc": 1
+          }
+        }
+      },
+      "files": 65,
+      "unwritable_files": []
+    },
+    {
+      "commit": "37e645d62310978bfbef948dffc15348500dc00c",
+      "mutations": 1,
+      "targets": {
+        "mkdocs": {
+          "status": "ok",
+          "seconds": 2.08,
+          "errors": 64,
+          "errors_by_code": {
+            "attr-defined": 21,
+            "union-attr": 9,
+            "var-annotated": 6,
+            "call-overload": 5,
+            "assignment": 5,
+            "arg-type": 3,
+            "index": 3,
+            "method-assign": 3,
+            "valid-type": 2,
+            "misc": 2,
+            "str-format": 2,
+            "str-bytes-safe": 1,
+            "func-returns-value": 1,
+            "override": 1
+          }
+        }
+      },
+      "files": 52,
+      "unwritable_files": []
+    },
+    {
+      "commit": "5c2b4f13536009852046c89aadd63ac46eacbaaa",
+      "mutations": 2,
+      "targets": {
+        "mkdocs": {
+          "status": "ok",
+          "seconds": 2.07,
+          "errors": 60,
+          "errors_by_code": {
+            "attr-defined": 20,
+            "union-attr": 9,
+            "var-annotated": 6,
+            "assignment": 5,
+            "call-overload": 4,
+            "arg-type": 3,
+            "index": 3,
+            "method-assign": 3,
+            "valid-type": 2,
+            "misc": 2,
+            "str-bytes-safe": 1,
+            "func-returns-value": 1,
+            "override": 1
+          }
+        }
+      },
+      "files": 50,
+      "unwritable_files": []
+    },
+    {
+      "commit": "79ebb89759d51a52fb4f60ccde18098bd1daab62",
+      "mutations": 2,
+      "targets": {
+        "mkdocs": {
+          "status": "ok",
+          "seconds": 2.05,
+          "errors": 84,
+          "errors_by_code": {
+            "attr-defined": 29,
+            "no-redef": 10,
+            "union-attr": 9,
+            "var-annotated": 7,
+            "call-overload": 5,
+            "assignment": 5,
+            "index": 4,
+            "arg-type": 3,
+            "method-assign": 3,
+            "valid-type": 2,
+            "misc": 2,
+            "str-format": 2,
+            "func-returns-value": 1,
+            "str-bytes-safe": 1,
+            "override": 1
+          }
+        }
+      },
+      "files": 52,
+      "unwritable_files": []
+    },
+    {
+      "commit": "8035d78dad55ff6ea4ebffad43b0a0a2a9586e7d",
+      "mutations": 1,
+      "targets": {
+        "mkdocs": {
+          "status": "ok",
+          "seconds": 2.73,
+          "errors": 142,
+          "errors_by_code": {
+            "arg-type": 45,
+            "union-attr": 35,
+            "var-annotated": 20,
+            "attr-defined": 15,
+            "call-arg": 8,
+            "assignment": 6,
+            "index": 5,
+            "method-assign": 4,
+            "return-value": 2,
+            "func-returns-value": 1,
+            "misc": 1
+          }
+        }
+      },
+      "files": 65,
+      "unwritable_files": []
+    },
+    {
+      "commit": "82fcf3115ab9c2e1c9fa8d41a90b0ae3eb307080",
+      "mutations": 1,
+      "targets": {
+        "mkdocs": {
+          "status": "ok",
+          "seconds": 2.27,
+          "errors": 107,
+          "errors_by_code": {
+            "attr-defined": 44,
+            "has-type": 16,
+            "union-attr": 9,
+            "assignment": 8,
+            "var-annotated": 7,
+            "func-returns-value": 4,
+            "call-overload": 4,
+            "index": 4,
+            "method-assign": 4,
+            "arg-type": 3,
+            "str-bytes-safe": 1,
+            "valid-type": 1,
+            "misc": 1,
+            "override": 1
+          }
+        }
+      },
+      "files": 59,
+      "unwritable_files": []
+    },
+    {
+      "commit": "930ae26a55436f7e1706d6076befb2853c8a0285",
+      "mutations": 1,
+      "targets": {
+        "mkdocs": {
+          "status": "ok",
+          "seconds": 2.63,
+          "errors": 159,
+          "errors_by_code": {
+            "index": 38,
+            "union-attr": 35,
+            "arg-type": 25,
+            "var-annotated": 19,
+            "attr-defined": 19,
+            "call-arg": 8,
+            "override": 5,
+            "method-assign": 4,
+            "assignment": 4,
+            "valid-type": 1,
+            "misc": 1
+          }
+        }
+      },
+      "files": 60,
+      "unwritable_files": []
+    },
+    {
+      "commit": "a3e60f138508485f63cab20047de0ba72f32b7e6",
+      "mutations": 1,
+      "targets": {
+        "mkdocs": {
+          "status": "ok",
+          "seconds": 1.95,
+          "errors": 67,
+          "errors_by_code": {
+            "attr-defined": 14,
+            "var-annotated": 11,
+            "no-redef": 9,
+            "union-attr": 7,
+            "call-overload": 5,
+            "assignment": 5,
+            "index": 3,
+            "arg-type": 3,
+            "valid-type": 2,
+            "misc": 2,
+            "str-format": 2,
+            "func-returns-value": 1,
+            "name-defined": 1,
+            "str-bytes-safe": 1,
+            "override": 1
+          }
+        }
+      },
+      "files": 47,
+      "unwritable_files": []
+    },
+    {
+      "commit": "c9032bd6bfde09ead2f4f879e85590d7cd6e68a6",
+      "mutations": 1,
+      "targets": {
+        "mkdocs": {
+          "status": "ok",
+          "seconds": 2.04,
+          "errors": 73,
+          "errors_by_code": {
+            "attr-defined": 28,
+            "union-attr": 9,
+            "var-annotated": 7,
+            "call-overload": 5,
+            "assignment": 5,
+            "index": 4,
+            "arg-type": 3,
+            "method-assign": 3,
+            "valid-type": 2,
+            "misc": 2,
+            "str-format": 2,
+            "str-bytes-safe": 1,
+            "func-returns-value": 1,
+            "override": 1
+          }
+        }
+      },
+      "files": 52,
+      "unwritable_files": []
+    },
+    {
+      "commit": "ccf011db793c968bf2cee80c3e8f1f66fd2b3189",
+      "mutations": 1,
+      "targets": {
+        "mkdocs": {
+          "status": "ok",
+          "seconds": 2.68,
+          "errors": 142,
+          "errors_by_code": {
+            "arg-type": 45,
+            "union-attr": 35,
+            "var-annotated": 20,
+            "attr-defined": 15,
+            "call-arg": 8,
+            "assignment": 6,
+            "index": 5,
+            "method-assign": 4,
+            "return-value": 2,
+            "func-returns-value": 1,
+            "misc": 1
+          }
+        }
+      },
+      "files": 65,
+      "unwritable_files": []
+    },
+    {
+      "commit": "d107e6d32c1d9cdb59f4f58a1f6371d377d6d18f",
+      "mutations": 1,
+      "targets": {
+        "mkdocs": {
+          "status": "ok",
+          "seconds": 2.81,
+          "errors": 143,
+          "errors_by_code": {
+            "arg-type": 45,
+            "union-attr": 35,
+            "var-annotated": 20,
+            "attr-defined": 15,
+            "call-arg": 8,
+            "assignment": 6,
+            "index": 5,
+            "method-assign": 4,
+            "return-value": 2,
+            "func-returns-value": 1,
+            "override": 1,
+            "misc": 1
+          }
+        }
+      },
+      "files": 67,
+      "unwritable_files": []
+    },
+    {
+      "commit": "da92f72ec8683fdd27b7ce48c7863a33508b25d7",
+      "mutations": 2,
+      "targets": {
+        "mkdocs": {
+          "status": "ok",
+          "seconds": 1.99,
+          "errors": 83,
+          "errors_by_code": {
+            "attr-defined": 28,
+            "no-redef": 10,
+            "union-attr": 9,
+            "var-annotated": 7,
+            "call-overload": 5,
+            "assignment": 5,
+            "index": 4,
+            "arg-type": 3,
+            "method-assign": 3,
+            "valid-type": 2,
+            "misc": 2,
+            "str-format": 2,
+            "func-returns-value": 1,
+            "str-bytes-safe": 1,
+            "override": 1
+          }
+        }
+      },
+      "files": 53,
+      "unwritable_files": []
+    },
+    {
+      "commit": "df2dffd8a62f312e98987998af3114f3e1e552fb",
+      "mutations": 1,
+      "targets": {
+        "mkdocs": {
+          "status": "ok",
+          "seconds": 2.62,
+          "errors": 142,
+          "errors_by_code": {
+            "arg-type": 45,
+            "union-attr": 35,
+            "var-annotated": 20,
+            "attr-defined": 15,
+            "call-arg": 8,
+            "assignment": 6,
+            "index": 5,
+            "method-assign": 4,
+            "return-value": 2,
+            "func-returns-value": 1,
+            "misc": 1
+          }
+        }
+      },
+      "files": 65,
+      "unwritable_files": []
+    },
+    {
+      "commit": "e5c2459fdf58e55237fef914ac67a968c68d2a3f",
+      "mutations": 1,
+      "targets": {
+        "mkdocs": {
+          "status": "ok",
+          "seconds": 1.92,
+          "errors": 67,
+          "errors_by_code": {
+            "attr-defined": 14,
+            "var-annotated": 11,
+            "no-redef": 9,
+            "union-attr": 7,
+            "call-overload": 5,
+            "assignment": 5,
+            "index": 3,
+            "arg-type": 3,
+            "valid-type": 2,
+            "misc": 2,
+            "str-format": 2,
+            "func-returns-value": 1,
+            "name-defined": 1,
+            "str-bytes-safe": 1,
+            "override": 1
+          }
+        }
+      },
+      "files": 47,
+      "unwritable_files": []
+    },
+    {
+      "commit": "f37ce51da197dd83e1c64fe1f091c99b503ef94e",
+      "mutations": 2,
+      "targets": {
+        "mkdocs": {
+          "status": "ok",
+          "seconds": 2.65,
+          "errors": 159,
+          "errors_by_code": {
+            "index": 38,
+            "union-attr": 35,
+            "arg-type": 25,
+            "var-annotated": 19,
+            "attr-defined": 19,
+            "call-arg": 8,
+            "override": 5,
+            "method-assign": 4,
+            "assignment": 4,
+            "valid-type": 1,
+            "misc": 1
+          }
+        }
+      },
+      "files": 60,
+      "unwritable_files": []
+    },
+    {
+      "commit": "f70a48ee20f025bab32047689f9072e8d380528f",
+      "mutations": 1,
+      "targets": {
+        "mkdocs": {
+          "status": "ok",
+          "seconds": 2.01,
+          "errors": 73,
+          "errors_by_code": {
+            "attr-defined": 28,
+            "union-attr": 9,
+            "var-annotated": 7,
+            "call-overload": 5,
+            "assignment": 5,
+            "index": 4,
+            "arg-type": 3,
+            "method-assign": 3,
+            "valid-type": 2,
+            "misc": 2,
+            "str-format": 2,
+            "str-bytes-safe": 1,
+            "func-returns-value": 1,
+            "override": 1
+          }
+        }
+      },
+      "files": 52,
+      "unwritable_files": []
+    }
+  ],
+  "mutations": [
+    {
+      "id": "mkdocs:052ba868ad56:mkdocs/__main__.py",
+      "commit": "052ba868ad564f5f413a7d6f83d0b5ae7ae42d92",
+      "parent": "ec9b583b02376b909c10889fef780cdf2f25a23d",
+      "stale_path": "mkdocs/__main__.py",
+      "stale_blob": "2f1944d3a35051b71b66208035e085c44c73266c",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "mkdocs",
+      "seconds": 0.59,
+      "errors_commit": 109,
+      "errors_mutated": 109,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "mkdocs/commands/gh_deploy.py",
+          "definition_qualname": "gh_deploy",
+          "line": 214,
+          "end_line": 214,
+          "call_line": 214,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            205,
+            214
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mkdocs:34ef3ca6d039:mkdocs/commands/build.py",
+      "commit": "34ef3ca6d0390959080ce93a695361eea1649272",
+      "parent": "3f0e4464a787ad5ce5a235d7ae988a2d8f53f077",
+      "stale_path": "mkdocs/commands/build.py",
+      "stale_blob": "d8a5cd27d64826f09ed10911a4b1c3d02b96bcfc",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "mkdocs",
+      "seconds": 0.58,
+      "errors_commit": 88,
+      "errors_mutated": 117,
+      "new_errors_in_stale_file": [
+        {
+          "path": "mkdocs/commands/build.py",
+          "line": 14,
+          "column": 1,
+          "code": "attr-defined",
+          "message": "Module \"mkdocs\" has no attribute \"nav\""
+        }
+      ],
+      "new_errors_elsewhere": [
+        {
+          "path": "mkdocs/tests/build_tests.py",
+          "line": 38,
+          "column": 19,
+          "code": "call-arg",
+          "message": "Too many arguments for \"get_context\""
+        },
+        {
+          "path": "mkdocs/tests/build_tests.py",
+          "line": 50,
+          "column": 19,
+          "code": "call-arg",
+          "message": "Too many arguments for \"get_context\""
+        },
+        {
+          "path": "mkdocs/tests/build_tests.py",
+          "line": 64,
+          "column": 19,
+          "code": "call-arg",
+          "message": "Too many arguments for \"get_context\""
+        },
+        {
+          "path": "mkdocs/tests/build_tests.py",
+          "line": 78,
+          "column": 19,
+          "code": "call-arg",
+          "message": "Too many arguments for \"get_context\""
+        },
+        {
+          "path": "mkdocs/tests/build_tests.py",
+          "line": 83,
+          "column": 19,
+          "code": "call-arg",
+          "message": "Unexpected keyword argument \"base_url\" for \"get_context\""
+        },
+        {
+          "path": "mkdocs/tests/build_tests.py",
+          "line": 88,
+          "column": 19,
+          "code": "call-arg",
+          "message": "Unexpected keyword argument \"base_url\" for \"get_context\""
+        },
+        {
+          "path": "mkdocs/tests/build_tests.py",
+          "line": 93,
+          "column": 19,
+          "code": "call-arg",
+          "message": "Unexpected keyword argument \"base_url\" for \"get_context\""
+        },
+        {
+          "path": "mkdocs/tests/build_tests.py",
+          "line": 98,
+          "column": 19,
+          "code": "call-arg",
+          "message": "Unexpected keyword argument \"base_url\" for \"get_context\""
+        },
+        {
+          "path": "mkdocs/tests/build_tests.py",
+          "line": 103,
+          "column": 19,
+          "code": "call-arg",
+          "message": "Unexpected keyword argument \"base_url\" for \"get_context\""
+        },
+        {
+          "path": "mkdocs/tests/build_tests.py",
+          "line": 108,
+          "column": 19,
+          "code": "call-arg",
+          "message": "Unexpected keyword argument \"base_url\" for \"get_context\""
+        },
+        {
+          "path": "mkdocs/tests/build_tests.py",
+          "line": 125,
+          "column": 19,
+          "code": "call-arg",
+          "message": "Too many arguments for \"get_context\""
+        },
+        {
+          "path": "mkdocs/tests/build_tests.py",
+          "line": 145,
+          "column": 19,
+          "code": "call-arg",
+          "message": "Too many arguments for \"get_context\""
+        },
+        {
+          "path": "mkdocs/tests/build_tests.py",
+          "line": 164,
+          "column": 19,
+          "code": "call-arg",
+          "message": "Too many arguments for \"get_context\""
+        },
+        {
+          "path": "mkdocs/tests/build_tests.py",
+          "line": 170,
+          "column": 19,
+          "code": "call-arg",
+          "message": "Unexpected keyword argument \"base_url\" for \"get_context\""
+        },
+        {
+          "path": "mkdocs/tests/build_tests.py",
+          "line": 186,
+          "column": 9,
+          "code": "attr-defined",
+          "message": "Module has no attribute \"_build_theme_template\"; maybe \"build_template\", \"build_error_template\", or \"build_extra_templates\"?"
+        },
+        {
+          "path": "mkdocs/tests/build_tests.py",
+          "line": 196,
+          "column": 9,
+          "code": "attr-defined",
+          "message": "Module has no attribute \"_build_theme_template\"; maybe \"build_template\", \"build_error_template\", or \"build_extra_templates\"?"
+        },
+        {
+          "path": "mkdocs/tests/build_tests.py",
+          "line": 207,
+          "column": 13,
+          "code": "attr-defined",
+          "message": "Module has no attribute \"_build_theme_template\"; maybe \"build_template\", \"build_error_template\", or \"build_extra_templates\"?"
+        },
+        {
+          "path": "mkdocs/tests/build_tests.py",
+          "line": 221,
+          "column": 13,
+          "code": "attr-defined",
+          "message": "Module has no attribute \"_build_theme_template\"; maybe \"build_template\", \"build_error_template\", or \"build_extra_templates\"?"
+        },
+        {
+          "path": "mkdocs/tests/build_tests.py",
+          "line": 237,
+          "column": 9,
+          "code": "attr-defined",
+          "message": "Module has no attribute \"_build_extra_template\"; maybe \"build_extra_templates\", \"build_error_template\", or \"build_template\"?"
+        },
+        {
+          "path": "mkdocs/tests/build_tests.py",
+          "line": 246,
+          "column": 13,
+          "code": "attr-defined",
+          "message": "Module has no attribute \"_build_extra_template\"; maybe \"build_extra_templates\", \"build_error_template\", or \"build_template\"?"
+        },
+        {
+          "path": "mkdocs/tests/build_tests.py",
+          "line": 259,
+          "column": 13,
+          "code": "attr-defined",
+          "message": "Module has no attribute \"_build_extra_template\"; maybe \"build_extra_templates\", \"build_error_template\", or \"build_template\"?"
+        },
+        {
+          "path": "mkdocs/tests/build_tests.py",
+          "line": 272,
+          "column": 13,
+          "code": "attr-defined",
+          "message": "Module has no attribute \"_build_extra_template\"; maybe \"build_extra_templates\", \"build_error_template\", or \"build_template\"?"
+        },
+        {
+          "path": "mkdocs/tests/build_tests.py",
+          "line": 285,
+          "column": 9,
+          "code": "attr-defined",
+          "message": "Module has no attribute \"_populate_page\""
+        },
+        {
+          "path": "mkdocs/tests/build_tests.py",
+          "line": 293,
+          "column": 9,
+          "code": "attr-defined",
+          "message": "Module has no attribute \"_populate_page\""
+        },
+        {
+          "path": "mkdocs/tests/build_tests.py",
+          "line": 303,
+          "column": 9,
+          "code": "attr-defined",
+          "message": "Module has no attribute \"_populate_page\""
+        },
+        {
+          "path": "mkdocs/tests/build_tests.py",
+          "line": 315,
+          "column": 40,
+          "code": "attr-defined",
+          "message": "Module has no attribute \"_populate_page\""
+        },
+        {
+          "path": "mkdocs/tests/build_tests.py",
+          "line": 373,
+          "column": 9,
+          "code": "misc",
+          "message": "\"_build_page\" gets multiple values for keyword argument \"dirty\""
+        },
+        {
+          "path": "mkdocs/tests/build_tests.py",
+          "line": 387,
+          "column": 9,
+          "code": "misc",
+          "message": "\"_build_page\" gets multiple values for keyword argument \"dirty\""
+        }
+      ],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "mkdocs/utils/__init__.py",
+          "definition_qualname": "create_media_urls",
+          "line": 42,
+          "end_line": 42,
+          "call_line": 42,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            33,
+            63
+          ]
+        },
+        {
+          "index": 1,
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "mkdocs/utils/__init__.py",
+          "definition_qualname": "create_media_urls",
+          "line": 44,
+          "end_line": 44,
+          "call_line": 44,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            33,
+            63
+          ]
+        },
+        {
+          "index": 2,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "mkdocs/nav.py",
+          "definition_qualname": "URLContext.make_relative",
+          "line": 53,
+          "end_line": 53,
+          "call_line": 53,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            33,
+            63
+          ]
+        },
+        {
+          "index": 3,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "mkdocs/nav.py",
+          "definition_qualname": "SiteNavigation.walk_pages",
+          "line": 240,
+          "end_line": 240,
+          "call_line": 240,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            216,
+            251
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mkdocs:34ef3ca6d039:mkdocs/utils/__init__.py",
+      "commit": "34ef3ca6d0390959080ce93a695361eea1649272",
+      "parent": "3f0e4464a787ad5ce5a235d7ae988a2d8f53f077",
+      "stale_path": "mkdocs/utils/__init__.py",
+      "stale_blob": "2a927e02ae49018fd28a37c7c159f6972ed101a4",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "mkdocs",
+      "seconds": 0.81,
+      "errors_commit": 88,
+      "errors_mutated": 93,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [
+        {
+          "path": "mkdocs/commands/build.py",
+          "line": 41,
+          "column": 20,
+          "code": "attr-defined",
+          "message": "Module has no attribute \"get_relative_url\""
+        },
+        {
+          "path": "mkdocs/commands/build.py",
+          "line": 43,
+          "column": 24,
+          "code": "call-arg",
+          "message": "Too many arguments for \"create_media_urls\""
+        },
+        {
+          "path": "mkdocs/commands/build.py",
+          "line": 45,
+          "column": 17,
+          "code": "call-arg",
+          "message": "Too many arguments for \"create_media_urls\""
+        },
+        {
+          "path": "mkdocs/commands/build.py",
+          "line": 84,
+          "column": 20,
+          "code": "attr-defined",
+          "message": "Module has no attribute \"get_relative_url\""
+        },
+        {
+          "path": "mkdocs/structure/files.py",
+          "line": 169,
+          "column": 16,
+          "code": "attr-defined",
+          "message": "Module has no attribute \"get_relative_url\""
+        }
+      ],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "mkdocs/nav.py",
+          "definition_qualname": "URLContext.make_relative",
+          "line": 303,
+          "end_line": 303,
+          "call_line": 303,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            288,
+            306
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mkdocs:35fb2c720352:mkdocs/__main__.py",
+      "commit": "35fb2c720352bd9c65b41c1781c93ea09ef84486",
+      "parent": "8aafea1742722be692637e6027150aa92f06cbbf",
+      "stale_path": "mkdocs/__main__.py",
+      "stale_blob": "baf67adc21aeb6afcb47a470ba4c406ab4c4c73d",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "mkdocs",
+      "seconds": 0.54,
+      "errors_commit": 142,
+      "errors_mutated": 143,
+      "new_errors_in_stale_file": [
+        {
+          "path": "mkdocs/__main__.py",
+          "line": 336,
+          "column": 5,
+          "code": "attr-defined",
+          "message": "Module \"mkdocs.commands\" has no attribute \"get_deps\""
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "mkdocs/commands/get_deps.py",
+          "definition_qualname": "get_deps",
+          "line": 342,
+          "end_line": 342,
+          "call_line": 342,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": true,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [
+            {
+              "line": 336,
+              "code": "attr-defined",
+              "message": "Module \"mkdocs.commands\" has no attribute \"get_deps\""
+            }
+          ],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            334,
+            345
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mkdocs:37e645d62310:mkdocs/structure/pages.py",
+      "commit": "37e645d62310978bfbef948dffc15348500dc00c",
+      "parent": "44f3ae212d85a60750769df0e9fa8022274166c8",
+      "stale_path": "mkdocs/structure/pages.py",
+      "stale_blob": "62623b05c199852418becd98bff0d22344af3f88",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "mkdocs",
+      "seconds": 0.52,
+      "errors_commit": 64,
+      "errors_mutated": 64,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "mkdocs/structure/toc.py",
+          "definition_qualname": "get_toc",
+          "line": 184,
+          "end_line": 184,
+          "call_line": 184,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            170,
+            184
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mkdocs:5c2b4f135360:mkdocs/__main__.py",
+      "commit": "5c2b4f13536009852046c89aadd63ac46eacbaaa",
+      "parent": "56f98cb72264136aa017020c56885b49ba64a9b7",
+      "stale_path": "mkdocs/__main__.py",
+      "stale_blob": "d8d56abae7f0b13365f7edcf14b4fc0998fd21e7",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "mkdocs",
+      "seconds": 0.56,
+      "errors_commit": 60,
+      "errors_mutated": 60,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "mkdocs/commands/gh_deploy.py",
+          "definition_qualname": "gh_deploy",
+          "line": 182,
+          "end_line": 182,
+          "call_line": 182,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            173,
+            185
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mkdocs:5c2b4f135360:mkdocs/commands/gh_deploy.py",
+      "commit": "5c2b4f13536009852046c89aadd63ac46eacbaaa",
+      "parent": "56f98cb72264136aa017020c56885b49ba64a9b7",
+      "stale_path": "mkdocs/commands/gh_deploy.py",
+      "stale_blob": "a9c04d8b3b6012177b0d1acc31ff04531fa60693",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "mkdocs",
+      "seconds": 0.55,
+      "errors_commit": 60,
+      "errors_mutated": 62,
+      "new_errors_in_stale_file": [
+        {
+          "path": "mkdocs/commands/gh_deploy.py",
+          "line": 8,
+          "column": 1,
+          "code": "attr-defined",
+          "message": "Module \"mkdocs.utils\" has no attribute \"ghp_import\""
+        }
+      ],
+      "new_errors_elsewhere": [
+        {
+          "path": "mkdocs/__main__.py",
+          "line": 184,
+          "column": 9,
+          "code": "call-arg",
+          "message": "Unexpected keyword argument \"shell\" for \"gh_deploy\""
+        }
+      ],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "mkdocs/utils/ghp_import.py",
+          "definition_qualname": "ghp_import",
+          "line": 106,
+          "end_line": 107,
+          "call_line": 106,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": true,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [
+            {
+              "line": 8,
+              "code": "attr-defined",
+              "message": "Module \"mkdocs.utils\" has no attribute \"ghp_import\""
+            }
+          ],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            86,
+            134
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mkdocs:79ebb89759d5:mkdocs/commands/build.py",
+      "commit": "79ebb89759d51a52fb4f60ccde18098bd1daab62",
+      "parent": "cc03fd05876ad7ff14dfeff55832dc0dd7f0bf06",
+      "stale_path": "mkdocs/commands/build.py",
+      "stale_blob": "b4fc6d221d680c086d921307f0ab2c0090db4a2f",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "mkdocs",
+      "seconds": 0.52,
+      "errors_commit": 84,
+      "errors_mutated": 84,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "mkdocs/plugins.py",
+          "definition_qualname": "PluginCollection.run_event",
+          "line": 245,
+          "end_line": 245,
+          "call_line": 245,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            236,
+            306
+          ]
+        },
+        {
+          "index": 1,
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "mkdocs/plugins.py",
+          "definition_qualname": "PluginCollection.run_event",
+          "line": 301,
+          "end_line": 301,
+          "call_line": 301,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            236,
+            306
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mkdocs:79ebb89759d5:mkdocs/structure/pages.py",
+      "commit": "79ebb89759d51a52fb4f60ccde18098bd1daab62",
+      "parent": "cc03fd05876ad7ff14dfeff55832dc0dd7f0bf06",
+      "stale_path": "mkdocs/structure/pages.py",
+      "stale_blob": "6327d28f639f6e703bffe77be672b307fe67559e",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "mkdocs",
+      "seconds": 0.54,
+      "errors_commit": 84,
+      "errors_mutated": 84,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "mkdocs/plugins.py",
+          "definition_qualname": "PluginCollection.run_event",
+          "line": 126,
+          "end_line": 126,
+          "call_line": 126,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            125,
+            139
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mkdocs:8035d78dad55:mkdocs/commands/serve.py",
+      "commit": "8035d78dad55ff6ea4ebffad43b0a0a2a9586e7d",
+      "parent": "646987da4502becf346bfaabb6ba40934307399b",
+      "stale_path": "mkdocs/commands/serve.py",
+      "stale_blob": "dc472a66cbe7917ea0cd64c82c90209c941aa5bb",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "mkdocs",
+      "seconds": 0.57,
+      "errors_commit": 142,
+      "errors_mutated": 143,
+      "new_errors_in_stale_file": [
+        {
+          "path": "mkdocs/commands/serve.py",
+          "line": 64,
+          "column": 9,
+          "code": "call-arg",
+          "message": "Unexpected keyword argument \"live_server\" for \"build\""
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "mkdocs/commands/build.py",
+          "definition_qualname": "build",
+          "line": 64,
+          "end_line": 64,
+          "call_line": 64,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 64,
+              "code": "call-arg",
+              "message": "Unexpected keyword argument \"live_server\" for \"build\""
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "call-arg"
+          ],
+          "tc_file_hit_codes": [
+            "call-arg"
+          ],
+          "enclosing_function_span": [
+            59,
+            64
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mkdocs:82fcf3115ab9:mkdocs/__main__.py",
+      "commit": "82fcf3115ab9c2e1c9fa8d41a90b0ae3eb307080",
+      "parent": "fa52d3ae71251ae1c760cbe9b31caced816573d1",
+      "stale_path": "mkdocs/__main__.py",
+      "stale_blob": "4afd164b14f213bdedc1c49b5574188aaec7cecb",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "mkdocs",
+      "seconds": 0.59,
+      "errors_commit": 107,
+      "errors_mutated": 107,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "unknown",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "mkdocs/commands/serve.py",
+          "definition_qualname": "serve",
+          "line": 177,
+          "end_line": 177,
+          "call_line": 177,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            175,
+            177
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mkdocs:930ae26a5543:mkdocs/__main__.py",
+      "commit": "930ae26a55436f7e1706d6076befb2853c8a0285",
+      "parent": "f37ce51da197dd83e1c64fe1f091c99b503ef94e",
+      "stale_path": "mkdocs/__main__.py",
+      "stale_blob": "84e7d3f086b52f17b4182ecafa776855a59ab189",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "mkdocs",
+      "seconds": 0.59,
+      "errors_commit": 159,
+      "errors_mutated": 159,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "unknown",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "mkdocs/commands/serve.py",
+          "definition_qualname": "serve",
+          "line": 234,
+          "end_line": 234,
+          "call_line": 234,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            229,
+            234
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mkdocs:a3e60f138508:mkdocs/config/config_options.py",
+      "commit": "a3e60f138508485f63cab20047de0ba72f32b7e6",
+      "parent": "d6449f90808b50979694a3e91b49b532f3bf785d",
+      "stale_path": "mkdocs/config/config_options.py",
+      "stale_blob": "9a7eb0b6c22d8801a9d97d27ede971cda017d5e2",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "mkdocs",
+      "seconds": 0.67,
+      "errors_commit": 67,
+      "errors_mutated": 66,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "mkdocs/plugins.py",
+          "definition_qualname": "BasePlugin.load_config",
+          "line": 657,
+          "end_line": 657,
+          "call_line": 657,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            645,
+            665
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mkdocs:c9032bd6bfde:mkdocs/structure/files.py",
+      "commit": "c9032bd6bfde09ead2f4f879e85590d7cd6e68a6",
+      "parent": "a308bdc05733e1968bee46d485ff773587291f25",
+      "stale_path": "mkdocs/structure/files.py",
+      "stale_blob": "013a51b27755f13a11b291401ca29e82c9e3f209",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "mkdocs",
+      "seconds": 0.71,
+      "errors_commit": 73,
+      "errors_mutated": 74,
+      "new_errors_in_stale_file": [
+        {
+          "path": "mkdocs/structure/files.py",
+          "line": 170,
+          "column": 16,
+          "code": "attr-defined",
+          "message": "Module has no attribute \"urlquote\""
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "mkdocs/utils/__init__.py",
+          "definition_qualname": "urlquote",
+          "line": 170,
+          "end_line": 170,
+          "call_line": 170,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 170,
+              "code": "attr-defined",
+              "message": "Module has no attribute \"urlquote\""
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "attr-defined"
+          ],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            161,
+            170
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mkdocs:ccf011db793c:mkdocs/commands/build.py",
+      "commit": "ccf011db793c968bf2cee80c3e8f1f66fd2b3189",
+      "parent": "64cab0d77f94583211a3b76a3c35530a269caf2e",
+      "stale_path": "mkdocs/commands/build.py",
+      "stale_blob": "2c9e97931d968811c1726355dcc0198eabec73c8",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "mkdocs",
+      "seconds": 0.56,
+      "errors_commit": 142,
+      "errors_mutated": 142,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "mkdocs/utils/__init__.py",
+          "definition_qualname": "get_build_timestamp",
+          "line": 113,
+          "end_line": 113,
+          "call_line": 113,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            91,
+            119
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mkdocs:d107e6d32c1d:mkdocs/commands/build.py",
+      "commit": "d107e6d32c1d9cdb59f4f58a1f6371d377d6d18f",
+      "parent": "a94a014e016343170daabb1eedf7d8c126ded4dc",
+      "stale_path": "mkdocs/commands/build.py",
+      "stale_blob": "e8af54fbbef5bf568e9017a8db30a27f153ec678",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "mkdocs",
+      "seconds": 0.64,
+      "errors_commit": 143,
+      "errors_mutated": 144,
+      "new_errors_in_stale_file": [
+        {
+          "path": "mkdocs/commands/build.py",
+          "line": 16,
+          "column": 1,
+          "code": "attr-defined",
+          "message": "Module \"mkdocs.structure.files\" has no attribute \"_set_exclusions\"; maybe \"set_exclusions\"?"
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "mkdocs/structure/files.py",
+          "definition_qualname": "_set_exclusions",
+          "line": 297,
+          "end_line": 297,
+          "call_line": 297,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": true,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [
+            {
+              "line": 16,
+              "code": "attr-defined",
+              "message": "Module \"mkdocs.structure.files\" has no attribute \"_set_exclusions\"; maybe \"set_exclusions\"?"
+            }
+          ],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            250,
+            362
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mkdocs:da92f72ec868:mkdocs/structure/pages.py",
+      "commit": "da92f72ec8683fdd27b7ce48c7863a33508b25d7",
+      "parent": "5c261d250f78afcca5da88168c76a7bf4750ef44",
+      "stale_path": "mkdocs/structure/pages.py",
+      "stale_blob": "77086ed71d9a193e27f5d07bd6135892210f90df",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "mkdocs",
+      "seconds": 0.62,
+      "errors_commit": 83,
+      "errors_mutated": 84,
+      "new_errors_in_stale_file": [
+        {
+          "path": "mkdocs/structure/pages.py",
+          "line": 22,
+          "column": 2,
+          "code": "attr-defined",
+          "message": "Module has no attribute \"transformer\""
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "mkdocs/utils/meta.py",
+          "definition_qualname": "transformer",
+          "line": 22,
+          "end_line": 22,
+          "call_line": 22,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 22,
+              "code": "attr-defined",
+              "message": "Module has no attribute \"transformer\""
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "attr-defined"
+          ],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": null
+        }
+      ]
+    },
+    {
+      "id": "mkdocs:da92f72ec868:mkdocs/utils/meta.py",
+      "commit": "da92f72ec8683fdd27b7ce48c7863a33508b25d7",
+      "parent": "5c261d250f78afcca5da88168c76a7bf4750ef44",
+      "stale_path": "mkdocs/utils/meta.py",
+      "stale_blob": "b976d9af384ea5674075e7dca7b5ebc00cf056ce",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "mkdocs",
+      "seconds": 0.71,
+      "errors_commit": 83,
+      "errors_mutated": 84,
+      "new_errors_in_stale_file": [
+        {
+          "path": "mkdocs/utils/meta.py",
+          "line": 140,
+          "column": 5,
+          "code": "var-annotated",
+          "message": "Need type annotation for \"data\" (hint: \"data: dict[<type>, <type>] = ...\")"
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "mkdocs/structure/pages.py",
+          "definition_qualname": "default",
+          "line": 87,
+          "end_line": 87,
+          "call_line": 87,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "var-annotated"
+          ],
+          "enclosing_function_span": [
+            80,
+            87
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mkdocs:df2dffd8a62f:mkdocs/commands/serve.py",
+      "commit": "df2dffd8a62f312e98987998af3114f3e1e552fb",
+      "parent": "8035d78dad55ff6ea4ebffad43b0a0a2a9586e7d",
+      "stale_path": "mkdocs/commands/serve.py",
+      "stale_blob": "d6e73b167542edf54672cf1ee91c3645174cb987",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "mkdocs",
+      "seconds": 0.54,
+      "errors_commit": 142,
+      "errors_mutated": 142,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "mkdocs/livereload/__init__.py",
+          "definition_qualname": "LiveReloadServer.serve",
+          "line": 102,
+          "end_line": 102,
+          "call_line": 102,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            20,
+            110
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mkdocs:e5c2459fdf58:mkdocs/__main__.py",
+      "commit": "e5c2459fdf58e55237fef914ac67a968c68d2a3f",
+      "parent": "ee37665418a8c1a20eff6041fe17d0d107dde07c",
+      "stale_path": "mkdocs/__main__.py",
+      "stale_blob": "8c231180fe4dec6eee238f8235dd74e116f0cf29",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "mkdocs",
+      "seconds": 0.52,
+      "errors_commit": 67,
+      "errors_mutated": 67,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "mkdocs/commands/gh_deploy.py",
+          "definition_qualname": "gh_deploy",
+          "line": 185,
+          "end_line": 185,
+          "call_line": 185,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            176,
+            188
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mkdocs:f37ce51da197:mkdocs/commands/build.py",
+      "commit": "f37ce51da197dd83e1c64fe1f091c99b503ef94e",
+      "parent": "67e0e4e052086bfcfd68d839104563fdc33bd8d0",
+      "stale_path": "mkdocs/commands/build.py",
+      "stale_blob": "cc53ff54a267f969649cc643c91203b427f2db7f",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "mkdocs",
+      "seconds": 0.64,
+      "errors_commit": 159,
+      "errors_mutated": 159,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "mkdocs/structure/files.py",
+          "definition_qualname": "Files.documentation_pages",
+          "line": 305,
+          "end_line": 305,
+          "call_line": 305,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            255,
+            350
+          ]
+        },
+        {
+          "index": 1,
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "mkdocs/structure/files.py",
+          "definition_qualname": "Files.copy_static_files",
+          "line": 317,
+          "end_line": 317,
+          "call_line": 317,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            255,
+            350
+          ]
+        },
+        {
+          "index": 2,
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "mkdocs/structure/files.py",
+          "definition_qualname": "Files.documentation_pages",
+          "line": 326,
+          "end_line": 326,
+          "call_line": 326,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            255,
+            350
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mkdocs:f37ce51da197:mkdocs/structure/nav.py",
+      "commit": "f37ce51da197dd83e1c64fe1f091c99b503ef94e",
+      "parent": "67e0e4e052086bfcfd68d839104563fdc33bd8d0",
+      "stale_path": "mkdocs/structure/nav.py",
+      "stale_blob": "cdf1d1697942d64cd04cdcb540384c81c8733e37",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "mkdocs",
+      "seconds": 0.76,
+      "errors_commit": 159,
+      "errors_mutated": 159,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "mkdocs/structure/files.py",
+          "definition_qualname": "Files.documentation_pages",
+          "line": 150,
+          "end_line": 150,
+          "call_line": 150,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            148,
+            192
+          ]
+        },
+        {
+          "index": 1,
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "mkdocs/structure/files.py",
+          "definition_qualname": "Files.documentation_pages",
+          "line": 162,
+          "end_line": 162,
+          "call_line": 162,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            148,
+            192
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mkdocs:f70a48ee20f0:mkdocs/__main__.py",
+      "commit": "f70a48ee20f025bab32047689f9072e8d380528f",
+      "parent": "d8f8e5be3c053ca4d083558bd575b1f83f0d04e2",
+      "stale_path": "mkdocs/__main__.py",
+      "stale_blob": "f8939fc04d8604e648b676d0c7408acce54ddacb",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "mkdocs",
+      "seconds": 0.49,
+      "errors_commit": 73,
+      "errors_mutated": 73,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "mkdocs/commands/serve.py",
+          "definition_qualname": "serve",
+          "line": 130,
+          "end_line": 137,
+          "call_line": 130,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            120,
+            140
+          ]
+        }
+      ]
+    }
+  ],
+  "environment": {
+    "mypy_version": "mypy 2.4.1 (compiled: yes)",
+    "python_version": "3.12.6",
+    "command": [
+      "python.exe",
+      "-I",
+      "-X",
+      "utf8",
+      "-m",
+      "mypy",
+      "--config-file",
+      "{config}",
+      "--cache-dir",
+      "{cache}",
+      "--no-site-packages",
+      "--ignore-missing-imports",
+      "--check-untyped-defs",
+      "--no-error-summary",
+      "--hide-error-context",
+      "--no-color-output",
+      "--show-column-numbers",
+      "--show-error-codes",
+      "--no-pretty",
+      "{target}"
+    ],
+    "config_file_contents": "[mypy]\n",
+    "incremental": true,
+    "timeout_seconds": 300.0,
+    "corpora": [
+      {
+        "repository": "attrs",
+        "sha256": "08d695e30812a1767abb3ebb3f1a77a247bfcb5f46314dddc963dfd92e321304"
+      },
+      {
+        "repository": "httpx",
+        "sha256": "8cca55075dac770cd299a2243b01d4be3380eb37387652ffb11796e2903409c2"
+      },
+      {
+        "repository": "marshmallow",
+        "sha256": "5609c8133d7a8d500218427d0e312291d5fa6491feaa97590aec1ee2b315c020"
+      },
+      {
+        "repository": "rich",
+        "sha256": "df1fff43103f05b6c114aa0ce650938d754a1ee4133cb97b3b024db96c942544"
+      },
+      {
+        "repository": "mkdocs",
+        "sha256": "d533e3529b034b3fdd19dfda561b1b9932344cdec5a586f3c887ddd427f859fb"
+      }
+    ]
+  }
+}

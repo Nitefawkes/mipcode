@@ -24,13 +24,15 @@ import shlex
 import subprocess
 import sys
 import time
+import uuid
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable, Iterable
 
 from .cache import FactCache
 from .delta import OPT_IN_DETECTORS, analyze_changed_only, analyze_delta, format_advisory, rank_findings
-from .ledger import Obligation, ObligationLedger, enclosing_function, format_open_obligations
+from .ledger import LedgerUpdate, Obligation, ObligationLedger, enclosing_function, format_open_obligations
 from .model import FileFacts, Finding, ObservedCallEdge, SourceFile
 from .session import DeltaSession
 
@@ -213,6 +215,8 @@ class _GitCheck:
     skipped: list[str]
     runtime_edges: list[ObservedCallEdge]
     anchor_for: Callable[[Finding], str]
+    # True when the whole workspace was read; False when the changed files were enough.
+    workspace_parsed: bool = False
 
 
 def _collect_git_findings(
@@ -280,7 +284,9 @@ def _collect_git_findings(
         runtime_edges=runtime_edges,
         enable=enable,
     )
-    return _GitCheck(changed_paths, findings, sorted(cache.skipped), runtime_edges, anchors(cache, after_files))
+    return _GitCheck(
+        changed_paths, findings, sorted(cache.skipped), runtime_edges, anchors(cache, after_files), True
+    )
 
 
 def _finding_json(finding: Finding) -> dict[str, Any]:
@@ -315,17 +321,100 @@ def _load_ledger_file(path: Path) -> tuple[ObligationLedger, str | None]:
     return ObligationLedger.from_dict(data.get("ledger") or {}), base if isinstance(base, str) else None
 
 
-def _save_ledger_file(path: Path, ledger: ObligationLedger, base_commit: str | None) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    if path.parent.name == ".mipdelta":
-        ignore = path.parent / ".gitignore"
+def _prepare_state_dir(directory: Path) -> None:
+    directory.mkdir(parents=True, exist_ok=True)
+    if directory.name == ".mipdelta":
+        ignore = directory / ".gitignore"
         if not ignore.exists():
             # Keep session state out of the user's Git status.
             ignore.write_text("*\n", encoding="utf-8")
+
+
+def _save_ledger_file(path: Path, ledger: ObligationLedger, base_commit: str | None) -> None:
+    _prepare_state_dir(path.parent)
     payload = {"schema": "mipdelta.ledger-file.v1", "base_commit": base_commit, "ledger": ledger.to_dict()}
     scratch = path.with_name(path.name + ".tmp")
     scratch.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
     os.replace(scratch, path)
+
+
+def _events_path(ledger_path: Path) -> Path:
+    """The append-only event log kept next to a ledger: X.json -> X.events.jsonl."""
+    return ledger_path.with_name(ledger_path.stem + ".events.jsonl")
+
+
+class _EventLog:
+    """Buffer the events of one invocation and append them to the log in one write.
+
+    Events carry names, paths and line numbers only, never source text or evidence.
+    A failure to write is swallowed: the log must not change what a check returns.
+    """
+
+    def __init__(self, ledger_path: Path, *, session: str | None, base_commit: str | None, **common: Any) -> None:
+        self.path = _events_path(ledger_path)
+        self._common = {"invocation": uuid.uuid4().hex[:12], "session": session, "base_commit": base_commit, **common}
+        self._rows: list[dict[str, Any]] = []
+
+    def add(self, event: str, **fields: Any) -> None:
+        stamp = datetime.now(timezone.utc).isoformat(timespec="milliseconds").replace("+00:00", "Z")
+        self._rows.append({"event": event, "ts": stamp, **self._common, **fields})
+
+    def obligations(self, event: str, items: Iterable[Obligation]) -> None:
+        for item in items:
+            finding = item.finding
+            self.add(
+                event,
+                id=item.id,
+                detector=finding.detector,
+                symbol=finding.symbol,
+                path=finding.path,
+                line=finding.start_line,
+                provenance=finding.resolution_source,
+            )
+
+    def run(self, source: str, wall_ms: float, update: LedgerUpdate, changed_paths: int, workspace_parsed: bool) -> None:
+        self.add(
+            "run",
+            source=source,
+            wall_ms=wall_ms,
+            opened=len(update.opened),
+            discharged=len(update.discharged),
+            open=len(update.open),
+            changed_paths=changed_paths,
+            workspace_parsed=workspace_parsed,
+        )
+
+    def flush(self) -> None:
+        rows, self._rows = self._rows, []
+        if not rows:
+            return
+        try:
+            text = "".join(json.dumps(row) + "\n" for row in rows)
+            with open(self.path, "a", encoding="utf-8", newline="\n") as handle:
+                handle.write(text)
+        except Exception as exc:  # noqa: BLE001 - logging must never change the outcome
+            _log_failure(exc)
+
+
+def _log_failure(exc: BaseException) -> None:
+    if os.environ.get("MIPDELTA_HOOK_DEBUG"):
+        print(f"mip-delta event log: {exc}", file=sys.stderr)
+
+
+def _relative_edit(edited: str, root: Path, top: Path) -> str | None:
+    """The edited file relative to the top of the repository, or None outside it."""
+    if not edited:
+        return None
+    path = Path(edited)
+    try:
+        return (path if path.is_absolute() else root / path).resolve().relative_to(top).as_posix()
+    except (ValueError, OSError):
+        return None
+
+
+def _ledger_session(ledger_path: Path) -> str | None:
+    match = re.fullmatch(r"ledger-(.+)\.json", ledger_path.name)
+    return match.group(1) if match and ledger_path.parent.name == ".mipdelta" else None
 
 
 def _run_git_check(
@@ -339,6 +428,7 @@ def _run_git_check(
     ledger_path: Path | None = None,
     show_open: bool = False,
     enable: Iterable[str] = (),
+    source: str = "check-git",
 ) -> int:
     t0 = time.perf_counter()
     check = _collect_git_findings(root, baseline, runtime_dir, enable=enable)
@@ -348,6 +438,7 @@ def _run_git_check(
     ledger_rows: dict[str, list[dict[str, Any]]] = {}
     open_text = ""
     failing = bool(ranked)
+    update: LedgerUpdate | None = None
     if ledger_path is not None:
         ledger, _ = _load_ledger_file(ledger_path)
         update = ledger.update(check.findings, check.anchor_for)
@@ -384,6 +475,15 @@ def _run_git_check(
     elif advisory:
         print(advisory)
     _note_skipped(check.skipped, as_json)
+    if ledger_path is not None and update is not None:
+        try:
+            log = _EventLog(ledger_path, session=_ledger_session(ledger_path), base_commit=baseline[1])
+            log.obligations("opened", update.opened)
+            log.obligations("discharged", update.discharged)
+            log.run(source, wall_ms, update, len(check.changed_paths), check.workspace_parsed)
+            log.flush()
+        except Exception as exc:  # noqa: BLE001 - logging must never change the exit status
+            _log_failure(exc)
 
     if fail_on_findings and failing:
         return 1
@@ -414,12 +514,14 @@ def _run_hook(kind: str, raw_event: str, enable: Iterable[str] = ()) -> int:
         return 0
     if kind == "claude-stop" and event.get("stop_hook_active"):
         return 0
+    edited = ""
     if kind == "claude-post-edit":
         tool_input = event.get("tool_input")
         edited = str(tool_input.get("file_path") or "") if isinstance(tool_input, dict) else ""
         if edited and not edited.endswith((".py", ".pyi")):
             return 0
     try:
+        t0 = time.perf_counter()
         root = Path(os.environ.get("CLAUDE_PROJECT_DIR") or event.get("cwd") or ".").resolve()
         top, head = _git_baseline(root, "HEAD")
         session = re.sub(r"[^A-Za-z0-9_-]", "_", str(event.get("session_id") or "default"))[:80]
@@ -432,6 +534,7 @@ def _run_hook(kind: str, raw_event: str, enable: Iterable[str] = ()) -> int:
         )
         update = ledger.update(check.findings, check.anchor_for)
         output: dict[str, Any] | None = None
+        pending: tuple[Obligation, ...] = ()
         if kind == "claude-post-edit":
             if update.opened:
                 text = format_advisory(rank_findings(item.finding for item in update.opened), max_bytes=250)
@@ -453,6 +556,25 @@ def _run_hook(kind: str, raw_event: str, enable: Iterable[str] = ()) -> int:
             _save_ledger_file(ledger_path, ledger, commit)
         if output is not None:
             print(json.dumps(output))
+        wall_ms = round((time.perf_counter() - t0) * 1000.0, 3)
+        # A quiet invocation in a session with no ledger leaves no state behind,
+        # unless MIPDELTA_LOG_ALL_RUNS asks for every run to be recorded.
+        if ledger_path.exists() or os.environ.get("MIPDELTA_LOG_ALL_RUNS"):
+            try:
+                _prepare_state_dir(ledger_path.parent)
+                extra = {"edited_path": _relative_edit(edited, root, top)} if kind == "claude-post-edit" else {}
+                raw_session = event.get("session_id")
+                log = _EventLog(
+                    ledger_path, session=None if raw_session is None else str(raw_session), base_commit=commit, **extra
+                )
+                log.obligations("opened", update.opened)
+                log.obligations("discharged", update.discharged)
+                if pending:
+                    log.add("stop_blocked", ids=[item.id for item in update.open], new_ids=[item.id for item in pending])
+                log.run(kind, wall_ms, update, len(check.changed_paths), check.workspace_parsed)
+                log.flush()
+            except Exception as exc:  # noqa: BLE001 - a hook never fails the tool call or the turn
+                _log_failure(exc)
     except (AnalysisError, OSError) as exc:
         # An edit in progress may not parse, and the directory may not be a repository.
         if os.environ.get("MIPDELTA_HOOK_DEBUG"):
@@ -515,6 +637,7 @@ def _run_monitored_pytest(
             ledger_path=ledger_path,
             show_open=show_open,
             enable=enable,
+            source="run-pytest",
         )
     except (AnalysisError, OSError) as exc:
         check_rc = _report_error(exc, as_json)
@@ -596,6 +719,12 @@ def main_cli(argv: list[str] | None = None) -> int:
             _save_ledger_file(args.ledger, ledger, base_commit)
         except (AnalysisError, OSError) as exc:
             return _report_error(exc, args.json)
+        try:
+            log = _EventLog(args.ledger, session=_ledger_session(args.ledger.resolve()), base_commit=base_commit)
+            log.add("waived", id=args.waive, reason=args.reason or "waived")
+            log.flush()
+        except Exception as exc:  # noqa: BLE001 - logging must never change the exit status
+            _log_failure(exc)
         return 0
     if args.open and args.ledger is None:
         parser.error("--open needs --ledger.")

@@ -1,0 +1,652 @@
+{
+  "schema": "mip-delta recall-mutation corpus v1",
+  "materialization": "Tree M is the tree of `commit` with the file at `stale_path` replaced by the blob `stale_blob` (the parent's version of that file). Every other path is exactly as in `commit`. Line numbers of sites refer to the `stale_blob` text, which is also the text of that file in M.",
+  "repository": "marshmallow",
+  "head": "a38b7f6842042e65fd1a485ed152ca99f87880c0",
+  "limit": 800,
+  "opt_in_detectors": [],
+  "wall_seconds": 61.6,
+  "counts": {
+    "changed_definitions_removed": 28,
+    "changed_definitions_signature": 45,
+    "commits_changing_production_python": 428,
+    "commits_examined": 800,
+    "commits_with_changed_definitions": 35,
+    "commits_with_mutations": 4,
+    "mutations": 4,
+    "sites": 10
+  },
+  "mutations": [
+    {
+      "id": "marshmallow:3273a5beb9db:src/marshmallow/fields.py",
+      "repository": "marshmallow",
+      "commit": "3273a5beb9db746217390589d72e92230255fede",
+      "parent": "168fae7e827ba761ffdf638aab43a32bfdfa3453",
+      "subject": "Remove FieldABC and the base module (#2722)",
+      "stale_path": "src/marshmallow/fields.py",
+      "stale_blob": "76157f7cb68216850919e16362ee6465a77cdaba",
+      "commit_blob": "985bd234c1d0d693dace1b5c9206f029d1a39570",
+      "other_changed_python_paths": [
+        "src/marshmallow/base.py",
+        "src/marshmallow/exceptions.py",
+        "src/marshmallow/schema.py",
+        "src/marshmallow/utils.py",
+        "tests/test_serialization.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "src/marshmallow/utils.py",
+            "qualname": "resolve_field_instance",
+            "name": "resolve_field_instance",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 260,
+            "new_line": null,
+            "is_method": false,
+            "old_parameters": "(cls_or_instance)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "cls_or_instance",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 692,
+          "end_line": 692,
+          "call_line": 692,
+          "call_text": "resolve_field_instance(cls_or_instance)",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "List.__init__",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "removed_callable_review"
+          ],
+          "site_hit_symbols": [
+            "resolve_field_instance"
+          ],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "src/marshmallow/utils.py",
+            "qualname": "resolve_field_instance",
+            "name": "resolve_field_instance",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 260,
+            "new_line": null,
+            "is_method": false,
+            "old_parameters": "(cls_or_instance)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "cls_or_instance",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 767,
+          "end_line": 767,
+          "call_line": 767,
+          "call_text": "resolve_field_instance(cls_or_instance)",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "Tuple.__init__",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "removed_callable_review"
+          ],
+          "site_hit_symbols": [
+            "resolve_field_instance"
+          ],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "src/marshmallow/utils.py",
+            "qualname": "resolve_field_instance",
+            "name": "resolve_field_instance",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 260,
+            "new_line": null,
+            "is_method": false,
+            "old_parameters": "(cls_or_instance)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "cls_or_instance",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 1513,
+          "end_line": 1513,
+          "call_line": 1513,
+          "call_text": "resolve_field_instance(keys)",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "Mapping.__init__",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "removed_callable_review"
+          ],
+          "site_hit_symbols": [
+            "resolve_field_instance"
+          ],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "src/marshmallow/utils.py",
+            "qualname": "resolve_field_instance",
+            "name": "resolve_field_instance",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 260,
+            "new_line": null,
+            "is_method": false,
+            "old_parameters": "(cls_or_instance)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "cls_or_instance",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 1524,
+          "end_line": 1524,
+          "call_line": 1524,
+          "call_text": "resolve_field_instance(values)",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "Mapping.__init__",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "removed_callable_review"
+          ],
+          "site_hit_symbols": [
+            "resolve_field_instance"
+          ],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "src/marshmallow/utils.py",
+            "qualname": "resolve_field_instance",
+            "name": "resolve_field_instance",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 260,
+            "new_line": null,
+            "is_method": false,
+            "old_parameters": "(cls_or_instance)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "cls_or_instance",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 1847,
+          "end_line": 1847,
+          "call_line": 1847,
+          "call_text": "resolve_field_instance(by_value)",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "Enum.__init__",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "removed_callable_review"
+          ],
+          "site_hit_symbols": [
+            "resolve_field_instance"
+          ],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        }
+      ],
+      "new_findings_in_stale_file": [
+        {
+          "detector": "removed_callable_review",
+          "symbol": "resolve_field_instance",
+          "path": "src/marshmallow/fields.py",
+          "line": 692,
+          "anchor": "List.__init__"
+        },
+        {
+          "detector": "removed_callable_review",
+          "symbol": "resolve_field_instance",
+          "path": "src/marshmallow/fields.py",
+          "line": 767,
+          "anchor": "Tuple.__init__"
+        },
+        {
+          "detector": "removed_callable_review",
+          "symbol": "resolve_field_instance",
+          "path": "src/marshmallow/fields.py",
+          "line": 1513,
+          "anchor": "Mapping.__init__"
+        },
+        {
+          "detector": "removed_callable_review",
+          "symbol": "resolve_field_instance",
+          "path": "src/marshmallow/fields.py",
+          "line": 1524,
+          "anchor": "Mapping.__init__"
+        },
+        {
+          "detector": "removed_callable_review",
+          "symbol": "resolve_field_instance",
+          "path": "src/marshmallow/fields.py",
+          "line": 1847,
+          "anchor": "Enum.__init__"
+        }
+      ],
+      "collateral": []
+    },
+    {
+      "id": "marshmallow:b1d5f8f797f4:src/marshmallow/schema.py",
+      "repository": "marshmallow",
+      "commit": "b1d5f8f797f41f5b601dfd1da0f0a98a35e4b3ca",
+      "parent": "b8a418884d1cc20765c390867f8b2513f9d58aeb",
+      "subject": "Rename json_data to s (#2764)",
+      "stale_path": "src/marshmallow/schema.py",
+      "stale_blob": "00ed57dcda46d01e4f1843425210d1b8070229e7",
+      "commit_blob": "85b362d6b0c6a11f86f3810291386e4087f83071",
+      "other_changed_python_paths": [
+        "src/marshmallow/types.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "src/marshmallow/types.py",
+            "qualname": "RenderModule.loads",
+            "name": "loads",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 25,
+            "new_line": 24,
+            "is_method": true,
+            "old_parameters": "(self, json_data, *args, **kwargs)",
+            "new_parameters": "(self, s, *args, **kwargs)",
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "json_data",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "args",
+                "var_positional",
+                false
+              ],
+              [
+                "kwargs",
+                "var_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "s",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "args",
+                "var_positional",
+                false
+              ],
+              [
+                "kwargs",
+                "var_keyword",
+                false
+              ]
+            ]
+          },
+          "line": 748,
+          "end_line": 748,
+          "call_line": 748,
+          "call_text": "self.opts.render_module.loads(json_data, **kwargs)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "Schema.loads",
+          "binding": "unknown",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 2,
+          "name_defined_in_stale_file": true,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "marshmallow:de5e842aeaf7:src/marshmallow/schema.py",
+      "repository": "marshmallow",
+      "commit": "de5e842aeaf7eacfa42e9231f8b18e0792851c45",
+      "parent": "c7152171fbe7c12f5ac77800a43dc7ad8ae2e2cf",
+      "subject": "Check for fields declared as instances at class declaration rather than at instantiation (#2772)",
+      "stale_path": "src/marshmallow/schema.py",
+      "stale_blob": "0298274e4b75e05cd7894e522b105d4e655cee5b",
+      "commit_blob": "f1ed1201d17ab7ca73ebb84d0d28f9c288c44ce2",
+      "other_changed_python_paths": [
+        "src/marshmallow/utils.py",
+        "tests/test_schema.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "src/marshmallow/utils.py",
+            "qualname": "is_instance_or_subclass",
+            "name": "is_instance_or_subclass",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 51,
+            "new_line": null,
+            "is_method": false,
+            "old_parameters": "(val, class_)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "val",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "class_",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 51,
+          "end_line": 51,
+          "call_line": 51,
+          "call_text": "is_instance_or_subclass(field_value, ma_fields.Field)",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "_get_fields",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "removed_callable_review"
+          ],
+          "site_hit_symbols": [
+            "is_instance_or_subclass"
+          ],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        }
+      ],
+      "new_findings_in_stale_file": [
+        {
+          "detector": "removed_callable_review",
+          "symbol": "is_instance_or_subclass",
+          "path": "src/marshmallow/schema.py",
+          "line": 51,
+          "anchor": "_get_fields"
+        }
+      ],
+      "collateral": []
+    },
+    {
+      "id": "marshmallow:50b2849ccaf6:src/marshmallow/schema.py",
+      "repository": "marshmallow",
+      "commit": "50b2849ccaf6659fcfc362111102d2b62d0165f1",
+      "parent": "e3e00836d64dc928ae7172dc180b50b381a7e929",
+      "subject": "Validate unknown with type checking rather than at runtime (#2771)",
+      "stale_path": "src/marshmallow/schema.py",
+      "stale_blob": "f1ed1201d17ab7ca73ebb84d0d28f9c288c44ce2",
+      "commit_blob": "756bbaf174975159c4ada9f8229413102b35ae95",
+      "other_changed_python_paths": [
+        "src/marshmallow/fields.py",
+        "src/marshmallow/types.py",
+        "src/marshmallow/utils.py",
+        "tests/test_schema.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "src/marshmallow/utils.py",
+            "qualname": "validate_unknown_parameter_value",
+            "name": "validate_unknown_parameter_value",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 187,
+            "new_line": null,
+            "is_method": false,
+            "old_parameters": "(obj)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "obj",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 210,
+          "end_line": 210,
+          "call_line": 210,
+          "call_text": "validate_unknown_parameter_value(getattr(meta, \"unknown\", RAISE))",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "SchemaOpts.__init__",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "removed_callable_review"
+          ],
+          "site_hit_symbols": [
+            "validate_unknown_parameter_value"
+          ],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "src/marshmallow/utils.py",
+            "qualname": "validate_unknown_parameter_value",
+            "name": "validate_unknown_parameter_value",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 187,
+            "new_line": null,
+            "is_method": false,
+            "old_parameters": "(obj)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "obj",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 420,
+          "end_line": 420,
+          "call_line": 420,
+          "call_text": "validate_unknown_parameter_value(unknown)",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "Schema.__init__",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "removed_callable_review"
+          ],
+          "site_hit_symbols": [
+            "validate_unknown_parameter_value"
+          ],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "src/marshmallow/utils.py",
+            "qualname": "validate_unknown_parameter_value",
+            "name": "validate_unknown_parameter_value",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 187,
+            "new_line": null,
+            "is_method": false,
+            "old_parameters": "(obj)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "obj",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 854,
+          "end_line": 854,
+          "call_line": 854,
+          "call_text": "validate_unknown_parameter_value(unknown)",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "Schema._do_load",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "removed_callable_review"
+          ],
+          "site_hit_symbols": [
+            "validate_unknown_parameter_value"
+          ],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        }
+      ],
+      "new_findings_in_stale_file": [
+        {
+          "detector": "removed_callable_review",
+          "symbol": "validate_unknown_parameter_value",
+          "path": "src/marshmallow/schema.py",
+          "line": 210,
+          "anchor": "SchemaOpts.__init__"
+        },
+        {
+          "detector": "removed_callable_review",
+          "symbol": "validate_unknown_parameter_value",
+          "path": "src/marshmallow/schema.py",
+          "line": 420,
+          "anchor": "Schema.__init__"
+        },
+        {
+          "detector": "removed_callable_review",
+          "symbol": "validate_unknown_parameter_value",
+          "path": "src/marshmallow/schema.py",
+          "line": 854,
+          "anchor": "Schema._do_load"
+        }
+      ],
+      "collateral": []
+    }
+  ]
+}

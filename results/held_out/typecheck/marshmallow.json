@@ -1,0 +1,610 @@
+{
+  "schema": "mip-delta recall-mutation typecheck baseline v1",
+  "repository": "marshmallow",
+  "corpus_schema": "mip-delta recall-mutation corpus v1",
+  "corpus_head": "a38b7f6842042e65fd1a485ed152ca99f87880c0",
+  "max_mutations": null,
+  "wall_seconds": 9.4,
+  "commits": [
+    {
+      "commit": "3273a5beb9db746217390589d72e92230255fede",
+      "mutations": 1,
+      "targets": {
+        "src/marshmallow": {
+          "status": "ok",
+          "seconds": 1.44,
+          "errors": 15,
+          "errors_by_code": {
+            "attr-defined": 6,
+            "override": 3,
+            "union-attr": 3,
+            "var-annotated": 2,
+            "arg-type": 1
+          }
+        }
+      },
+      "files": 35,
+      "unwritable_files": []
+    },
+    {
+      "commit": "50b2849ccaf6659fcfc362111102d2b62d0165f1",
+      "mutations": 1,
+      "targets": {
+        "src/marshmallow": {
+          "status": "ok",
+          "seconds": 1.44,
+          "errors": 16,
+          "errors_by_code": {
+            "index": 5,
+            "override": 3,
+            "var-annotated": 2,
+            "call-arg": 2,
+            "arg-type": 2,
+            "union-attr": 1,
+            "misc": 1
+          }
+        }
+      },
+      "files": 39,
+      "unwritable_files": []
+    },
+    {
+      "commit": "b1d5f8f797f41f5b601dfd1da0f0a98a35e4b3ca",
+      "mutations": 1,
+      "targets": {
+        "src/marshmallow": {
+          "status": "ok",
+          "seconds": 1.46,
+          "errors": 16,
+          "errors_by_code": {
+            "index": 5,
+            "override": 3,
+            "var-annotated": 2,
+            "call-arg": 2,
+            "arg-type": 2,
+            "union-attr": 1,
+            "misc": 1
+          }
+        }
+      },
+      "files": 39,
+      "unwritable_files": []
+    },
+    {
+      "commit": "de5e842aeaf7eacfa42e9231f8b18e0792851c45",
+      "mutations": 1,
+      "targets": {
+        "src/marshmallow": {
+          "status": "ok",
+          "seconds": 1.51,
+          "errors": 16,
+          "errors_by_code": {
+            "index": 5,
+            "override": 3,
+            "var-annotated": 2,
+            "call-arg": 2,
+            "arg-type": 2,
+            "union-attr": 1,
+            "misc": 1
+          }
+        }
+      },
+      "files": 39,
+      "unwritable_files": []
+    }
+  ],
+  "mutations": [
+    {
+      "id": "marshmallow:3273a5beb9db:src/marshmallow/fields.py",
+      "commit": "3273a5beb9db746217390589d72e92230255fede",
+      "parent": "168fae7e827ba761ffdf638aab43a32bfdfa3453",
+      "stale_path": "src/marshmallow/fields.py",
+      "stale_blob": "76157f7cb68216850919e16362ee6465a77cdaba",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "src/marshmallow",
+      "seconds": 0.62,
+      "errors_commit": 15,
+      "errors_mutated": 17,
+      "new_errors_in_stale_file": [
+        {
+          "path": "src/marshmallow/fields.py",
+          "line": 30,
+          "column": 1,
+          "code": "attr-defined",
+          "message": "Module \"marshmallow.exceptions\" has no attribute \"FieldInstanceResolutionError\"; maybe \"_FieldInstanceResolutionError\"?"
+        },
+        {
+          "path": "src/marshmallow/fields.py",
+          "line": 35,
+          "column": 1,
+          "code": "attr-defined",
+          "message": "Module \"marshmallow.utils\" has no attribute \"resolve_field_instance\""
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "src/marshmallow/utils.py",
+          "definition_qualname": "resolve_field_instance",
+          "line": 692,
+          "end_line": 692,
+          "call_line": 692,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": true,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [
+            {
+              "line": 35,
+              "code": "attr-defined",
+              "message": "Module \"marshmallow.utils\" has no attribute \"resolve_field_instance\""
+            }
+          ],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            687,
+            700
+          ]
+        },
+        {
+          "index": 1,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "src/marshmallow/utils.py",
+          "definition_qualname": "resolve_field_instance",
+          "line": 767,
+          "end_line": 767,
+          "call_line": 767,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": true,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [
+            {
+              "line": 35,
+              "code": "attr-defined",
+              "message": "Module \"marshmallow.utils\" has no attribute \"resolve_field_instance\""
+            }
+          ],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            756,
+            776
+          ]
+        },
+        {
+          "index": 2,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "src/marshmallow/utils.py",
+          "definition_qualname": "resolve_field_instance",
+          "line": 1513,
+          "end_line": 1513,
+          "call_line": 1513,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": true,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [
+            {
+              "line": 35,
+              "code": "attr-defined",
+              "message": "Module \"marshmallow.utils\" has no attribute \"resolve_field_instance\""
+            }
+          ],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            1502,
+            1532
+          ]
+        },
+        {
+          "index": 3,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "src/marshmallow/utils.py",
+          "definition_qualname": "resolve_field_instance",
+          "line": 1524,
+          "end_line": 1524,
+          "call_line": 1524,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": true,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [
+            {
+              "line": 35,
+              "code": "attr-defined",
+              "message": "Module \"marshmallow.utils\" has no attribute \"resolve_field_instance\""
+            }
+          ],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            1502,
+            1532
+          ]
+        },
+        {
+          "index": 4,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "src/marshmallow/utils.py",
+          "definition_qualname": "resolve_field_instance",
+          "line": 1847,
+          "end_line": 1847,
+          "call_line": 1847,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": true,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [
+            {
+              "line": 35,
+              "code": "attr-defined",
+              "message": "Module \"marshmallow.utils\" has no attribute \"resolve_field_instance\""
+            }
+          ],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            1824,
+            1855
+          ]
+        }
+      ]
+    },
+    {
+      "id": "marshmallow:50b2849ccaf6:src/marshmallow/schema.py",
+      "commit": "50b2849ccaf6659fcfc362111102d2b62d0165f1",
+      "parent": "e3e00836d64dc928ae7172dc180b50b381a7e929",
+      "stale_path": "src/marshmallow/schema.py",
+      "stale_blob": "f1ed1201d17ab7ca73ebb84d0d28f9c288c44ce2",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "src/marshmallow",
+      "seconds": 0.62,
+      "errors_commit": 16,
+      "errors_mutated": 17,
+      "new_errors_in_stale_file": [
+        {
+          "path": "src/marshmallow/schema.py",
+          "line": 30,
+          "column": 1,
+          "code": "attr-defined",
+          "message": "Module \"marshmallow.utils\" has no attribute \"validate_unknown_parameter_value\""
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "src/marshmallow/utils.py",
+          "definition_qualname": "validate_unknown_parameter_value",
+          "line": 210,
+          "end_line": 210,
+          "call_line": 210,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": true,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [
+            {
+              "line": 30,
+              "code": "attr-defined",
+              "message": "Module \"marshmallow.utils\" has no attribute \"validate_unknown_parameter_value\""
+            }
+          ],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            195,
+            212
+          ]
+        },
+        {
+          "index": 1,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "src/marshmallow/utils.py",
+          "definition_qualname": "validate_unknown_parameter_value",
+          "line": 420,
+          "end_line": 420,
+          "call_line": 420,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": true,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [
+            {
+              "line": 30,
+              "code": "attr-defined",
+              "message": "Module \"marshmallow.utils\" has no attribute \"validate_unknown_parameter_value\""
+            }
+          ],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            391,
+            433
+          ]
+        },
+        {
+          "index": 2,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "src/marshmallow/utils.py",
+          "definition_qualname": "validate_unknown_parameter_value",
+          "line": 854,
+          "end_line": 854,
+          "call_line": 854,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": true,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [
+            {
+              "line": 30,
+              "code": "attr-defined",
+              "message": "Module \"marshmallow.utils\" has no attribute \"validate_unknown_parameter_value\""
+            }
+          ],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            820,
+            929
+          ]
+        }
+      ]
+    },
+    {
+      "id": "marshmallow:b1d5f8f797f4:src/marshmallow/schema.py",
+      "commit": "b1d5f8f797f41f5b601dfd1da0f0a98a35e4b3ca",
+      "parent": "b8a418884d1cc20765c390867f8b2513f9d58aeb",
+      "stale_path": "src/marshmallow/schema.py",
+      "stale_blob": "00ed57dcda46d01e4f1843425210d1b8070229e7",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "src/marshmallow",
+      "seconds": 0.62,
+      "errors_commit": 16,
+      "errors_mutated": 16,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "unknown",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "src/marshmallow/types.py",
+          "definition_qualname": "RenderModule.loads",
+          "line": 748,
+          "end_line": 748,
+          "call_line": 748,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            720,
+            749
+          ]
+        }
+      ]
+    },
+    {
+      "id": "marshmallow:de5e842aeaf7:src/marshmallow/schema.py",
+      "commit": "de5e842aeaf7eacfa42e9231f8b18e0792851c45",
+      "parent": "c7152171fbe7c12f5ac77800a43dc7ad8ae2e2cf",
+      "stale_path": "src/marshmallow/schema.py",
+      "stale_blob": "0298274e4b75e05cd7894e522b105d4e655cee5b",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "src/marshmallow",
+      "seconds": 0.62,
+      "errors_commit": 16,
+      "errors_mutated": 17,
+      "new_errors_in_stale_file": [
+        {
+          "path": "src/marshmallow/schema.py",
+          "line": 30,
+          "column": 1,
+          "code": "attr-defined",
+          "message": "Module \"marshmallow.utils\" has no attribute \"is_instance_or_subclass\""
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "src/marshmallow/utils.py",
+          "definition_qualname": "is_instance_or_subclass",
+          "line": 51,
+          "end_line": 51,
+          "call_line": 51,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": true,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [
+            {
+              "line": 30,
+              "code": "attr-defined",
+              "message": "Module \"marshmallow.utils\" has no attribute \"is_instance_or_subclass\""
+            }
+          ],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            43,
+            52
+          ]
+        }
+      ]
+    }
+  ],
+  "environment": {
+    "mypy_version": "mypy 2.4.1 (compiled: yes)",
+    "python_version": "3.12.6",
+    "command": [
+      "python.exe",
+      "-I",
+      "-X",
+      "utf8",
+      "-m",
+      "mypy",
+      "--config-file",
+      "{config}",
+      "--cache-dir",
+      "{cache}",
+      "--no-site-packages",
+      "--ignore-missing-imports",
+      "--check-untyped-defs",
+      "--no-error-summary",
+      "--hide-error-context",
+      "--no-color-output",
+      "--show-column-numbers",
+      "--show-error-codes",
+      "--no-pretty",
+      "{target}"
+    ],
+    "config_file_contents": "[mypy]\n",
+    "incremental": true,
+    "timeout_seconds": 300.0,
+    "corpora": [
+      {
+        "repository": "attrs",
+        "sha256": "08d695e30812a1767abb3ebb3f1a77a247bfcb5f46314dddc963dfd92e321304"
+      },
+      {
+        "repository": "httpx",
+        "sha256": "8cca55075dac770cd299a2243b01d4be3380eb37387652ffb11796e2903409c2"
+      },
+      {
+        "repository": "marshmallow",
+        "sha256": "5609c8133d7a8d500218427d0e312291d5fa6491feaa97590aec1ee2b315c020"
+      },
+      {
+        "repository": "rich",
+        "sha256": "df1fff43103f05b6c114aa0ce650938d754a1ee4133cb97b3b024db96c942544"
+      },
+      {
+        "repository": "mkdocs",
+        "sha256": "d533e3529b034b3fdd19dfda561b1b9932344cdec5a586f3c887ddd427f859fb"
+      }
+    ]
+  }
+}

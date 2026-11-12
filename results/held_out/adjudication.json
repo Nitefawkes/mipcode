@@ -1,0 +1,1774 @@
+[
+ {
+  "site_id": "attrs-001",
+  "repository": "attrs",
+  "commit": "980c8b04f59d",
+  "commit_subject": "Drop Python 2.7 (#936)",
+  "detector": "removed_callable_review",
+  "changed_symbol": "new_class",
+  "site_path": "src/attr/_cmp.py",
+  "site_line": 82,
+  "site_enclosing_function": "cmp_using",
+  "tool_message": "previous declaration at src/attr/_compat.py:37 was removed; review this call",
+  "reader_a": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "Only the Python 2 stub `def new_class` (parent _compat.py:37) was removed; _compat.py still defines `new_class = types.new_class` (line 53 after the commit) and the site still imports it from ._compat. The call resolves to the same Python 3 implementation it used before, so nothing is missing.",
+   "evidence": "980c8b04f59d: src/attr/_compat.py parent lines 37,158 vs after line 53; src/attr/_cmp.py imports from ._compat line 6, call at line 82"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "The commit removed the Python 2 branch's def new_class, but _compat.py still defines new_class = types.new_class at module level and _cmp.py still imports it from ._compat. The call new_class(class_name, (object,), {}, lambda ns: ns.update(body)) matches the types.new_class signature, so the name still resolves and works. The later #941 cleanup is an unrelated tidy-up, not a fix.",
+   "evidence": "980c8b04f59d: src/attr/_compat.py:53 (new_class = types.new_class); src/attr/_cmp.py:6 import, :82 call"
+  },
+  "final_label": "false_report",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "attrs-002",
+  "repository": "attrs",
+  "commit": "980c8b04f59d",
+  "commit_subject": "Drop Python 2.7 (#936)",
+  "detector": "removed_callable_review",
+  "changed_symbol": "new_class",
+  "site_path": "src/attr/_make.py",
+  "site_line": 2924,
+  "site_enclosing_function": "make_class",
+  "tool_message": "previous declaration at src/attr/_compat.py:37 was removed; review this call",
+  "reader_a": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "Only the Python 2 stub `def new_class` (parent _compat.py:37) was removed; _compat.py still defines `new_class = types.new_class` (line 53 after the commit) and the site still imports it from ._compat. The call resolves to the same Python 3 implementation it used before, so nothing is missing.",
+   "evidence": "980c8b04f59d: src/attr/_compat.py after line 53; src/attr/_make.py import line 23, call at line 2924"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "Same as attrs-001. new_class is still exported from _compat as types.new_class and imported in _make.py's from ._compat import (... new_class ...). The call at make_class has a valid types.new_class signature.",
+   "evidence": "980c8b04f59d: src/attr/_compat.py:53; src/attr/_make.py:15-23 import, :2924 call"
+  },
+  "final_label": "false_report",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "attrs-003",
+  "repository": "attrs",
+  "commit": "0f6a9b475349",
+  "commit_subject": "Add unsafe_hash alias for class-wide hash (#1065)",
+  "detector": "callback_binding_review",
+  "changed_symbol": "attrs",
+  "site_path": "src/attr/_make.py",
+  "site_line": 1780,
+  "site_enclosing_function": "_make_order.attrs_to_tuple",
+  "tool_message": "changed callable attrs is passed as a value",
+  "reader_a": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "In _make_order, `attrs` is a local list (`attrs = [a for a in attrs if a.order]`), not the `attrs` class decorator. The checker resolved the name to the wrong definition, so the decorator's signature change cannot affect this generator expression. The commit added `unsafe_hash` to the decorator.",
+   "evidence": "0f6a9b475349: src/attr/_make.py lines 1770-1785 (_make_order.attrs_to_tuple)"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "Inside _make_order, attrs is a local parameter that is rebound to a list (attrs = [a for a in attrs if a.order]), and attrs_to_tuple iterates it. It is not the attrs() decorator whose signature gained unsafe_hash, so the checker resolved the name to the wrong definition.",
+   "evidence": "0f6a9b475349: src/attr/_make.py:1770-1785 (_make_order / attrs_to_tuple); diff of attrs() at :1217"
+  },
+  "final_label": "false_report",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "attrs-004",
+  "repository": "attrs",
+  "commit": "0f6a9b475349",
+  "commit_subject": "Add unsafe_hash alias for class-wide hash (#1065)",
+  "detector": "callback_binding_review",
+  "changed_symbol": "define",
+  "site_path": "src/attr/_next_gen.py",
+  "site_line": 159,
+  "site_enclosing_function": "",
+  "tool_message": "changed callable define is passed as a value",
+  "reader_a": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "Line 159 is `frozen = partial(define, frozen=True, on_setattr=None)`, next to `mutable = define`. The commit only added an optional keyword-only `unsafe_hash=None` to define and forwarded it internally. The alias and partial pick it up automatically and bind no conflicting argument, so the site is unaffected by construction.",
+   "evidence": "0f6a9b475349: src/attr/_next_gen.py diff (define signature, do_it forwarding), lines 157-159"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "Line 159 is frozen = partial(define, frozen=True, on_setattr=None) (next to mutable = define). define only gained an optional keyword-only unsafe_hash=None, which the partial and the alias pass through untouched. The site is unaffected by construction.",
+   "evidence": "0f6a9b475349: src/attr/_next_gen.py:26-30 (new param), :158-159"
+  },
+  "final_label": "false_report",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "attrs-005",
+  "repository": "attrs",
+  "commit": "deb97638a7d0",
+  "commit_subject": "Refactor setters determination into function",
+  "detector": "removed_callable_review",
+  "changed_symbol": "_attrs_to_init_script.fmt_setter_with_converter",
+  "site_path": "src/attr/_make.py",
+  "site_line": 2361,
+  "site_enclosing_function": "_attrs_to_init_script",
+  "tool_message": "previous declaration at src/attr/_make.py:2302 was removed; review this call",
+  "reader_a": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "The nested `fmt_setter`/`fmt_setter_with_converter` defs were moved into the new `_determine_setters` with identical signatures. `_attrs_to_init_script` now binds the locals by unpacking `extra_lines, fmt_setter, fmt_setter_with_converter = _determine_setters(...)`. The call resolves to the returned function (or `_setattr`/`_assign` variants) with the same 3-arg contract, so the 'removed declaration' is a scoping artifact.",
+   "evidence": "deb97638a7d0: src/attr/_make.py _determine_setters (new, ~2251-2290), unpacking at ~2327, call at line 2361"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "The commit moved the nested fmt_setter_with_converter defs into _determine_setters and binds the local by tuple-unpacking: extra_lines, fmt_setter, fmt_setter_with_converter = _determine_setters(frozen, slots, base_attr_map). All three returned variants (_setattr_with_converter, nested, _assign_with_converter) keep the (attr_name, value_var, has_on_setattr) signature. The _inst_dict line is still emitted via lines.extend(extra_lines).",
+   "evidence": "deb97638a7d0: src/attr/_make.py:2251-2290 (_determine_setters), ~2327-2330 (unpacking), :2361"
+  },
+  "final_label": "false_report",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "attrs-006",
+  "repository": "attrs",
+  "commit": "deb97638a7d0",
+  "commit_subject": "Refactor setters determination into function",
+  "detector": "removed_callable_review",
+  "changed_symbol": "_attrs_to_init_script.fmt_setter",
+  "site_path": "src/attr/_make.py",
+  "site_line": 2372,
+  "site_enclosing_function": "_attrs_to_init_script",
+  "tool_message": "previous declaration at src/attr/_make.py:2296 was removed; review this call",
+  "reader_a": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "The nested `fmt_setter`/`fmt_setter_with_converter` defs were moved into the new `_determine_setters` with identical signatures. `_attrs_to_init_script` now binds the locals by unpacking `extra_lines, fmt_setter, fmt_setter_with_converter = _determine_setters(...)`. The call resolves to the returned function (or `_setattr`/`_assign` variants) with the same 3-arg contract, so the 'removed declaration' is a scoping artifact.",
+   "evidence": "deb97638a7d0: src/attr/_make.py _determine_setters (new, ~2251-2290), unpacking at ~2327, call at line 2372"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "fmt_setter is still a bound local, assigned from _determine_setters' return tuple with an unchanged 3-argument signature, so the call is valid. This is a pure extract-function refactor.",
+   "evidence": "deb97638a7d0: src/attr/_make.py ~2327-2330, :2372"
+  },
+  "final_label": "false_report",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "attrs-007",
+  "repository": "attrs",
+  "commit": "deb97638a7d0",
+  "commit_subject": "Refactor setters determination into function",
+  "detector": "removed_callable_review",
+  "changed_symbol": "_attrs_to_init_script.fmt_setter_with_converter",
+  "site_path": "src/attr/_make.py",
+  "site_line": 2381,
+  "site_enclosing_function": "_attrs_to_init_script",
+  "tool_message": "previous declaration at src/attr/_make.py:2302 was removed; review this call",
+  "reader_a": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "The nested `fmt_setter`/`fmt_setter_with_converter` defs were moved into the new `_determine_setters` with identical signatures. `_attrs_to_init_script` now binds the locals by unpacking `extra_lines, fmt_setter, fmt_setter_with_converter = _determine_setters(...)`. The call resolves to the returned function (or `_setattr`/`_assign` variants) with the same 3-arg contract, so the 'removed declaration' is a scoping artifact.",
+   "evidence": "deb97638a7d0: src/attr/_make.py _determine_setters (new, ~2251-2290), unpacking at ~2327, call at line 2381"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "Same rebinding as attrs-005. fmt_setter_with_converter comes from _determine_setters with the same signature.",
+   "evidence": "deb97638a7d0: src/attr/_make.py ~2327-2330, :2381"
+  },
+  "final_label": "false_report",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "attrs-008",
+  "repository": "attrs",
+  "commit": "deb97638a7d0",
+  "commit_subject": "Refactor setters determination into function",
+  "detector": "removed_callable_review",
+  "changed_symbol": "_attrs_to_init_script.fmt_setter",
+  "site_path": "src/attr/_make.py",
+  "site_line": 2392,
+  "site_enclosing_function": "_attrs_to_init_script",
+  "tool_message": "previous declaration at src/attr/_make.py:2296 was removed; review this call",
+  "reader_a": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "The nested `fmt_setter`/`fmt_setter_with_converter` defs were moved into the new `_determine_setters` with identical signatures. `_attrs_to_init_script` now binds the locals by unpacking `extra_lines, fmt_setter, fmt_setter_with_converter = _determine_setters(...)`. The call resolves to the returned function (or `_setattr`/`_assign` variants) with the same 3-arg contract, so the 'removed declaration' is a scoping artifact.",
+   "evidence": "deb97638a7d0: src/attr/_make.py _determine_setters (new, ~2251-2290), unpacking at ~2327, call at line 2392"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "Same rebinding as attrs-006. The call fmt_setter(attr_name, ..., has_on_setattr) matches all returned variants.",
+   "evidence": "deb97638a7d0: src/attr/_make.py ~2327-2330, :2392"
+  },
+  "final_label": "false_report",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "attrs-009",
+  "repository": "attrs",
+  "commit": "deb97638a7d0",
+  "commit_subject": "Refactor setters determination into function",
+  "detector": "removed_callable_review",
+  "changed_symbol": "_attrs_to_init_script.fmt_setter_with_converter",
+  "site_path": "src/attr/_make.py",
+  "site_line": 2407,
+  "site_enclosing_function": "_attrs_to_init_script",
+  "tool_message": "previous declaration at src/attr/_make.py:2302 was removed; review this call",
+  "reader_a": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "The nested `fmt_setter`/`fmt_setter_with_converter` defs were moved into the new `_determine_setters` with identical signatures. `_attrs_to_init_script` now binds the locals by unpacking `extra_lines, fmt_setter, fmt_setter_with_converter = _determine_setters(...)`. The call resolves to the returned function (or `_setattr`/`_assign` variants) with the same 3-arg contract, so the 'removed declaration' is a scoping artifact.",
+   "evidence": "deb97638a7d0: src/attr/_make.py _determine_setters (new, ~2251-2290), unpacking at ~2327, call at line 2407"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "Same rebinding as attrs-005. This is an extract-function refactor with identical setter signatures.",
+   "evidence": "deb97638a7d0: src/attr/_make.py ~2327-2330, :2407"
+  },
+  "final_label": "false_report",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "attrs-010",
+  "repository": "attrs",
+  "commit": "deb97638a7d0",
+  "commit_subject": "Refactor setters determination into function",
+  "detector": "removed_callable_review",
+  "changed_symbol": "_attrs_to_init_script.fmt_setter",
+  "site_path": "src/attr/_make.py",
+  "site_line": 2415,
+  "site_enclosing_function": "_attrs_to_init_script",
+  "tool_message": "previous declaration at src/attr/_make.py:2296 was removed; review this call",
+  "reader_a": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "The nested `fmt_setter`/`fmt_setter_with_converter` defs were moved into the new `_determine_setters` with identical signatures. `_attrs_to_init_script` now binds the locals by unpacking `extra_lines, fmt_setter, fmt_setter_with_converter = _determine_setters(...)`. The call resolves to the returned function (or `_setattr`/`_assign` variants) with the same 3-arg contract, so the 'removed declaration' is a scoping artifact.",
+   "evidence": "deb97638a7d0: src/attr/_make.py _determine_setters (new, ~2251-2290), unpacking at ~2327, call at line 2415"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "Same rebinding as attrs-006.",
+   "evidence": "deb97638a7d0: src/attr/_make.py ~2327-2330, :2415"
+  },
+  "final_label": "false_report",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "attrs-011",
+  "repository": "attrs",
+  "commit": "deb97638a7d0",
+  "commit_subject": "Refactor setters determination into function",
+  "detector": "removed_callable_review",
+  "changed_symbol": "_attrs_to_init_script.fmt_setter_with_converter",
+  "site_path": "src/attr/_make.py",
+  "site_line": 2429,
+  "site_enclosing_function": "_attrs_to_init_script",
+  "tool_message": "previous declaration at src/attr/_make.py:2302 was removed; review this call",
+  "reader_a": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "The nested `fmt_setter`/`fmt_setter_with_converter` defs were moved into the new `_determine_setters` with identical signatures. `_attrs_to_init_script` now binds the locals by unpacking `extra_lines, fmt_setter, fmt_setter_with_converter = _determine_setters(...)`. The call resolves to the returned function (or `_setattr`/`_assign` variants) with the same 3-arg contract, so the 'removed declaration' is a scoping artifact.",
+   "evidence": "deb97638a7d0: src/attr/_make.py _determine_setters (new, ~2251-2290), unpacking at ~2327, call at line 2429"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "Same rebinding as attrs-005.",
+   "evidence": "deb97638a7d0: src/attr/_make.py ~2327-2330, :2429"
+  },
+  "final_label": "false_report",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "attrs-012",
+  "repository": "attrs",
+  "commit": "deb97638a7d0",
+  "commit_subject": "Refactor setters determination into function",
+  "detector": "removed_callable_review",
+  "changed_symbol": "_attrs_to_init_script.fmt_setter_with_converter",
+  "site_path": "src/attr/_make.py",
+  "site_line": 2436,
+  "site_enclosing_function": "_attrs_to_init_script",
+  "tool_message": "previous declaration at src/attr/_make.py:2302 was removed; review this call",
+  "reader_a": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "The nested `fmt_setter`/`fmt_setter_with_converter` defs were moved into the new `_determine_setters` with identical signatures. `_attrs_to_init_script` now binds the locals by unpacking `extra_lines, fmt_setter, fmt_setter_with_converter = _determine_setters(...)`. The call resolves to the returned function (or `_setattr`/`_assign` variants) with the same 3-arg contract, so the 'removed declaration' is a scoping artifact.",
+   "evidence": "deb97638a7d0: src/attr/_make.py _determine_setters (new, ~2251-2290), unpacking at ~2327, call at line 2436"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "Same rebinding as attrs-005.",
+   "evidence": "deb97638a7d0: src/attr/_make.py ~2327-2330, :2436"
+  },
+  "final_label": "false_report",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "attrs-013",
+  "repository": "attrs",
+  "commit": "deb97638a7d0",
+  "commit_subject": "Refactor setters determination into function",
+  "detector": "removed_callable_review",
+  "changed_symbol": "_attrs_to_init_script.fmt_setter",
+  "site_path": "src/attr/_make.py",
+  "site_line": 2447,
+  "site_enclosing_function": "_attrs_to_init_script",
+  "tool_message": "previous declaration at src/attr/_make.py:2296 was removed; review this call",
+  "reader_a": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "The nested `fmt_setter`/`fmt_setter_with_converter` defs were moved into the new `_determine_setters` with identical signatures. `_attrs_to_init_script` now binds the locals by unpacking `extra_lines, fmt_setter, fmt_setter_with_converter = _determine_setters(...)`. The call resolves to the returned function (or `_setattr`/`_assign` variants) with the same 3-arg contract, so the 'removed declaration' is a scoping artifact.",
+   "evidence": "deb97638a7d0: src/attr/_make.py _determine_setters (new, ~2251-2290), unpacking at ~2327, call at line 2447"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "Same rebinding as attrs-006.",
+   "evidence": "deb97638a7d0: src/attr/_make.py ~2327-2330, :2447"
+  },
+  "final_label": "false_report",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "attrs-014",
+  "repository": "attrs",
+  "commit": "deb97638a7d0",
+  "commit_subject": "Refactor setters determination into function",
+  "detector": "removed_callable_review",
+  "changed_symbol": "_attrs_to_init_script.fmt_setter",
+  "site_path": "src/attr/_make.py",
+  "site_line": 2452,
+  "site_enclosing_function": "_attrs_to_init_script",
+  "tool_message": "previous declaration at src/attr/_make.py:2296 was removed; review this call",
+  "reader_a": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "The nested `fmt_setter`/`fmt_setter_with_converter` defs were moved into the new `_determine_setters` with identical signatures. `_attrs_to_init_script` now binds the locals by unpacking `extra_lines, fmt_setter, fmt_setter_with_converter = _determine_setters(...)`. The call resolves to the returned function (or `_setattr`/`_assign` variants) with the same 3-arg contract, so the 'removed declaration' is a scoping artifact.",
+   "evidence": "deb97638a7d0: src/attr/_make.py _determine_setters (new, ~2251-2290), unpacking at ~2327, call at line 2452"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "Same rebinding as attrs-006.",
+   "evidence": "deb97638a7d0: src/attr/_make.py ~2327-2330, :2452"
+  },
+  "final_label": "false_report",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "attrs-015",
+  "repository": "attrs",
+  "commit": "deb97638a7d0",
+  "commit_subject": "Refactor setters determination into function",
+  "detector": "removed_callable_review",
+  "changed_symbol": "_attrs_to_init_script.fmt_setter_with_converter",
+  "site_path": "src/attr/_make.py",
+  "site_line": 2467,
+  "site_enclosing_function": "_attrs_to_init_script",
+  "tool_message": "previous declaration at src/attr/_make.py:2302 was removed; review this call",
+  "reader_a": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "The nested `fmt_setter`/`fmt_setter_with_converter` defs were moved into the new `_determine_setters` with identical signatures. `_attrs_to_init_script` now binds the locals by unpacking `extra_lines, fmt_setter, fmt_setter_with_converter = _determine_setters(...)`. The call resolves to the returned function (or `_setattr`/`_assign` variants) with the same 3-arg contract, so the 'removed declaration' is a scoping artifact.",
+   "evidence": "deb97638a7d0: src/attr/_make.py _determine_setters (new, ~2251-2290), unpacking at ~2327, call at line 2467"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "Same rebinding as attrs-005.",
+   "evidence": "deb97638a7d0: src/attr/_make.py ~2327-2330, :2467"
+  },
+  "final_label": "false_report",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "attrs-016",
+  "repository": "attrs",
+  "commit": "deb97638a7d0",
+  "commit_subject": "Refactor setters determination into function",
+  "detector": "removed_callable_review",
+  "changed_symbol": "_attrs_to_init_script.fmt_setter",
+  "site_path": "src/attr/_make.py",
+  "site_line": 2475,
+  "site_enclosing_function": "_attrs_to_init_script",
+  "tool_message": "previous declaration at src/attr/_make.py:2296 was removed; review this call",
+  "reader_a": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "The nested `fmt_setter`/`fmt_setter_with_converter` defs were moved into the new `_determine_setters` with identical signatures. `_attrs_to_init_script` now binds the locals by unpacking `extra_lines, fmt_setter, fmt_setter_with_converter = _determine_setters(...)`. The call resolves to the returned function (or `_setattr`/`_assign` variants) with the same 3-arg contract, so the 'removed declaration' is a scoping artifact.",
+   "evidence": "deb97638a7d0: src/attr/_make.py _determine_setters (new, ~2251-2290), unpacking at ~2327, call at line 2475"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "Same rebinding as attrs-006.",
+   "evidence": "deb97638a7d0: src/attr/_make.py ~2327-2330, :2475"
+  },
+  "final_label": "false_report",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "attrs-017",
+  "repository": "attrs",
+  "commit": "f5683b852b1e",
+  "commit_subject": "converters: allow wrapping and passing self and fields (#1267)",
+  "detector": "callback_binding_review",
+  "changed_symbol": "pipe.pipe_converter",
+  "site_path": "src/attr/_make.py",
+  "site_line": 3343,
+  "site_enclosing_function": "pipe",
+  "tool_message": "changed callable pipe_converter is passed as a value",
+  "reader_a": {
+   "label": "real_omission",
+   "confidence": "medium",
+   "rationale": "The commit changed pipe_converter to (val, inst, field) and at this line wrapped it as `Converter(pipe_converter, takes_self=True, takes_field=True)`. At that commit Converter had no __call__, so pipe() stopped returning a callable. setters.convert still called `c(new_value)`, which breaks the default on_setattr for define with a pipe/list converter, and converters.optional(pipe(...)) also breaks. Upstream fixed this in 6fda0a4 (#1328, 'fix converters.pipe': adds Converter.__call__ and changes setters.convert), e21793e (#1372), and 1e07f46 (#1380), which rewrote this exact return. The checker's stated relation, passing the changed callable as a value, is only roughly the defect mechanism, hence medium confidence.",
+   "evidence": "f5683b852b1e: src/attr/_make.py 3311-3343, Converter class ~3089-3120 (no __call__), src/attr/setters.py convert(); 6fda0a4 diff of setters.py and changelog.d/1328.change.md; e21793e; 1e07f4689748 diff of the same return"
+  },
+  "reader_b": {
+   "label": "review_worthy",
+   "confidence": "medium",
+   "rationale": "The site is return Converter(pipe_converter, takes_self=True, takes_field=True). The flags match the new (val, inst, field) arity, so the binding itself is consistent. The relation is still real: wrapping changes pipe()'s public return to a Converter that at this commit has no __call__. The function body also passes c.takes_self/c.takes_field instead of inst/field. Upstream later fixed the body and setters.convert in 6fda0a4 ('fix converters.pipe') and made this line conditional in 1e07f4689748 (#1380). The defect sits mainly in the body and in callers rather than this binding, so I chose review_worthy over real_omission (conservative).",
+   "evidence": "f5683b852b1e: src/attr/_make.py:3311-3343, Converter class ~3089-3108 (no __call__), src/attr/setters.py convert(); 6fda0a4e086b (pipe body + setters.convert fix, changelog 1328); 1e07f4689748 (conditional return)"
+  },
+  "final_label": "review_worthy",
+  "resolution": "third_read",
+  "third_read_rationale": "The reported line binds pipe_converter with flags that match its new (val, inst, field) arity, so the binding is consistent. The defects are in the function body and in setters.convert, which upstream fixed in 6fda0a4. The site merited review; it was not itself left wrong."
+ },
+ {
+  "site_id": "attrs-018",
+  "repository": "attrs",
+  "commit": "1e07f4689748",
+  "commit_subject": "Make attrs.converters.pipe only return a Converter instance if one is passed (#1380)",
+  "detector": "callback_binding_review",
+  "changed_symbol": "pipe.pipe_converter",
+  "site_path": "src/attr/_make.py",
+  "site_line": 2975,
+  "site_enclosing_function": "pipe",
+  "tool_message": "changed callable pipe_converter is passed as a value",
+  "reader_a": {
+   "label": "false_report",
+   "confidence": "medium",
+   "rationale": "At line 2975, `return Converter(pipe_converter, takes_self=True, takes_field=True)` only runs under `if return_instance:`, where pipe_converter is the 3-arg (val, inst, field) variant. The 1-arg variant is returned bare. By then Converter is callable (since #1328). The binding matches the signature by construction, and the commit itself wrote both sides consistently.",
+   "evidence": "1e07f4689748: src/attr/_make.py 2935-2977"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "medium",
+   "rationale": "The commit defines pipe_converter in two branches: 3-argument when any converter is a Converter, 1-argument otherwise. It returns Converter(pipe_converter, takes_self=True, takes_field=True) only under the same return_instance condition, so the binding at 2975 matches the 3-argument variant by construction. The commit itself wrote this line.",
+   "evidence": "1e07f4689748: src/attr/_make.py ~2935-2976 (return_instance branches, :2975 return)"
+  },
+  "final_label": "false_report",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "attrs-019",
+  "repository": "attrs",
+  "commit": "74007f67d203",
+  "commit_subject": "ClassBuilder: eval only once (#1407)",
+  "detector": "removed_callable_review",
+  "changed_symbol": "_ClassBuilder._add_method_dunders",
+  "site_path": "src/attr/_make.py",
+  "site_line": 995,
+  "site_enclosing_function": "_ClassBuilder.add_str",
+  "tool_message": "previous declaration at src/attr/_make.py:1131 was removed; review this call",
+  "reader_a": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "`_add_method_dunders` was not removed as a callable. It became a `__slots__` instance attribute that `_ClassBuilder.__init__` sets to either `_add_method_dunders_safe` or `_add_method_dunders_unsafe` (bound methods with the same one-argument contract). The add_* methods run after __init__, and nothing in __init__ calls it before the assignment, so `self._add_method_dunders(...)` at this site still resolves and works.",
+   "evidence": "74007f67d203: src/attr/_make.py __slots__ line 627, __init__ 748-755, defs 1177/1191, call at line 995 (add_str)"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "The method def _add_method_dunders was split into _add_method_dunders_safe/_unsafe. _ClassBuilder.__init__ always assigns self._add_method_dunders to one of them, and the name stays in __slots__. Both variants take (method) and return it, so self._add_method_dunders(__str__) still resolves and works.",
+   "evidence": "74007f67d203: src/attr/_make.py:627 (__slots__), :750-755 (assignment), :1177-1205 (variants), :995"
+  },
+  "final_label": "false_report",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "attrs-020",
+  "repository": "attrs",
+  "commit": "74007f67d203",
+  "commit_subject": "ClassBuilder: eval only once (#1407)",
+  "detector": "removed_callable_review",
+  "changed_symbol": "_ClassBuilder._add_method_dunders",
+  "site_path": "src/attr/_make.py",
+  "site_line": 1084,
+  "site_enclosing_function": "_ClassBuilder.add_replace",
+  "tool_message": "previous declaration at src/attr/_make.py:1131 was removed; review this call",
+  "reader_a": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "`_add_method_dunders` was not removed as a callable. It became a `__slots__` instance attribute that `_ClassBuilder.__init__` sets to either `_add_method_dunders_safe` or `_add_method_dunders_unsafe` (bound methods with the same one-argument contract). The add_* methods run after __init__, and nothing in __init__ calls it before the assignment, so `self._add_method_dunders(...)` at this site still resolves and works.",
+   "evidence": "74007f67d203: src/attr/_make.py 627, 748-755, 1177/1191, call at line 1084 (add_replace)"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "Same instance-attribute rebinding as attrs-019. A lambda accepts __module__/__qualname__/__doc__ assignment, so even the unsafe variant works.",
+   "evidence": "74007f67d203: src/attr/_make.py:750-755, :1084"
+  },
+  "final_label": "false_report",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "attrs-021",
+  "repository": "attrs",
+  "commit": "74007f67d203",
+  "commit_subject": "ClassBuilder: eval only once (#1407)",
+  "detector": "removed_callable_review",
+  "changed_symbol": "_ClassBuilder._add_method_dunders",
+  "site_path": "src/attr/_make.py",
+  "site_line": 1139,
+  "site_enclosing_function": "_ClassBuilder.add_order",
+  "tool_message": "previous declaration at src/attr/_make.py:1131 was removed; review this call",
+  "reader_a": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "`_add_method_dunders` was not removed as a callable. It became a `__slots__` instance attribute that `_ClassBuilder.__init__` sets to either `_add_method_dunders_safe` or `_add_method_dunders_unsafe` (bound methods with the same one-argument contract). The add_* methods run after __init__, and nothing in __init__ calls it before the assignment, so `self._add_method_dunders(...)` at this site still resolves and works.",
+   "evidence": "74007f67d203: src/attr/_make.py 627, 748-755, 1177/1191, call at line 1139 (add_order)"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "Same as attrs-019. The generator calls self._add_method_dunders(meth) on plain functions from _make_order, which is valid for both variants.",
+   "evidence": "74007f67d203: src/attr/_make.py:750-755, :1139"
+  },
+  "final_label": "false_report",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "attrs-022",
+  "repository": "attrs",
+  "commit": "74007f67d203",
+  "commit_subject": "ClassBuilder: eval only once (#1407)",
+  "detector": "removed_callable_review",
+  "changed_symbol": "_ClassBuilder._add_method_dunders",
+  "site_path": "src/attr/_make.py",
+  "site_line": 1172,
+  "site_enclosing_function": "_ClassBuilder.add_setattr",
+  "tool_message": "previous declaration at src/attr/_make.py:1131 was removed; review this call",
+  "reader_a": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "`_add_method_dunders` was not removed as a callable. It became a `__slots__` instance attribute that `_ClassBuilder.__init__` sets to either `_add_method_dunders_safe` or `_add_method_dunders_unsafe` (bound methods with the same one-argument contract). The add_* methods run after __init__, and nothing in __init__ calls it before the assignment, so `self._add_method_dunders(...)` at this site still resolves and works.",
+   "evidence": "74007f67d203: src/attr/_make.py 627, 748-755, 1177/1191, call at line 1172 (add_setattr)"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "Same as attrs-019. The local __setattr__ function is passed to the bound instance attribute.",
+   "evidence": "74007f67d203: src/attr/_make.py:750-755, :1172"
+  },
+  "final_label": "false_report",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "attrs-023",
+  "repository": "attrs",
+  "commit": "6e3786c59927",
+  "commit_subject": "Make `kw_only=True` behavior consistent with dataclasses (#1457)",
+  "detector": "callback_binding_review",
+  "changed_symbol": "attrs",
+  "site_path": "src/attr/_make.py",
+  "site_line": 1745,
+  "site_enclosing_function": "_make_order.attrs_to_tuple",
+  "tool_message": "changed callable attrs is passed as a value",
+  "reader_a": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "In _make_order, `attrs` is a local list (`attrs = [a for a in attrs if a.order]`), not the `attrs` class decorator. The checker resolved the name to the wrong definition, so the decorator's signature change cannot affect this generator expression. The commit added `force_kw_only` to the decorator.",
+   "evidence": "6e3786c59927: src/attr/_make.py lines 1735-1750 (_make_order.attrs_to_tuple)"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "As in attrs-003, attrs here is _make_order's local list of Attribute objects, not the attrs() decorator that gained force_kw_only. The name resolution is wrong.",
+   "evidence": "6e3786c59927: src/attr/_make.py:1738-1750"
+  },
+  "final_label": "false_report",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "attrs-024",
+  "repository": "attrs",
+  "commit": "6e3786c59927",
+  "commit_subject": "Make `kw_only=True` behavior consistent with dataclasses (#1457)",
+  "detector": "callback_binding_review",
+  "changed_symbol": "define",
+  "site_path": "src/attr/_next_gen.py",
+  "site_line": 434,
+  "site_enclosing_function": "",
+  "tool_message": "changed callable define is passed as a value",
+  "reader_a": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "Line 434 is `frozen = partial(define, frozen=True, on_setattr=None)`, next to `mutable = define`. The commit added an optional keyword-only `force_kw_only=False` to define and forwarded it to attrs(). The alias and partial inherit it unchanged, so this site is unaffected by construction.",
+   "evidence": "6e3786c59927: src/attr/_next_gen.py diff (define signature/forwarding), lines 430-435"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "Line 434 is frozen = partial(define, frozen=True, on_setattr=None). define only gained the defaulted keyword force_kw_only=False, which the partial forwards automatically, so the site is unaffected.",
+   "evidence": "6e3786c59927: src/attr/_next_gen.py:46 (new param), :433-434"
+  },
+  "final_label": "false_report",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "httpx-025",
+  "repository": "httpx",
+  "commit": "35f09d139416",
+  "commit_subject": "Single consistent name for status codes (#1088)",
+  "detector": "removed_callable_review",
+  "changed_symbol": "StatusCode.get_reason_phrase",
+  "site_path": "httpx/_models.py",
+  "site_line": 663,
+  "site_enclosing_function": "Response.reason_phrase",
+  "tool_message": "previous declaration at httpx/_status_codes.py:31 was removed; review this call",
+  "reader_a": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "The commit renamed class StatusCode to codes (previously `codes = StatusCode` was an alias) and kept every classmethod, including get_reason_phrase. Response.reason_phrase calls codes.get_reason_phrase, which still exists on the renamed class. Nothing was removed.",
+   "evidence": "git show 35f09d139416 -- httpx/_status_codes.py (class rename, methods retained at lines 31-61); 35f09d139416:httpx/_models.py:663"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "The commit renamed class StatusCode to codes (removing the old `codes = StatusCode` alias); get_reason_phrase remains a classmethod on codes. Response.reason_phrase calls codes.get_reason_phrase, which still resolves. The checker treated the class rename as removal of the method.",
+   "evidence": "git show 35f09d139416 -- httpx/_status_codes.py (class codes(IntEnum), get_reason_phrase kept at ~line 32); 35f09d139416:httpx/_models.py:663"
+  },
+  "final_label": "false_report",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "httpx-026",
+  "repository": "httpx",
+  "commit": "35f09d139416",
+  "commit_subject": "Single consistent name for status codes (#1088)",
+  "detector": "removed_callable_review",
+  "changed_symbol": "StatusCode.is_error",
+  "site_path": "httpx/_models.py",
+  "site_line": 761,
+  "site_enclosing_function": "Response.is_error",
+  "tool_message": "previous declaration at httpx/_status_codes.py:53 was removed; review this call",
+  "reader_a": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "is_error was not removed. It is still a classmethod of the renamed class `codes`, and Response.is_error calls codes.is_error, which resolves correctly. The checker read the class rename as removing the method.",
+   "evidence": "git show 35f09d139416 -- httpx/_status_codes.py; 35f09d139416:httpx/_models.py:761"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "is_error is still a classmethod of the renamed class codes; Response.is_error calls codes.is_error, which resolves. Only the class name changed.",
+   "evidence": "35f09d139416 diff of httpx/_status_codes.py; 35f09d139416:httpx/_models.py:761"
+  },
+  "final_label": "false_report",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "httpx-027",
+  "repository": "httpx",
+  "commit": "35f09d139416",
+  "commit_subject": "Single consistent name for status codes (#1088)",
+  "detector": "removed_callable_review",
+  "changed_symbol": "StatusCode.is_redirect",
+  "site_path": "httpx/_models.py",
+  "site_line": 765,
+  "site_enclosing_function": "Response.is_redirect",
+  "tool_message": "previous declaration at httpx/_status_codes.py:38 was removed; review this call",
+  "reader_a": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "is_redirect still exists on `codes`. The diff shows its body only switching from StatusCode.X to codes.X references. Response.is_redirect calls codes.is_redirect, which is valid.",
+   "evidence": "git show 35f09d139416 -- httpx/_status_codes.py hunk @@ -38; 35f09d139416:httpx/_models.py:765"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "is_redirect still exists on codes (the diff only rewrites its body from StatusCode.X to codes.X). Response.is_redirect calls codes.is_redirect, which works.",
+   "evidence": "35f09d139416 diff hunk @@ -38,15 +39,15 @@ in httpx/_status_codes.py; 35f09d139416:httpx/_models.py:765"
+  },
+  "final_label": "false_report",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "httpx-028",
+  "repository": "httpx",
+  "commit": "35f09d139416",
+  "commit_subject": "Single consistent name for status codes (#1088)",
+  "detector": "removed_callable_review",
+  "changed_symbol": "StatusCode.is_client_error",
+  "site_path": "httpx/_models.py",
+  "site_line": 776,
+  "site_enclosing_function": "Response.raise_for_status",
+  "tool_message": "previous declaration at httpx/_status_codes.py:57 was removed; review this call",
+  "reader_a": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "is_client_error is retained on the renamed class `codes`. raise_for_status calls codes.is_client_error, and `codes` was already the name used before the commit (as an alias), so the call site is unaffected.",
+   "evidence": "git show 35f09d139416 -- httpx/_status_codes.py; 35f09d139416:httpx/_models.py:776"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "is_client_error is unchanged on the renamed class codes. raise_for_status calls codes.is_client_error, which resolves.",
+   "evidence": "35f09d139416:httpx/_status_codes.py; 35f09d139416:httpx/_models.py:776"
+  },
+  "final_label": "false_report",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "httpx-029",
+  "repository": "httpx",
+  "commit": "35f09d139416",
+  "commit_subject": "Single consistent name for status codes (#1088)",
+  "detector": "removed_callable_review",
+  "changed_symbol": "StatusCode.is_server_error",
+  "site_path": "httpx/_models.py",
+  "site_line": 779,
+  "site_enclosing_function": "Response.raise_for_status",
+  "tool_message": "previous declaration at httpx/_status_codes.py:61 was removed; review this call",
+  "reader_a": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "is_server_error is retained on `codes`, and raise_for_status calls codes.is_server_error. This is a class rename that kept the methods, not a removal.",
+   "evidence": "git show 35f09d139416 -- httpx/_status_codes.py; 35f09d139416:httpx/_models.py:779"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "is_server_error is unchanged on the renamed class codes. raise_for_status calls codes.is_server_error, which resolves.",
+   "evidence": "35f09d139416:httpx/_status_codes.py; 35f09d139416:httpx/_models.py:779"
+  },
+  "final_label": "false_report",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "httpx-030",
+  "repository": "httpx",
+  "commit": "926a55a84f0a",
+  "commit_subject": "Included create_ssl_context function to create the same context with SSLConfig and serve as API (#99",
+  "detector": "delegating_wrapper_review",
+  "changed_symbol": "Client._init_transport",
+  "site_path": "httpx/_client.py",
+  "site_line": 502,
+  "site_enclosing_function": "Client._init_transport",
+  "tool_message": "delegating wrapper Client._init_transport calls create_ssl_context without forwarding optional parameter http2",
+  "reader_a": {
+   "label": "false_report",
+   "confidence": "medium",
+   "rationale": "The commit replaced SSLConfig(verify, cert, trust_env).ssl_context with create_ssl_context(verify, cert, trust_env). Neither the old nor the new call passed http2, so behaviour is identical by construction. http2 is still forwarded to the httpcore pool, and upstream never added http2 to this call (it was carried unchanged into HTTPTransport in 89fb0cb). The relation is plausible enough that review_worthy was the alternative; I chose the conservative label.",
+   "evidence": "git show 926a55a84f0a -- httpx/_client.py httpx/_config.py; 926a55a84f0a:httpx/_client.py:502; 89fb0cb:httpx/_transports/default.py:55"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "medium",
+   "rationale": "The parent code was SSLConfig(verify=verify, cert=cert, trust_env=trust_env).ssl_context, which also never passed http2. The commit only substituted the new create_ssl_context helper with the same arguments, so behavior is identical, and http2 is still forwarded to httpcore.SyncConnectionPool(http2=http2). Upstream kept this exact call unchanged for years (also in HTTPTransport, 89fb0cb). Not review_worthy because the commit did not change this forwarding; conservative choice.",
+   "evidence": "git show 926a55a84f0a -- httpx/_client.py (hunk @@ -499); 926a55a84f0a:httpx/_config.py:43-51,165; 89fb0cb:httpx/_transports/default.py:55"
+  },
+  "final_label": "false_report",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "httpx-031",
+  "repository": "httpx",
+  "commit": "926a55a84f0a",
+  "commit_subject": "Included create_ssl_context function to create the same context with SSLConfig and serve as API (#99",
+  "detector": "delegating_wrapper_review",
+  "changed_symbol": "Client._init_proxy_transport",
+  "site_path": "httpx/_client.py",
+  "site_line": 521,
+  "site_enclosing_function": "Client._init_proxy_transport",
+  "tool_message": "delegating wrapper Client._init_proxy_transport calls create_ssl_context without forwarding optional parameter http2",
+  "reader_a": {
+   "label": "false_report",
+   "confidence": "medium",
+   "rationale": "This is a behaviour-preserving refactor. The previous SSLConfig call in _init_proxy_transport also omitted http2, so create_ssl_context produces the same context as before. Upstream never changed this to forward http2.",
+   "evidence": "git show 926a55a84f0a -- httpx/_client.py hunk @@ -520; 926a55a84f0a:httpx/_client.py:521"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "medium",
+   "rationale": "Same as httpx-030: the proxy-transport path never passed http2 into SSLConfig before the commit either. The refactor preserved the arguments exactly, and http2 still reaches httpcore.SyncHTTPProxy.",
+   "evidence": "926a55a84f0a diff hunk @@ -520; 926a55a84f0a:httpx/_client.py:513-530"
+  },
+  "final_label": "false_report",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "httpx-032",
+  "repository": "httpx",
+  "commit": "926a55a84f0a",
+  "commit_subject": "Included create_ssl_context function to create the same context with SSLConfig and serve as API (#99",
+  "detector": "delegating_wrapper_review",
+  "changed_symbol": "AsyncClient._init_transport",
+  "site_path": "httpx/_client.py",
+  "site_line": 1031,
+  "site_enclosing_function": "AsyncClient._init_transport",
+  "tool_message": "delegating wrapper AsyncClient._init_transport calls create_ssl_context without forwarding optional parameter http2",
+  "reader_a": {
+   "label": "false_report",
+   "confidence": "medium",
+   "rationale": "This is the same refactor in AsyncClient._init_transport. The old SSLConfig call omitted http2 too, the ssl_context is unchanged, and http2 is still passed to httpcore.AsyncConnectionPool. No later upstream fix forwarded it.",
+   "evidence": "git show 926a55a84f0a -- httpx/_client.py hunk @@ -1032; 926a55a84f0a:httpx/_client.py:1031"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "medium",
+   "rationale": "This is the async twin of httpx-030 and was the same mechanical replacement of SSLConfig(...).ssl_context with create_ssl_context(...), with identical arguments. No behavior changed, and http2 is forwarded to AsyncConnectionPool.",
+   "evidence": "926a55a84f0a diff hunk @@ -1032; 926a55a84f0a:httpx/_client.py:1031"
+  },
+  "final_label": "false_report",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "httpx-033",
+  "repository": "httpx",
+  "commit": "926a55a84f0a",
+  "commit_subject": "Included create_ssl_context function to create the same context with SSLConfig and serve as API (#99",
+  "detector": "delegating_wrapper_review",
+  "changed_symbol": "AsyncClient._init_proxy_transport",
+  "site_path": "httpx/_client.py",
+  "site_line": 1050,
+  "site_enclosing_function": "AsyncClient._init_proxy_transport",
+  "tool_message": "delegating wrapper AsyncClient._init_proxy_transport calls create_ssl_context without forwarding optional parameter http2",
+  "reader_a": {
+   "label": "false_report",
+   "confidence": "medium",
+   "rationale": "This is the same refactor in AsyncClient._init_proxy_transport. The commit did not change which arguments reach the SSL context, and http2 is still passed to httpcore.AsyncHTTPProxy.",
+   "evidence": "git show 926a55a84f0a -- httpx/_client.py hunk @@ -1053; 926a55a84f0a:httpx/_client.py:1050"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "medium",
+   "rationale": "This is the async twin of httpx-031 and was a mechanical replacement with unchanged arguments. http2 was never passed into the SSL config, before or after the commit.",
+   "evidence": "926a55a84f0a diff hunk @@ -1053; 926a55a84f0a:httpx/_client.py:1050"
+  },
+  "final_label": "false_report",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "httpx-034",
+  "repository": "httpx",
+  "commit": "e0b4528b170b",
+  "commit_subject": "Make the response's request parameter optional (#1238)",
+  "detector": "exception_contract_review",
+  "changed_symbol": "TextDecoder._detector_result",
+  "site_path": "httpx/_decoders.py",
+  "site_line": 193,
+  "site_enclosing_function": "TextDecoder.decode",
+  "tool_message": "TextDecoder._detector_result newly raises ValueError, bypassing caller try/except (UnicodeDecodeError)",
+  "reader_a": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "Before the commit, _detector_result raised DecodingError, which is not a UnicodeDecodeError either, so it already bypassed decode()'s except-UnicodeDecodeError handler. That handler now re-raises as ValueError anyway, so the bypassing ValueError has the same type the handler would produce. The 'newly raises' claim is wrong in substance, and the exception contract seen by callers is unchanged.",
+   "evidence": "git show e0b4528b170b -- httpx/_decoders.py (DecodingError->ValueError everywhere); e0b4528b170b:httpx/_decoders.py:177-224"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "Before the commit, _detector_result raised DecodingError, which the `except UnicodeDecodeError` in decode also did not catch. The commit changed it to ValueError, the same type decode's own handler now re-raises. Callers in _models wrap decoding in the new _wrap_decoder_errors, which catches ValueError and converts it to DecodingError. No handler is newly bypassed.",
+   "evidence": "git show e0b4528b170b -- httpx/_decoders.py (_detector_result, decode); e0b4528b170b:httpx/_decoders.py:177-201; _wrap_decoder_errors in e0b4528b170b httpx/_models.py diff"
+  },
+  "final_label": "false_report",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "httpx-035",
+  "repository": "httpx",
+  "commit": "e0b4528b170b",
+  "commit_subject": "Make the response's request parameter optional (#1238)",
+  "detector": "exception_contract_review",
+  "changed_symbol": "TextDecoder._detector_result",
+  "site_path": "httpx/_decoders.py",
+  "site_line": 209,
+  "site_enclosing_function": "TextDecoder.flush",
+  "tool_message": "TextDecoder._detector_result newly raises ValueError, bypassing caller try/except (UnicodeDecodeError)",
+  "reader_a": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "This is the same situation in TextDecoder.flush. The error from _detector_result bypassed the UnicodeDecodeError handler before the commit as well, and both paths now produce ValueError. The commit changed the exception uniformly, so this site is not left inconsistent.",
+   "evidence": "git show e0b4528b170b -- httpx/_decoders.py; e0b4528b170b:httpx/_decoders.py:200-213"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "Same as httpx-034, for flush: the old DecodingError also escaped the UnicodeDecodeError handler. The new ValueError is translated to DecodingError by Response._wrap_decoder_errors around iter_text/aiter_text.",
+   "evidence": "e0b4528b170b:httpx/_decoders.py:203-213; e0b4528b170b httpx/_models.py iter_text/aiter_text"
+  },
+  "final_label": "false_report",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "httpx-036",
+  "repository": "httpx",
+  "commit": "feb404f86b46",
+  "commit_subject": "Seperate `content=...` and `data=...` parameters (#1266)",
+  "detector": "override_signature_review",
+  "changed_symbol": "Cookies._CookieCompatRequest.__init__",
+  "site_path": "httpx/_models.py",
+  "site_line": 1219,
+  "site_enclosing_function": "Cookies._CookieCompatRequest.__init__",
+  "tool_message": "override may omit changed base parameter content",
+  "reader_a": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "_CookieCompatRequest subclasses urllib.request.Request, not httpx's Request, so the change to httpx Request.__init__ (adding content=) has no bearing on it. The checker resolved the base class by name to the wrong definition.",
+   "evidence": "feb404f86b46:httpx/_models.py:1213-1223 (class _CookieCompatRequest(urllib.request.Request))"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "_CookieCompatRequest subclasses urllib.request.Request, not httpx's Request. Its __init__ takes an httpx Request and calls the urllib constructor with url/headers/method. The new content parameter on httpx.Request.__init__ is unrelated to this override. The checker resolved the base class to the wrong definition.",
+   "evidence": "feb404f86b46:httpx/_models.py:1213-1225; feb404f86b46 diff of class Request.__init__"
+  },
+  "final_label": "false_report",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "httpx-037",
+  "repository": "httpx",
+  "commit": "d25f2bfeff35",
+  "commit_subject": "Fix stream unsetting auth (#1312)",
+  "detector": "callback_binding_review",
+  "changed_symbol": "BaseClient.stream",
+  "site_path": "httpx/_client.py",
+  "site_line": 863,
+  "site_enclosing_function": "Client._send_single_request.on_close",
+  "tool_message": "changed callable stream is passed as a value",
+  "reader_a": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "The `stream` at this site is a local variable unpacked from transport.request(...) and closed in on_close. It is not the BaseClient.stream method whose auth default changed. The checker confused a local name with the method.",
+   "evidence": "git show d25f2bfeff35 -- httpx/_client.py; d25f2bfeff35:httpx/_client.py:850-870"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "At this site, `stream` is the local variable unpacked from transport.request(...), and the on_close closure calls stream.close(). It is not BaseClient.stream passed as a value, so the checker mis-resolved the name.",
+   "evidence": "d25f2bfeff35:httpx/_client.py:850-866; d25f2bfeff35 diff (BaseClient.stream auth default)"
+  },
+  "final_label": "false_report",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "httpx-038",
+  "repository": "httpx",
+  "commit": "d25f2bfeff35",
+  "commit_subject": "Fix stream unsetting auth (#1312)",
+  "detector": "callback_binding_review",
+  "changed_symbol": "BaseClient.stream",
+  "site_path": "httpx/_client.py",
+  "site_line": 1508,
+  "site_enclosing_function": "AsyncClient._send_single_request.on_close",
+  "tool_message": "changed callable stream is passed as a value",
+  "reader_a": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "As in httpx-037, `stream` is the local tuple element returned by transport.arequest, used in the async on_close. It is unrelated to BaseClient.stream.",
+   "evidence": "d25f2bfeff35:httpx/_client.py:1495-1512"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "Same as httpx-037 in AsyncClient._send_single_request: `stream` is the local value returned by transport.arequest, used as stream.aclose(). It is unrelated to BaseClient.stream.",
+   "evidence": "d25f2bfeff35:httpx/_client.py:1495-1510"
+  },
+  "final_label": "false_report",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "httpx-039",
+  "repository": "httpx",
+  "commit": "27df5e49c7a9",
+  "commit_subject": "Support for `chunk_size` (#1277)",
+  "detector": "delegating_wrapper_review",
+  "changed_symbol": "Response.iter_bytes",
+  "site_path": "httpx/_models.py",
+  "site_line": 1180,
+  "site_enclosing_function": "Response.iter_bytes",
+  "tool_message": "delegating wrapper Response.iter_bytes calls Response.iter_raw without forwarding optional parameter chunk_size",
+  "reader_a": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "iter_bytes deliberately consumes iter_raw() unchunked and applies chunk_size itself through its own ByteChunker(chunk_size=chunk_size) after decoding. Forwarding chunk_size to iter_raw would be redundant and would chunk compressed bytes. The parameter is honoured by construction.",
+   "evidence": "27df5e49c7a9:httpx/_models.py:1167-1188"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "iter_bytes deliberately does not forward chunk_size to iter_raw. It re-chunks the decoded output with ByteChunker(chunk_size=chunk_size), because chunk size must apply after decompression. Forwarding it would be redundant or wrong, so the site is correct by construction.",
+   "evidence": "27df5e49c7a9:httpx/_models.py:1167-1188"
+  },
+  "final_label": "false_report",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "httpx-040",
+  "repository": "httpx",
+  "commit": "27df5e49c7a9",
+  "commit_subject": "Support for `chunk_size` (#1277)",
+  "detector": "delegating_wrapper_review",
+  "changed_symbol": "Response.iter_text",
+  "site_path": "httpx/_models.py",
+  "site_line": 1199,
+  "site_enclosing_function": "Response.iter_text",
+  "tool_message": "delegating wrapper Response.iter_text calls Response.iter_bytes without forwarding optional parameter chunk_size",
+  "reader_a": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "iter_text applies chunk_size via TextChunker(chunk_size=chunk_size) on the decoded text. Byte chunking of the inner iter_bytes call is irrelevant to text chunk size, so not forwarding it is intended.",
+   "evidence": "27df5e49c7a9:httpx/_models.py:1190-1206"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "iter_text applies chunk_size via TextChunker on the decoded text. Byte chunk size of the inner iter_bytes call is irrelevant to text chunk size, so not forwarding it is intentional and correct.",
+   "evidence": "27df5e49c7a9:httpx/_models.py:1190-1205"
+  },
+  "final_label": "false_report",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "httpx-041",
+  "repository": "httpx",
+  "commit": "27df5e49c7a9",
+  "commit_subject": "Support for `chunk_size` (#1277)",
+  "detector": "delegating_wrapper_review",
+  "changed_symbol": "Response.aiter_bytes",
+  "site_path": "httpx/_models.py",
+  "site_line": 1275,
+  "site_enclosing_function": "Response.aiter_bytes",
+  "tool_message": "delegating wrapper Response.aiter_bytes calls Response.aiter_raw without forwarding optional parameter chunk_size",
+  "reader_a": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "This is the async mirror of iter_bytes. aiter_bytes re-chunks decoded output with its own ByteChunker(chunk_size), so aiter_raw does not need the parameter.",
+   "evidence": "27df5e49c7a9:httpx/_models.py:1262-1281"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "This is the async twin of httpx-039: aiter_bytes re-chunks the decoded output with ByteChunker(chunk_size=chunk_size) instead of forwarding the size to aiter_raw.",
+   "evidence": "27df5e49c7a9:httpx/_models.py:1262-1283"
+  },
+  "final_label": "false_report",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "httpx-042",
+  "repository": "httpx",
+  "commit": "27df5e49c7a9",
+  "commit_subject": "Support for `chunk_size` (#1277)",
+  "detector": "delegating_wrapper_review",
+  "changed_symbol": "Response.aiter_text",
+  "site_path": "httpx/_models.py",
+  "site_line": 1294,
+  "site_enclosing_function": "Response.aiter_text",
+  "tool_message": "delegating wrapper Response.aiter_text calls Response.aiter_bytes without forwarding optional parameter chunk_size",
+  "reader_a": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "aiter_text applies chunk_size via TextChunker. The unchunked inner aiter_bytes call is intended.",
+   "evidence": "27df5e49c7a9:httpx/_models.py:1283-1300"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "This is the async twin of httpx-040: aiter_text applies chunk_size through TextChunker after decoding, by design.",
+   "evidence": "27df5e49c7a9:httpx/_models.py:1285-1300"
+  },
+  "final_label": "false_report",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "httpx-043",
+  "repository": "httpx",
+  "commit": "9b17671f155a",
+  "commit_subject": "Support HTTP/2 prior-knowledge, using `httpx.Client(http1=False, http2=True)`. (#1624)",
+  "detector": "parameter_sink_review",
+  "changed_symbol": "AsyncClient._init_proxy_transport",
+  "site_path": "httpx/_client.py",
+  "site_line": 1402,
+  "site_enclosing_function": "AsyncClient._init_proxy_transport",
+  "tool_message": "new parameter http1 is not read in the function body; verify its intended behavioral sink",
+  "reader_a": {
+   "label": "real_omission",
+   "confidence": "high",
+   "rationale": "The commit added http1 to AsyncClient._init_proxy_transport and passed it from __init__, but the body never forwards it to AsyncHTTPTransport. The sync Client._init_proxy_transport does forward http1=http1. Upstream later fixed exactly this call in 1a66014 'Add missing argument (#3023)', whose changelog entry reads 'Respect the http1 argument while configuring proxy transports'. At this commit the transport's proxy branch also ignored http1, but the client-side omission is the one upstream fixed.",
+   "evidence": "git show 9b17671f155a -- httpx/_client.py; 9b17671f155a:httpx/_client.py:1402-1418; 9b17671f155a:httpx/_transports/default.py:210-250; git show 1a66014 (adds http1=http1 at AsyncClient._init_proxy_transport)"
+  },
+  "reader_b": {
+   "label": "real_omission",
+   "confidence": "high",
+   "rationale": "AsyncClient._init_proxy_transport gained an http1 parameter (and its caller passes http1=http1), but the body builds AsyncHTTPTransport(verify, cert, http2, limits, trust_env, proxy) without http1. The sync Client._init_proxy_transport does forward it. Upstream later fixed exactly this in 1a66014, 'Add missing argument (#3023)', adding http1=http1 here, with the changelog entry 'Respect the http1 argument while configuring proxy transports'.",
+   "evidence": "9b17671f155a:httpx/_client.py:703-720 (sync forwards) vs 1402-1418 (async omits); git show 1a66014 -- httpx/_client.py"
+  },
+  "final_label": "real_omission",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "httpx-044",
+  "repository": "httpx",
+  "commit": "541a0afe5636",
+  "commit_subject": "Add Client(allow_redirect=<...>) (#1790)",
+  "detector": "override_signature_review",
+  "changed_symbol": "Client.__init__",
+  "site_path": "httpx/_client.py",
+  "site_line": 602,
+  "site_enclosing_function": "Client.__init__",
+  "tool_message": "override may omit changed base parameter allow_redirects",
+  "reader_a": {
+   "label": "real_omission",
+   "confidence": "high",
+   "rationale": "The commit, titled 'Add Client(allow_redirect=<...>)', added allow_redirects to BaseClient.__init__ and read self.allow_redirects in send(). Client.__init__ neither accepts the parameter nor passes it to super().__init__, so Client(allow_redirects=False) raises TypeError and the advertised feature is unreachable. Upstream 47266d763bde (#1808) added follow_redirects to Client.__init__ and forwarded it to super().",
+   "evidence": "git show 541a0afe5636 -- httpx/_client.py; 541a0afe5636:httpx/_client.py:602-640 (no allow_redirects); 47266d763bde:httpx/_client.py:616,631"
+  },
+  "reader_b": {
+   "label": "real_omission",
+   "confidence": "high",
+   "rationale": "The commit, titled 'Add Client(allow_redirect=<...>)', added allow_redirects to BaseClient.__init__ only. Client.__init__ neither accepts nor forwards it, so Client(allow_redirects=False) raises TypeError and the advertised constructor option is unreachable. Commit 47266d7 later added follow_redirects to Client.__init__ and passed it to super().__init__ (with a rename).",
+   "evidence": "git show 541a0afe5636 -- httpx/_client.py (only BaseClient.__init__ changed among constructors); 541a0afe5636:httpx/_client.py Client.__init__ ~504-540; git show 47266d763bde hunks @@ -613 and @@ -627"
+  },
+  "final_label": "real_omission",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "httpx-045",
+  "repository": "httpx",
+  "commit": "541a0afe5636",
+  "commit_subject": "Add Client(allow_redirect=<...>) (#1790)",
+  "detector": "override_signature_review",
+  "changed_symbol": "AsyncClient.__init__",
+  "site_path": "httpx/_client.py",
+  "site_line": 1312,
+  "site_enclosing_function": "AsyncClient.__init__",
+  "tool_message": "override may omit changed base parameter allow_redirects",
+  "reader_a": {
+   "label": "real_omission",
+   "confidence": "high",
+   "rationale": "This is the same omission in AsyncClient.__init__: it has no allow_redirects parameter and its super().__init__ call does not forward one, so the new client-level setting cannot be set on AsyncClient. Fixed upstream in 47266d763bde, which added follow_redirects to AsyncClient.__init__ and forwarded it.",
+   "evidence": "541a0afe5636:httpx/_client.py:1312-1345; 47266d763bde:httpx/_client.py:1334,1349"
+  },
+  "reader_b": {
+   "label": "real_omission",
+   "confidence": "high",
+   "rationale": "Same as httpx-044 for AsyncClient: AsyncClient.__init__ has no allow_redirects parameter and does not pass it to BaseClient.__init__, so the new client-level default cannot be set at construction. It was fixed in 47266d7 (hunks @@ -1329 and @@ -1343 add follow_redirects to AsyncClient.__init__).",
+   "evidence": "541a0afe5636:httpx/_client.py:1312-1345; git show 47266d763bde -- httpx/_client.py"
+  },
+  "final_label": "real_omission",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "httpx-046",
+  "repository": "httpx",
+  "commit": "ff9813e84dab",
+  "commit_subject": "Transport API as plain `request -> response` method. (#1840)",
+  "detector": "override_signature_review",
+  "changed_symbol": "Cookies._CookieCompatRequest.__init__",
+  "site_path": "httpx/_models.py",
+  "site_line": 1839,
+  "site_enclosing_function": "Cookies._CookieCompatRequest.__init__",
+  "tool_message": "override may omit changed base parameter extensions",
+  "reader_a": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "As in httpx-036, _CookieCompatRequest's base is urllib.request.Request, so adding `extensions` to httpx Request.__init__ cannot make this override inconsistent. The checker resolved the base class by name to the wrong definition.",
+   "evidence": "ff9813e84dab:httpx/_models.py:1833-1843"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "_CookieCompatRequest's base is urllib.request.Request, not httpx.Request, so the new extensions parameter on httpx.Request.__init__ does not apply to this override. The checker resolved the base to the wrong definition.",
+   "evidence": "ff9813e84dab:httpx/_models.py:1833-1845"
+  },
+  "final_label": "false_report",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "marshmallow-047",
+  "repository": "marshmallow",
+  "commit": "013abfd669f6",
+  "commit_subject": "Deprecate metadata as additional field kwargs, support explicit `metadata=...` (#1702)",
+  "detector": "override_signature_review",
+  "changed_symbol": "Inferred.__init__",
+  "site_path": "src/marshmallow/fields.py",
+  "site_line": 1868,
+  "site_enclosing_function": "Inferred.__init__",
+  "tool_message": "override may omit changed base parameter metadata",
+  "reader_a": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "Inferred.__init__ takes no parameters at all and calls super().__init__() with no arguments. It is a private field that schema.py builds as ma_fields.Inferred() with no arguments. The new explicit `metadata=` keyword on Field.__init__ defaults to None, so Inferred is unaffected by construction and was never meant to forward any Field kwargs.",
+   "evidence": "013abfd669f6 diff of src/marshmallow/fields.py (Field.__init__ adds metadata=None, **additional_metadata); 013abfd669f6:src/marshmallow/fields.py ~1862-1870 (Inferred.__init__)"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "Inferred.__init__ takes no parameters at all and calls super().__init__() with no arguments; it never accepted the old **metadata either. It is a private field created internally with no metadata, so turning **metadata into an explicit metadata= keyword in Field.__init__ does not affect this override.",
+   "evidence": "013abfd669f6 diff of src/marshmallow/fields.py (Field.__init__ hunk at 160-200); 013abfd669f6:src/marshmallow/fields.py lines 1858-1873 (class Inferred)"
+  },
+  "final_label": "false_report",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "marshmallow-048",
+  "repository": "marshmallow",
+  "commit": "1db1a8a87041",
+  "commit_subject": "Replace missing/default with {load,dump}_default",
+  "detector": "override_signature_review",
+  "changed_symbol": "Inferred.__init__",
+  "site_path": "src/marshmallow/fields.py",
+  "site_line": 1971,
+  "site_enclosing_function": "Inferred.__init__",
+  "tool_message": "override may omit changed base parameter load_default",
+  "reader_a": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "Inferred.__init__(self) takes no arguments and calls super().__init__() bare. Its only constructor call is ma_fields.Inferred() in schema.py:970, so adding load_default/dump_default to Field.__init__ cannot affect it. The 'resolving' commit is an unrelated sphinx bump.",
+   "evidence": "1db1a8a87041:src/marshmallow/fields.py 1962-1975; 1db1a8a87041:src/marshmallow/schema.py:970; lead 4e28ae1dbf16 (sphinx bump)"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "This is the same zero-argument Inferred.__init__ that calls super().__init__(). It never forwarded missing/default, and an internal inference field has no use for load_default. Renaming the base parameters cannot leave this override wrong. The later 'resolution' is a Sphinx version bump that has nothing to do with it.",
+   "evidence": "1db1a8a87041:src/marshmallow/fields.py lines 1960-1973; the commit's diff has no Inferred hunk"
+  },
+  "final_label": "false_report",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "marshmallow-049",
+  "repository": "marshmallow",
+  "commit": "447eb86c9c70",
+  "commit_subject": "Various typing improvements to fields module (#2723)",
+  "detector": "override_signature_review",
+  "changed_symbol": "Pluck._deserialize",
+  "site_path": "src/marshmallow/fields.py",
+  "site_line": 730,
+  "site_enclosing_function": "Pluck._deserialize",
+  "tool_message": "override default for changed base parameter data differs from the new base default",
+  "reader_a": {
+   "label": "review_worthy",
+   "confidence": "low",
+   "rationale": "The commit, a typing pass, gave Nested._deserialize's `data` parameter the default `= None`, but the Pluck override still requires `data`, so the override is narrower than its base. Every in-tree caller (Field.deserialize line 364 and others) passes data positionally, so nothing fails at runtime, and Pluck is still unchanged at HEAD. The mismatch is real and is the kind of thing a typing review would flag, but its practical impact is nil (it nearly qualifies as false_report).",
+   "evidence": "447eb86c9c70 diff src/marshmallow/fields.py (@@ -644 Nested._deserialize); 447eb86c9c70:src/marshmallow/fields.py:661-680, 730; git grep '_deserialize(' at 447eb86c9c70 (all callers pass data)"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "medium",
+   "rationale": "The commit gave Nested._deserialize's data a default of None, but Pluck._deserialize(value, attr, data, partial=None) still requires data positionally, matching Field._deserialize's signature (data has no default). Every caller (Field.deserialize at line 364) passes data, so nothing breaks. Upstream later removed the default from Nested itself rather than changing Pluck, which suggests the Nested default was the outlier. It is borderline review_worthy; I chose the conservative label.",
+   "evidence": "447eb86c9c70:src/marshmallow/fields.py lines 364, 405-411, 661-676, 730-736; HEAD src/marshmallow/fields.py lines 638-645 (Nested data no longer defaulted) and 713"
+  },
+  "final_label": "review_worthy",
+  "resolution": "third_read",
+  "third_read_rationale": "The stated relation is true at the commit: Nested._deserialize gave data a default of None while Pluck._deserialize still requires it. Nothing fails at runtime, and at HEAD upstream removed the default from Nested, which reconciles the two."
+ },
+ {
+  "site_id": "marshmallow-050",
+  "repository": "marshmallow",
+  "commit": "2bf3ae6ac656",
+  "commit_subject": "feat: improve consistency of many arg with nested schema (#2854)",
+  "detector": "override_signature_review",
+  "changed_symbol": "Pluck.__init__",
+  "site_path": "src/marshmallow/fields.py",
+  "site_line": 657,
+  "site_enclosing_function": "Pluck.__init__",
+  "tool_message": "override default for changed base parameter many differs from the new base default",
+  "reader_a": {
+   "label": "review_worthy",
+   "confidence": "medium",
+   "rationale": "The commit changed Nested's `many` default from False to None, so that a Schema instance's own `many` is kept unless the caller overrides it explicitly. Pluck.__init__ still declares many=False and always forwards it, so Pluck(SchemaInstance(many=True), ...) now has its schema's many forced to False and never gets the new 'None = keep the instance' behaviour. The result is consistent because Pluck uses self.many for plucking, so this is legal and working but is a real divergence from the commit's intent. Still open at HEAD.",
+   "evidence": "2bf3ae6ac656 diff src/marshmallow/fields.py (Nested many: bool|None=None; 'if self.many is not None: self._schema.many = self.many'); 2bf3ae6ac656:src/marshmallow/fields.py 657-668 (Pluck many=False); HEAD Pluck still many=False"
+  },
+  "reader_b": {
+   "label": "review_worthy",
+   "confidence": "medium",
+   "rationale": "The commit changed Nested's many default from False to None so that a Schema instance's own many is respected (new code at lines 554-555). Pluck still defaults many=False and forwards it, so Pluck now always overrides a passed schema instance's many. That silently changes Pluck behaviour, and Pluck is excluded from the new semantics described in the docstring. Keeping a bool default is defensible, because Pluck._serialize/_deserialize branch on self.many and None would break them, but a reviewer should look at this site.",
+   "evidence": "2bf3ae6ac656 diff of src/marshmallow/fields.py (lines 505-568); 2bf3ae6ac656:src/marshmallow/fields.py lines 554-555, 590-595, 657-668, 680-686; no later change to Pluck.__init__ many"
+  },
+  "final_label": "review_worthy",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "rich-051",
+  "repository": "rich",
+  "commit": "c856e6b46901",
+  "commit_subject": "version bump",
+  "detector": "delegating_wrapper_review",
+  "changed_symbol": "Traceback.__init__",
+  "site_path": "rich/traceback.py",
+  "site_line": 263,
+  "site_enclosing_function": "Traceback.__init__",
+  "tool_message": "delegating wrapper Traceback.__init__ calls Traceback.extract without forwarding optional parameter locals_hide_dunder",
+  "reader_a": {
+   "label": "real_omission",
+   "confidence": "high",
+   "rationale": "The commit added locals_hide_dunder to Traceback.__init__ (default False), but when trace is None, __init__ calls self.extract(exc_type, exc_value, traceback, show_locals=show_locals), whose locals_hide_dunder defaults to True. Locals are filtered only inside extract (get_locals, lines 422-428), and the stored self.locals_hide_dunder is never read at render time. So Traceback(show_locals=True, locals_hide_dunder=False) still hides dunder locals: the new argument has no effect. Unchanged at HEAD.",
+   "evidence": "c856e6b46901 diff rich/traceback.py; c856e6b46901:rich/traceback.py 249-276 (__init__, extract call ~262), 360-369 (extract defaults), 419-428 (filtering only in extract); HEAD:rich/traceback.py 309-311"
+  },
+  "reader_b": {
+   "label": "real_omission",
+   "confidence": "medium",
+   "rationale": "The commit added locals_hide_dunder to Traceback.__init__ and stores it on self, but self.locals_hide_dunder is never read. Filtering happens only inside extract() (get_locals), and when trace is None __init__ calls self.extract(exc_type, exc_value, traceback, show_locals=show_locals) without forwarding it. As a result, Traceback(show_locals=True, locals_hide_dunder=False) inside an except block still hides dunders because extract defaults to True. from_exception forwards the parameter correctly; this path never did, and HEAD (line 309) still does not.",
+   "evidence": "c856e6b46901 diff of rich/traceback.py; c856e6b46901:rich/traceback.py lines 240-276 and the get_locals filter in extract (~416-450); HEAD rich/traceback.py lines 309-324"
+  },
+  "final_label": "real_omission",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "rich-052",
+  "repository": "rich",
+  "commit": "c856e6b46901",
+  "commit_subject": "version bump",
+  "detector": "delegating_wrapper_review",
+  "changed_symbol": "Traceback.__init__",
+  "site_path": "rich/traceback.py",
+  "site_line": 263,
+  "site_enclosing_function": "Traceback.__init__",
+  "tool_message": "delegating wrapper Traceback.__init__ calls Traceback.extract without forwarding optional parameter locals_hide_sunder",
+  "reader_a": {
+   "label": "real_omission",
+   "confidence": "high",
+   "rationale": "This is the same defect as rich-051, for locals_hide_sunder. Traceback.__init__ accepts and stores locals_hide_sunder but does not pass it to self.extract, the only place sunder locals are filtered. The stored attribute is never used, so Traceback(show_locals=True, locals_hide_sunder=True) built inside an except block does not hide them. from_exception and install forward it correctly; only the direct constructor path is wrong.",
+   "evidence": "c856e6b46901:rich/traceback.py 252-253, 262-264, 276, 422-429; from_exception forwards at 338-354"
+  },
+  "reader_b": {
+   "label": "real_omission",
+   "confidence": "medium",
+   "rationale": "This is the same site and defect as rich-051, for locals_hide_sunder. The new parameter is accepted and documented by Traceback.__init__ but never reaches extract(), the only place sunder locals are filtered, so Traceback(show_locals=True, locals_hide_sunder=True) built inside an except block still shows _private locals. HEAD still has not fixed it.",
+   "evidence": "c856e6b46901:rich/traceback.py lines 251-276 (stored, unused) and extract get_locals; HEAD rich/traceback.py lines 309-311"
+  },
+  "final_label": "real_omission",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "rich-053",
+  "repository": "rich",
+  "commit": "a9669b8859d5",
+  "commit_subject": "Enable per-column enabling or disabling of highlighting",
+  "detector": "delegating_wrapper_review",
+  "changed_symbol": "Table.__init__",
+  "site_path": "rich/table.py",
+  "site_line": 246,
+  "site_enclosing_function": "Table.__init__",
+  "tool_message": "delegating wrapper Table.__init__ calls Table.add_column without forwarding optional parameter highlight",
+  "reader_a": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "The commit added highlight=None to Table.add_column, and None resolves to self.highlight. Table.__init__ sets self.highlight = highlight before it loops over headers calling self.add_column(header=header), so each column already inherits the table's highlight setting by construction. Table.__init__ is not a wrapper that drops a parameter, and the commit's own semantics make the non-forwarding correct.",
+   "evidence": "a9669b8859d5 diff rich/table.py (add_column highlight); a9669b8859d5:rich/table.py 235-247"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "Table.__init__ calls self.add_column(header=header) after it has already set self.highlight. The new add_column highlight parameter defaults to None, which resolves to self.highlight, so the table-level setting propagates by construction. Forwarding it would be redundant.",
+   "evidence": "a9669b8859d5 diff of rich/table.py (add_column lines 366-407); a9669b8859d5:rich/table.py lines 241-249"
+  },
+  "final_label": "false_report",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "rich-054",
+  "repository": "rich",
+  "commit": "e8e797d19d84",
+  "commit_subject": "feat: Traceback - Expose more locals rendering options",
+  "detector": "delegating_wrapper_review",
+  "changed_symbol": "Traceback.__init__",
+  "site_path": "rich/traceback.py",
+  "site_line": 321,
+  "site_enclosing_function": "Traceback.__init__",
+  "tool_message": "delegating wrapper Traceback.__init__ calls Traceback.extract without forwarding optional parameter locals_max_depth",
+  "reader_a": {
+   "label": "real_omission",
+   "confidence": "medium",
+   "rationale": "The commit added locals_max_depth to Traceback.__init__ but does not forward it to self.extract when trace is None. extract applies max_depth through pretty.traverse; render_scope also passes max_depth=self.locals_max_depth to Pretty, but pretty_repr skips traverse for Node values ('if _safe_isinstance(_object, Node): node = _object'), and frame locals are already Nodes. So the depth limit set on a directly constructed Traceback has no effect. The listed resolving commit f412ce7923fd touches only pretty.py, and the call is unchanged at HEAD.",
+   "evidence": "e8e797d19d84 diff rich/traceback.py; e8e797d19d84:rich/traceback.py 315-323 (extract call), ~582 (traverse max_depth in extract), 772-782 (render_locals); e8e797d19d84:rich/pretty.py 906-911; f412ce7923fd --stat (pretty.py only)"
+  },
+  "reader_b": {
+   "label": "real_omission",
+   "confidence": "medium",
+   "rationale": "The commit added locals_max_depth to Traceback.__init__ and to extract(), where it is passed to pretty.traverse. The trace-is-None path in __init__ still calls extract(..., show_locals=show_locals) without it. The render-time max_depth passed to render_scope has no effect, because pretty_repr skips traverse when the object is already a Node, so depth limiting from Traceback(locals_max_depth=N) inside an except block is silently ignored. The f412ce79 'resolution' only touches rich/pretty.py, and HEAD still does not forward it.",
+   "evidence": "e8e797d19d84 diff of rich/traceback.py and rich/scope.py; e8e797d19d84:rich/traceback.py lines 300-337 and ~582; e8e797d19d84:rich/pretty.py lines 906-913; HEAD rich/traceback.py lines 309-311, 760-770"
+  },
+  "final_label": "real_omission",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "rich-055",
+  "repository": "rich",
+  "commit": "5ffec68c91d4",
+  "commit_subject": "split text",
+  "detector": "delegating_wrapper_review",
+  "changed_symbol": "set_cell_size",
+  "site_path": "rich/cell_string.py",
+  "site_line": 257,
+  "site_enclosing_function": "set_cell_size",
+  "tool_message": "delegating wrapper set_cell_size calls cell_len without forwarding optional parameter unicode_version",
+  "reader_a": {
+   "label": "real_omission",
+   "confidence": "medium",
+   "rationale": "The commit introduced set_cell_size(text, total, unicode_version). It measures with cell_len(text), which uses the default 'auto', but crops with _split_text(text, total, unicode_version). With a non-auto unicode_version and characters whose width differs between versions, the pad/crop decision and the padding amount are computed under a different table than the cropping, so the result can be the wrong width. No in-tree caller passes unicode_version, so the bug is latent, but the code is internally inconsistent and still is at HEAD.",
+   "evidence": "5ffec68c91d4:rich/cell_string.py 239-263 (cell_len(text) at 257 vs _split_text(..., unicode_version) at 262); HEAD:rich/cells.py set_cell_size still cell_len(text); callers rich/rule.py:100, segment.py:378, text.py:866 pass no version"
+  },
+  "reader_b": {
+   "label": "real_omission",
+   "confidence": "medium",
+   "rationale": "set_cell_size is new in this commit and takes unicode_version. It forwards unicode_version to _split_text but measures with cell_len(text), which uses the 'auto' version, so the length check and the split can use different width tables. With a non-default version and characters whose width differs between versions, it can pad or return the text at the wrong cell size. All in-tree callers use the default, so the defect is latent, but the function's own contract is internally inconsistent.",
+   "evidence": "5ffec68c91d4:rich/cell_string.py lines 79-120 (cell_len), 237-262 (set_cell_size); grep of in-tree set_cell_size callers at HEAD (rule.py, segment.py, text.py all default)"
+  },
+  "final_label": "real_omission",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "rich-056",
+  "repository": "rich",
+  "commit": "7001a52a356f",
+  "commit_subject": "move to cells.py",
+  "detector": "callback_binding_review",
+  "changed_symbol": "get_character_cell_size",
+  "site_path": "rich/cells.py",
+  "site_line": 94,
+  "site_enclosing_function": "cached_cell_len",
+  "tool_message": "changed callable get_character_cell_size is passed as a value",
+  "reader_a": {
+   "label": "review_worthy",
+   "confidence": "medium",
+   "rationale": "cached_cell_len still computes sum(map(get_character_cell_size, text)). map passes one argument, so the new optional unicode_version parameter does not break the call. The same commit, however, rewrote cell_len to handle ZWJ/VS16 graphemes and dropped its delegation to cached_cell_len. cached_cell_len, which Segment still uses (segment.py:630), now measures differently from cell_len. Upstream rewrote exactly this line in 9904f141 'restore caching behavior' to delegate to _cell_len(text, unicode_version). The site deserved review, but the checker's stated reason (signature change of the passed callable) is not itself the defect.",
+   "evidence": "7001a52a356f:rich/cells.py 79-95, 97-140; 7001a52a356f:rich/segment.py:21,630; 9904f141ccdb diff rich/cells.py"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "medium",
+   "rationale": "cached_cell_len passes get_character_cell_size to map() with one argument per character. The changed signature (character, unicode_version='auto') only added an optional parameter, so the callback binding still works and behaves as the default. The function was rewritten later (9904f141) to reuse the grapheme-aware _cell_len and take unicode_version, which was a caching and consistency refactor, not a fix for the callback arity.",
+   "evidence": "7001a52a356f^:rich/cells.py lines 33-48, 67-68; 7001a52a356f:rich/cells.py lines 47-48, 79-94; 9904f141ccdb diff of rich/cells.py"
+  },
+  "final_label": "false_report",
+  "resolution": "third_read",
+  "third_read_rationale": "cached_cell_len calls map(get_character_cell_size, text), which passes one argument. The commit only added an optional parameter, so this binding is unaffected by construction. The later rewrite of the function had a different cause."
+ },
+ {
+  "site_id": "rich-057",
+  "repository": "rich",
+  "commit": "7001a52a356f",
+  "commit_subject": "move to cells.py",
+  "detector": "delegating_wrapper_review",
+  "changed_symbol": "set_cell_size",
+  "site_path": "rich/cells.py",
+  "site_line": 275,
+  "site_enclosing_function": "set_cell_size",
+  "tool_message": "delegating wrapper set_cell_size calls cell_len without forwarding optional parameter unicode_version",
+  "reader_a": {
+   "label": "real_omission",
+   "confidence": "medium",
+   "rationale": "This is the same code as rich-055, moved into rich/cells.py by this commit. set_cell_size accepts unicode_version and uses it in _split_text but measures with cell_len(text) under 'auto', so measurement and cropping can disagree for a non-default version. It is unchanged at HEAD; no in-tree caller passes a version, so it is latent.",
+   "evidence": "7001a52a356f:rich/cells.py 255-279 (cell_len(text) at ~275); HEAD:rich/cells.py set_cell_size line ~317"
+  },
+  "reader_b": {
+   "label": "real_omission",
+   "confidence": "medium",
+   "rationale": "This is the same defect as rich-055, carried into rich/cells.py by the move. set_cell_size(text, total, unicode_version) still measures with cell_len(text), using the default 'auto', while splitting with _split_text(text, total, unicode_version). The mismatch persists unchanged at HEAD (cells.py line 317).",
+   "evidence": "7001a52a356f:rich/cells.py lines 258-280; HEAD rich/cells.py lines 299-323"
+  },
+  "final_label": "real_omission",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "rich-058",
+  "repository": "rich",
+  "commit": "7001a52a356f",
+  "commit_subject": "move to cells.py",
+  "detector": "delegating_wrapper_review",
+  "changed_symbol": "Text.cell_len",
+  "site_path": "rich/text.py",
+  "site_line": 227,
+  "site_enclosing_function": "Text.cell_len",
+  "tool_message": "delegating wrapper Text.cell_len calls cell_len without forwarding optional parameter unicode_version",
+  "reader_a": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "Text.cell_len is a property with no parameters, so it has no unicode_version to forward. It calls cell_len(self.plain) with the default 'auto', like every other internal measurement in rich. The removed `_cell_len` callable parameter of cells.cell_len was never passed here either, so the commit does not affect this site.",
+   "evidence": "7001a52a356f:rich/text.py 224-227; 7001a52a356f diff rich/cells.py (cell_len signature change)"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "Text.cell_len is a no-argument property returning cell_len(self.plain). Text has no unicode_version attribute or parameter, so there is nothing to forward, and the commit did not touch rich/text.py. The default 'auto' behaviour is the intended one.",
+   "evidence": "7001a52a356f:rich/text.py lines 224-227; no unicode_version in 7001a52a356f:rich/text.py; rich/text.py not in 7001a52a356f --stat"
+  },
+  "final_label": "false_report",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "mkdocs-059",
+  "repository": "mkdocs",
+  "commit": "a3e60f138508",
+  "commit_subject": "Paths in config file are relative to the config file. (#1376)",
+  "detector": "override_signature_review",
+  "changed_symbol": "SubConfig.__init__",
+  "site_path": "mkdocs/config/config_options.py",
+  "site_line": 51,
+  "site_enclosing_function": "SubConfig.__init__",
+  "tool_message": "override may omit changed base parameter config_file_path",
+  "reader_a": {
+   "label": "review_worthy",
+   "confidence": "medium",
+   "rationale": "The commit gave Config.__init__ a config_file_path parameter so that FilesystemObject paths resolve relative to the config file. SubConfig (a Config subclass) neither accepts nor obtains it. The relation is real (see mkdocs-060), but the defect is the missing forwarding, not the override's signature: the upstream fix (66f8df9) captured the path in pre_validation rather than adding a constructor parameter. That makes the signature report useful for review but not the omission itself.",
+   "evidence": "a3e60f138508 diff mkdocs/config/base.py, config_options.py (FilesystemObject.pre_validation uses config.config_file_path); a3e60f138508:mkdocs/config/config_options.py 50-62; 66f8df97d282 diff"
+  },
+  "reader_b": {
+   "label": "review_worthy",
+   "confidence": "medium",
+   "rationale": "SubConfig(BaseConfigOption, Config).__init__(*config_options) is never constructed polymorphically as Config(schema, config_file_path), so the signature mismatch itself is harmless. The underlying gap is real, though: nested options validated through SubConfig see config_file_path=None, so FilesystemObject.pre_validation silently falls back to cwd-relative paths. Upstream fixed this in 66f8df9 ('Pass config file path through SubConfig to Config'). The concrete omission is captured by mkdocs-060; this override-framed report is worth a look but is not itself the defect.",
+   "evidence": "a3e60f138508 diff of mkdocs/config/base.py and config_options.py (FilesystemObject.pre_validation); a3e60f138508:mkdocs/config/config_options.py lines 50-62; 66f8df9 diff"
+  },
+  "final_label": "review_worthy",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "mkdocs-060",
+  "repository": "mkdocs",
+  "commit": "a3e60f138508",
+  "commit_subject": "Paths in config file are relative to the config file. (#1376)",
+  "detector": "delegating_wrapper_review",
+  "changed_symbol": "SubConfig.__init__",
+  "site_path": "mkdocs/config/config_options.py",
+  "site_line": 53,
+  "site_enclosing_function": "SubConfig.__init__",
+  "tool_message": "delegating wrapper SubConfig.__init__ calls Config.__init__ without forwarding optional parameter config_file_path",
+  "reader_a": {
+   "label": "real_omission",
+   "confidence": "high",
+   "rationale": "SubConfig.__init__ calls Config.__init__(self, config_options) without config_file_path, so config.config_file_path is None inside sub-configs. The commit's new FilesystemObject.pre_validation then silently skips resolving relative paths against the config directory. Upstream later fixed exactly this: 66f8df9 'Pass config file path through SubConfig to Config (#3265)', whose message says it ensures FilesystemObject fields are evaluated relative to the file. The only in-tree uses at the time (extra, ConfigItems) had no path options, so the bug mainly hit plugins.",
+   "evidence": "a3e60f138508:mkdocs/config/config_options.py 50-53, ~296-312 (pre_validation fallback when config_file_path is None); 66f8df97d282 (later fix)"
+  },
+  "reader_b": {
+   "label": "real_omission",
+   "confidence": "medium",
+   "rationale": "The commit made relative paths resolve against config.config_file_path, via FilesystemObject.pre_validation and Plugins passing the path into plugin Config. SubConfig.__init__ calls Config.__init__(self, config_options) without config_file_path, and nothing sets it later, so File/Dir options inside a SubConfig stay cwd-relative, contrary to the commit's stated goal. Upstream later fixed this exact gap for this exact reason (66f8df9, 'This ensures FilesystemObject fields in Config are correctly evaluated relative to file'), although by then SubConfig had been restructured.",
+   "evidence": "a3e60f138508:mkdocs/config/config_options.py lines 50-62, 293-312; a3e60f138508 mkdocs/plugins.py load_config; 66f8df97d282 diff of mkdocs/config/config_options.py"
+  },
+  "final_label": "real_omission",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "mkdocs-061",
+  "repository": "mkdocs",
+  "commit": "5c2b4f135360",
+  "commit_subject": "Update ghp_import dependency to 1.0",
+  "detector": "removed_callable_review",
+  "changed_symbol": "ghp_import",
+  "site_path": "mkdocs/commands/gh_deploy.py",
+  "site_line": 107,
+  "site_enclosing_function": "gh_deploy",
+  "tool_message": "previous declaration at mkdocs/utils/ghp_import.py:160 was removed; review this call",
+  "reader_a": {
+   "label": "real_omission",
+   "confidence": "medium",
+   "rationale": "The commit replaced the vendored mkdocs.utils.ghp_import with the upstream ghp_import 1.0 API and rewrote the call at line 107 to pass push=force. In the new API push and force are separate options, so without --force gh-deploy no longer pushed. Upstream fixed this exact call 58 commits later in 2688a6d 'Ensure gh-deploy always pushes' ('I had missed that push and force are two separate parameters'). The checker's framing ('declaration removed') is crude, since the name now resolves to the external package, but the call did need review and was wrong because of this change.",
+   "evidence": "5c2b4f135360 diff mkdocs/commands/gh_deploy.py (lines ~106-115, push=force); 2688a6d88d61 diff (push=True, force=force)"
+  },
+  "reader_b": {
+   "label": "real_omission",
+   "confidence": "medium",
+   "rationale": "The vendored mkdocs.utils.ghp_import.ghp_import(dir, message, remote, branch, force) was removed, and this call was rewritten against the external ghp_import 1.0 API, whose contract differs: push and force are separate parameters. The rewritten call passes push=force and no force, so a plain `mkdocs gh-deploy` no longer pushes at all. Upstream fixed this exact call in 2688a6d 'Ensure gh-deploy always pushes' ('I had missed that push and force are two separate parameters'). The checker's message is generic, but this call left by the removal was wrong.",
+   "evidence": "5c2b4f135360 diff of mkdocs/commands/gh_deploy.py (lines 103-140) and removal of mkdocs/utils/ghp_import.py; 2688a6d88d61 diff (push=True, force=force), 58 commits later"
+  },
+  "final_label": "real_omission",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "mkdocs-062",
+  "repository": "mkdocs",
+  "commit": "57b5ccd7d63e",
+  "commit_subject": "Add support for Configuration Inheritance",
+  "detector": "delegating_wrapper_review",
+  "changed_symbol": "yaml_load",
+  "site_path": "mkdocs/utils/__init__.py",
+  "site_line": 55,
+  "site_enclosing_function": "yaml_load",
+  "tool_message": "delegating wrapper yaml_load calls get_yaml_loader without forwarding optional parameter loader",
+  "reader_a": {
+   "label": "false_report",
+   "confidence": "medium",
+   "rationale": "The new yaml_load uses `Loader = loader or get_yaml_loader()`: a supplied loader is used as the complete Loader class rather than as a base to wrap. The recursive INHERIT call passes the already-built Loader back in, so forwarding `loader` into get_yaml_loader would wrap it twice. Not forwarding is deliberate, and no in-tree caller passes a loader (base.py:137, theme.py:84 call yaml_load(f)).",
+   "evidence": "57b5ccd7d63e diff mkdocs/utils/__init__.py; 57b5ccd7d63e:mkdocs/utils/__init__.py 37-68; git grep yaml_load at 57b5ccd7d63e"
+  },
+  "reader_b": {
+   "label": "review_worthy",
+   "confidence": "low",
+   "rationale": "Before the commit, yaml_load(source, loader=X) subclassed X and attached the !ENV (and str) constructors. After it, yaml_load uses `loader or get_yaml_loader()`, so an explicitly passed loader is used raw and loses !ENV. Not forwarding loader to get_yaml_loader is deliberate, since the recursive INHERIT call passes the already-built Loader, and no in-tree caller passes a loader. Still, the public parameter's meaning changed from 'base loader to extend' to 'finished loader', which a reviewer would want to confirm.",
+   "evidence": "57b5ccd7d63e diff of mkdocs/utils/__init__.py; 57b5ccd7d63e:mkdocs/utils/__init__.py lines 37-68; git grep yaml_load callers at 57b5ccd7d63e and its parent"
+  },
+  "final_label": "false_report",
+  "resolution": "third_read",
+  "third_read_rationale": "yaml_load uses `loader or get_yaml_loader()` and passes the built Loader to its own recursive call, so not forwarding loader into get_yaml_loader is the design. No in-tree caller passes a loader."
+ },
+ {
+  "site_id": "mkdocs-063",
+  "repository": "mkdocs",
+  "commit": "a56ac6e0513b",
+  "commit_subject": "Add plugin events that persist across builds in `mkdocs serve`",
+  "detector": "callback_binding_review",
+  "changed_symbol": "serve.builder",
+  "site_path": "mkdocs/commands/serve.py",
+  "site_line": 83,
+  "site_enclosing_function": "serve",
+  "tool_message": "changed callable builder is passed as a value",
+  "reader_a": {
+   "label": "false_report",
+   "confidence": "medium",
+   "rationale": "builder gained an optional `config=None` parameter and no longer returns config. Its value-passing sites are LiveReloadServer(builder=builder) and the plugins' on_serve event. LiveReloadServer only calls func() with no arguments and ignores the result (livereload/__init__.py watch and rebuild loop), and plugins are documented to hand builder to server.watch. The change is compatible with every consumer by construction; the later 62d8a6f4 edit concerns event priority, not this.",
+   "evidence": "a56ac6e0513b diff mkdocs/commands/serve.py; a56ac6e0513b:mkdocs/commands/serve.py 46-90; a56ac6e0513b:mkdocs/livereload/__init__.py 64-73, 105-167"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "medium",
+   "rationale": "builder gained an optional config=None parameter and now returns None instead of config. It is passed to LiveReloadServer and plugin on_serve, which call it with no arguments (livereload watch/_build loop: func()) and ignore the return value, and the plugin docs describe builder only as the callable to pass to server.watch. The only caller that used the return value, the initial build in serve(), was updated in the same commit. The later 'resolving' commit is unrelated plugin-priority work.",
+   "evidence": "a56ac6e0513b diff of mkdocs/commands/serve.py; a56ac6e0513b:mkdocs/commands/serve.py lines 46-95; a56ac6e0513b:mkdocs/livereload/__init__.py lines ~105-168; a56ac6e0513b:mkdocs/plugins.py lines 105-117"
+  },
+  "final_label": "false_report",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "mkdocs-064",
+  "repository": "mkdocs",
+  "commit": "cf9d23757e4d",
+  "commit_subject": "Change ListOfItems' \"default default\" from [] to None",
+  "detector": "override_signature_review",
+  "changed_symbol": "Hooks.__init__",
+  "site_path": "mkdocs/config/config_options.py",
+  "site_line": 969,
+  "site_enclosing_function": "Hooks.__init__",
+  "tool_message": "override may omit changed base parameter default",
+  "reader_a": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "The commit changed ListOfItems' default from [] to None. Hooks.__init__ already passed default=[] explicitly before and after the commit, so the new base default never applies to Hooks. Its validation path (value None becomes self.default = []) behaves as before, and the edit 20 commits later (ca8a3c8d) was an unrelated rewrite of Hooks onto BaseConfigOption.",
+   "evidence": "cf9d23757e4d diff mkdocs/config/config_options.py; cf9d23757e4d^:mkdocs/config/config_options.py 963-968; cf9d23757e4d:mkdocs/config/config_options.py 966-976; ca8a3c8d671b diff"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "Hooks.__init__ already passes default=[] explicitly to ListOfItems.__init__ and did not change in this commit. Changing the base's default from [] to None therefore does not affect Hooks, and with a None value run_validation still returns [] as before. The later edit (ca8a3c8) was a type-annotation refactor that rebased Hooks onto BaseConfigOption, not a fix for this.",
+   "evidence": "cf9d23757e4d diff of mkdocs/config/config_options.py (ListOfItems hunks only); cf9d23757e4d^ and cf9d23757e4d:mkdocs/config/config_options.py lines 963-968; ca8a3c8d671b Hooks hunk"
+  },
+  "final_label": "false_report",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "mkdocs-065",
+  "repository": "mkdocs",
+  "commit": "7d8483904a5f",
+  "commit_subject": "Add YAML placeholder tags that resolve to current paths",
+  "detector": "delegating_wrapper_review",
+  "changed_symbol": "yaml_load",
+  "site_path": "mkdocs/utils/yaml.py",
+  "site_line": 102,
+  "site_enclosing_function": "yaml_load",
+  "tool_message": "delegating wrapper yaml_load calls get_yaml_loader without forwarding optional parameter loader",
+  "reader_a": {
+   "label": "false_report",
+   "confidence": "medium",
+   "rationale": "This commit moved yaml_load into mkdocs/utils/yaml.py with the same `loader = loader or get_yaml_loader()` logic as before. A supplied loader is the complete Loader class (including the recursive INHERIT call and callers that pass get_yaml_loader(config=...)), so passing it into get_yaml_loader would wrap it again. The non-forwarding is deliberate and unchanged from the previous behaviour.",
+   "evidence": "7d8483904a5f diff (new mkdocs/utils/yaml.py, removal from utils/__init__.py); 7d8483904a5f:mkdocs/utils/yaml.py 80-122"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "In this commit yaml_load(source, loader=None) moved into mkdocs/utils/yaml.py with the same 'finished loader' semantics it has had since 57b5ccd. Not forwarding loader to get_yaml_loader is intentional: callers build the loader themselves (defaults.py lines 153-154 pass get_yaml_loader(config=self); get_deps passes YamlLoader), and the INHERIT recursion reuses it. The commit did not change yaml_load's loader contract. The 'resolution' commit only touches docs.",
+   "evidence": "7d8483904a5f:mkdocs/utils/yaml.py lines 81-122; git grep yaml_load/get_yaml_loader at 7d8483904a5f (config/defaults.py:153-154, commands/get_deps.py:98); 25f4ea153322 --stat"
+  },
+  "final_label": "false_report",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "mkdocs-066",
+  "repository": "mkdocs",
+  "commit": "a42ab62311b0",
+  "commit_subject": "Validation of absolute links relative to docs root",
+  "detector": "parameter_sink_review",
+  "changed_symbol": "_RelativePathTreeprocessor._possible_target_uris",
+  "site_path": "mkdocs/structure/pages.py",
+  "site_line": 361,
+  "site_enclosing_function": "_RelativePathTreeprocessor._possible_target_uris",
+  "tool_message": "new parameter suggest_absolute is not read in the function body; verify its intended behavioral sink",
+  "reader_a": {
+   "label": "review_worthy",
+   "confidence": "high",
+   "rationale": "The commit added `suggest_absolute: bool = False` to _possible_target_uris, but the body never reads it and the only caller (path_to_url ~422) never passes it. The absolute-suggestion behaviour was implemented in path_to_url instead (`path = '/' + path` when RELATIVE_TO_DOCS). Behaviour is correct, but the dead parameter is a real leftover a reviewer should catch. It is still unread at HEAD (line 383); the 'resolving' commit 224676fb did not touch it.",
+   "evidence": "a42ab62311b0 diff mkdocs/structure/pages.py; a42ab62311b0:mkdocs/structure/pages.py 360-396, 422-424, ~463; HEAD:mkdocs/structure/pages.py:383; git log -G suggest_absolute (no later change)"
+  },
+  "reader_b": {
+   "label": "review_worthy",
+   "confidence": "high",
+   "rationale": "The commit added suggest_absolute: bool = False to _possible_target_uris, but the body never reads it and the only caller (path_to_url, lines 422-424) never passes it. The absolute-suggestion behaviour was implemented separately in path_to_url (path = '/' + path), so nothing misbehaves. The unused parameter is a dead leftover that a reviewer would flag, and it still exists unused at HEAD.",
+   "evidence": "a42ab62311b0 diff of mkdocs/structure/pages.py; a42ab62311b0:mkdocs/structure/pages.py lines 360-397, 422-424, 460-466; HEAD mkdocs/structure/pages.py line 383 (only occurrence)"
+  },
+  "final_label": "review_worthy",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "mkdocs-067",
+  "repository": "mkdocs",
+  "commit": "0b5ef68184c5",
+  "commit_subject": "Make fields of File computed on demand",
+  "detector": "callback_binding_review",
+  "changed_symbol": "File._get_dest_path",
+  "site_path": "mkdocs/structure/files.py",
+  "site_line": 271,
+  "site_enclosing_function": "",
+  "tool_message": "changed callable _get_dest_path is passed as a value",
+  "reader_a": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "Line 271 is `dest_uri = cached_property(_get_dest_path)`, which this commit itself added. It made use_directory_urls optional (`bool | None = None`, falling back to self.use_directory_urls) precisely so that _get_dest_path could serve as a property getter. The binding is consistent with the new signature by construction, and the 'resolving' commit is an unrelated packaging change.",
+   "evidence": "0b5ef68184c5 diff mkdocs/structure/files.py; 0b5ef68184c5:mkdocs/structure/files.py 256-272"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "The binding dest_uri = cached_property(_get_dest_path) was introduced in this same commit. _get_dest_path's use_directory_urls parameter was made optional (default None, which resolves to self.use_directory_urls) precisely so cached_property can call it with only self. The binding is correct by construction.",
+   "evidence": "0b5ef68184c5 diff of mkdocs/structure/files.py; 0b5ef68184c5:mkdocs/structure/files.py lines 257-272"
+  },
+  "final_label": "false_report",
+  "resolution": "readers_agree"
+ },
+ {
+  "site_id": "mkdocs-068",
+  "repository": "mkdocs",
+  "commit": "0b5ef68184c5",
+  "commit_subject": "Make fields of File computed on demand",
+  "detector": "callback_binding_review",
+  "changed_symbol": "File._get_url",
+  "site_path": "mkdocs/structure/files.py",
+  "site_line": 284,
+  "site_enclosing_function": "",
+  "tool_message": "changed callable _get_url is passed as a value",
+  "reader_a": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "Line 284 is `url = cached_property(_get_url)`, also added by this commit. _get_url's use_directory_urls became optional with a fallback to self.use_directory_urls specifically so it works as a cached_property getter. The binding matches the new contract.",
+   "evidence": "0b5ef68184c5 diff mkdocs/structure/files.py; 0b5ef68184c5:mkdocs/structure/files.py 274-285"
+  },
+  "reader_b": {
+   "label": "false_report",
+   "confidence": "high",
+   "rationale": "url = cached_property(_get_url) was added in the same commit, and _get_url's use_directory_urls became optional (default None, which resolves to self.use_directory_urls) so the one-argument call works. Nothing about the change makes this binding inconsistent.",
+   "evidence": "0b5ef68184c5 diff of mkdocs/structure/files.py; 0b5ef68184c5:mkdocs/structure/files.py lines 275-285"
+  },
+  "final_label": "false_report",
+  "resolution": "readers_agree"
+ }
+]

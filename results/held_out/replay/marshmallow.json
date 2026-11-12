@@ -1,0 +1,90 @@
+{
+  "repository": "marshmallow",
+  "head": "a38b7f684204",
+  "commits_replayed": 800,
+  "horizon_commits": 25,
+  "opt_in_detectors": [],
+  "wall_seconds": 267.3,
+  "commits_changing_production_python": 428,
+  "contract_changing_commits": 82,
+  "contract_changing_commits_silent": 78,
+  "contract_changing_commits_flagged": 4,
+  "local_commits_flagged": 0,
+  "analysis_errors": 0,
+  "flagged_commits": [
+    {
+      "commit": "013abfd669f6",
+      "subject": "Deprecate metadata as additional field kwargs, support explicit `metadata=...` (#1702)",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "override_signature_review",
+          "symbol": "Inferred.__init__",
+          "path": "src/marshmallow/fields.py",
+          "line": 1868,
+          "anchor": "Inferred.__init__",
+          "provenance": "static_ast",
+          "evidence": "override may omit changed base parameter metadata",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        }
+      ]
+    },
+    {
+      "commit": "1db1a8a87041",
+      "subject": "Replace missing/default with {load,dump}_default",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "override_signature_review",
+          "symbol": "Inferred.__init__",
+          "path": "src/marshmallow/fields.py",
+          "line": 1971,
+          "anchor": "Inferred.__init__",
+          "provenance": "static_ast",
+          "evidence": "override may omit changed base parameter load_default",
+          "resolved_after_commits": 2,
+          "resolved_by": "same_file_other_edit",
+          "resolving_commit": "4e28ae1dbf16",
+          "resolving_subject": "Bump sphinx from 4.0.1 to 4.0.2"
+        }
+      ]
+    },
+    {
+      "commit": "447eb86c9c70",
+      "subject": "Various typing improvements to fields module (#2723)",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "override_signature_review",
+          "symbol": "Pluck._deserialize",
+          "path": "src/marshmallow/fields.py",
+          "line": 730,
+          "anchor": "Pluck._deserialize",
+          "provenance": "static_ast",
+          "evidence": "override default for changed base parameter data differs from the new base default",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        }
+      ]
+    },
+    {
+      "commit": "2bf3ae6ac656",
+      "subject": "feat: improve consistency of many arg with nested schema (#2854)",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "override_signature_review",
+          "symbol": "Pluck.__init__",
+          "path": "src/marshmallow/fields.py",
+          "line": 657,
+          "anchor": "Pluck.__init__",
+          "provenance": "static_ast",
+          "evidence": "override default for changed base parameter many differs from the new base default",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        }
+      ]
+    }
+  ]
+}
