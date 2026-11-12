@@ -5,7 +5,7 @@ from typing import Iterable, Mapping
 
 from .cache import FactCache
 from .facts import parse_file
-from .model import FileFacts, Finding, FunctionFact, ObservedCallEdge
+from .model import ClassFact, FileFacts, Finding, FunctionFact, ObservedCallEdge
 from .resolve import (
     MutableResolutionIndex,
     build_index,
@@ -61,6 +61,50 @@ def _parameter_map(function: FunctionFact | None):
 
 def _has_kwarg(function: FunctionFact | None) -> bool:
     return bool(function and any(p.kind == "kwarg" for p in function.parameters))
+
+
+def _constructor_pair_reads(function: FunctionFact, parameter: str, facts: FileFacts | None) -> bool:
+    """__new__ and __init__ receive the same arguments; either one may consume a parameter."""
+    if facts is None or function.class_qualname is None or function.name not in {"__new__", "__init__"}:
+        return False
+    cls = facts.classes.get(function.class_qualname)
+    partner = cls.methods.get("__init__" if function.name == "__new__" else "__new__") if cls else None
+    return partner is not None and parameter in partner.local_name_reads
+
+
+def _signature_is_dictated(function: FunctionFact, facts: FileFacts | None, index: MutableResolutionIndex) -> bool:
+    """The parameter list follows a protocol, a callback convention, or an overridden method."""
+    if function.name.startswith("__") and function.name.endswith("__") and function.name != "__init__":
+        return True
+    expected = f"{function.class_qualname}.{function.name}" if function.class_qualname else function.name
+    if function.qualname != expected:
+        # Nested functions are usually callbacks whose caller fixes the arguments.
+        return True
+    cls = facts.classes.get(function.class_qualname) if facts and function.class_qualname else None
+    if cls is None:
+        return False
+    if any(function.name in child.methods for child in index.subclasses_of(cls.name)):
+        return True
+    return bool(cls.bases) and _class_may_inherit(cls, function.name, index)
+
+
+def _class_may_inherit(cls: ClassFact, method: str, index: MutableResolutionIndex) -> bool:
+    """A base class provides the method, or a base outside the workspace might."""
+    seen: set[str] = set()
+    pending = [base.split(".")[-1] for base in cls.bases]
+    while pending:
+        name = pending.pop()
+        if name in seen or name == "object":
+            continue
+        seen.add(name)
+        bases = index.classes_by_short.get(name)
+        if not bases:
+            return True
+        for base in bases.values():
+            if method in base.methods:
+                return True
+            pending.extend(item.split(".")[-1] for item in base.bases)
+    return False
 
 
 def _field_tokens(name: str) -> tuple[str, ...]:
@@ -150,6 +194,9 @@ def _exception_contract_findings(
     if not added:
         return [], 0
     added_params = set(_parameter_map(new)) - set(_parameter_map(old))
+    positional_slots = [
+        p.name for p in new.parameters if p.kind in {"posonly", "positional"} and p.name not in {"self", "cls"}
+    ]
     findings: list[Finding] = []
     inspected = 0
     visited = {(new.path, new.qualname)}
@@ -174,6 +221,23 @@ def _exception_contract_findings(
                 effective = set(exceptions)
                 if hop == 0 and added_params and not (added_params & set(call.keyword_names)) and not call.has_kwargs:
                     effective -= {"ValueError", "TypeError"}
+                if hop == 0 and added_params and not (call.has_kwargs or call.has_varargs):
+                    omitted = {
+                        name
+                        for name in added_params - set(call.keyword_names)
+                        if name not in positional_slots[: call.positional_count]
+                    }
+                    # A raise reached only through a test of a new parameter needs that parameter.
+                    effective = {
+                        name
+                        for name in effective
+                        if not all(
+                            omitted & set(guards)
+                            for raised, guards in new.guarded_raises
+                            if raised == name
+                        )
+                        or not any(raised == name for raised, _ in new.guarded_raises)
+                    }
                 if not effective:
                     continue
                 caught = call.enclosing_caught_exceptions
@@ -351,7 +415,18 @@ def analyze_changed_files_in_index(
                     ):
                         if not legacy_optional_keyword_all_callers or parameter.kind == "kwonly":
                             added_optional_parameters.append((new, name))
-                    if prior is None and name not in {"self", "cls"}:
+                    if (
+                        old is not None
+                        and prior is None
+                        and name not in {"self", "cls"}
+                        and not name.startswith("_")
+                        and parameter.kind not in {"vararg", "kwarg"}
+                        and len(new.parameters) > len(old.parameters)
+                        and not new.is_stub
+                        and not _signature_is_dictated(new, new_file, index)
+                        and not _constructor_pair_reads(new, name, new_file)
+                    ):
+                        # Abstract declarations and catch-all parameters have no body to read them.
                         added_parameters.append((new, name))
 
     before_index: MutableResolutionIndex | None = None
@@ -361,12 +436,19 @@ def analyze_changed_files_in_index(
         if replacement_import and replacement_import[1] and replacement_import[0] != old.module:
             # A direct re-export keeps the original import name available.
             continue
+        surviving_class = new_file.classes.get(old.class_qualname) if new_file and old.class_qualname else None
+        if surviving_class is not None and _class_may_inherit(surviving_class, old.name, index):
+            continue
         for caller_facts, call in index.calls_for_callee(old.name):
             candidate_calls_inspected += 1
             if call_head_is_parameter(call, caller_facts):
                 continue
             current = resolve_call_with_provenance(call, caller_facts, index)
-            if any(fn.module == old.module and fn.qualname == old.qualname for fn, _ in current):
+            if any(
+                (fn.module == old.module or fn.path == caller_facts.path) and fn.qualname == old.qualname
+                for fn, _ in current
+            ):
+                # Still defined, or moved together with this caller into the caller's file.
                 continue
             if before_index is None:
                 previous_files = {
@@ -456,6 +538,12 @@ def analyze_changed_files_in_index(
             }
             for caller_facts, call in index.calls_for_value_leaf(new.name):
                 candidate_calls_inspected += 1
+                owner = caller_facts.functions.get(call.owner_function or "")
+                if owner is not None and (
+                    new.name in owner.local_name_stores or any(p.name == new.name for p in owner.parameters)
+                ):
+                    # The name is a parameter or local variable in this scope.
+                    continue
                 if any(value_refers_to_target(value, caller_facts, new) for value in call.value_names):
                     wrapper_adapts = any(
                         wrapped_name == new.name and changed_names <= set(forwarded_keywords)
@@ -499,7 +587,15 @@ def analyze_changed_files_in_index(
                 for name, base_parameter in changed_base_params.items():
                     override_parameter = override_params.get(name)
                     if override_parameter is None:
-                        if not _has_kwarg(override):
+                        positional = {"posonly", "positional"}
+                        base_slots = [p.name for p in new.parameters if p.kind in positional]
+                        override_slots = [p.name for p in override.parameters if p.kind in positional]
+                        renamed_in_place = (
+                            base_parameter.kind in positional
+                            and len(old.parameters) == len(new.parameters)
+                            and base_slots.index(name) < len(override_slots)
+                        )
+                        if not _has_kwarg(override) and not renamed_in_place:
                             evidence.append(f"override may omit changed base parameter {name}")
                         continue
                     incompatible_kinds = (

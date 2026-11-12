@@ -106,6 +106,37 @@ class FunctionFact:
     return_allows_none: bool = False
     raised_exceptions: frozenset[str] = frozenset()
     _ast_node: ast.AST | None = field(default=None, repr=False, compare=False)
+    guarded_raises: tuple[tuple[str, tuple[str, ...]], ...] = ()
+    local_name_stores: frozenset[str] = frozenset()
+
+    @property
+    def is_stub(self) -> bool:
+        """An abstract method, overload, or declaration whose body does no work."""
+        node = self._ast_node
+        if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            return False
+        for decorator in node.decorator_list:
+            target = decorator.func if isinstance(decorator, ast.Call) else decorator
+            name = target.attr if isinstance(target, ast.Attribute) else getattr(target, "id", "")
+            if name in {"abstractmethod", "overload"}:
+                return True
+        for statement in node.body:
+            if isinstance(statement, ast.Pass):
+                continue
+            if isinstance(statement, ast.Expr) and isinstance(statement.value, ast.Constant):
+                continue
+            if (
+                isinstance(statement, ast.Return)
+                and isinstance(statement.value, ast.Name)
+                and statement.value.id == "NotImplemented"
+            ):
+                continue
+            if isinstance(statement, ast.Raise) and statement.exc is not None:
+                raised = statement.exc.func if isinstance(statement.exc, ast.Call) else statement.exc
+                if getattr(raised, "id", "") == "NotImplementedError":
+                    continue
+            return False
+        return True
 
     @property
     def is_async(self) -> bool:

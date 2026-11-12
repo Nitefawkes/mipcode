@@ -310,6 +310,7 @@ class _FunctionScanner(_CallContextScanner):
         self.writes: set[str] = set()
         self.calls: list[ast.Call] = []
         self.local_name_reads: set[str] = set()
+        self.local_name_stores: set[str] = set()
         self.bare_truthy_checks: list[tuple[str, int]] = []
         self.self_attr_annotations: list[tuple[str, str]] = []
         self.nested_declarations: list[ast.AST] = []
@@ -318,6 +319,8 @@ class _FunctionScanner(_CallContextScanner):
         self.has_non_none_return: bool = False
         self.has_explicit_none_return: bool = False
         self.raised_exceptions: set[str] = set()
+        self.guarded_raises: list[tuple[str, tuple[str, ...]]] = []
+        self._guard_names: list[frozenset[str]] = []
         self.call_unpack_arity: dict[int, int] = {}
         self.assigned_call_vars: dict[str, int] = {}
         self.dereferenced_calls: set[int] = set()
@@ -341,14 +344,17 @@ class _FunctionScanner(_CallContextScanner):
     def visit_Name(self, node: ast.Name) -> None:
         if isinstance(node.ctx, ast.Load):
             self.local_name_reads.add(node.id)
+        else:
+            self.local_name_stores.add(node.id)
 
     def visit_If(self, node: ast.If) -> None:
         if isinstance(node.test, ast.Name):
             self.bare_truthy_checks.append((node.test.id, node.test.lineno))
-        for child in ast.walk(node.test):
-            if isinstance(child, ast.Name):
-                self.guarded_vars.add(child.id)
+        tested = frozenset(child.id for child in ast.walk(node.test) if isinstance(child, ast.Name))
+        self.guarded_vars.update(tested)
+        self._guard_names.append(tested)
         self.generic_visit(node)
+        self._guard_names.pop()
 
     def visit_IfExp(self, node: ast.IfExp) -> None:
         for child in ast.walk(node.test):
@@ -417,15 +423,22 @@ class _FunctionScanner(_CallContextScanner):
         self.generic_visit(node)
 
     def visit_Raise(self, node: ast.Raise) -> None:
+        name = None
         if node.exc is not None:
             if isinstance(node.exc, ast.Call):
                 chain = dotted(node.exc.func)
-                if chain:
-                    self.raised_exceptions.add(chain[-1])
+                # `raise self.make_error(...)` raises whatever the factory returns.
+                if chain and chain[-1][:1].isupper():
+                    name = chain[-1]
             elif isinstance(node.exc, (ast.Name, ast.Attribute)):
                 chain = dotted(node.exc)
                 if chain and chain[-1][:1].isupper():
-                    self.raised_exceptions.add(chain[-1])
+                    name = chain[-1]
+        if name is not None:
+            self.raised_exceptions.add(name)
+            # Names tested by the enclosing if statements that lead to this raise.
+            guards = sorted(frozenset().union(*self._guard_names)) if self._guard_names else []
+            self.guarded_raises.append((name, tuple(guards)))
         self.generic_visit(node)
 
     def visit_Try(self, node: ast.Try) -> None:
@@ -583,6 +596,8 @@ class _ModuleScanner(_CallContextScanner):
                 prior_fn.return_allows_none,
                 prior_fn.raised_exceptions,
                 node,
+                guarded_raises=prior_fn.guarded_raises,
+                local_name_stores=prior_fn.local_name_stores,
             )
             self.functions[qual] = fact
             if class_qual and class_qual in self.classes:
@@ -650,6 +665,8 @@ class _ModuleScanner(_CallContextScanner):
             ret_allows_none,
             frozenset(local.raised_exceptions),
             node,
+            guarded_raises=tuple(local.guarded_raises),
+            local_name_stores=frozenset(local.local_name_stores),
         )
         self.functions[qual] = fact
         if class_qual and class_qual in self.classes:
