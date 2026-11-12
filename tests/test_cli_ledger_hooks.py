@@ -159,3 +159,28 @@ def test_hook_stays_quiet_on_unusable_input(repo, tmp_path):
     event = json.dumps({"session_id": "s", "tool_input": {"file_path": str(outside / "a.py")}, "cwd": str(outside)})
     not_a_repo = _run(outside, "--hook", "claude-post-edit", stdin=event, env={"CLAUDE_PROJECT_DIR": str(outside)})
     assert not_a_repo.returncode == 0 and not_a_repo.stdout == ""
+
+
+def test_merge_base_check_reports_a_caller_added_on_the_other_branch(repo):
+    """Two branches merge without a textual conflict, yet one adds a caller of the old contract."""
+    _git(repo, "checkout", "-q", "-b", "change-contract")
+    (repo / "lib.py").write_text(LIB_THREE, encoding="utf-8")
+    (repo / "app.py").write_text(APP_FIXED, encoding="utf-8")
+    _git(repo, "commit", "-q", "-am", "return a third value and update the caller")
+    assert _run(repo, "--check-git", "--root", str(repo), "--base-ref", "HEAD~1").stdout == ""
+
+    _git(repo, "checkout", "-q", "-")
+    (repo / "report.py").write_text(
+        "from lib import load\n\ndef summarize():\n    name, count = load('x')\n    return name\n", encoding="utf-8"
+    )
+    _git(repo, "add", "report.py")
+    _git(repo, "commit", "-q", "-m", "add a report that unpacks two values")
+    base = subprocess.run(
+        ["git", "merge-base", "HEAD", "change-contract"], cwd=repo, capture_output=True, text=True, check=True
+    ).stdout.strip()
+    _git(repo, "merge", "-q", "--no-edit", "change-contract")
+
+    merged = _run(repo, "--check-git", "--root", str(repo), "--base-ref", base)
+    assert merged.returncode == 0
+    assert "report.py:4 return_contract_review" in merged.stdout
+    assert "app.py" not in merged.stdout
