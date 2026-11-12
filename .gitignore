@@ -15,5 +15,8 @@ dist/
 *.egg-info/
 .pytest_cache/
 
-# Local runtime observations
+# Local runtime observations & scratch research workspaces
 .mipdelta/
+/Research/
+/.worktrees/
+
