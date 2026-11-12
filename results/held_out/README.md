@@ -129,6 +129,7 @@ These readings come from five typed repositories and constructed omissions. They
 
 - The rich clone's head is a merge commit. The replay's last commit is `364ce24a3be6`, the last non-merge commit.
 - The readers and the third read are model judgments made from the commit diffs and the source. The rich `Traceback` finding was also checked by parsing the file at the replayed head.
+- **A later reading weakens one label.** While pilot tasks were being written, the mkdocs `SubConfig.__init__` site was read again more closely. `SubConfig` is created at import time and has no config file path to forward at that commit. Upstream's fix, five years later and on refactored code, copies the path during validation. The gap was real, and it was not at the reported site or by the reported mechanism. The label above is left as the two readers gave it; a stricter reading would call this site review-worthy, which makes 9 real omissions and 6 review-worthy sites.
 - [Replay data](replay/) holds one report per repository. [adjudication.json](adjudication.json) holds every site with both readers' labels, their reasons, and the final label.
 - [Recall corpora](recall/) hold every mutation and site with its strata and `mip-delta` result. [mypy results](typecheck/) hold the same sites with mypy's new errors, the exact command, and the mypy and Python versions.
 - The recall harness and the mypy baseline were built and debugged on the five tuned repositories. Each ran once on the held-out repositories.
