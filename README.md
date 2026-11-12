@@ -1,4 +1,5 @@
 # MipCode v0.6 research preview
+[![CI](https://github.com/Nitefawkes/mipcode/actions/workflows/ci.yml/badge.svg)](https://github.com/Nitefawkes/mipcode/actions/workflows/ci.yml) [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 
 MipCode checks a Python change for places it left inconsistent. When a change alters a function's contract, the `mip-delta` command names the other files and lines that may need the same change: a caller that omits a newly required argument, a wrapper that accepts a new option and does not pass it on, an override that no longer matches its base.
 
