@@ -277,7 +277,11 @@ def resolve_call_with_provenance(
         same_module = mut.by_module_name.get((facts.module, call.callee_name))
         if same_module and len(same_module) == 1:
             fn = next(iter(same_module.values()))
-            if fn.class_qualname is None:
+            scope = fn.qualname.rpartition(".")[0]
+            owner = call.owner_function or ""
+            # A nested function is visible only inside the function that defines it.
+            visible = not scope or owner == scope or owner.startswith(scope + ".")
+            if fn.class_qualname is None and visible:
                 return ((fn, "static_ast"),)
     elif len(chain) == 2 and chain[0] in facts.classes:
         method = facts.classes[chain[0]].methods.get(call.callee_name)

@@ -201,6 +201,61 @@ def test_parameter_required_by_a_shared_signature_is_not_reported_as_unread(befo
     assert _detectors({"mod.py": before_src}, {"mod.py": after_src}) == []
 
 
+def test_nested_helper_is_not_confused_with_a_same_named_helper_elsewhere():
+    template = (
+        "class Response:\n"
+        "    def www_authenticate(self):\n"
+        "        def on_update(value{extra}):\n            self.header = value\n"
+        "        return Tracker(on_update)\n\n"
+        "    def mimetype_params(self):\n"
+        "        def on_update(value):\n            self.params = value\n"
+        "        return Tracker(on_update)\n"
+    )
+    before = {"response.py": template.format(extra="")}
+    after = {"response.py": template.format(extra=", source=None")}
+    found = [(f.detector, f.start_line) for f in analyze_delta(before, after) if f.detector == "callback_binding_review"]
+    assert found == [("callback_binding_review", 5)]
+
+
+def test_nested_function_extracted_to_module_level_keeps_its_callers():
+    before = {"serving.py": "def run():\n    def log_startup(sock):\n        return sock\n    return log_startup(1)\n"}
+    after = {"serving.py": "def log_startup(sock):\n    return sock\n\ndef run():\n    return log_startup(1)\n"}
+    assert _detectors(before, after) == []
+
+
+def test_removed_nested_function_does_not_claim_calls_to_an_imported_name():
+    before = {
+        "urls.py": "def _make():\n    def quote(text):\n        return text\n    return quote\n\nurl_quote = _make()\n"
+    }
+    after = {"urls.py": "from urllib.parse import quote\n\ndef url_quote(text):\n    return quote(text)\n"}
+    assert _detectors(before, after) == []
+
+
+def test_module_that_became_a_package_still_exports_the_name():
+    before = {
+        "pkg/data.py": "def iter_items(mapping):\n    return list(mapping)\n",
+        "pkg/request.py": "from .data import iter_items\n\ndef args(m):\n    return iter_items(m)\n",
+    }
+    after = {
+        "pkg/data/__init__.py": "from .structures import iter_items\n",
+        "pkg/data/structures.py": "def iter_items(mapping):\n    return list(mapping)\n",
+        "pkg/request.py": before["pkg/request.py"],
+    }
+    assert _detectors(before, after) == []
+
+
+def test_private_backing_attribute_is_not_parallel_state():
+    template = (
+        "class Builder:\n"
+        "    def __init__(self):\n        self.form = None\n\n"
+        "    def load(self, value):\n{write}\n"
+        "    def environ(self):\n        return self.form\n"
+    )
+    before = {"test.py": template.format(write="        self.form = value")}
+    after = {"test.py": template.format(write="        self._form = value")}
+    assert _detectors(before, after) == []
+
+
 def _graphs(base_body: str, child_body: str, parameter: str) -> str:
     return (
         f"class Graph:\n    def parse(self, source{parameter}):\n{base_body}\n"

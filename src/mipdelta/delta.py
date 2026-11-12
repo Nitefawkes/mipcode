@@ -160,6 +160,9 @@ def _fields_share_stem(added: str, existing: str) -> bool:
     first, second = _field_tokens(added), _field_tokens(existing)
     if not first or not second:
         return False
+    if added.strip("_") == existing.strip("_"):
+        # `_form` backing a `form` property is one field, not parallel state.
+        return False
     if first == second:
         return True
     shorter, longer = sorted((first, second), key=len)
@@ -172,7 +175,7 @@ _BUILTIN_EXCEPTION_ANCESTORS = {
     for name, value in vars(builtins).items()
     if isinstance(value, type) and issubclass(value, BaseException)
 }
-_MAX_EXCEPTION_HOPS = 2
+_MAX_EXCEPTION_HOPS = 1
 
 
 def _exception_ancestors(name: str, index: MutableResolutionIndex) -> tuple[frozenset[str], bool]:
@@ -225,7 +228,7 @@ def _uncaught_exceptions(
 def _exception_contract_findings(
     old: FunctionFact, new: FunctionFact, index: MutableResolutionIndex
 ) -> tuple[list[Finding], int]:
-    """Narrow handlers that a newly raised exception passes, at the call and up to two callers above it."""
+    """Narrow handlers that a newly raised exception passes, at the call and one unguarded caller above it."""
     added = new.raised_exceptions - old.raised_exceptions
     if not added:
         return [], 0
@@ -472,6 +475,12 @@ def analyze_changed_files_in_index(
         if replacement_import and replacement_import[1] and replacement_import[0] != old.module:
             # A direct re-export keeps the original import name available.
             continue
+        if old.qualname == old.name and any(
+            facts.module == old.module and (old.name in facts.imports or "*" in facts.imports)
+            for facts in index.files.values()
+        ):
+            # The module became a package whose __init__ imports the name.
+            continue
         surviving_class = new_file.classes.get(old.class_qualname) if new_file and old.class_qualname else None
         if surviving_class is not None and _class_may_inherit(surviving_class, old.name, index):
             continue
@@ -481,10 +490,11 @@ def analyze_changed_files_in_index(
                 continue
             current = resolve_call_with_provenance(call, caller_facts, index)
             if any(
-                (fn.module == old.module or fn.path == caller_facts.path) and fn.qualname == old.qualname
+                (fn.module == old.module and fn.qualname == old.qualname)
+                or (fn.path == caller_facts.path and fn.name == old.name)
                 for fn, _ in current
             ):
-                # Still defined, or moved together with this caller into the caller's file.
+                # Still defined, or defined under the same name in the caller's own file.
                 continue
             if before_index is None:
                 previous_files = {
@@ -580,6 +590,12 @@ def analyze_changed_files_in_index(
                 ):
                     # The name is a parameter or local variable in this scope.
                     continue
+                scope = new.qualname.rpartition(".")[0]
+                if scope and scope != new.class_qualname:
+                    inside = call.owner_function or ""
+                    if caller_facts.path != new.path or not (inside == scope or inside.startswith(scope + ".")):
+                        # Another function's nested helper of the same name.
+                        continue
                 if any(value_refers_to_target(value, caller_facts, new) for value in call.value_names):
                     wrapper_adapts = any(
                         wrapped_name == new.name and changed_names <= set(forwarded_keywords)

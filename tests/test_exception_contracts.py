@@ -124,7 +124,7 @@ def test_propagation_stops_where_an_intermediate_caller_handles_it(guard):
     assert _exception_findings(before, after) == []
 
 
-def test_propagation_is_bounded_to_two_intermediate_callers():
+def test_propagation_is_bounded_to_one_intermediate_caller():
     def chain(raising: bool) -> str:
         body = "    if not p:\n        raise Bad(p)\n    return p\n" if raising else "    return p\n"
         return (
@@ -138,7 +138,7 @@ def test_propagation_is_bounded_to_two_intermediate_callers():
     def caller(name: str) -> str:
         return _caller("ValueError").replace("load", name)
 
-    for name, expected in (("f2", 1), ("f3", 0)):
+    for name, expected in (("f1", 1), ("f2", 0)):
         before = {"lib.py": chain(False), "app.py": caller(name)}
         after = {**before, "lib.py": chain(True)}
         assert len(_exception_findings(before, after)) == expected, name
