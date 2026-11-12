@@ -42,6 +42,6 @@ python experiments/history_replay/replay_history.py \
   --horizon 25 --out ./artifacts/history-replay
 ```
 
-The script reads the target repositories through Git plumbing. It does not check out, import, or execute their code. It writes one JSON report per repository and a `summary.json` with totals and resolutions by detector. `--limit N` replays only the most recent N commits.
+The script reads the target repositories through Git plumbing. It does not check out, import, or execute their code. It writes one JSON report per repository and a `summary.json` with totals and resolutions by detector. `--limit N` replays only the most recent N commits. `--enable DETECTOR` also runs an opt-in detector, and each report records the enabled names in `opt_in_detectors`.
 
 The [results](../../results/history_replay/README.md) describe one run over five repositories and the changes made in response.

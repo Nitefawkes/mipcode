@@ -200,7 +200,7 @@ class DeltaEngineTests(unittest.TestCase):
         self.assertEqual(matches[0].symbol, "Reporter.notify")
         self.assertIn("observer_thresholds", matches[0].evidence[0])
 
-    def test_new_optional_parameter_truthiness_is_candidate_not_fact(self):
+    def test_enabled_truthiness_review_is_candidate_not_fact(self):
         before = {"serialize.py": "def serialize(data):\n    return str(data)\n"}
         after = {
             "serialize.py": (
@@ -211,7 +211,7 @@ class DeltaEngineTests(unittest.TestCase):
             )
         }
 
-        found = analyze_delta(before, after)
+        found = analyze_delta(before, after, enable=["parameter_truthiness_review"])
         matches = [row for row in found if row.detector == "parameter_truthiness_review"]
 
         self.assertEqual(len(matches), 1)

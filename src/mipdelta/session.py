@@ -5,7 +5,7 @@ import time
 from typing import Iterable, Mapping, Sequence
 
 from .cache import FactCache
-from .delta import analyze_changed_files_in_index, format_advisory, rank_findings
+from .delta import analyze_changed_files_in_index, enabled_detectors, format_advisory, rank_findings
 from .ledger import LedgerUpdate, Obligation, ObligationLedger, enclosing_function, format_open_obligations
 from .model import (
     CustodyReport,
@@ -39,6 +39,7 @@ class DeltaSession:
         stub_files: Mapping[str, FileFacts] | None = None,
         runtime_edges: Iterable[ObservedCallEdge] | None = None,
         max_advisory_bytes: int = 250,
+        enable: Iterable[str] = (),
     ) -> None:
         self.cache = cache if cache is not None else FactCache()
         self.index = MutableResolutionIndex(stub_files=stub_files, runtime_edges=runtime_edges)
@@ -48,6 +49,7 @@ class DeltaSession:
         self._active_facts: dict[str, FileFacts] = {}
         self.ledger = ObligationLedger()
         self.max_advisory_bytes = max_advisory_bytes
+        self.enabled_detectors = enabled_detectors(enable)
         self.warmup_cpu_seconds: float = 0.0
         self.warmup_wall_seconds: float = 0.0
 
@@ -60,6 +62,7 @@ class DeltaSession:
         stub_texts: Mapping[str, str] | None = None,
         runtime_edges: Iterable[ObservedCallEdge] | None = None,
         max_advisory_bytes: int = 250,
+        enable: Iterable[str] = (),
     ) -> "DeltaSession":
         cpu_start = time.process_time()
         wall_start = time.perf_counter()
@@ -69,6 +72,7 @@ class DeltaSession:
             stub_files=parsed_stubs,
             runtime_edges=runtime_edges,
             max_advisory_bytes=max_advisory_bytes,
+            enable=enable,
         )
         for raw_path in sorted(files):
             norm = session.cache.normalize_path(raw_path)
@@ -142,6 +146,7 @@ class DeltaSession:
                 {p: self._active_facts[p] for p in changed_paths},
                 self.index,
                 legacy_optional_keyword_all_callers=legacy_optional_keyword_all_callers,
+                enable=self.enabled_detectors,
             )
         update = self.ledger.update(
             findings,

@@ -1,5 +1,12 @@
 from .cache import CacheStats, FactCache
-from .delta import analyze_changed_files_in_index, analyze_delta, deduplicate_findings, format_advisory, rank_findings
+from .delta import (
+    OPT_IN_DETECTORS,
+    analyze_changed_files_in_index,
+    analyze_delta,
+    deduplicate_findings,
+    format_advisory,
+    rank_findings,
+)
 from .facts import parse_file
 from .gateway import ContainedGatewaySession, DeltaImpactSideband, gateway_tool_schemas
 from .model import (
@@ -35,6 +42,7 @@ __all__ = [
     "Finding",
     "FunctionFact",
     "MutableResolutionIndex",
+    "OPT_IN_DETECTORS",
     "ObservedCallEdge",
     "ParameterFact",
     "ScopedCallCollector",

@@ -29,7 +29,7 @@ import subprocess
 import sys
 import tempfile
 import time
-from typing import Any, Callable, Mapping
+from typing import Any, Callable, Iterable, Mapping
 
 from .facts import parse_file
 from .model import ObservedCallEdge, WriteDeltaResult
@@ -223,6 +223,7 @@ class DeltaImpactSideband:
         stub_texts: Mapping[str, str] | None = None,
         runtime_edges: list[ObservedCallEdge] | None = None,
         max_advisory_bytes: int = 250,
+        enable: Iterable[str] = (),
     ) -> None:
         self.root = Path(root).resolve(strict=True)
         self.max_advisory_bytes = max_advisory_bytes
@@ -233,6 +234,7 @@ class DeltaImpactSideband:
             stub_texts=effective_stubs,
             runtime_edges=runtime_edges,
             max_advisory_bytes=max_advisory_bytes,
+            enable=enable,
         )
         self.write_events: list[WriteDeltaResult] = []
         self.ingested_runtime_edges_count: int = len(runtime_edges or ())
@@ -357,6 +359,7 @@ class ContainedGatewaySession:
         stub_texts: Mapping[str, str] | None = None,
         test_commands: Mapping[str, list[str]] | None = None,
         enable_test_monitoring: bool = True,
+        enable: Iterable[str] = (),
         max_calls: int = 80,
         max_response_bytes: int = 16384,
         max_visible_bytes: int = 4 * 1024 * 1024,
@@ -393,7 +396,9 @@ class ContainedGatewaySession:
         self._baseline = self._snapshot()
         self._expected = {name: sha256_bytes(data) for name, data in self._baseline.items()}
         self.impact: DeltaImpactSideband | None = (
-            DeltaImpactSideband(self.root, stub_texts=stub_texts) if arm in ("B", "L") else None
+            DeltaImpactSideband(self.root, stub_texts=stub_texts, enable=enable)
+            if arm in ("B", "L")
+            else None
         )
         self._finalize_held = False
         if arm == "L":

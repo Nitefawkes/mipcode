@@ -1,7 +1,7 @@
 # Documentation
 
 - [Quick start](../README.md#quick-start) installs the preview and shows a caller warning.
-- [Usage](usage.md) covers Git checks, candidate edits, the obligation ledger, agent hooks, merge checks, runtime observations, and exit codes.
+- [Usage](usage.md) covers Git checks, candidate edits, the opt-in check, the obligation ledger, agent hooks, merge checks, runtime observations, and exit codes.
 - [Engineering article](engineering_blog_post_mipdelta.md) describes the experiments and remaining questions.
 - [Research evidence](../results/v2_delta_readout/README.md) lists reports and machine-readable data.
 - [One-shot brief pilot](../results/one_shot/README.md) reports the offline and live comparisons.

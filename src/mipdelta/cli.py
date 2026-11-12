@@ -29,7 +29,7 @@ from pathlib import Path
 from typing import Any, Callable, Iterable
 
 from .cache import FactCache
-from .delta import analyze_changed_only, analyze_delta, format_advisory, rank_findings
+from .delta import OPT_IN_DETECTORS, analyze_changed_only, analyze_delta, format_advisory, rank_findings
 from .ledger import Obligation, ObligationLedger, enclosing_function, format_open_obligations
 from .model import FileFacts, Finding, ObservedCallEdge, SourceFile
 from .session import DeltaSession
@@ -216,7 +216,12 @@ class _GitCheck:
 
 
 def _collect_git_findings(
-    root: Path, baseline: tuple[Path, str], runtime_dir: Path, *, local_first: bool = False
+    root: Path,
+    baseline: tuple[Path, str],
+    runtime_dir: Path,
+    *,
+    local_first: bool = False,
+    enable: Iterable[str] = (),
 ) -> _GitCheck:
     """Compare the working tree with the baseline commit.
 
@@ -255,6 +260,7 @@ def _collect_git_findings(
             {p: text for p, text in before_changed.items() if not p.endswith(".pyi")},
             {p: text for p, text in after_changed.items() if not p.endswith(".pyi")},
             cache=cache,
+            enable=enable,
         )
         if not needs_workspace:
             return _GitCheck(changed_paths, findings, [], runtime_edges, anchors(cache, after_changed))
@@ -272,6 +278,7 @@ def _collect_git_findings(
         cache=cache,
         stub_files=stubs,
         runtime_edges=runtime_edges,
+        enable=enable,
     )
     return _GitCheck(changed_paths, findings, sorted(cache.skipped), runtime_edges, anchors(cache, after_files))
 
@@ -331,9 +338,10 @@ def _run_git_check(
     fail_on_findings: bool,
     ledger_path: Path | None = None,
     show_open: bool = False,
+    enable: Iterable[str] = (),
 ) -> int:
     t0 = time.perf_counter()
-    check = _collect_git_findings(root, baseline, runtime_dir)
+    check = _collect_git_findings(root, baseline, runtime_dir, enable=enable)
     ranked = tuple(rank_findings(check.findings))
     advisory_budget = 250 if max_bytes is None else max_bytes
     reported = ranked
@@ -390,7 +398,7 @@ def _commit_exists(top: Path, commit: str) -> bool:
     return True
 
 
-def _run_hook(kind: str, raw_event: str) -> int:
+def _run_hook(kind: str, raw_event: str, enable: Iterable[str] = ()) -> int:
     """Adapt a Claude Code hook event. A hook never fails the agent's tool call or turn.
 
     claude-post-edit adds newly opened obligations as context after an Edit or Write.
@@ -419,7 +427,9 @@ def _run_hook(kind: str, raw_event: str) -> int:
         ledger, pinned = _load_ledger_file(ledger_path)
         commit = pinned if pinned and _commit_exists(top, pinned) else head
         before = ledger.to_dict()
-        check = _collect_git_findings(root, (top, commit), root / ".mipdelta" / "runtime", local_first=True)
+        check = _collect_git_findings(
+            root, (top, commit), root / ".mipdelta" / "runtime", local_first=True, enable=enable
+        )
         update = ledger.update(check.findings, check.anchor_for)
         output: dict[str, Any] | None = None
         if kind == "claude-post-edit":
@@ -461,6 +471,7 @@ def _run_monitored_pytest(
     fail_on_findings: bool,
     ledger_path: Path | None = None,
     show_open: bool = False,
+    enable: Iterable[str] = (),
 ) -> int:
     shard_dir = runtime_dir.resolve()
     shard_dir.mkdir(parents=True, exist_ok=True)
@@ -503,6 +514,7 @@ def _run_monitored_pytest(
             fail_on_findings=fail_on_findings,
             ledger_path=ledger_path,
             show_open=show_open,
+            enable=enable,
         )
     except (AnalysisError, OSError) as exc:
         check_rc = _report_error(exc, as_json)
@@ -561,11 +573,19 @@ def main_cli(argv: list[str] | None = None) -> int:
         default=None,
         help="Read a Claude Code hook event on stdin and answer in that hook's JSON format",
     )
+    parser.add_argument(
+        "--enable",
+        action="append",
+        choices=sorted(OPT_IN_DETECTORS),
+        default=[],
+        metavar="DETECTOR",
+        help="Also run an opt-in detector (repeatable): " + ", ".join(sorted(OPT_IN_DETECTORS)),
+    )
     parser.add_argument("--json", action="store_true", help="Emit full JSON readout")
     args = parser.parse_args(argv)
 
     if args.hook:
-        return _run_hook(args.hook, sys.stdin.buffer.read().decode("utf-8", errors="replace"))
+        return _run_hook(args.hook, sys.stdin.buffer.read().decode("utf-8", errors="replace"), args.enable)
     if args.waive is not None:
         if args.ledger is None:
             parser.error("--waive needs --ledger.")
@@ -602,6 +622,7 @@ def main_cli(argv: list[str] | None = None) -> int:
                 "fail_on_findings": args.fail_on_findings,
                 "ledger_path": args.ledger.resolve() if args.ledger else None,
                 "show_open": args.open,
+                "enable": args.enable,
             }
             if args.run_pytest:
                 return _run_monitored_pytest(pytest_args=args.pytest_args, **kwargs)
@@ -617,6 +638,7 @@ def main_cli(argv: list[str] | None = None) -> int:
             cache=cache,
             stub_texts=stubs,
             max_advisory_bytes=250 if args.max_bytes is None else args.max_bytes,
+            enable=args.enable,
         )
         session.add_runtime_edges(_load_runtime_edges(runtime_dir))
         res = session.apply_write(args.write_path, new_text)

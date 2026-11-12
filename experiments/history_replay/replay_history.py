@@ -29,7 +29,7 @@ from typing import Any
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
 from mipdelta.cache import FactCache  # noqa: E402
-from mipdelta.delta import analyze_changed_only, analyze_delta  # noqa: E402
+from mipdelta.delta import OPT_IN_DETECTORS, analyze_changed_only, analyze_delta  # noqa: E402
 from mipdelta.ledger import enclosing_function  # noqa: E402
 from mipdelta.model import Finding  # noqa: E402
 
@@ -133,18 +133,20 @@ def site_key(finding: Finding, anchor: str) -> tuple[str, str, str, str]:
     return (finding.detector, finding.symbol, finding.path, anchor)
 
 
-def analyze(reader: GitReader, cache: FactCache, base: str, commit: str) -> tuple[bool, list[tuple[Finding, str]]]:
+def analyze(
+    reader: GitReader, cache: FactCache, base: str, commit: str, enable: tuple[str, ...] = ()
+) -> tuple[bool, list[tuple[Finding, str]]]:
     """Findings for base -> commit with the enclosing function of each site."""
     before_blobs, after_blobs = reader.python_blobs(base), reader.python_blobs(commit)
     changed = sorted(p for p in before_blobs.keys() | after_blobs.keys() if before_blobs.get(p) != after_blobs.get(p))
     if not changed:
         return False, []
     before_changed, after_changed = reader.texts(before_blobs, changed), reader.texts(after_blobs, changed)
-    findings, cross_file = analyze_changed_only(before_changed, after_changed, cache=cache)
+    findings, cross_file = analyze_changed_only(before_changed, after_changed, cache=cache, enable=enable)
     after = after_changed
     if cross_file:
         before, after = reader.texts(before_blobs), reader.texts(after_blobs)
-        findings = analyze_delta(before, after, cache=cache, stub_files={})
+        findings = analyze_delta(before, after, cache=cache, stub_files={}, enable=enable)
     rows = []
     for finding in findings:
         text = after.get(finding.path)
@@ -170,7 +172,9 @@ def resolution(
     return "site_function_edit" if slices[0] != slices[1] else "same_file_other_edit"
 
 
-def replay_repository(repo: Path, horizon: int, limit: int | None) -> dict[str, Any]:
+def replay_repository(
+    repo: Path, horizon: int, limit: int | None, enable: tuple[str, ...] = ()
+) -> dict[str, Any]:
     reader = GitReader(repo)
     cache = FactCache()
     started = time.perf_counter()
@@ -194,7 +198,7 @@ def replay_repository(repo: Path, horizon: int, limit: int | None) -> dict[str, 
                 cache.clear()
                 parses_at_last_clear = cache.stats.parses
             try:
-                cross_file, rows = analyze(reader, cache, parent, sha)
+                cross_file, rows = analyze(reader, cache, parent, sha, enable)
             except (RecursionError, ValueError):
                 counts["analysis_errors"] += 1
                 continue
@@ -217,7 +221,7 @@ def replay_repository(repo: Path, horizon: int, limit: int | None) -> dict[str, 
                 if not open_sites:
                     break
                 try:
-                    _, later_rows = analyze(reader, cache, parent, later)
+                    _, later_rows = analyze(reader, cache, parent, later, enable)
                 except (RecursionError, ValueError):
                     break
                 still = Counter(site_key(f, a) for f, a in later_rows)
@@ -255,6 +259,7 @@ def replay_repository(repo: Path, horizon: int, limit: int | None) -> dict[str, 
             "head": commits[-1][0][:12] if commits else None,
             "commits_replayed": len(commits),
             "horizon_commits": horizon,
+            "opt_in_detectors": sorted(enable),
             "wall_seconds": round(time.perf_counter() - started, 1),
             **{name: counts[name] for name in (
                 "commits_changing_production_python",
@@ -296,11 +301,18 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--horizon", type=int, default=25, help="Later commits examined for each reported site")
     parser.add_argument("--limit", type=int, default=None, help="Replay only the most recent N commits")
     parser.add_argument("--out", type=Path, required=True, help="Directory for one JSON report per repository")
+    parser.add_argument(
+        "--enable",
+        action="append",
+        choices=sorted(OPT_IN_DETECTORS),
+        default=[],
+        help="Also run an opt-in detector (repeatable)",
+    )
     args = parser.parse_args(argv)
     args.out.mkdir(parents=True, exist_ok=True)
     reports = []
     for repo in args.repo:
-        report = replay_repository(repo.resolve(), args.horizon, args.limit)
+        report = replay_repository(repo.resolve(), args.horizon, args.limit, tuple(args.enable))
         (args.out / f"{report['repository']}.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
         reports.append(report)
         print(

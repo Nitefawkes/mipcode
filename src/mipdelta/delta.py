@@ -30,6 +30,24 @@ _DETECTOR_PRIORITY = {
     "optional_keyword_contract": 10,
 }
 
+# Detectors that report only when a caller names them. History replay found that
+# upstream code routinely tests a None-default parameter by truth value on purpose.
+OPT_IN_DETECTORS = frozenset({"parameter_truthiness_review"})
+
+
+def enabled_detectors(enable: Iterable[str]) -> frozenset[str]:
+    """Validate a request for opt-in detectors."""
+    if isinstance(enable, str):
+        enable = (enable,)
+    names = frozenset(enable)
+    unknown = sorted(names - OPT_IN_DETECTORS)
+    if unknown:
+        raise ValueError(
+            f"Not an opt-in detector: {', '.join(unknown)}. Available: {', '.join(sorted(OPT_IN_DETECTORS))}"
+        )
+    return names
+
+
 _PROVENANCE_TAG = {
     "observed_runtime": "rt-obs",
     "static_ast": "static",
@@ -399,8 +417,13 @@ def analyze_changed_files_in_index(
     index: MutableResolutionIndex,
     *,
     legacy_optional_keyword_all_callers: bool = False,
+    enable: Iterable[str] = (),
 ) -> tuple[list[Finding], bool, int]:
-    """Core incremental delta analyzer operating strictly on mutated files + MutableResolutionIndex."""
+    """Core incremental delta analyzer operating strictly on mutated files + MutableResolutionIndex.
+
+    `enable` names detectors from OPT_IN_DETECTORS to run in addition to the default set.
+    """
+    enabled = enabled_detectors(enable)
     findings: list[Finding] = []
     changed_fns: list[tuple[FunctionFact | None, FunctionFact]] = []
     removed_fns: list[FunctionFact] = []
@@ -883,8 +906,10 @@ def analyze_changed_files_in_index(
                 )
             )
 
-    # 7. Intra-function bare truthiness on newly added/changed None-default parameters (O(1) via bare_truthy_checks)
-    for (path, qualname), nullable_names in sorted(changed_nullable_params.items()):
+    # 7. Opt-in: intra-function bare truthiness on newly added/changed None-default parameters
+    #    (O(1) via bare_truthy_checks)
+    truthiness_candidates = changed_nullable_params if "parameter_truthiness_review" in enabled else {}
+    for (path, qualname), nullable_names in sorted(truthiness_candidates.items()):
         fn = after_changed[path].functions.get(qualname)
         if fn is None:
             continue
@@ -911,19 +936,23 @@ def analyze_changed_only(
     after: Mapping[str, str],
     *,
     cache: FactCache | None = None,
+    enable: Iterable[str] = (),
 ) -> tuple[list[Finding], bool]:
     """Analyze changed files without the rest of the workspace.
 
     Returns the findings and whether a contract visible to other files changed. When
     that flag is False, the findings are complete and no other file needs to be read.
     When it is True, discard them and run analyze_delta over the whole workspace.
+    `enable` names detectors from OPT_IN_DETECTORS to run as well.
     """
     parse = cache.load if cache is not None else parse_file
     paths = sorted(p for p in before.keys() | after.keys() if before.get(p) != after.get(p))
     before_changed = {p: (parse(p, before[p]) if p in before else None) for p in paths}
     after_changed = {p: parse(p, after[p]) for p in paths if p in after}
     index = build_index(after_changed)
-    findings, cross_file_triggered, _ = analyze_changed_files_in_index(before_changed, after_changed, index)
+    findings, cross_file_triggered, _ = analyze_changed_files_in_index(
+        before_changed, after_changed, index, enable=enable
+    )
     return findings, cross_file_triggered
 
 
@@ -935,8 +964,13 @@ def analyze_delta(
     stub_files: Mapping[str, str] | None = None,
     runtime_edges: Iterable[ObservedCallEdge] | None = None,
     legacy_optional_keyword_all_callers: bool = False,
+    enable: Iterable[str] = (),
 ) -> list[Finding]:
-    """Stateless before/after package analyzer (preserving v1 API while eliminating redundant parses)."""
+    """Stateless before/after package analyzer (preserving v1 API while eliminating redundant parses).
+
+    `enable` names detectors from OPT_IN_DETECTORS to run in addition to the default set.
+    """
+    enable = enabled_detectors(enable)
     normalized_before = {p.replace("\\", "/"): text for p, text in before.items()}
     normalized_after = {p.replace("\\", "/"): text for p, text in after.items()}
     if stub_files is None:
@@ -972,5 +1006,6 @@ def analyze_delta(
         after_changed,
         index,
         legacy_optional_keyword_all_callers=legacy_optional_keyword_all_callers,
+        enable=enable,
     )
     return findings
