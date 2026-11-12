@@ -4,6 +4,20 @@ MipCode checks for possible cross-file Python contract breaks after a coding age
 
 The preview covers selected call, override, callback, return, and exception patterns. Treat findings as review prompts. Coverage depends on what the tool can resolve from source, type information, or executed tests.
 
+## Why it exists
+
+In our transcripts, coding agents rarely failed multi-file tasks because search couldn't find a caller. They failed because they stopped early. The edited file looked finished and the existing tests passed, so the agent never searched for the caller it had just broken.
+
+In one `pypa/packaging` task, the agent made `parse_requirement` raise a new `EmptyRequirementError`. It missed that `packaging/requirements.py:102` only catches `ParserSyntaxError`, so the new exception escaped the public `Requirement` API. With `mip-delta` attached, the agent's `write` response came back with one extra line:
+
+```text
+[mip-delta] packaging/requirements.py:102 exception_contract_review[static] parse_requirement (parse_requirement newly raises EmptyRequirementError, bypassing caller try/except (ParserSyntaxError))
+```
+
+Local edits add nothing to the output. When an edit changes a tracked contract, `mip-delta` appends one advisory of at most 250 bytes.
+
+In paired Codex runs on 14 selected tasks, agents with the advisory passed 14 and agents without it passed 8. Most tasks were constructed, and the benchmark is small. See the study limits below.
+
 ## Quick start
 
 From the repository root, activate a fresh virtual environment with Python 3.10 or later.
