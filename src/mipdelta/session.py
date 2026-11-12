@@ -6,6 +6,7 @@ from typing import Iterable, Mapping, Sequence
 
 from .cache import FactCache
 from .delta import analyze_changed_files_in_index, format_advisory, rank_findings
+from .ledger import LedgerUpdate, Obligation, ObligationLedger, enclosing_function, format_open_obligations
 from .model import (
     CustodyReport,
     FileFacts,
@@ -18,23 +19,15 @@ from .resolve import MutableResolutionIndex
 from .stubs import parse_stub_tree
 
 
-def _finding_key(finding: Finding) -> tuple[str, str, str, int, str]:
-    return (
-        finding.detector,
-        finding.symbol,
-        finding.path,
-        finding.start_line,
-        finding.resolution_source,
-    )
-
-
 class DeltaSession:
     """Stateful, content-addressed per-session workspace tracker for incremental write_file analysis.
 
     - Warm-up (`from_workspace`) parses the initial package once and records exact SHA-256 digests.
     - `apply_write(path, new_text)` parses ONLY the written file, updates `MutableResolutionIndex`
       in O(|file|), short-circuits cross-file checks when signatures are unchanged, and emits a
-      bounded advisory string.
+      bounded advisory string for obligations the write newly opened.
+    - Every event compares the session baseline with the current sources, so `ledger` knows
+      which obligations are still open, which a later edit discharged, and which were waived.
     - `verify_custody(disk_files)` performs an explicit SHA-256 custody check against unrecorded
       external mutations without relying on (mtime_ns, size).
     """
@@ -53,7 +46,7 @@ class DeltaSession:
         self._baseline_facts: dict[str, FileFacts] = {}
         self._active_digests: dict[str, str] = {}
         self._active_facts: dict[str, FileFacts] = {}
-        self._emitted_finding_keys: set[tuple[str, str, str, int, str]] = set()
+        self.ledger = ObligationLedger()
         self.max_advisory_bytes = max_advisory_bytes
         self.warmup_cpu_seconds: float = 0.0
         self.warmup_wall_seconds: float = 0.0
@@ -128,6 +121,44 @@ class DeltaSession:
             wall_seconds=time.perf_counter() - wall_start,
         )
 
+    def _changed_paths(self) -> list[str]:
+        return [
+            p
+            for p in sorted(set(self._baseline_digests) | set(self._active_digests))
+            if self._baseline_digests.get(p) != self._active_digests.get(p) and p in self._active_facts
+        ]
+
+    def _refresh_obligations(
+        self, *, legacy_optional_keyword_all_callers: bool = False
+    ) -> tuple[LedgerUpdate, bool, int]:
+        """Compare the session baseline with the current sources and update the ledger."""
+        changed_paths = self._changed_paths()
+        findings: list[Finding] = []
+        cross_triggered = False
+        calls_inspected = 0
+        if changed_paths:
+            findings, cross_triggered, calls_inspected = analyze_changed_files_in_index(
+                {p: self._baseline_facts.get(p) for p in changed_paths},
+                {p: self._active_facts[p] for p in changed_paths},
+                self.index,
+                legacy_optional_keyword_all_callers=legacy_optional_keyword_all_callers,
+            )
+        update = self.ledger.update(
+            findings,
+            lambda finding: enclosing_function(self._active_facts.get(finding.path), finding.start_line),
+        )
+        return update, cross_triggered, calls_inspected
+
+    def open_obligations(self) -> tuple[Obligation, ...]:
+        return self.ledger.open()
+
+    def waive(self, obligation_id: str, reason: str = "") -> bool:
+        return self.ledger.waive(obligation_id, reason)
+
+    def finalize_advisory(self, *, max_bytes: int = 600, show_ids: bool = False) -> str:
+        """List obligations still open, or return an empty string when none remain."""
+        return format_open_obligations(self.ledger.open(), max_bytes=max_bytes, show_ids=show_ids)
+
     def apply_write(
         self,
         path: str,
@@ -167,14 +198,11 @@ class DeltaSession:
         self._active_facts[norm] = new_facts
         self.index.add_file(new_facts)
 
-        findings, cross_triggered, calls_inspected = analyze_changed_files_in_index(
-            {norm: old_facts},
-            {norm: new_facts},
-            self.index,
-            legacy_optional_keyword_all_callers=legacy_optional_keyword_all_callers,
+        update, cross_triggered, calls_inspected = self._refresh_obligations(
+            legacy_optional_keyword_all_callers=legacy_optional_keyword_all_callers
         )
+        findings = [item.finding for item in update.opened]
         ranked = rank_findings(findings)
-        self._emitted_finding_keys.update(_finding_key(f) for f in ranked)
         advisory = format_advisory(ranked, max_bytes=self.max_advisory_bytes)
         cpu_elapsed = time.process_time() - cpu_start
         wall_elapsed = time.perf_counter() - wall_start
@@ -193,6 +221,8 @@ class DeltaSession:
             advisory_utf8_bytes=len(advisory.encode("utf-8")),
             cpu_seconds=cpu_elapsed,
             wall_seconds=wall_elapsed,
+            discharged_findings=tuple(item.finding for item in update.discharged),
+            open_obligations=len(update.open),
         )
 
     def evaluate_new_runtime_findings(
@@ -203,26 +233,16 @@ class DeltaSession:
         """Re-evaluate modified session files after new runtime call edges are ingested."""
         cpu_start = time.process_time()
         wall_start = time.perf_counter()
-        changed_paths = [
-            p
-            for p in sorted(set(self._baseline_digests) | set(self._active_digests))
-            if self._baseline_digests.get(p) != self._active_digests.get(p) and p in self._active_facts
-        ]
+        changed_paths = self._changed_paths()
         if not changed_paths:
             return None
-        before_changed = {p: self._baseline_facts.get(p) for p in changed_paths}
-        after_changed = {p: self._active_facts[p] for p in changed_paths}
-        findings, cross_triggered, calls_inspected = analyze_changed_files_in_index(
-            before_changed,
-            after_changed,
-            self.index,
-            legacy_optional_keyword_all_callers=legacy_optional_keyword_all_callers,
+        update, cross_triggered, calls_inspected = self._refresh_obligations(
+            legacy_optional_keyword_all_callers=legacy_optional_keyword_all_callers
         )
-        new_findings = [f for f in findings if _finding_key(f) not in self._emitted_finding_keys]
+        new_findings = [item.finding for item in update.opened]
         if not new_findings:
             return None
         ranked = rank_findings(new_findings)
-        self._emitted_finding_keys.update(_finding_key(f) for f in ranked)
         advisory = format_advisory(ranked, max_bytes=self.max_advisory_bytes)
         last_path = changed_paths[-1]
         return WriteDeltaResult(
@@ -239,6 +259,8 @@ class DeltaSession:
             advisory_utf8_bytes=len(advisory.encode("utf-8")),
             cpu_seconds=time.process_time() - cpu_start,
             wall_seconds=time.perf_counter() - wall_start,
+            discharged_findings=tuple(item.finding for item in update.discharged),
+            open_obligations=len(update.open),
         )
 
     def apply_writes_batch(
@@ -297,14 +319,11 @@ class DeltaSession:
                 wall_seconds=time.perf_counter() - wall_start,
             )
 
-        findings, cross_triggered, calls_inspected = analyze_changed_files_in_index(
-            before_changed,
-            after_changed,
-            self.index,
-            legacy_optional_keyword_all_callers=legacy_optional_keyword_all_callers,
+        update, cross_triggered, calls_inspected = self._refresh_obligations(
+            legacy_optional_keyword_all_callers=legacy_optional_keyword_all_callers
         )
+        findings = [item.finding for item in update.opened]
         ranked = rank_findings(findings)
-        self._emitted_finding_keys.update(_finding_key(f) for f in ranked)
         advisory = format_advisory(ranked, max_bytes=self.max_advisory_bytes)
         return WriteDeltaResult(
             path=",".join(sorted(after_changed)),
@@ -320,4 +339,6 @@ class DeltaSession:
             advisory_utf8_bytes=len(advisory.encode("utf-8")),
             cpu_seconds=time.process_time() - cpu_start,
             wall_seconds=time.perf_counter() - wall_start,
+            discharged_findings=tuple(item.finding for item in update.discharged),
+            open_obligations=len(update.open),
         )
