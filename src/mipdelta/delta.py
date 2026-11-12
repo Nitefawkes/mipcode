@@ -1,10 +1,11 @@
 from __future__ import annotations
 
+import ast
 import builtins
 from typing import Iterable, Mapping
 
 from .cache import FactCache
-from .facts import parse_file
+from .facts import callable_stores, parse_file
 from .model import CallFact, ClassFact, FileFacts, Finding, FunctionFact, ObservedCallEdge
 from .resolve import (
     MutableResolutionIndex,
@@ -155,19 +156,21 @@ def _default_value(default: str | None, facts: FileFacts | None) -> str | None:
 
 
 def _still_bound(old: FunctionFact, new_file: FileFacts | None) -> bool:
-    """The removed declaration's name is still assigned in the scope that declared it."""
+    """The scope that declared the removed name still assigns it something that could be called.
+
+    An alias, a value returned by a helper, or a bound method stored on the instance keeps
+    callers working. A literal, a loop variable, or a `del` does not.
+    """
     if new_file is None:
         return False
     if old.qualname == old.name:
         return old.name in new_file.module_name_stores
     if old.class_qualname is not None and old.qualname == f"{old.class_qualname}.{old.name}":
         cls = new_file.classes.get(old.class_qualname)
-        return cls is not None and (
-            old.name in cls.assigned_names
-            or any(old.name in method.field_writes for method in cls.methods.values())
-        )
+        return cls is not None and old.name in cls.assigned_names
     owner = new_file.functions.get(old.qualname.rsplit(".", 1)[0])
-    return owner is not None and old.name in owner.local_name_stores
+    node = owner._ast_node if owner is not None else None
+    return isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and old.name in callable_stores(node.body)
 
 
 def _named_class_has_method(fn: FunctionFact, old: FunctionFact, call: CallFact, caller: FileFacts) -> bool:
@@ -726,10 +729,14 @@ def analyze_changed_files_in_index(
                         evidence.append(
                             f"override parameter {name} kind {override_parameter.kind} may not accept base calls ({base_parameter.kind})"
                         )
+                    # Equal text is equal, as when an override imports the base's constant.
+                    # Otherwise compare values where a module constant makes them known.
                     base_default = _default_value(base_parameter.default, after_changed.get(new.path))
                     if (
                         name in old_params
+                        and old_params[name].default != base_parameter.default
                         and _default_value(old_params[name].default, before_changed.get(new.path)) != base_default
+                        and override_parameter.default != base_parameter.default
                         and _default_value(override_parameter.default, index.files.get(override.path)) != base_default
                     ):
                         evidence.append(

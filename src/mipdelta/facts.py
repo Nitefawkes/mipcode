@@ -137,9 +137,13 @@ def _fold_number(node: ast.expr) -> int | float | None:
             # Keep the result small enough to compute while parsing.
             return None
         try:
-            return _FOLDABLE[type(node.op)](left, right)
+            value = _FOLDABLE[type(node.op)](left, right)
         except (ArithmeticError, TypeError, ValueError):
             return None
+        if isinstance(value, int) and value.bit_length() > 256:
+            # A product of bounded powers can still grow past what int-to-text conversion allows.
+            return None
+        return value if type(value) in (int, float) else None
     return None
 
 
@@ -160,21 +164,85 @@ _OWN_SCOPE = (
 )
 
 
-def _module_bindings(tree: ast.Module) -> tuple[frozenset[str], dict[str, str]]:
-    """Names assigned at module scope, and the values of those assigned exactly once."""
-    stores: dict[str, int] = {}
-    rebound_elsewhere: set[str] = set()
-    pending: list[ast.AST] = list(tree.body)
+# Expressions whose value could be a function, class, or bound method. Literals are not.
+_CALLABLE_VALUES = (
+    ast.Name, ast.Attribute, ast.Call, ast.Lambda, ast.IfExp, ast.BoolOp, ast.Subscript, ast.NamedExpr, ast.Await,
+)
+
+
+def callable_stores(body: list[ast.stmt], *, attribute_of: str | None = None) -> frozenset[str]:
+    """Names one scope assigns from an expression that could be a callable.
+
+    A loop target, a `del`, an annotation without a value, and an assignment of a literal
+    do not count. With `attribute_of`, collect attributes assigned on that name instead,
+    as in `self.finish = self._safe`.
+    """
+    names: set[str] = set()
+    pending: list[ast.AST] = list(body)
     while pending:
         node = pending.pop()
         if isinstance(node, _OWN_SCOPE):
-            rebound_elsewhere.update(
-                name for item in ast.walk(node) if isinstance(item, ast.Global) for name in item.names
-            )
+            continue
+        pending.extend(ast.iter_child_nodes(node))
+        if isinstance(node, ast.Assign):
+            targets, value = list(node.targets), node.value
+        elif isinstance(node, (ast.AnnAssign, ast.NamedExpr)) and node.value is not None:
+            targets, value = [node.target], node.value
+        else:
+            continue
+        if not isinstance(value, _CALLABLE_VALUES):
+            continue
+        while targets:
+            target = targets.pop()
+            if isinstance(target, (ast.Tuple, ast.List)):
+                targets.extend(target.elts)
+            elif attribute_of is None and isinstance(target, ast.Name):
+                names.add(target.id)
+            elif (
+                attribute_of is not None
+                and isinstance(target, ast.Attribute)
+                and isinstance(target.value, ast.Name)
+                and target.value.id == attribute_of
+            ):
+                names.add(target.attr)
+    return frozenset(names)
+
+
+def _scope_stores(body: list[ast.stmt], counts: dict[str, int]) -> None:
+    """Count every way one scope binds or unbinds a name, without entering nested scopes."""
+    pending: list[ast.AST] = list(body)
+    while pending:
+        node = pending.pop()
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+            counts[node.name] = counts.get(node.name, 0) + 1
+        if isinstance(node, _OWN_SCOPE):
             continue
         if isinstance(node, ast.Name) and not isinstance(node.ctx, ast.Load):
-            stores[node.id] = stores.get(node.id, 0) + 1
+            counts[node.id] = counts.get(node.id, 0) + 1
+        elif isinstance(node, (ast.Import, ast.ImportFrom)):
+            for alias in node.names:
+                bound = alias.asname or alias.name.split(".")[0]
+                counts[bound] = counts.get(bound, 0) + 1
         pending.extend(ast.iter_child_nodes(node))
+
+
+def _module_constants(tree: ast.Module) -> dict[str, str]:
+    """Small literal values of module names that are bound exactly once.
+
+    Keys are the default text of a reference to the name, so a parameter default can be
+    looked up directly. A name is left out when anything else could give it another
+    value: a second binding, an import, a `global` statement, or a class attribute of the
+    same name, which is what a method's default would read.
+    """
+    stores: dict[str, int] = {}
+    _scope_stores(tree.body, stores)
+    excluded: dict[str, int] = {}
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Global):
+            for name in node.names:
+                excluded[name] = 1
+        elif isinstance(node, ast.ClassDef):
+            _scope_stores(node.body, excluded)
 
     constants: dict[str, str] = {}
     for statement in tree.body:
@@ -184,10 +252,15 @@ def _module_bindings(tree: ast.Module) -> tuple[frozenset[str], dict[str, str]]:
             target, value = statement.target, statement.value
         else:
             continue
-        if isinstance(target, ast.Name) and stores.get(target.id) == 1 and target.id not in rebound_elsewhere:
+        if not isinstance(target, ast.Name) or stores.get(target.id) != 1 or target.id in excluded:
+            continue
+        small_literal = isinstance(value, ast.Constant) and not (
+            isinstance(value.value, (str, bytes)) and len(value.value) > 200
+        )
+        if small_literal or _fold_number(value) is not None:
             reference = _default_text(ast.Name(id=target.id, ctx=ast.Load()))
             constants[reference] = _default_text(value)
-    return frozenset(stores), constants
+    return constants
 
 
 def _parameters(args: ast.arguments) -> tuple[tuple[ParameterFact, ...], tuple[tuple[str, str], ...]]:
@@ -361,8 +434,14 @@ class _CallContextScanner(ast.NodeVisitor):
             self._result_consumers[id(node.iter)] = node
         self.generic_visit(node)
 
+    def visit_For(self, node: ast.For) -> None:
+        if isinstance(node.iter, ast.Call):
+            self._result_consumers[id(node.iter)] = node
+        self.generic_visit(node)
+
     def visit_comprehension(self, node: ast.comprehension) -> None:
-        if node.is_async and isinstance(node.iter, ast.Call):
+        # Recorded for both kinds. Readers check `is_async` to tell them apart.
+        if isinstance(node.iter, ast.Call):
             self._result_consumers[id(node.iter)] = node
         self.generic_visit(node)
 
@@ -615,13 +694,10 @@ class _ModuleScanner(_CallContextScanner):
                 ann = _annotation_head(stmt.annotation)
                 if ann:
                     attr_annotations[stmt.target.id] = ann
-        assigned_names = frozenset(
-            target.id
-            for stmt in node.body
-            if isinstance(stmt, (ast.Assign, ast.AnnAssign)) and stmt.value is not None
-            for target in (stmt.targets if isinstance(stmt, ast.Assign) else [stmt.target])
-            if isinstance(target, ast.Name)
-        )
+        assigned_names = callable_stores(node.body)
+        for stmt in node.body:
+            if isinstance(stmt, (ast.FunctionDef, ast.AsyncFunctionDef)) and stmt.args.args:
+                assigned_names |= callable_stores(stmt.body, attribute_of=stmt.args.args[0].arg)
         row = ClassFact(
             self.path, self.module, qual, node.name, bases, node.lineno, {}, attr_annotations, assigned_names
         )
@@ -782,7 +858,7 @@ def parse_file(path: str, text: str, *, prior_facts: FileFacts | None = None) ->
         return FileFacts(normalized, module_name(normalized), {}, {}, [], {}, f"{exc.msg} at line {exc.lineno}")
     scanner = _ModuleScanner(normalized, text.splitlines(), prior_facts=prior_facts)
     scanner.visit(tree)
-    module_name_stores, constant_defaults = _module_bindings(tree)
+    module_name_stores, constant_defaults = callable_stores(tree.body), _module_constants(tree)
     return FileFacts(
         normalized,
         scanner.module,

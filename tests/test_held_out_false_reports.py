@@ -229,3 +229,132 @@ def test_removed_method_with_no_other_binding_is_still_reported():
         ),
     }
     assert _reports(analyze_delta(before, after)) == [("removed_callable_review", "builder.py", 3)]
+
+
+# Limits on the rules above, found by an independent review of the first version.
+
+def test_a_huge_folded_default_does_not_stop_the_analysis():
+    factors = " * ".join(["(2**32)**64"] * 8)
+    before = {"m.py": "def f(x=1):\n    return x\n"}
+    after = {"m.py": f"LIMIT = {factors}\n\ndef f(x={factors}):\n    return x\n"}
+    assert analyze_delta(before, after) == []
+
+
+def test_override_that_imports_the_new_base_constant_is_not_drift():
+    before = {"base.py": BASE.replace("2**16", "1024"), "child.py": OVERRIDE.replace("2**16", "1024")}
+    after = {
+        "base.py": BASE_WITH_CONSTANT.format(value="65536"),
+        "child.py": OVERRIDE.replace("import Reader", "import Reader, _CHUNK").replace("2**16", "_CHUNK"),
+    }
+    assert analyze_delta(before, after) == []
+
+
+@pytest.mark.parametrize(
+    "constant_lines",
+    [
+        "_CHUNK = 65536\n\nclass Reader:\n    _CHUNK = 1024\n",
+        "_CHUNK = 65536\nfrom fast import _CHUNK\n\nclass Reader:\n",
+        "_CHUNK = 65536\ndef _CHUNK():\n    return 1024\n\nclass Reader:\n",
+    ],
+    ids=["class-attribute-shadows", "import-rebinds", "def-rebinds"],
+)
+def test_a_shadowed_or_rebound_name_is_not_resolved_as_the_module_constant(constant_lines):
+    child = OVERRIDE.replace("2**16", "65536")
+    before = {"base.py": BASE.replace("2**16", "65536"), "child.py": child}
+    after = {"base.py": constant_lines + "    def stream(self, amt=_CHUNK):\n        return amt\n", "child.py": child}
+    assert _reports(analyze_delta(before, after)) == [("override_signature_review", "child.py", 4)]
+
+
+def test_large_module_literals_are_not_kept_as_constants():
+    from mipdelta.facts import parse_file
+
+    facts = parse_file("data.py", "TABLE = [" + ", ".join(str(n) for n in range(2000)) + "]\nSIZE = 2**16\n")
+    assert list(facts.constant_defaults.values()) == ["Constant(value=65536)"]
+
+
+BOX = (
+    "class Box:\n"
+    "    def __init__(self):\n"
+    "        self.items = []\n"
+    "{init}"
+    "{body}"
+    "    def report(self):\n"
+    "        return self.size() + 1\n"
+)
+BOX_METHOD = "    def size(self):\n        return len(self.items)\n"
+
+
+@pytest.mark.parametrize(
+    ("init", "body"),
+    [
+        ("        self.size = 0\n", ""),
+        ("        self.size = None\n", ""),
+        ("", "    size = 0\n"),
+        ("", "    def clear(self):\n        del self.size\n"),
+        ("", "    def add(self, item):\n        self.size.append(item)\n"),
+    ],
+    ids=["instance-number", "instance-none", "class-number", "deleted", "mutated"],
+)
+def test_method_replaced_by_data_is_still_reported(init, body):
+    before = {"box.py": BOX.format(init="", body=BOX_METHOD)}
+    after = {"box.py": BOX.format(init=init, body=body)}
+    assert ("removed_callable_review", "box.py") in [(d, p) for d, p, _ in _reports(analyze_delta(before, after))]
+
+
+@pytest.mark.parametrize(
+    "replacement",
+    [
+        "from typing import Callable\n\ncompute: Callable[[int], int]\n",
+        "compute = None\n",
+        "compute = 1\ndel compute\n",
+        "for compute in range(3):\n    pass\n",
+        "with open('x') as compute:\n    pass\n",
+        "values = [1, 2]\nfirst, *compute = [1, 2]\n",
+    ],
+    ids=["annotation-only", "none", "deleted", "loop-target", "with-target", "star-unpacked-literal"],
+)
+def test_module_name_bound_to_something_not_callable_is_still_reported(replacement):
+    before = {
+        "lib.py": "def compute(x):\n    return x\n",
+        "client.py": "from lib import compute\n\ndef entry():\n    return compute(1)\n",
+    }
+    after = {**before, "lib.py": replacement}
+    assert _reports(analyze_delta(before, after)) == [("removed_callable_review", "client.py", 4)]
+
+
+@pytest.mark.parametrize(
+    "binding",
+    ["    fmt = '{} = 1'\n", "    for fmt in names:\n        pass\n"],
+    ids=["string", "loop-target"],
+)
+def test_nested_function_replaced_by_a_local_that_is_not_callable_is_still_reported(binding):
+    before = {
+        "make.py": "def script(names):\n    def fmt(name):\n        return name\n    return [fmt(name) for name in names]\n",
+    }
+    after = {"make.py": "def script(names):\n" + binding + "    return [fmt(name) for name in names]\n"}
+    assert [d for d, _, _ in _reports(analyze_delta(before, after))] == ["removed_callable_review"]
+
+
+@pytest.mark.parametrize(
+    "body",
+    ["    return [row for row in rows(1)]\n", "    for row in rows(1):\n        print(row)\n", "    return list(rows(1))\n"],
+    ids=["comprehension", "for-loop", "list-call"],
+)
+def test_function_that_becomes_an_async_generator_reports_a_call_iterated_synchronously(body):
+    before = {
+        "lib.py": "def rows(x):\n    return [x]\n",
+        "client.py": "from lib import rows\n\ndef entry():\n" + body,
+    }
+    after = {**before, "lib.py": "async def rows(x):\n    yield x\n"}
+    findings = analyze_delta(before, after)
+    assert [(d, p) for d, p, _ in _reports(findings)] == [("call_signature_review", "client.py")]
+    assert _evidence(findings) == ["target became an async generator; review how the call result is iterated"]
+
+
+def test_a_coroutine_iterated_by_a_plain_comprehension_is_still_reported():
+    before = {
+        "lib.py": "def rows(x):\n    return [x]\n",
+        "client.py": "from lib import rows\n\ndef entry():\n    return [row for row in rows(1)]\n",
+    }
+    after = {**before, "lib.py": "async def rows(x):\n    return [x]\n"}
+    assert _evidence(analyze_delta(before, after)) == ["target became async; review how the call result is consumed"]

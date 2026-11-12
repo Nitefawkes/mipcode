@@ -130,9 +130,33 @@ def _prior_call_bound(
     )
 
 
+_SYNC_ITERATING_BUILTINS = {
+    "all", "any", "dict", "enumerate", "frozenset", "iter", "len", "list", "max", "min",
+    "next", "set", "sorted", "sum", "tuple", "zip",
+}
+
+
+def _iterated_asynchronously(consumer: ast.AST | None) -> bool:
+    return isinstance(consumer, ast.AsyncFor) or (
+        isinstance(consumer, ast.comprehension) and bool(consumer.is_async)
+    )
+
+
+def _iterated_synchronously(consumer: ast.AST | None) -> bool:
+    if isinstance(consumer, ast.For):
+        return True
+    if isinstance(consumer, ast.comprehension):
+        return not consumer.is_async
+    return (
+        isinstance(consumer, ast.Call)
+        and isinstance(consumer.func, ast.Name)
+        and consumer.func.id in _SYNC_ITERATING_BUILTINS
+    )
+
+
 def _consumes_async_result(call: CallFact, caller: FileFacts) -> bool:
     consumer = call._result_consumer
-    if isinstance(consumer, (ast.Await, ast.AsyncFor, ast.comprehension)):
+    if isinstance(consumer, ast.Await) or _iterated_asynchronously(consumer):
         return True
     if isinstance(consumer, ast.Call):
         chain = dotted(consumer.func)
@@ -186,8 +210,10 @@ def signature_review_reason(
     if old.is_async != new.is_async:
         if new.is_async and new.is_generator:
             # Calling an async generator returns an async iterator at once: nothing is awaited.
-            # A caller breaks only if it iterated the old generator with a plain `for`.
-            if old.is_generator and not isinstance(call._result_consumer, (ast.AsyncFor, ast.comprehension)):
+            # A caller breaks if it still iterates the result with a plain `for`. That is known
+            # when the old function was a generator, or when this call visibly iterates.
+            consumer = call._result_consumer
+            if not _iterated_asynchronously(consumer) and (old.is_generator or _iterated_synchronously(consumer)):
                 return "target became an async generator; review how the call result is iterated"
             return None
         if new.is_async and not _consumes_async_result(call, caller):

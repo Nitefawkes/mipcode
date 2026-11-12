@@ -177,7 +177,8 @@ class ClassFact:
     line: int
     methods: dict[str, FunctionFact]
     attr_annotations: dict[str, str] = field(default_factory=dict)
-    # Names assigned in the class body, such as `finish = _finish`.
+    # Names the class body or a method's `self` assigns from an expression that could be a
+    # callable, such as `finish = _finish` or `self.finish = self._safe`.
     assigned_names: frozenset[str] = frozenset()
 
 
@@ -190,10 +191,10 @@ class FileFacts:
     calls: list[CallFact]
     imports: dict[str, tuple[str, str | None]]
     parse_error: str | None = None
-    # Names assigned at module scope, outside any function or class.
+    # Names assigned at module scope from an expression that could be a callable.
     module_name_stores: frozenset[str] = frozenset()
-    # For a module name assigned exactly once: the default text of a reference to it,
-    # mapped to the default text of its value.
+    # For a module name bound exactly once to a small literal: the default text of a
+    # reference to it, mapped to the default text of its value.
     constant_defaults: dict[str, str] = field(default_factory=dict)
 
 
