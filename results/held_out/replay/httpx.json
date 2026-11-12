@@ -1,0 +1,325 @@
+{
+  "repository": "httpx",
+  "head": "b5addb64f016",
+  "commits_replayed": 800,
+  "horizon_commits": 25,
+  "opt_in_detectors": [],
+  "wall_seconds": 176.8,
+  "commits_changing_production_python": 409,
+  "contract_changing_commits": 128,
+  "contract_changing_commits_silent": 119,
+  "contract_changing_commits_flagged": 9,
+  "local_commits_flagged": 0,
+  "analysis_errors": 0,
+  "flagged_commits": [
+    {
+      "commit": "35f09d139416",
+      "subject": "Single consistent name for status codes (#1088)",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "removed_callable_review",
+          "symbol": "StatusCode.get_reason_phrase",
+          "path": "httpx/_models.py",
+          "line": 663,
+          "anchor": "Response.reason_phrase",
+          "provenance": "static_ast",
+          "evidence": "previous declaration at httpx/_status_codes.py:31 was removed; review this call",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        },
+        {
+          "detector": "removed_callable_review",
+          "symbol": "StatusCode.is_error",
+          "path": "httpx/_models.py",
+          "line": 761,
+          "anchor": "Response.is_error",
+          "provenance": "static_ast",
+          "evidence": "previous declaration at httpx/_status_codes.py:53 was removed; review this call",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        },
+        {
+          "detector": "removed_callable_review",
+          "symbol": "StatusCode.is_redirect",
+          "path": "httpx/_models.py",
+          "line": 765,
+          "anchor": "Response.is_redirect",
+          "provenance": "static_ast",
+          "evidence": "previous declaration at httpx/_status_codes.py:38 was removed; review this call",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        },
+        {
+          "detector": "removed_callable_review",
+          "symbol": "StatusCode.is_client_error",
+          "path": "httpx/_models.py",
+          "line": 776,
+          "anchor": "Response.raise_for_status",
+          "provenance": "static_ast",
+          "evidence": "previous declaration at httpx/_status_codes.py:57 was removed; review this call",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        },
+        {
+          "detector": "removed_callable_review",
+          "symbol": "StatusCode.is_server_error",
+          "path": "httpx/_models.py",
+          "line": 779,
+          "anchor": "Response.raise_for_status",
+          "provenance": "static_ast",
+          "evidence": "previous declaration at httpx/_status_codes.py:61 was removed; review this call",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        }
+      ]
+    },
+    {
+      "commit": "926a55a84f0a",
+      "subject": "Included create_ssl_context function to create the same context with SSLConfig and serve as API (#99",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "delegating_wrapper_review",
+          "symbol": "Client._init_transport",
+          "path": "httpx/_client.py",
+          "line": 502,
+          "anchor": "Client._init_transport",
+          "provenance": "static_ast",
+          "evidence": "delegating wrapper Client._init_transport calls create_ssl_context without forwarding optional parameter http2",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        },
+        {
+          "detector": "delegating_wrapper_review",
+          "symbol": "Client._init_proxy_transport",
+          "path": "httpx/_client.py",
+          "line": 521,
+          "anchor": "Client._init_proxy_transport",
+          "provenance": "static_ast",
+          "evidence": "delegating wrapper Client._init_proxy_transport calls create_ssl_context without forwarding optional parameter http2",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        },
+        {
+          "detector": "delegating_wrapper_review",
+          "symbol": "AsyncClient._init_transport",
+          "path": "httpx/_client.py",
+          "line": 1031,
+          "anchor": "AsyncClient._init_transport",
+          "provenance": "static_ast",
+          "evidence": "delegating wrapper AsyncClient._init_transport calls create_ssl_context without forwarding optional parameter http2",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        },
+        {
+          "detector": "delegating_wrapper_review",
+          "symbol": "AsyncClient._init_proxy_transport",
+          "path": "httpx/_client.py",
+          "line": 1050,
+          "anchor": "AsyncClient._init_proxy_transport",
+          "provenance": "static_ast",
+          "evidence": "delegating wrapper AsyncClient._init_proxy_transport calls create_ssl_context without forwarding optional parameter http2",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        }
+      ]
+    },
+    {
+      "commit": "e0b4528b170b",
+      "subject": "Make the response's request parameter optional (#1238)",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "exception_contract_review",
+          "symbol": "TextDecoder._detector_result",
+          "path": "httpx/_decoders.py",
+          "line": 193,
+          "anchor": "TextDecoder.decode",
+          "provenance": "static_ast",
+          "evidence": "TextDecoder._detector_result newly raises ValueError, bypassing caller try/except (UnicodeDecodeError)",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        },
+        {
+          "detector": "exception_contract_review",
+          "symbol": "TextDecoder._detector_result",
+          "path": "httpx/_decoders.py",
+          "line": 209,
+          "anchor": "TextDecoder.flush",
+          "provenance": "static_ast",
+          "evidence": "TextDecoder._detector_result newly raises ValueError, bypassing caller try/except (UnicodeDecodeError)",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        }
+      ]
+    },
+    {
+      "commit": "feb404f86b46",
+      "subject": "Seperate `content=...` and `data=...` parameters (#1266)",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "override_signature_review",
+          "symbol": "Cookies._CookieCompatRequest.__init__",
+          "path": "httpx/_models.py",
+          "line": 1219,
+          "anchor": "Cookies._CookieCompatRequest.__init__",
+          "provenance": "static_ast",
+          "evidence": "override may omit changed base parameter content",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        }
+      ]
+    },
+    {
+      "commit": "d25f2bfeff35",
+      "subject": "Fix stream unsetting auth (#1312)",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "callback_binding_review",
+          "symbol": "BaseClient.stream",
+          "path": "httpx/_client.py",
+          "line": 863,
+          "anchor": "Client._send_single_request.on_close",
+          "provenance": "static_ast",
+          "evidence": "changed callable stream is passed as a value",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        },
+        {
+          "detector": "callback_binding_review",
+          "symbol": "BaseClient.stream",
+          "path": "httpx/_client.py",
+          "line": 1508,
+          "anchor": "AsyncClient._send_single_request.on_close",
+          "provenance": "static_ast",
+          "evidence": "changed callable stream is passed as a value",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        }
+      ]
+    },
+    {
+      "commit": "27df5e49c7a9",
+      "subject": "Support for `chunk_size` (#1277)",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "delegating_wrapper_review",
+          "symbol": "Response.iter_bytes",
+          "path": "httpx/_models.py",
+          "line": 1180,
+          "anchor": "Response.iter_bytes",
+          "provenance": "static_ast",
+          "evidence": "delegating wrapper Response.iter_bytes calls Response.iter_raw without forwarding optional parameter chunk_size",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        },
+        {
+          "detector": "delegating_wrapper_review",
+          "symbol": "Response.iter_text",
+          "path": "httpx/_models.py",
+          "line": 1199,
+          "anchor": "Response.iter_text",
+          "provenance": "static_ast",
+          "evidence": "delegating wrapper Response.iter_text calls Response.iter_bytes without forwarding optional parameter chunk_size",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        },
+        {
+          "detector": "delegating_wrapper_review",
+          "symbol": "Response.aiter_bytes",
+          "path": "httpx/_models.py",
+          "line": 1275,
+          "anchor": "Response.aiter_bytes",
+          "provenance": "static_ast",
+          "evidence": "delegating wrapper Response.aiter_bytes calls Response.aiter_raw without forwarding optional parameter chunk_size",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        },
+        {
+          "detector": "delegating_wrapper_review",
+          "symbol": "Response.aiter_text",
+          "path": "httpx/_models.py",
+          "line": 1294,
+          "anchor": "Response.aiter_text",
+          "provenance": "static_ast",
+          "evidence": "delegating wrapper Response.aiter_text calls Response.aiter_bytes without forwarding optional parameter chunk_size",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        }
+      ]
+    },
+    {
+      "commit": "9b17671f155a",
+      "subject": "Support HTTP/2 prior-knowledge, using `httpx.Client(http1=False, http2=True)`. (#1624)",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "parameter_sink_review",
+          "symbol": "AsyncClient._init_proxy_transport",
+          "path": "httpx/_client.py",
+          "line": 1402,
+          "anchor": "AsyncClient._init_proxy_transport",
+          "provenance": "static_ast",
+          "evidence": "new parameter http1 is not read in the function body; verify its intended behavioral sink",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        }
+      ]
+    },
+    {
+      "commit": "541a0afe5636",
+      "subject": "Add Client(allow_redirect=<...>) (#1790)",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "override_signature_review",
+          "symbol": "Client.__init__",
+          "path": "httpx/_client.py",
+          "line": 602,
+          "anchor": "Client.__init__",
+          "provenance": "static_ast",
+          "evidence": "override may omit changed base parameter allow_redirects",
+          "resolved_after_commits": 25,
+          "resolved_by": "site_function_edit",
+          "resolving_commit": "47266d763bde",
+          "resolving_subject": "Switch follow redirects default (#1808)"
+        },
+        {
+          "detector": "override_signature_review",
+          "symbol": "AsyncClient.__init__",
+          "path": "httpx/_client.py",
+          "line": 1312,
+          "anchor": "AsyncClient.__init__",
+          "provenance": "static_ast",
+          "evidence": "override may omit changed base parameter allow_redirects",
+          "resolved_after_commits": 25,
+          "resolved_by": "site_function_edit",
+          "resolving_commit": "47266d763bde",
+          "resolving_subject": "Switch follow redirects default (#1808)"
+        }
+      ]
+    },
+    {
+      "commit": "ff9813e84dab",
+      "subject": "Transport API as plain `request -> response` method. (#1840)",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "override_signature_review",
+          "symbol": "Cookies._CookieCompatRequest.__init__",
+          "path": "httpx/_models.py",
+          "line": 1839,
+          "anchor": "Cookies._CookieCompatRequest.__init__",
+          "provenance": "static_ast",
+          "evidence": "override may omit changed base parameter extensions",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        }
+      ]
+    }
+  ]
+}
