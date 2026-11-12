@@ -758,6 +758,27 @@ def analyze_changed_files_in_index(
     return deduplicate_findings(findings), cross_file_triggered, candidate_calls_inspected
 
 
+def analyze_changed_only(
+    before: Mapping[str, str],
+    after: Mapping[str, str],
+    *,
+    cache: FactCache | None = None,
+) -> tuple[list[Finding], bool]:
+    """Analyze changed files without the rest of the workspace.
+
+    Returns the findings and whether a contract visible to other files changed. When
+    that flag is False, the findings are complete and no other file needs to be read.
+    When it is True, discard them and run analyze_delta over the whole workspace.
+    """
+    parse = cache.load if cache is not None else parse_file
+    paths = sorted(p for p in before.keys() | after.keys() if before.get(p) != after.get(p))
+    before_changed = {p: (parse(p, before[p]) if p in before else None) for p in paths}
+    after_changed = {p: parse(p, after[p]) for p in paths if p in after}
+    index = build_index(after_changed)
+    findings, cross_file_triggered, _ = analyze_changed_files_in_index(before_changed, after_changed, index)
+    return findings, cross_file_triggered
+
+
 def analyze_delta(
     before: Mapping[str, str],
     after: Mapping[str, str],
