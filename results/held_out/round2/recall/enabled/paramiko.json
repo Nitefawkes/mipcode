@@ -1,0 +1,5762 @@
+{
+  "schema": "mip-delta recall-mutation corpus v1",
+  "materialization": "Tree M is the tree of `commit` with the file at `stale_path` replaced by the blob `stale_blob` (the parent's version of that file). Every other path is exactly as in `commit`. Line numbers of sites refer to the `stale_blob` text, which is also the text of that file in M.",
+  "repository": "paramiko",
+  "head": "0e9ccb91e0f9a68f2587233d523ad7fe46e730fe",
+  "limit": 800,
+  "opt_in_detectors": [
+    "callback_binding_review",
+    "removed_callable_review"
+  ],
+  "wall_seconds": 104.7,
+  "counts": {
+    "changed_definitions_removed": 93,
+    "changed_definitions_signature": 56,
+    "commits_changing_production_python": 404,
+    "commits_examined": 800,
+    "commits_with_changed_definitions": 45,
+    "commits_with_mutations": 7,
+    "mutations": 16,
+    "sites": 86
+  },
+  "mutations": [
+    {
+      "id": "paramiko:8e5198394252:paramiko/transport.py",
+      "repository": "paramiko",
+      "commit": "8e5198394252790111d72071a365bfe1f918b1c6",
+      "parent": "d88807841331042b8ff291c2156333a971d8b510",
+      "subject": "Add hmac-sha2-256-etm@openssh.com and hmac-sha2-512-etm@openssh.com support",
+      "stale_path": "paramiko/transport.py",
+      "stale_blob": "5687778eefc29f161b2d580470eac8305a606f60",
+      "commit_blob": "d7ab03512f87f41b146863d034ba7438fb9caceb",
+      "other_changed_python_paths": [
+        "paramiko/packet.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "paramiko/packet.py",
+            "qualname": "Packetizer.set_inbound_cipher",
+            "name": "set_inbound_cipher",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 163,
+            "new_line": 168,
+            "is_method": true,
+            "old_parameters": "(self, block_engine, block_size, mac_engine, mac_size, mac_key)",
+            "new_parameters": "(self, block_engine, block_size, mac_engine, mac_size, mac_key, etm=...)",
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "block_engine",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "block_size",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "mac_engine",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "mac_size",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "mac_key",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "block_engine",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "block_size",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "mac_engine",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "mac_size",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "mac_key",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "etm",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 2445,
+          "end_line": 2447,
+          "call_line": 2445,
+          "call_text": "self.packetizer.set_inbound_cipher(\n            engine, block_size, mac_engine, mac_size, mac_key\n        )",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "Transport._activate_inbound",
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "paramiko/packet.py",
+            "qualname": "Packetizer.set_outbound_cipher",
+            "name": "set_outbound_cipher",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 136,
+            "new_line": 138,
+            "is_method": true,
+            "old_parameters": "(self, block_engine, block_size, mac_engine, mac_size, mac_key, sdctr=...)",
+            "new_parameters": "(self, block_engine, block_size, mac_engine, mac_size, mac_key, sdctr=..., etm=...)",
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "block_engine",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "block_size",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "mac_engine",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "mac_size",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "mac_key",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "sdctr",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "block_engine",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "block_size",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "mac_engine",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "mac_size",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "mac_key",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "sdctr",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "etm",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 2484,
+          "end_line": 2486,
+          "call_line": 2484,
+          "call_text": "self.packetizer.set_outbound_cipher(\n            engine, block_size, mac_engine, mac_size, mac_key, sdctr\n        )",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "Transport._activate_outbound",
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "paramiko:363a28d94cad:paramiko/auth_handler.py",
+      "repository": "paramiko",
+      "commit": "363a28d94cada17f012c1604a3c99c71a2bda003",
+      "parent": "dfffaeaa0170c784307d1c89dad60528a59b6ff2",
+      "subject": "Add support for RSA SHA2 host and public keys",
+      "stale_path": "paramiko/auth_handler.py",
+      "stale_blob": "011e57f327777e5b8735d5acb69468c569649015",
+      "commit_blob": "845b9143e6d5b78d7c09df8155ef3000f1afda20",
+      "other_changed_python_paths": [
+        "paramiko/__init__.py",
+        "paramiko/agent.py",
+        "paramiko/common.py",
+        "paramiko/dsskey.py",
+        "paramiko/ecdsakey.py",
+        "paramiko/ed25519key.py",
+        "paramiko/kex_curve25519.py",
+        "paramiko/kex_ecdh_nist.py",
+        "paramiko/kex_gex.py",
+        "paramiko/kex_group1.py",
+        "paramiko/pkey.py",
+        "paramiko/rsakey.py",
+        "paramiko/ssh_exception.py",
+        "paramiko/transport.py",
+        "tests/test_kex.py",
+        "tests/test_pkey.py",
+        "tests/test_transport.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "paramiko/agent.py",
+            "qualname": "AgentKey.sign_ssh_data",
+            "name": "sign_ssh_data",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 414,
+            "new_line": 414,
+            "is_method": true,
+            "old_parameters": "(self, data)",
+            "new_parameters": "(self, data, algorithm=...)",
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "algorithm",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 301,
+          "end_line": 301,
+          "call_line": 301,
+          "call_text": "self.private_key.sign_ssh_data(blob)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "AuthHandler._parse_service_accept",
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 6,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "paramiko/dsskey.py",
+            "qualname": "DSSKey.sign_ssh_data",
+            "name": "sign_ssh_data",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 108,
+            "new_line": 108,
+            "is_method": true,
+            "old_parameters": "(self, data)",
+            "new_parameters": "(self, data, algorithm=...)",
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "algorithm",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 301,
+          "end_line": 301,
+          "call_line": 301,
+          "call_text": "self.private_key.sign_ssh_data(blob)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "AuthHandler._parse_service_accept",
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 6,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "paramiko/ecdsakey.py",
+            "qualname": "ECDSAKey.sign_ssh_data",
+            "name": "sign_ssh_data",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 214,
+            "new_line": 214,
+            "is_method": true,
+            "old_parameters": "(self, data)",
+            "new_parameters": "(self, data, algorithm=...)",
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "algorithm",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 301,
+          "end_line": 301,
+          "call_line": 301,
+          "call_text": "self.private_key.sign_ssh_data(blob)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "AuthHandler._parse_service_accept",
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 6,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "paramiko/ed25519key.py",
+            "qualname": "Ed25519Key.sign_ssh_data",
+            "name": "sign_ssh_data",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 194,
+            "new_line": 194,
+            "is_method": true,
+            "old_parameters": "(self, data)",
+            "new_parameters": "(self, data, algorithm=...)",
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "algorithm",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 301,
+          "end_line": 301,
+          "call_line": 301,
+          "call_text": "self.private_key.sign_ssh_data(blob)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "AuthHandler._parse_service_accept",
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 6,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "paramiko/pkey.py",
+            "qualname": "PKey.sign_ssh_data",
+            "name": "sign_ssh_data",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 199,
+            "new_line": 199,
+            "is_method": true,
+            "old_parameters": "(self, data)",
+            "new_parameters": "(self, data, algorithm=...)",
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "algorithm",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 301,
+          "end_line": 301,
+          "call_line": 301,
+          "call_text": "self.private_key.sign_ssh_data(blob)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "AuthHandler._parse_service_accept",
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 6,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "paramiko/rsakey.py",
+            "qualname": "RSAKey.sign_ssh_data",
+            "name": "sign_ssh_data",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 114,
+            "new_line": 125,
+            "is_method": true,
+            "old_parameters": "(self, data)",
+            "new_parameters": "(self, data, algorithm=...)",
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "algorithm",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 301,
+          "end_line": 301,
+          "call_line": 301,
+          "call_text": "self.private_key.sign_ssh_data(blob)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "AuthHandler._parse_service_accept",
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 6,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "paramiko:363a28d94cad:paramiko/kex_curve25519.py",
+      "repository": "paramiko",
+      "commit": "363a28d94cada17f012c1604a3c99c71a2bda003",
+      "parent": "dfffaeaa0170c784307d1c89dad60528a59b6ff2",
+      "subject": "Add support for RSA SHA2 host and public keys",
+      "stale_path": "paramiko/kex_curve25519.py",
+      "stale_blob": "59710c1aadc4fbfd7e6cc222555ba5eec9e2137e",
+      "commit_blob": "3420fb4f29349b47eec1f2eab6a4e4a08de1bcf9",
+      "other_changed_python_paths": [
+        "paramiko/__init__.py",
+        "paramiko/agent.py",
+        "paramiko/auth_handler.py",
+        "paramiko/common.py",
+        "paramiko/dsskey.py",
+        "paramiko/ecdsakey.py",
+        "paramiko/ed25519key.py",
+        "paramiko/kex_ecdh_nist.py",
+        "paramiko/kex_gex.py",
+        "paramiko/kex_group1.py",
+        "paramiko/pkey.py",
+        "paramiko/rsakey.py",
+        "paramiko/ssh_exception.py",
+        "paramiko/transport.py",
+        "tests/test_kex.py",
+        "tests/test_pkey.py",
+        "tests/test_transport.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "paramiko/agent.py",
+            "qualname": "AgentKey.sign_ssh_data",
+            "name": "sign_ssh_data",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 414,
+            "new_line": 414,
+            "is_method": true,
+            "old_parameters": "(self, data)",
+            "new_parameters": "(self, data, algorithm=...)",
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "algorithm",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 92,
+          "end_line": 92,
+          "call_line": 92,
+          "call_text": "self.transport.get_server_key().sign_ssh_data(H)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "KexCurve25519._parse_kexecdh_init",
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 6,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "paramiko/dsskey.py",
+            "qualname": "DSSKey.sign_ssh_data",
+            "name": "sign_ssh_data",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 108,
+            "new_line": 108,
+            "is_method": true,
+            "old_parameters": "(self, data)",
+            "new_parameters": "(self, data, algorithm=...)",
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "algorithm",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 92,
+          "end_line": 92,
+          "call_line": 92,
+          "call_text": "self.transport.get_server_key().sign_ssh_data(H)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "KexCurve25519._parse_kexecdh_init",
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 6,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "paramiko/ecdsakey.py",
+            "qualname": "ECDSAKey.sign_ssh_data",
+            "name": "sign_ssh_data",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 214,
+            "new_line": 214,
+            "is_method": true,
+            "old_parameters": "(self, data)",
+            "new_parameters": "(self, data, algorithm=...)",
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "algorithm",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 92,
+          "end_line": 92,
+          "call_line": 92,
+          "call_text": "self.transport.get_server_key().sign_ssh_data(H)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "KexCurve25519._parse_kexecdh_init",
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 6,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "paramiko/ed25519key.py",
+            "qualname": "Ed25519Key.sign_ssh_data",
+            "name": "sign_ssh_data",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 194,
+            "new_line": 194,
+            "is_method": true,
+            "old_parameters": "(self, data)",
+            "new_parameters": "(self, data, algorithm=...)",
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "algorithm",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 92,
+          "end_line": 92,
+          "call_line": 92,
+          "call_text": "self.transport.get_server_key().sign_ssh_data(H)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "KexCurve25519._parse_kexecdh_init",
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 6,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "paramiko/pkey.py",
+            "qualname": "PKey.sign_ssh_data",
+            "name": "sign_ssh_data",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 199,
+            "new_line": 199,
+            "is_method": true,
+            "old_parameters": "(self, data)",
+            "new_parameters": "(self, data, algorithm=...)",
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "algorithm",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 92,
+          "end_line": 92,
+          "call_line": 92,
+          "call_text": "self.transport.get_server_key().sign_ssh_data(H)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "KexCurve25519._parse_kexecdh_init",
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 6,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "paramiko/rsakey.py",
+            "qualname": "RSAKey.sign_ssh_data",
+            "name": "sign_ssh_data",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 114,
+            "new_line": 125,
+            "is_method": true,
+            "old_parameters": "(self, data)",
+            "new_parameters": "(self, data, algorithm=...)",
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "algorithm",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 92,
+          "end_line": 92,
+          "call_line": 92,
+          "call_text": "self.transport.get_server_key().sign_ssh_data(H)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "KexCurve25519._parse_kexecdh_init",
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 6,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "paramiko:363a28d94cad:paramiko/kex_ecdh_nist.py",
+      "repository": "paramiko",
+      "commit": "363a28d94cada17f012c1604a3c99c71a2bda003",
+      "parent": "dfffaeaa0170c784307d1c89dad60528a59b6ff2",
+      "subject": "Add support for RSA SHA2 host and public keys",
+      "stale_path": "paramiko/kex_ecdh_nist.py",
+      "stale_blob": "ad5c9c79d84c602feb80ec84210661df227d570e",
+      "commit_blob": "19de24313e22bb9b389f44dbc723a9e1fea6a0a8",
+      "other_changed_python_paths": [
+        "paramiko/__init__.py",
+        "paramiko/agent.py",
+        "paramiko/auth_handler.py",
+        "paramiko/common.py",
+        "paramiko/dsskey.py",
+        "paramiko/ecdsakey.py",
+        "paramiko/ed25519key.py",
+        "paramiko/kex_curve25519.py",
+        "paramiko/kex_gex.py",
+        "paramiko/kex_group1.py",
+        "paramiko/pkey.py",
+        "paramiko/rsakey.py",
+        "paramiko/ssh_exception.py",
+        "paramiko/transport.py",
+        "tests/test_kex.py",
+        "tests/test_pkey.py",
+        "tests/test_transport.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "paramiko/agent.py",
+            "qualname": "AgentKey.sign_ssh_data",
+            "name": "sign_ssh_data",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 414,
+            "new_line": 414,
+            "is_method": true,
+            "old_parameters": "(self, data)",
+            "new_parameters": "(self, data, algorithm=...)",
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "algorithm",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 93,
+          "end_line": 93,
+          "call_line": 93,
+          "call_text": "self.transport.get_server_key().sign_ssh_data(H)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "KexNistp256._parse_kexecdh_init",
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 6,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "paramiko/dsskey.py",
+            "qualname": "DSSKey.sign_ssh_data",
+            "name": "sign_ssh_data",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 108,
+            "new_line": 108,
+            "is_method": true,
+            "old_parameters": "(self, data)",
+            "new_parameters": "(self, data, algorithm=...)",
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "algorithm",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 93,
+          "end_line": 93,
+          "call_line": 93,
+          "call_text": "self.transport.get_server_key().sign_ssh_data(H)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "KexNistp256._parse_kexecdh_init",
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 6,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "paramiko/ecdsakey.py",
+            "qualname": "ECDSAKey.sign_ssh_data",
+            "name": "sign_ssh_data",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 214,
+            "new_line": 214,
+            "is_method": true,
+            "old_parameters": "(self, data)",
+            "new_parameters": "(self, data, algorithm=...)",
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "algorithm",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 93,
+          "end_line": 93,
+          "call_line": 93,
+          "call_text": "self.transport.get_server_key().sign_ssh_data(H)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "KexNistp256._parse_kexecdh_init",
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 6,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "paramiko/ed25519key.py",
+            "qualname": "Ed25519Key.sign_ssh_data",
+            "name": "sign_ssh_data",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 194,
+            "new_line": 194,
+            "is_method": true,
+            "old_parameters": "(self, data)",
+            "new_parameters": "(self, data, algorithm=...)",
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "algorithm",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 93,
+          "end_line": 93,
+          "call_line": 93,
+          "call_text": "self.transport.get_server_key().sign_ssh_data(H)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "KexNistp256._parse_kexecdh_init",
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 6,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "paramiko/pkey.py",
+            "qualname": "PKey.sign_ssh_data",
+            "name": "sign_ssh_data",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 199,
+            "new_line": 199,
+            "is_method": true,
+            "old_parameters": "(self, data)",
+            "new_parameters": "(self, data, algorithm=...)",
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "algorithm",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 93,
+          "end_line": 93,
+          "call_line": 93,
+          "call_text": "self.transport.get_server_key().sign_ssh_data(H)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "KexNistp256._parse_kexecdh_init",
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 6,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "paramiko/rsakey.py",
+            "qualname": "RSAKey.sign_ssh_data",
+            "name": "sign_ssh_data",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 114,
+            "new_line": 125,
+            "is_method": true,
+            "old_parameters": "(self, data)",
+            "new_parameters": "(self, data, algorithm=...)",
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "algorithm",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 93,
+          "end_line": 93,
+          "call_line": 93,
+          "call_text": "self.transport.get_server_key().sign_ssh_data(H)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "KexNistp256._parse_kexecdh_init",
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 6,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "paramiko:363a28d94cad:paramiko/kex_gex.py",
+      "repository": "paramiko",
+      "commit": "363a28d94cada17f012c1604a3c99c71a2bda003",
+      "parent": "dfffaeaa0170c784307d1c89dad60528a59b6ff2",
+      "subject": "Add support for RSA SHA2 host and public keys",
+      "stale_path": "paramiko/kex_gex.py",
+      "stale_blob": "fb8f01fdc3a465b8da60ef1a3b1e8c5f2754c869",
+      "commit_blob": "ab462e6d74dbd00d6be7c2326da94e3714a69c5f",
+      "other_changed_python_paths": [
+        "paramiko/__init__.py",
+        "paramiko/agent.py",
+        "paramiko/auth_handler.py",
+        "paramiko/common.py",
+        "paramiko/dsskey.py",
+        "paramiko/ecdsakey.py",
+        "paramiko/ed25519key.py",
+        "paramiko/kex_curve25519.py",
+        "paramiko/kex_ecdh_nist.py",
+        "paramiko/kex_group1.py",
+        "paramiko/pkey.py",
+        "paramiko/rsakey.py",
+        "paramiko/ssh_exception.py",
+        "paramiko/transport.py",
+        "tests/test_kex.py",
+        "tests/test_pkey.py",
+        "tests/test_transport.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "paramiko/agent.py",
+            "qualname": "AgentKey.sign_ssh_data",
+            "name": "sign_ssh_data",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 414,
+            "new_line": 414,
+            "is_method": true,
+            "old_parameters": "(self, data)",
+            "new_parameters": "(self, data, algorithm=...)",
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "algorithm",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 243,
+          "end_line": 243,
+          "call_line": 243,
+          "call_text": "self.transport.get_server_key().sign_ssh_data(H)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "KexGex._parse_kexdh_gex_init",
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 6,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "paramiko/dsskey.py",
+            "qualname": "DSSKey.sign_ssh_data",
+            "name": "sign_ssh_data",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 108,
+            "new_line": 108,
+            "is_method": true,
+            "old_parameters": "(self, data)",
+            "new_parameters": "(self, data, algorithm=...)",
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "algorithm",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 243,
+          "end_line": 243,
+          "call_line": 243,
+          "call_text": "self.transport.get_server_key().sign_ssh_data(H)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "KexGex._parse_kexdh_gex_init",
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 6,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "paramiko/ecdsakey.py",
+            "qualname": "ECDSAKey.sign_ssh_data",
+            "name": "sign_ssh_data",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 214,
+            "new_line": 214,
+            "is_method": true,
+            "old_parameters": "(self, data)",
+            "new_parameters": "(self, data, algorithm=...)",
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "algorithm",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 243,
+          "end_line": 243,
+          "call_line": 243,
+          "call_text": "self.transport.get_server_key().sign_ssh_data(H)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "KexGex._parse_kexdh_gex_init",
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 6,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "paramiko/ed25519key.py",
+            "qualname": "Ed25519Key.sign_ssh_data",
+            "name": "sign_ssh_data",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 194,
+            "new_line": 194,
+            "is_method": true,
+            "old_parameters": "(self, data)",
+            "new_parameters": "(self, data, algorithm=...)",
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "algorithm",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 243,
+          "end_line": 243,
+          "call_line": 243,
+          "call_text": "self.transport.get_server_key().sign_ssh_data(H)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "KexGex._parse_kexdh_gex_init",
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 6,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "paramiko/pkey.py",
+            "qualname": "PKey.sign_ssh_data",
+            "name": "sign_ssh_data",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 199,
+            "new_line": 199,
+            "is_method": true,
+            "old_parameters": "(self, data)",
+            "new_parameters": "(self, data, algorithm=...)",
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "algorithm",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 243,
+          "end_line": 243,
+          "call_line": 243,
+          "call_text": "self.transport.get_server_key().sign_ssh_data(H)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "KexGex._parse_kexdh_gex_init",
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 6,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "paramiko/rsakey.py",
+            "qualname": "RSAKey.sign_ssh_data",
+            "name": "sign_ssh_data",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 114,
+            "new_line": 125,
+            "is_method": true,
+            "old_parameters": "(self, data)",
+            "new_parameters": "(self, data, algorithm=...)",
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "algorithm",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 243,
+          "end_line": 243,
+          "call_line": 243,
+          "call_text": "self.transport.get_server_key().sign_ssh_data(H)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "KexGex._parse_kexdh_gex_init",
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 6,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "paramiko:363a28d94cad:paramiko/kex_group1.py",
+      "repository": "paramiko",
+      "commit": "363a28d94cada17f012c1604a3c99c71a2bda003",
+      "parent": "dfffaeaa0170c784307d1c89dad60528a59b6ff2",
+      "subject": "Add support for RSA SHA2 host and public keys",
+      "stale_path": "paramiko/kex_group1.py",
+      "stale_blob": "dce3fd91ab51fcc274ce3b44171be0895d12838e",
+      "commit_blob": "6d548b0131662343e673cf3466b91c2eb4c2946d",
+      "other_changed_python_paths": [
+        "paramiko/__init__.py",
+        "paramiko/agent.py",
+        "paramiko/auth_handler.py",
+        "paramiko/common.py",
+        "paramiko/dsskey.py",
+        "paramiko/ecdsakey.py",
+        "paramiko/ed25519key.py",
+        "paramiko/kex_curve25519.py",
+        "paramiko/kex_ecdh_nist.py",
+        "paramiko/kex_gex.py",
+        "paramiko/pkey.py",
+        "paramiko/rsakey.py",
+        "paramiko/ssh_exception.py",
+        "paramiko/transport.py",
+        "tests/test_kex.py",
+        "tests/test_pkey.py",
+        "tests/test_transport.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "paramiko/agent.py",
+            "qualname": "AgentKey.sign_ssh_data",
+            "name": "sign_ssh_data",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 414,
+            "new_line": 414,
+            "is_method": true,
+            "old_parameters": "(self, data)",
+            "new_parameters": "(self, data, algorithm=...)",
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "algorithm",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 146,
+          "end_line": 146,
+          "call_line": 146,
+          "call_text": "self.transport.get_server_key().sign_ssh_data(H)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "KexGroup1._parse_kexdh_init",
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 6,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "paramiko/dsskey.py",
+            "qualname": "DSSKey.sign_ssh_data",
+            "name": "sign_ssh_data",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 108,
+            "new_line": 108,
+            "is_method": true,
+            "old_parameters": "(self, data)",
+            "new_parameters": "(self, data, algorithm=...)",
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "algorithm",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 146,
+          "end_line": 146,
+          "call_line": 146,
+          "call_text": "self.transport.get_server_key().sign_ssh_data(H)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "KexGroup1._parse_kexdh_init",
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 6,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "paramiko/ecdsakey.py",
+            "qualname": "ECDSAKey.sign_ssh_data",
+            "name": "sign_ssh_data",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 214,
+            "new_line": 214,
+            "is_method": true,
+            "old_parameters": "(self, data)",
+            "new_parameters": "(self, data, algorithm=...)",
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "algorithm",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 146,
+          "end_line": 146,
+          "call_line": 146,
+          "call_text": "self.transport.get_server_key().sign_ssh_data(H)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "KexGroup1._parse_kexdh_init",
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 6,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "paramiko/ed25519key.py",
+            "qualname": "Ed25519Key.sign_ssh_data",
+            "name": "sign_ssh_data",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 194,
+            "new_line": 194,
+            "is_method": true,
+            "old_parameters": "(self, data)",
+            "new_parameters": "(self, data, algorithm=...)",
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "algorithm",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 146,
+          "end_line": 146,
+          "call_line": 146,
+          "call_text": "self.transport.get_server_key().sign_ssh_data(H)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "KexGroup1._parse_kexdh_init",
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 6,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "paramiko/pkey.py",
+            "qualname": "PKey.sign_ssh_data",
+            "name": "sign_ssh_data",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 199,
+            "new_line": 199,
+            "is_method": true,
+            "old_parameters": "(self, data)",
+            "new_parameters": "(self, data, algorithm=...)",
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "algorithm",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 146,
+          "end_line": 146,
+          "call_line": 146,
+          "call_text": "self.transport.get_server_key().sign_ssh_data(H)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "KexGroup1._parse_kexdh_init",
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 6,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "paramiko/rsakey.py",
+            "qualname": "RSAKey.sign_ssh_data",
+            "name": "sign_ssh_data",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 114,
+            "new_line": 125,
+            "is_method": true,
+            "old_parameters": "(self, data)",
+            "new_parameters": "(self, data, algorithm=...)",
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "data",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "algorithm",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 146,
+          "end_line": 146,
+          "call_line": 146,
+          "call_text": "self.transport.get_server_key().sign_ssh_data(H)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "KexGroup1._parse_kexdh_init",
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 6,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "paramiko:8367147e8835:paramiko/agent.py",
+      "repository": "paramiko",
+      "commit": "8367147e883583bba71cd660d1bae880a66eb27c",
+      "parent": "53460723a6ab342129ac456ef6a4ba5ef676b577",
+      "subject": "Nuke retry_on_signal, pointless on modern Py3",
+      "stale_path": "paramiko/agent.py",
+      "stale_blob": "f2d57ea56c388fd9008e70e6dc7402d62c2880cc",
+      "commit_blob": "c1a073905f2bb3a1129861617f2dbd168dce150e",
+      "other_changed_python_paths": [
+        "paramiko/client.py",
+        "paramiko/packet.py",
+        "paramiko/transport.py",
+        "paramiko/util.py",
+        "tests/test_util.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "paramiko/util.py",
+            "qualname": "retry_on_signal",
+            "name": "retry_on_signal",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 276,
+            "new_line": null,
+            "is_method": false,
+            "old_parameters": "(function)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "function",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 216,
+          "end_line": 216,
+          "call_line": 216,
+          "call_text": "retry_on_signal(lambda: conn.connect(os.environ[\"SSH_AUTH_SOCK\"]))",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "get_agent_connection",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "removed_callable_review"
+          ],
+          "site_hit_symbols": [
+            "retry_on_signal"
+          ],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        }
+      ],
+      "new_findings_in_stale_file": [
+        {
+          "detector": "removed_callable_review",
+          "symbol": "retry_on_signal",
+          "path": "paramiko/agent.py",
+          "line": 216,
+          "anchor": "get_agent_connection"
+        }
+      ],
+      "collateral": []
+    },
+    {
+      "id": "paramiko:8367147e8835:paramiko/client.py",
+      "repository": "paramiko",
+      "commit": "8367147e883583bba71cd660d1bae880a66eb27c",
+      "parent": "53460723a6ab342129ac456ef6a4ba5ef676b577",
+      "subject": "Nuke retry_on_signal, pointless on modern Py3",
+      "stale_path": "paramiko/client.py",
+      "stale_blob": "2dd25e91791330b9d622198a0c8feb747441c25b",
+      "commit_blob": "5667d7e7a3b9569c4ad0fe059ad9506941d83458",
+      "other_changed_python_paths": [
+        "paramiko/agent.py",
+        "paramiko/packet.py",
+        "paramiko/transport.py",
+        "paramiko/util.py",
+        "tests/test_util.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "paramiko/util.py",
+            "qualname": "retry_on_signal",
+            "name": "retry_on_signal",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 276,
+            "new_line": null,
+            "is_method": false,
+            "old_parameters": "(function)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "function",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 357,
+          "end_line": 357,
+          "call_line": 357,
+          "call_text": "retry_on_signal(lambda: sock.connect(addr))",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "SSHClient.connect",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "removed_callable_review"
+          ],
+          "site_hit_symbols": [
+            "retry_on_signal"
+          ],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        }
+      ],
+      "new_findings_in_stale_file": [
+        {
+          "detector": "removed_callable_review",
+          "symbol": "retry_on_signal",
+          "path": "paramiko/client.py",
+          "line": 357,
+          "anchor": "SSHClient.connect"
+        }
+      ],
+      "collateral": []
+    },
+    {
+      "id": "paramiko:8367147e8835:paramiko/transport.py",
+      "repository": "paramiko",
+      "commit": "8367147e883583bba71cd660d1bae880a66eb27c",
+      "parent": "53460723a6ab342129ac456ef6a4ba5ef676b577",
+      "subject": "Nuke retry_on_signal, pointless on modern Py3",
+      "stale_path": "paramiko/transport.py",
+      "stale_blob": "6c14218cb06bca0f4fa03eecc9f55b84a68577a4",
+      "commit_blob": "2b6acd6e7e7e9b5bb9a327b08eef9821dccb8a79",
+      "other_changed_python_paths": [
+        "paramiko/agent.py",
+        "paramiko/client.py",
+        "paramiko/packet.py",
+        "paramiko/util.py",
+        "tests/test_util.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "paramiko/util.py",
+            "qualname": "retry_on_signal",
+            "name": "retry_on_signal",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 276,
+            "new_line": null,
+            "is_method": false,
+            "old_parameters": "(function)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "function",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 439,
+          "end_line": 439,
+          "call_line": 439,
+          "call_text": "retry_on_signal(lambda: sock.connect((hostname, port)))",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "Transport.__init__",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "removed_callable_review"
+          ],
+          "site_hit_symbols": [
+            "retry_on_signal"
+          ],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        }
+      ],
+      "new_findings_in_stale_file": [
+        {
+          "detector": "removed_callable_review",
+          "symbol": "retry_on_signal",
+          "path": "paramiko/transport.py",
+          "line": 439,
+          "anchor": "Transport.__init__"
+        }
+      ],
+      "collateral": []
+    },
+    {
+      "id": "paramiko:9fddb6e99fb9:paramiko/sftp_client.py",
+      "repository": "paramiko",
+      "commit": "9fddb6e99fb981cd31eb8187dd2f47746b3625d8",
+      "parent": "63fd01aa39b0d7cba587380a61b38590004c755d",
+      "subject": "Allow limiting the number of concurrent prefetch requests",
+      "stale_path": "paramiko/sftp_client.py",
+      "stale_blob": "31ac1292b4989610e7e2f089637118697a540222",
+      "commit_blob": "a0d38bb916b27722fb1e0cca80bc1f82500282b3",
+      "other_changed_python_paths": [
+        "paramiko/sftp_file.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "paramiko/sftp_file.py",
+            "qualname": "SFTPFile.prefetch",
+            "name": "prefetch",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 438,
+            "new_line": 438,
+            "is_method": true,
+            "old_parameters": "(self, file_size=...)",
+            "new_parameters": "(self, file_size=..., max_concurrent_requests=...)",
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "file_size",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "file_size",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "max_concurrent_requests",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 785,
+          "end_line": 785,
+          "call_line": 785,
+          "call_text": "fr.prefetch(file_size)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "SFTPClient.getfo",
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "paramiko:39871d2fd8b9:paramiko/transport.py",
+      "repository": "paramiko",
+      "commit": "39871d2fd8b9d2f3faba8573294e3482905feecb",
+      "parent": "d2e7c0c75ae7de7c823d70c9feb2a9813d6c585a",
+      "subject": "add support for aes256-gcm and aes128-gcm",
+      "stale_path": "paramiko/transport.py",
+      "stale_blob": "ecd8c7bc54d1e546d1c16e914bbfe0a45b20d8f2",
+      "commit_blob": "a80ad9ef5d45784b88a9e952e1d397e1d41864ac",
+      "other_changed_python_paths": [
+        "paramiko/packet.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "paramiko/packet.py",
+            "qualname": "Packetizer.set_inbound_cipher",
+            "name": "set_inbound_cipher",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 176,
+            "new_line": 186,
+            "is_method": true,
+            "old_parameters": "(self, block_engine, block_size, mac_engine, mac_size, mac_key, etm=...)",
+            "new_parameters": "(self, block_engine, block_size, mac_engine, mac_size, mac_key, etm=..., aead=..., iv_in=...)",
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "block_engine",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "block_size",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "mac_engine",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "mac_size",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "mac_key",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "etm",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "block_engine",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "block_size",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "mac_engine",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "mac_size",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "mac_key",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "etm",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "aead",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "iv_in",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 2731,
+          "end_line": 2733,
+          "call_line": 2731,
+          "call_text": "self.packetizer.set_inbound_cipher(\n            engine, block_size, mac_engine, mac_size, mac_key, etm=etm\n        )",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": false,
+          "enclosing_function": "Transport._activate_inbound",
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "paramiko/packet.py",
+            "qualname": "Packetizer.set_outbound_cipher",
+            "name": "set_outbound_cipher",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 146,
+            "new_line": 152,
+            "is_method": true,
+            "old_parameters": "(self, block_engine, block_size, mac_engine, mac_size, mac_key, sdctr=..., etm=...)",
+            "new_parameters": "(self, block_engine, block_size, mac_engine, mac_size, mac_key, sdctr=..., etm=..., aead=..., iv_out=...)",
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "block_engine",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "block_size",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "mac_engine",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "mac_size",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "mac_key",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "sdctr",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "etm",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "block_engine",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "block_size",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "mac_engine",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "mac_size",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "mac_key",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "sdctr",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "etm",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "aead",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "iv_out",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 2785,
+          "end_line": 2787,
+          "call_line": 2785,
+          "call_text": "self.packetizer.set_outbound_cipher(\n            engine, block_size, mac_engine, mac_size, mac_key, sdctr, etm=etm\n        )",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": false,
+          "enclosing_function": "Transport._activate_outbound",
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "paramiko:1ecc933b3451:paramiko/auth_handler.py",
+      "repository": "paramiko",
+      "commit": "1ecc933b34510525aee8cad9956c3b8e642783ec",
+      "parent": "9bf5fcae57e6ca995275037eea9d6305f70d7cdb",
+      "subject": "Remove GSSAPI support :(",
+      "stale_path": "paramiko/auth_handler.py",
+      "stale_blob": "9a4d79c4656c8a7a79fd791e6e9946d228e67b33",
+      "commit_blob": "5d58089a6bc276af607c02a9995e01e900c15902",
+      "other_changed_python_paths": [
+        "paramiko/__init__.py",
+        "paramiko/client.py",
+        "paramiko/server.py",
+        "paramiko/ssh_gss.py",
+        "paramiko/transport.py",
+        "tests/_util.py",
+        "tests/test_client.py",
+        "tests/test_gssapi.py",
+        "tests/test_kex_gss.py",
+        "tests/test_ssh_gss.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "paramiko/ssh_gss.py",
+            "qualname": "GSSAuth",
+            "name": "GSSAuth",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 77,
+            "new_line": null,
+            "is_method": false,
+            "old_parameters": "(auth_method, gss_deleg_creds=...)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "auth_method",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "gss_deleg_creds",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 393,
+          "end_line": 393,
+          "call_line": 393,
+          "call_text": "GSSAuth(self.auth_method, self.gss_deleg_creds)",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "AuthHandler._parse_service_accept",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "removed_callable_review"
+          ],
+          "site_hit_symbols": [
+            "GSSAuth"
+          ],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "paramiko/ssh_gss.py",
+            "qualname": "_SSH_GSSAuth.ssh_gss_oids",
+            "name": "ssh_gss_oids",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 162,
+            "new_line": null,
+            "is_method": true,
+            "old_parameters": "(self, mode=...)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "mode",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 394,
+          "end_line": 394,
+          "call_line": 394,
+          "call_text": "sshgss.ssh_gss_oids()",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "AuthHandler._parse_service_accept",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "removed_callable_review"
+          ],
+          "site_hit_symbols": [
+            "GSSAuth"
+          ],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "paramiko/ssh_gss.py",
+            "qualname": "_SSH_GSSAPI_OLD.ssh_init_sec_context",
+            "name": "ssh_init_sec_context",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 268,
+            "new_line": null,
+            "is_method": true,
+            "old_parameters": "(self, target, desired_mech=..., username=..., recv_token=...)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "target",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "desired_mech",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "username",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "recv_token",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 410,
+          "end_line": 412,
+          "call_line": 410,
+          "call_text": "sshgss.ssh_init_sec_context(\n                                self.gss_host, mech, self.username\n                            )",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "AuthHandler._parse_service_accept",
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 3,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "removed_callable_review"
+          ],
+          "site_hit_symbols": [
+            "GSSAuth"
+          ],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "paramiko/ssh_gss.py",
+            "qualname": "_SSH_GSSAPI_NEW.ssh_init_sec_context",
+            "name": "ssh_init_sec_context",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 448,
+            "new_line": null,
+            "is_method": true,
+            "old_parameters": "(self, target, desired_mech=..., username=..., recv_token=...)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "target",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "desired_mech",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "username",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "recv_token",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 410,
+          "end_line": 412,
+          "call_line": 410,
+          "call_text": "sshgss.ssh_init_sec_context(\n                                self.gss_host, mech, self.username\n                            )",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "AuthHandler._parse_service_accept",
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 3,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "removed_callable_review"
+          ],
+          "site_hit_symbols": [
+            "GSSAuth"
+          ],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "paramiko/ssh_gss.py",
+            "qualname": "_SSH_SSPI.ssh_init_sec_context",
+            "name": "ssh_init_sec_context",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 619,
+            "new_line": null,
+            "is_method": true,
+            "old_parameters": "(self, target, desired_mech=..., username=..., recv_token=...)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "target",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "desired_mech",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "username",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "recv_token",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 410,
+          "end_line": 412,
+          "call_line": 410,
+          "call_text": "sshgss.ssh_init_sec_context(\n                                self.gss_host, mech, self.username\n                            )",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "AuthHandler._parse_service_accept",
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 3,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "removed_callable_review"
+          ],
+          "site_hit_symbols": [
+            "GSSAuth"
+          ],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "paramiko/ssh_gss.py",
+            "qualname": "_SSH_GSSAPI_OLD.ssh_init_sec_context",
+            "name": "ssh_init_sec_context",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 268,
+            "new_line": null,
+            "is_method": true,
+            "old_parameters": "(self, target, desired_mech=..., username=..., recv_token=...)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "target",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "desired_mech",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "username",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "recv_token",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 422,
+          "end_line": 427,
+          "call_line": 422,
+          "call_text": "sshgss.ssh_init_sec_context(\n                                    self.gss_host,\n                                    mech,\n                                    self.username,\n                                    srv_token,\n                                )",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "AuthHandler._parse_service_accept",
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 3,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "removed_callable_review"
+          ],
+          "site_hit_symbols": [
+            "GSSAuth"
+          ],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "paramiko/ssh_gss.py",
+            "qualname": "_SSH_GSSAPI_NEW.ssh_init_sec_context",
+            "name": "ssh_init_sec_context",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 448,
+            "new_line": null,
+            "is_method": true,
+            "old_parameters": "(self, target, desired_mech=..., username=..., recv_token=...)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "target",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "desired_mech",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "username",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "recv_token",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 422,
+          "end_line": 427,
+          "call_line": 422,
+          "call_text": "sshgss.ssh_init_sec_context(\n                                    self.gss_host,\n                                    mech,\n                                    self.username,\n                                    srv_token,\n                                )",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "AuthHandler._parse_service_accept",
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 3,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "removed_callable_review"
+          ],
+          "site_hit_symbols": [
+            "GSSAuth"
+          ],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "paramiko/ssh_gss.py",
+            "qualname": "_SSH_SSPI.ssh_init_sec_context",
+            "name": "ssh_init_sec_context",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 619,
+            "new_line": null,
+            "is_method": true,
+            "old_parameters": "(self, target, desired_mech=..., username=..., recv_token=...)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "target",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "desired_mech",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "username",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "recv_token",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 422,
+          "end_line": 427,
+          "call_line": 422,
+          "call_text": "sshgss.ssh_init_sec_context(\n                                    self.gss_host,\n                                    mech,\n                                    self.username,\n                                    srv_token,\n                                )",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "AuthHandler._parse_service_accept",
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 3,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "removed_callable_review"
+          ],
+          "site_hit_symbols": [
+            "GSSAuth"
+          ],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "paramiko/ssh_gss.py",
+            "qualname": "_SSH_GSSAPI_OLD.ssh_get_mic",
+            "name": "ssh_get_mic",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 320,
+            "new_line": null,
+            "is_method": true,
+            "old_parameters": "(self, session_id, gss_kex=...)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "session_id",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "gss_kex",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 447,
+          "end_line": 447,
+          "call_line": 447,
+          "call_text": "sshgss.ssh_get_mic(self.transport.session_id)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "AuthHandler._parse_service_accept",
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 3,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "removed_callable_review"
+          ],
+          "site_hit_symbols": [
+            "GSSAuth"
+          ],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "paramiko/ssh_gss.py",
+            "qualname": "_SSH_GSSAPI_NEW.ssh_get_mic",
+            "name": "ssh_get_mic",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 494,
+            "new_line": null,
+            "is_method": true,
+            "old_parameters": "(self, session_id, gss_kex=...)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "session_id",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "gss_kex",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 447,
+          "end_line": 447,
+          "call_line": 447,
+          "call_text": "sshgss.ssh_get_mic(self.transport.session_id)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "AuthHandler._parse_service_accept",
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 3,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "removed_callable_review"
+          ],
+          "site_hit_symbols": [
+            "GSSAuth"
+          ],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "paramiko/ssh_gss.py",
+            "qualname": "_SSH_SSPI.ssh_get_mic",
+            "name": "ssh_get_mic",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 671,
+            "new_line": null,
+            "is_method": true,
+            "old_parameters": "(self, session_id, gss_kex=...)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "session_id",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "gss_kex",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 447,
+          "end_line": 447,
+          "call_line": 447,
+          "call_text": "sshgss.ssh_get_mic(self.transport.session_id)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "AuthHandler._parse_service_accept",
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 3,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "removed_callable_review"
+          ],
+          "site_hit_symbols": [
+            "GSSAuth"
+          ],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "paramiko/ssh_gss.py",
+            "qualname": "_SSH_GSSAuth.set_username",
+            "name": "set_username",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 153,
+            "new_line": null,
+            "is_method": true,
+            "old_parameters": "(self, username)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "username",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 480,
+          "end_line": 480,
+          "call_line": 480,
+          "call_text": "kexgss.set_username(self.username)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "AuthHandler._parse_service_accept",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "removed_callable_review"
+          ],
+          "site_hit_symbols": [
+            "GSSAuth"
+          ],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "paramiko/ssh_gss.py",
+            "qualname": "_SSH_GSSAPI_OLD.ssh_get_mic",
+            "name": "ssh_get_mic",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 320,
+            "new_line": null,
+            "is_method": true,
+            "old_parameters": "(self, session_id, gss_kex=...)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "session_id",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "gss_kex",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 481,
+          "end_line": 481,
+          "call_line": 481,
+          "call_text": "kexgss.ssh_get_mic(self.transport.session_id)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "AuthHandler._parse_service_accept",
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 3,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "removed_callable_review"
+          ],
+          "site_hit_symbols": [
+            "GSSAuth"
+          ],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "paramiko/ssh_gss.py",
+            "qualname": "_SSH_GSSAPI_NEW.ssh_get_mic",
+            "name": "ssh_get_mic",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 494,
+            "new_line": null,
+            "is_method": true,
+            "old_parameters": "(self, session_id, gss_kex=...)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "session_id",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "gss_kex",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 481,
+          "end_line": 481,
+          "call_line": 481,
+          "call_text": "kexgss.ssh_get_mic(self.transport.session_id)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "AuthHandler._parse_service_accept",
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 3,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "removed_callable_review"
+          ],
+          "site_hit_symbols": [
+            "GSSAuth"
+          ],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "paramiko/ssh_gss.py",
+            "qualname": "_SSH_SSPI.ssh_get_mic",
+            "name": "ssh_get_mic",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 671,
+            "new_line": null,
+            "is_method": true,
+            "old_parameters": "(self, session_id, gss_kex=...)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "session_id",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "gss_kex",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 481,
+          "end_line": 481,
+          "call_line": 481,
+          "call_text": "kexgss.ssh_get_mic(self.transport.session_id)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "AuthHandler._parse_service_accept",
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 3,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "removed_callable_review"
+          ],
+          "site_hit_symbols": [
+            "GSSAuth"
+          ],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "paramiko/server.py",
+            "qualname": "ServerInterface.enable_auth_gssapi",
+            "name": "enable_auth_gssapi",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 300,
+            "new_line": null,
+            "is_method": true,
+            "old_parameters": "(self)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 567,
+          "end_line": 567,
+          "call_line": 567,
+          "call_text": "self.transport.server_object.enable_auth_gssapi()",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "AuthHandler._parse_userauth_request",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "removed_callable_review"
+          ],
+          "site_hit_symbols": [
+            "GSSAuth"
+          ],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "paramiko/ssh_gss.py",
+            "qualname": "GSSAuth",
+            "name": "GSSAuth",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 77,
+            "new_line": null,
+            "is_method": false,
+            "old_parameters": "(auth_method, gss_deleg_creds=...)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "auth_method",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "gss_deleg_creds",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 652,
+          "end_line": 652,
+          "call_line": 652,
+          "call_text": "GSSAuth(method)",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "AuthHandler._parse_userauth_request",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "removed_callable_review"
+          ],
+          "site_hit_symbols": [
+            "GSSAuth"
+          ],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "paramiko/ssh_gss.py",
+            "qualname": "_SSH_GSSAuth.ssh_check_mech",
+            "name": "ssh_check_mech",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 184,
+            "new_line": null,
+            "is_method": true,
+            "old_parameters": "(self, desired_mech)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "desired_mech",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 666,
+          "end_line": 666,
+          "call_line": 666,
+          "call_text": "sshgss.ssh_check_mech(desired_mech)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "AuthHandler._parse_userauth_request",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "removed_callable_review"
+          ],
+          "site_hit_symbols": [
+            "GSSAuth"
+          ],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "paramiko/ssh_gss.py",
+            "qualname": "_SSH_GSSAuth.ssh_gss_oids",
+            "name": "ssh_gss_oids",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 162,
+            "new_line": null,
+            "is_method": true,
+            "old_parameters": "(self, mode=...)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "mode",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 675,
+          "end_line": 675,
+          "call_line": 675,
+          "call_text": "sshgss.ssh_gss_oids(\"server\")",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "AuthHandler._parse_userauth_request",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "removed_callable_review"
+          ],
+          "site_hit_symbols": [
+            "GSSAuth"
+          ],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "paramiko/ssh_gss.py",
+            "qualname": "_SSH_GSSAPI_OLD.ssh_check_mic",
+            "name": "ssh_check_mic",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 367,
+            "new_line": null,
+            "is_method": true,
+            "old_parameters": "(self, mic_token, session_id, username=...)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "mic_token",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "session_id",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "username",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 699,
+          "end_line": 701,
+          "call_line": 699,
+          "call_text": "sshgss.ssh_check_mic(\n                    mic_token, self.transport.session_id, self.auth_username\n                )",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "AuthHandler._parse_userauth_request",
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 3,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "removed_callable_review"
+          ],
+          "site_hit_symbols": [
+            "GSSAuth"
+          ],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "paramiko/ssh_gss.py",
+            "qualname": "_SSH_GSSAPI_NEW.ssh_check_mic",
+            "name": "ssh_check_mic",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 542,
+            "new_line": null,
+            "is_method": true,
+            "old_parameters": "(self, mic_token, session_id, username=...)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "mic_token",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "session_id",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "username",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 699,
+          "end_line": 701,
+          "call_line": 699,
+          "call_text": "sshgss.ssh_check_mic(\n                    mic_token, self.transport.session_id, self.auth_username\n                )",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "AuthHandler._parse_userauth_request",
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 3,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "removed_callable_review"
+          ],
+          "site_hit_symbols": [
+            "GSSAuth"
+          ],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "paramiko/ssh_gss.py",
+            "qualname": "_SSH_SSPI.ssh_check_mic",
+            "name": "ssh_check_mic",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 720,
+            "new_line": null,
+            "is_method": true,
+            "old_parameters": "(self, mic_token, session_id, username=...)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "mic_token",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "session_id",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "username",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 699,
+          "end_line": 701,
+          "call_line": 699,
+          "call_text": "sshgss.ssh_check_mic(\n                    mic_token, self.transport.session_id, self.auth_username\n                )",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "AuthHandler._parse_userauth_request",
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 3,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "removed_callable_review"
+          ],
+          "site_hit_symbols": [
+            "GSSAuth"
+          ],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "paramiko/server.py",
+            "qualname": "ServerInterface.check_auth_gssapi_keyex",
+            "name": "check_auth_gssapi_keyex",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 268,
+            "new_line": null,
+            "is_method": true,
+            "old_parameters": "(self, username, gss_authenticated=..., cc_file=...)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "username",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "gss_authenticated",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "cc_file",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 707,
+          "end_line": 709,
+          "call_line": 707,
+          "call_text": "self.transport.server_object.check_auth_gssapi_keyex(\n                username, result\n            )",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "AuthHandler._parse_userauth_request",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "removed_callable_review"
+          ],
+          "site_hit_symbols": [
+            "GSSAuth"
+          ],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "paramiko/ssh_gss.py",
+            "qualname": "_SSH_GSSAPI_OLD.ssh_accept_sec_context",
+            "name": "ssh_accept_sec_context",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 347,
+            "new_line": null,
+            "is_method": true,
+            "old_parameters": "(self, hostname, recv_token, username=...)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "hostname",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "recv_token",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "username",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 891,
+          "end_line": 893,
+          "call_line": 891,
+          "call_text": "sshgss.ssh_accept_sec_context(\n                self.gss_host, client_token, self.auth_username\n            )",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "GssapiWithMicAuthHandler._parse_userauth_gssapi_token",
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 3,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": true,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "paramiko/ssh_gss.py",
+            "qualname": "_SSH_GSSAPI_NEW.ssh_accept_sec_context",
+            "name": "ssh_accept_sec_context",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 522,
+            "new_line": null,
+            "is_method": true,
+            "old_parameters": "(self, hostname, recv_token, username=...)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "hostname",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "recv_token",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "username",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 891,
+          "end_line": 893,
+          "call_line": 891,
+          "call_text": "sshgss.ssh_accept_sec_context(\n                self.gss_host, client_token, self.auth_username\n            )",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "GssapiWithMicAuthHandler._parse_userauth_gssapi_token",
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 3,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": true,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "paramiko/ssh_gss.py",
+            "qualname": "_SSH_SSPI.ssh_accept_sec_context",
+            "name": "ssh_accept_sec_context",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 698,
+            "new_line": null,
+            "is_method": true,
+            "old_parameters": "(self, hostname, username, recv_token)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "hostname",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "username",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "recv_token",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 891,
+          "end_line": 893,
+          "call_line": 891,
+          "call_text": "sshgss.ssh_accept_sec_context(\n                self.gss_host, client_token, self.auth_username\n            )",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "GssapiWithMicAuthHandler._parse_userauth_gssapi_token",
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 3,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": true,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "paramiko/ssh_gss.py",
+            "qualname": "_SSH_GSSAPI_OLD.ssh_check_mic",
+            "name": "ssh_check_mic",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 367,
+            "new_line": null,
+            "is_method": true,
+            "old_parameters": "(self, mic_token, session_id, username=...)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "mic_token",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "session_id",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "username",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 917,
+          "end_line": 919,
+          "call_line": 917,
+          "call_text": "sshgss.ssh_check_mic(\n                mic_token, self.transport.session_id, username\n            )",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "GssapiWithMicAuthHandler._parse_userauth_gssapi_mic",
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 3,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": true,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "paramiko/ssh_gss.py",
+            "qualname": "_SSH_GSSAPI_NEW.ssh_check_mic",
+            "name": "ssh_check_mic",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 542,
+            "new_line": null,
+            "is_method": true,
+            "old_parameters": "(self, mic_token, session_id, username=...)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "mic_token",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "session_id",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "username",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 917,
+          "end_line": 919,
+          "call_line": 917,
+          "call_text": "sshgss.ssh_check_mic(\n                mic_token, self.transport.session_id, username\n            )",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "GssapiWithMicAuthHandler._parse_userauth_gssapi_mic",
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 3,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": true,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "paramiko/ssh_gss.py",
+            "qualname": "_SSH_SSPI.ssh_check_mic",
+            "name": "ssh_check_mic",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 720,
+            "new_line": null,
+            "is_method": true,
+            "old_parameters": "(self, mic_token, session_id, username=...)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "mic_token",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "session_id",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "username",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 917,
+          "end_line": 919,
+          "call_line": 917,
+          "call_text": "sshgss.ssh_check_mic(\n                mic_token, self.transport.session_id, username\n            )",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "GssapiWithMicAuthHandler._parse_userauth_gssapi_mic",
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 3,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": true,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "paramiko/server.py",
+            "qualname": "ServerInterface.check_auth_gssapi_with_mic",
+            "name": "check_auth_gssapi_with_mic",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 238,
+            "new_line": null,
+            "is_method": true,
+            "old_parameters": "(self, username, gss_authenticated=..., cc_file=...)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "username",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "gss_authenticated",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "cc_file",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 929,
+          "end_line": 931,
+          "call_line": 929,
+          "call_text": "self.transport.server_object.check_auth_gssapi_with_mic(\n            username, result\n        )",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "GssapiWithMicAuthHandler._parse_userauth_gssapi_mic",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": true,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        }
+      ],
+      "new_findings_in_stale_file": [
+        {
+          "detector": "removed_callable_review",
+          "symbol": "GSSAuth",
+          "path": "paramiko/auth_handler.py",
+          "line": 393,
+          "anchor": "AuthHandler._parse_service_accept"
+        },
+        {
+          "detector": "removed_callable_review",
+          "symbol": "GSSAuth",
+          "path": "paramiko/auth_handler.py",
+          "line": 652,
+          "anchor": "AuthHandler._parse_userauth_request"
+        }
+      ],
+      "collateral": []
+    },
+    {
+      "id": "paramiko:1ecc933b3451:paramiko/client.py",
+      "repository": "paramiko",
+      "commit": "1ecc933b34510525aee8cad9956c3b8e642783ec",
+      "parent": "9bf5fcae57e6ca995275037eea9d6305f70d7cdb",
+      "subject": "Remove GSSAPI support :(",
+      "stale_path": "paramiko/client.py",
+      "stale_blob": "7b844afb82f71e1d7ed55d54e426d06a804bde7b",
+      "commit_blob": "2eb9ce246b1979167ba30e08ffc91b414f01ae50",
+      "other_changed_python_paths": [
+        "paramiko/__init__.py",
+        "paramiko/auth_handler.py",
+        "paramiko/server.py",
+        "paramiko/ssh_gss.py",
+        "paramiko/transport.py",
+        "tests/_util.py",
+        "tests/test_client.py",
+        "tests/test_gssapi.py",
+        "tests/test_kex_gss.py",
+        "tests/test_ssh_gss.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "paramiko/transport.py",
+            "qualname": "Transport.set_gss_host",
+            "name": "set_gss_host",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 680,
+            "new_line": null,
+            "is_method": true,
+            "old_parameters": "(self, gss_host, trust_dns=..., gssapi_requested=...)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "gss_host",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "trust_dns",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "gssapi_requested",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 418,
+          "end_line": 424,
+          "call_line": 418,
+          "call_text": "t.set_gss_host(\n            # t.hostname may be None, but GSS-API requires a target name.\n            # Therefore use hostname as fallback.\n            gss_host=gss_host or hostname,\n            trust_dns=gss_trust_dns,\n            gssapi_requested=gss_auth or gss_kex,\n        )",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "SSHClient.connect",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "paramiko/auth_handler.py",
+            "qualname": "AuthHandler.auth_gssapi_keyex",
+            "name": "auth_gssapi_keyex",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 170,
+            "new_line": null,
+            "is_method": true,
+            "old_parameters": "(self, username, event)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "username",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "event",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 714,
+          "end_line": 714,
+          "call_line": 714,
+          "call_text": "self._transport.auth_gssapi_keyex(username)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "SSHClient._auth",
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 3,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "paramiko/transport.py",
+            "qualname": "Transport.auth_gssapi_keyex",
+            "name": "auth_gssapi_keyex",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 1806,
+            "new_line": null,
+            "is_method": true,
+            "old_parameters": "(self, username)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "username",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 714,
+          "end_line": 714,
+          "call_line": 714,
+          "call_text": "self._transport.auth_gssapi_keyex(username)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "SSHClient._auth",
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 3,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "paramiko/transport.py",
+            "qualname": "ServiceRequestingTransport.auth_gssapi_keyex",
+            "name": "auth_gssapi_keyex",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 3469,
+            "new_line": null,
+            "is_method": true,
+            "old_parameters": "(self, username)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "username",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 714,
+          "end_line": 714,
+          "call_line": 714,
+          "call_text": "self._transport.auth_gssapi_keyex(username)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "SSHClient._auth",
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 3,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "paramiko/auth_handler.py",
+            "qualname": "AuthHandler.auth_gssapi_with_mic",
+            "name": "auth_gssapi_with_mic",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 158,
+            "new_line": null,
+            "is_method": true,
+            "old_parameters": "(self, username, gss_host, gss_deleg_creds, event)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "username",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "gss_host",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "gss_deleg_creds",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "event",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 725,
+          "end_line": 727,
+          "call_line": 725,
+          "call_text": "self._transport.auth_gssapi_with_mic(\n                    username, gss_host, gss_deleg_creds\n                )",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "SSHClient._auth",
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 3,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "paramiko/transport.py",
+            "qualname": "Transport.auth_gssapi_with_mic",
+            "name": "auth_gssapi_with_mic",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 1780,
+            "new_line": null,
+            "is_method": true,
+            "old_parameters": "(self, username, gss_host, gss_deleg_creds)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "username",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "gss_host",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "gss_deleg_creds",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 725,
+          "end_line": 727,
+          "call_line": 725,
+          "call_text": "self._transport.auth_gssapi_with_mic(\n                    username, gss_host, gss_deleg_creds\n                )",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "SSHClient._auth",
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 3,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "paramiko/transport.py",
+            "qualname": "ServiceRequestingTransport.auth_gssapi_with_mic",
+            "name": "auth_gssapi_with_mic",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 3460,
+            "new_line": null,
+            "is_method": true,
+            "old_parameters": "(self, username, gss_host, gss_deleg_creds)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "username",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "gss_host",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "gss_deleg_creds",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 725,
+          "end_line": 727,
+          "call_line": 725,
+          "call_text": "self._transport.auth_gssapi_with_mic(\n                    username, gss_host, gss_deleg_creds\n                )",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "SSHClient._auth",
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 3,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "paramiko:1ecc933b3451:paramiko/transport.py",
+      "repository": "paramiko",
+      "commit": "1ecc933b34510525aee8cad9956c3b8e642783ec",
+      "parent": "9bf5fcae57e6ca995275037eea9d6305f70d7cdb",
+      "subject": "Remove GSSAPI support :(",
+      "stale_path": "paramiko/transport.py",
+      "stale_blob": "cbeb3940f48b90bc556db14c52e26d36d880eb87",
+      "commit_blob": "dd23f1fe57d40d7431a395e4d0bbc1ac42b2705a",
+      "other_changed_python_paths": [
+        "paramiko/__init__.py",
+        "paramiko/auth_handler.py",
+        "paramiko/client.py",
+        "paramiko/server.py",
+        "paramiko/ssh_gss.py",
+        "tests/_util.py",
+        "tests/test_client.py",
+        "tests/test_gssapi.py",
+        "tests/test_kex_gss.py",
+        "tests/test_ssh_gss.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "paramiko/ssh_gss.py",
+            "qualname": "GSSAuth",
+            "name": "GSSAuth",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 77,
+            "new_line": null,
+            "is_method": false,
+            "old_parameters": "(auth_method, gss_deleg_creds=...)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "auth_method",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "gss_deleg_creds",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 521,
+          "end_line": 521,
+          "call_line": 521,
+          "call_text": "GSSAuth(\"gssapi-keyex\", gss_deleg_creds)",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "Transport.__init__",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "removed_callable_review"
+          ],
+          "site_hit_symbols": [
+            "GSSAuth"
+          ],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "paramiko/auth_handler.py",
+            "qualname": "AuthHandler.auth_gssapi_with_mic",
+            "name": "auth_gssapi_with_mic",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 158,
+            "new_line": null,
+            "is_method": true,
+            "old_parameters": "(self, username, gss_host, gss_deleg_creds, event)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "username",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "gss_host",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "gss_deleg_creds",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "event",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 1447,
+          "end_line": 1449,
+          "call_line": 1447,
+          "call_text": "self.auth_gssapi_with_mic(\n                    username, self.gss_host, gss_deleg_creds\n                )",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "Transport.connect",
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 3,
+          "name_defined_in_stale_file": true,
+          "site_hit": false,
+          "file_hit": true,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "paramiko/auth_handler.py",
+            "qualname": "AuthHandler.auth_gssapi_keyex",
+            "name": "auth_gssapi_keyex",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 170,
+            "new_line": null,
+            "is_method": true,
+            "old_parameters": "(self, username, event)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "username",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "event",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 1452,
+          "end_line": 1452,
+          "call_line": 1452,
+          "call_text": "self.auth_gssapi_keyex(username)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "Transport.connect",
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 3,
+          "name_defined_in_stale_file": true,
+          "site_hit": false,
+          "file_hit": true,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "paramiko/auth_handler.py",
+            "qualname": "AuthHandler.auth_gssapi_with_mic",
+            "name": "auth_gssapi_with_mic",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 158,
+            "new_line": null,
+            "is_method": true,
+            "old_parameters": "(self, username, gss_host, gss_deleg_creds, event)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "username",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "gss_host",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "gss_deleg_creds",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "event",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 1801,
+          "end_line": 1803,
+          "call_line": 1801,
+          "call_text": "self.auth_handler.auth_gssapi_with_mic(\n            username, gss_host, gss_deleg_creds, my_event\n        )",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "Transport.auth_gssapi_with_mic",
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 3,
+          "name_defined_in_stale_file": true,
+          "site_hit": false,
+          "file_hit": true,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "paramiko/auth_handler.py",
+            "qualname": "AuthHandler.auth_gssapi_keyex",
+            "name": "auth_gssapi_keyex",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 170,
+            "new_line": null,
+            "is_method": true,
+            "old_parameters": "(self, username, event)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "username",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "event",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 1826,
+          "end_line": 1826,
+          "call_line": 1826,
+          "call_text": "self.auth_handler.auth_gssapi_keyex(username, my_event)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "Transport.auth_gssapi_keyex",
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 3,
+          "name_defined_in_stale_file": true,
+          "site_hit": false,
+          "file_hit": true,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "paramiko/auth_handler.py",
+            "qualname": "AuthHandler.auth_gssapi_with_mic",
+            "name": "auth_gssapi_with_mic",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 158,
+            "new_line": null,
+            "is_method": true,
+            "old_parameters": "(self, username, gss_host, gss_deleg_creds, event)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "username",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "gss_host",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "gss_deleg_creds",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "event",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 3465,
+          "end_line": 3467,
+          "call_line": 3465,
+          "call_text": "self.auth_handler.auth_gssapi_with_mic(\n            username, gss_host, gss_deleg_creds\n        )",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "ServiceRequestingTransport.auth_gssapi_with_mic",
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 3,
+          "name_defined_in_stale_file": true,
+          "site_hit": false,
+          "file_hit": true,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "paramiko/auth_handler.py",
+            "qualname": "AuthHandler.auth_gssapi_keyex",
+            "name": "auth_gssapi_keyex",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 170,
+            "new_line": null,
+            "is_method": true,
+            "old_parameters": "(self, username, event)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "username",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "event",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 3474,
+          "end_line": 3474,
+          "call_line": 3474,
+          "call_text": "self.auth_handler.auth_gssapi_keyex(username)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "ServiceRequestingTransport.auth_gssapi_keyex",
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 3,
+          "name_defined_in_stale_file": true,
+          "site_hit": false,
+          "file_hit": true,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": [
+            "removed_callable_review"
+          ]
+        }
+      ],
+      "new_findings_in_stale_file": [
+        {
+          "detector": "removed_callable_review",
+          "symbol": "GSSAuth",
+          "path": "paramiko/transport.py",
+          "line": 521,
+          "anchor": "Transport.__init__"
+        }
+      ],
+      "collateral": []
+    },
+    {
+      "id": "paramiko:acd4bc1dee5a:paramiko/ecdsakey.py",
+      "repository": "paramiko",
+      "commit": "acd4bc1dee5a594a3534b6d76f7dfc6ebd55f71b",
+      "parent": "6fa15569100fc222af4153f763d19620d64d9e4f",
+      "subject": "Replace hardcoded PEM format in PKey.write* with new parameter",
+      "stale_path": "paramiko/ecdsakey.py",
+      "stale_blob": "271971acd0339b64315d2b363d51f4a9b7050b4c",
+      "commit_blob": "07eac6959314ba49147866df04ad16db593455ad",
+      "other_changed_python_paths": [
+        "paramiko/pkey.py",
+        "paramiko/rsakey.py",
+        "tests/pkey.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "paramiko/pkey.py",
+            "qualname": "PKey._write_private_key_file",
+            "name": "_write_private_key_file",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 746,
+            "new_line": 799,
+            "is_method": true,
+            "old_parameters": "(self, filename, key, format, password=...)",
+            "new_parameters": "(self, filename, key, file_format, password=...)",
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "filename",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "key",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "format",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "password",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "filename",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "key",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "file_format",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "password",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 248,
+          "end_line": 253,
+          "call_line": 248,
+          "call_text": "self._write_private_key_file(\n            filename,\n            self.signing_key,\n            serialization.PrivateFormat.TraditionalOpenSSL,\n            password=password,\n        )",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "ECDSAKey.write_private_key_file",
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "override_signature_review"
+          ],
+          "site_hit_symbols": [
+            "ECDSAKey.write_private_key_file"
+          ],
+          "file_hit_detectors": [
+            "override_signature_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "paramiko/pkey.py",
+            "qualname": "PKey._write_private_key",
+            "name": "_write_private_key",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 780,
+            "new_line": 825,
+            "is_method": true,
+            "old_parameters": "(self, f, key, format, password=...)",
+            "new_parameters": "(self, f, key, file_format, password=...)",
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "f",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "key",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "format",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "password",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "f",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "key",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "file_format",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "password",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 256,
+          "end_line": 261,
+          "call_line": 256,
+          "call_text": "self._write_private_key(\n            file_obj,\n            self.signing_key,\n            serialization.PrivateFormat.TraditionalOpenSSL,\n            password=password,\n        )",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "ECDSAKey.write_private_key",
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "override_signature_review"
+          ],
+          "site_hit_symbols": [
+            "ECDSAKey.write_private_key"
+          ],
+          "file_hit_detectors": [
+            "override_signature_review"
+          ]
+        }
+      ],
+      "new_findings_in_stale_file": [
+        {
+          "detector": "override_signature_review",
+          "symbol": "ECDSAKey.write_private_key_file",
+          "path": "paramiko/ecdsakey.py",
+          "line": 247,
+          "anchor": "ECDSAKey.write_private_key_file"
+        },
+        {
+          "detector": "override_signature_review",
+          "symbol": "ECDSAKey.write_private_key",
+          "path": "paramiko/ecdsakey.py",
+          "line": 255,
+          "anchor": "ECDSAKey.write_private_key"
+        }
+      ],
+      "collateral": []
+    },
+    {
+      "id": "paramiko:acd4bc1dee5a:paramiko/rsakey.py",
+      "repository": "paramiko",
+      "commit": "acd4bc1dee5a594a3534b6d76f7dfc6ebd55f71b",
+      "parent": "6fa15569100fc222af4153f763d19620d64d9e4f",
+      "subject": "Replace hardcoded PEM format in PKey.write* with new parameter",
+      "stale_path": "paramiko/rsakey.py",
+      "stale_blob": "5ca43544152185986c953c0db76030129e08c458",
+      "commit_blob": "bcef762ed00331c65c048424dbccdc6e30b4e012",
+      "other_changed_python_paths": [
+        "paramiko/ecdsakey.py",
+        "paramiko/pkey.py",
+        "tests/pkey.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "paramiko/pkey.py",
+            "qualname": "PKey._write_private_key_file",
+            "name": "_write_private_key_file",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 746,
+            "new_line": 799,
+            "is_method": true,
+            "old_parameters": "(self, filename, key, format, password=...)",
+            "new_parameters": "(self, filename, key, file_format, password=...)",
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "filename",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "key",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "format",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "password",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "filename",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "key",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "file_format",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "password",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 169,
+          "end_line": 174,
+          "call_line": 169,
+          "call_text": "self._write_private_key_file(\n            filename,\n            self.key,\n            serialization.PrivateFormat.TraditionalOpenSSL,\n            password=password,\n        )",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "RSAKey.write_private_key_file",
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "override_signature_review"
+          ],
+          "site_hit_symbols": [
+            "RSAKey.write_private_key_file"
+          ],
+          "file_hit_detectors": [
+            "override_signature_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "paramiko/pkey.py",
+            "qualname": "PKey._write_private_key",
+            "name": "_write_private_key",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 780,
+            "new_line": 825,
+            "is_method": true,
+            "old_parameters": "(self, f, key, format, password=...)",
+            "new_parameters": "(self, f, key, file_format, password=...)",
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "f",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "key",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "format",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "password",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "f",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "key",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "file_format",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "password",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 177,
+          "end_line": 182,
+          "call_line": 177,
+          "call_text": "self._write_private_key(\n            file_obj,\n            self.key,\n            serialization.PrivateFormat.TraditionalOpenSSL,\n            password=password,\n        )",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "RSAKey.write_private_key",
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "override_signature_review"
+          ],
+          "site_hit_symbols": [
+            "RSAKey.write_private_key"
+          ],
+          "file_hit_detectors": [
+            "override_signature_review"
+          ]
+        }
+      ],
+      "new_findings_in_stale_file": [
+        {
+          "detector": "override_signature_review",
+          "symbol": "RSAKey.write_private_key_file",
+          "path": "paramiko/rsakey.py",
+          "line": 168,
+          "anchor": "RSAKey.write_private_key_file"
+        },
+        {
+          "detector": "override_signature_review",
+          "symbol": "RSAKey.write_private_key",
+          "path": "paramiko/rsakey.py",
+          "line": 176,
+          "anchor": "RSAKey.write_private_key"
+        }
+      ],
+      "collateral": []
+    }
+  ]
+}

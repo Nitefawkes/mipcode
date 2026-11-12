@@ -1,0 +1,17 @@
+{
+  "schema": "mip-delta recall-mutation corpus v1",
+  "materialization": "Tree M is the tree of `commit` with the file at `stale_path` replaced by the blob `stale_blob` (the parent's version of that file). Every other path is exactly as in `commit`. Line numbers of sites refer to the `stale_blob` text, which is also the text of that file in M.",
+  "repository": "requests",
+  "head": "3c7baaa05ab4aa49cc819ce3a819d260de19c157",
+  "limit": 800,
+  "opt_in_detectors": [],
+  "wall_seconds": 91.1,
+  "counts": {
+    "changed_definitions_removed": 6,
+    "changed_definitions_signature": 6,
+    "commits_changing_production_python": 236,
+    "commits_examined": 800,
+    "commits_with_changed_definitions": 9
+  },
+  "mutations": []
+}

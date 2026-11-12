@@ -22,8 +22,8 @@ Three checks are off by default because most of their reports on complete upstre
 
 | Check | Reports | Why it is off by default |
 | --- | --- | --- |
-| `removed_callable_review` | A surviving call whose resolved definition was removed | On [held-out repositories](../results/held_out/README.md), 23 of its 24 reports were false: the name was still bound after a move, rename, or rebinding. A type checker reports most real cases at the import. |
-| `callback_binding_review` | A changed function that is passed as a value | 11 of its 12 held-out reports were false, mostly after an optional parameter was added. |
+| `removed_callable_review` | A surviving call whose resolved definition was removed | Its results are mixed. In the [first held-out round](../results/held_out/README.md), 23 of its 24 reports were false: the name was still bound after a move, rename, or rebinding. In the [second](../results/held_out/round2/README.md), 78 of 79 sampled reports were real, nearly all from one commit that deleted a module and left its importers unchanged. A test run or a type checker reports that kind of break first. |
+| `callback_binding_review` | A changed function that is passed as a value | 22 of its 23 held-out reports across both rounds were false, mostly a function passed where the signature change cannot matter. |
 | `parameter_truthiness_review` | A new or changed `None`-default parameter tested as a bare truth value, as in `if base:` | Upstream code often intends this. It produced the most reports in the [first history replay](../results/history_replay/README.md). |
 
 Turn a check on with `--enable`, which can be repeated:

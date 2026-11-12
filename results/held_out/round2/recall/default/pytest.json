@@ -1,0 +1,1740 @@
+{
+  "schema": "mip-delta recall-mutation corpus v1",
+  "materialization": "Tree M is the tree of `commit` with the file at `stale_path` replaced by the blob `stale_blob` (the parent's version of that file). Every other path is exactly as in `commit`. Line numbers of sites refer to the `stale_blob` text, which is also the text of that file in M.",
+  "repository": "pytest",
+  "head": "d5afeaffaa52b149e49300c90b173336994c2147",
+  "limit": 800,
+  "opt_in_detectors": [],
+  "wall_seconds": 125.5,
+  "counts": {
+    "changed_definitions_removed": 21,
+    "changed_definitions_signature": 74,
+    "commits_changing_production_python": 388,
+    "commits_examined": 800,
+    "commits_with_changed_definitions": 45,
+    "commits_with_mutations": 11,
+    "definitions_skipped_duplicate_qualname": 1,
+    "mutations": 15,
+    "sites": 19
+  },
+  "mutations": [
+    {
+      "id": "pytest:15c2e193f22d:src/_pytest/config/__init__.py",
+      "repository": "pytest",
+      "commit": "15c2e193f22d6d7e6c78fae4b0643b710af4eb89",
+      "parent": "ebcd836c5ad997fd1b700eda0b92c296b2637058",
+      "subject": "config: apply --override-ini eagerly",
+      "stale_path": "src/_pytest/config/__init__.py",
+      "stale_blob": "4df15c4db7f874be05c770ba1c38a9473c8f73ff",
+      "commit_blob": "c26455e3d8b02b21e1b4d8663e180f83303012f7",
+      "other_changed_python_paths": [
+        "src/_pytest/config/findpaths.py",
+        "testing/test_config.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "src/_pytest/config/findpaths.py",
+            "qualname": "determine_setup",
+            "name": "determine_setup",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 187,
+            "new_line": 209,
+            "is_method": false,
+            "old_parameters": "(*, inifile, args, rootdir_cmd_arg, invocation_dir)",
+            "new_parameters": "(*, inifile, override_ini, args, rootdir_cmd_arg, invocation_dir)",
+            "old_parameter_list": [
+              [
+                "inifile",
+                "keyword_only",
+                false
+              ],
+              [
+                "args",
+                "keyword_only",
+                false
+              ],
+              [
+                "rootdir_cmd_arg",
+                "keyword_only",
+                false
+              ],
+              [
+                "invocation_dir",
+                "keyword_only",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "inifile",
+                "keyword_only",
+                false
+              ],
+              [
+                "override_ini",
+                "keyword_only",
+                false
+              ],
+              [
+                "args",
+                "keyword_only",
+                false
+              ],
+              [
+                "rootdir_cmd_arg",
+                "keyword_only",
+                false
+              ],
+              [
+                "invocation_dir",
+                "keyword_only",
+                false
+              ]
+            ]
+          },
+          "line": 1252,
+          "end_line": 1257,
+          "call_line": 1252,
+          "call_text": "determine_setup(\n            inifile=ns.inifilename,\n            args=ns.file_or_dir + unknown_args,\n            rootdir_cmd_arg=ns.rootdir or None,\n            invocation_dir=self.invocation_params.dir,\n        )",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "Config._initini",
+          "binding": "breaking",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "pytest:4f0718027657:src/_pytest/config/__init__.py",
+      "repository": "pytest",
+      "commit": "4f07180276575856ebe3d35d02c8b415316ba56d",
+      "parent": "95e0cf22fa1f9fa01a372216572f97a8e614205c",
+      "subject": "config: inline `parse_setoption`",
+      "stale_path": "src/_pytest/config/__init__.py",
+      "stale_blob": "6e94328c1bae6fc8ff041877fcc8a4937bbe3504",
+      "commit_blob": "43a4cc3dfafd8aa62b33b058a789ba295eeee9e8",
+      "other_changed_python_paths": [
+        "src/_pytest/config/argparsing.py",
+        "testing/test_parseopt.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "src/_pytest/config/argparsing.py",
+            "qualname": "Parser.parse_setoption",
+            "name": "parse_setoption",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 137,
+            "new_line": null,
+            "is_method": true,
+            "old_parameters": "(self, args, option, namespace=...)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "args",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "option",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "namespace",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 1541,
+          "end_line": 1543,
+          "call_line": 1541,
+          "call_text": "self._parser.parse_setoption(\n                args, self.option, namespace=self.option\n            )",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "Config.parse",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "pytest:e94518ddef13:src/_pytest/config/__init__.py",
+      "repository": "pytest",
+      "commit": "e94518ddef13db739e9ab2c35d11e4f8904f6d13",
+      "parent": "bda322a4932d9d55638202896017239a8ea7fdd2",
+      "subject": "config: use one `ArgumentParser` instead of creating new one for each parse",
+      "stale_path": "src/_pytest/config/__init__.py",
+      "stale_blob": "8e47bb0a28c67af6271a1727d27dc435557bb331",
+      "commit_blob": "14ac820649a4299e7d172dbeebe2e60f72f36f9f",
+      "other_changed_python_paths": [
+        "src/_pytest/config/argparsing.py",
+        "testing/test_config.py",
+        "testing/test_parseopt.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "src/_pytest/config/argparsing.py",
+            "qualname": "Parser._getparser",
+            "name": "_getparser",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 105,
+            "new_line": null,
+            "is_method": true,
+            "old_parameters": "(self)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 1160,
+          "end_line": 1160,
+          "call_line": 1160,
+          "call_text": "self._parser._getparser()",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "Config.pytest_cmdline_parse",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "pytest:d4907e8499fc:src/_pytest/nodes.py",
+      "repository": "pytest",
+      "commit": "d4907e8499fc4c36493b61437b56cf2eabfdcebf",
+      "parent": "d889ca0f3b8c45f92ef90f34e67ddbaa2c988134",
+      "subject": "nodes: remove deprecated `fspath` Node constructor parameter",
+      "stale_path": "src/_pytest/nodes.py",
+      "stale_blob": "bc1dfc90d966e5b00caad586079fc7a7d80409c1",
+      "commit_blob": "f0629c2daf76c0b35e86868d4406f421d2d7eb69",
+      "other_changed_python_paths": [
+        "src/_pytest/config/compat.py",
+        "src/_pytest/deprecated.py",
+        "src/_pytest/python.py",
+        "testing/deprecated_test.py",
+        "testing/test_nodes.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "src/_pytest/config/compat.py",
+            "qualname": "_check_path",
+            "name": "_check_path",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 8,
+            "new_line": null,
+            "is_method": false,
+            "old_parameters": "(path, fspath)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "path",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "fspath",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 88,
+          "end_line": 88,
+          "call_line": 88,
+          "call_text": "_check_path(path, fspath)",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "_imply_path",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "pytest:05c837dc3178:src/_pytest/assertion/__init__.py",
+      "repository": "pytest",
+      "commit": "05c837dc3178814b581fd378cdda9363c2392ecd",
+      "parent": "6f93bd03849570ce53f7bb3608e29442378b4d1a",
+      "subject": "assertion: push `config` access up from `assertrepr_compare` to the hook",
+      "stale_path": "src/_pytest/assertion/__init__.py",
+      "stale_blob": "22f3ca8e258cc48effeb34154821f8b1e5cf151b",
+      "commit_blob": "f274b9d579c1e2189bd2d0ff06626c4e2f417afb",
+      "other_changed_python_paths": [
+        "src/_pytest/assertion/util.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "src/_pytest/assertion/util.py",
+            "qualname": "assertrepr_compare",
+            "name": "assertrepr_compare",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 176,
+            "new_line": 176,
+            "is_method": false,
+            "old_parameters": "(config, op, left, right)",
+            "new_parameters": "(op, left, right, *, verbose, highlighter)",
+            "old_parameter_list": [
+              [
+                "config",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "op",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "left",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "right",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "op",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "left",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "right",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "verbose",
+                "keyword_only",
+                false
+              ],
+              [
+                "highlighter",
+                "keyword_only",
+                false
+              ]
+            ]
+          },
+          "line": 208,
+          "end_line": 208,
+          "call_line": 208,
+          "call_text": "util.assertrepr_compare(config=config, op=op, left=left, right=right)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "pytest_assertrepr_compare",
+          "binding": "breaking",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "pytest:0263914bf9ce:src/_pytest/tmpdir.py",
+      "repository": "pytest",
+      "commit": "0263914bf9cec5677783cda7557717e4a9660452",
+      "parent": "deb9f5f79b0537a5e80cc26dd11bfb217e263a72",
+      "subject": "tmpdir: stop relying on atexit and add integration tests for tmpdir fixture",
+      "stale_path": "src/_pytest/tmpdir.py",
+      "stale_blob": "66ca9f190e38ed95995f0ded13d9d401a0517c93",
+      "commit_blob": "9196006e500997f3e806fae68f6a255335b0bf3d",
+      "other_changed_python_paths": [
+        "src/_pytest/pathlib.py",
+        "testing/test_tmpdir.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "src/_pytest/pathlib.py",
+            "qualname": "make_numbered_dir_with_cleanup",
+            "name": "make_numbered_dir_with_cleanup",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 377,
+            "new_line": 374,
+            "is_method": false,
+            "old_parameters": "(root, prefix, keep, lock_timeout, mode)",
+            "new_parameters": "(*, root, prefix, mode, keep, lock_timeout, register)",
+            "old_parameter_list": [
+              [
+                "root",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "prefix",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "keep",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "lock_timeout",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "mode",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "root",
+                "keyword_only",
+                false
+              ],
+              [
+                "prefix",
+                "keyword_only",
+                false
+              ],
+              [
+                "mode",
+                "keyword_only",
+                false
+              ],
+              [
+                "keep",
+                "keyword_only",
+                false
+              ],
+              [
+                "lock_timeout",
+                "keyword_only",
+                false
+              ],
+              [
+                "register",
+                "keyword_only",
+                false
+              ]
+            ]
+          },
+          "line": 208,
+          "end_line": 214,
+          "call_line": 208,
+          "call_text": "make_numbered_dir_with_cleanup(\n                prefix=\"pytest-\",\n                root=rootdir,\n                keep=keep,\n                lock_timeout=LOCK_TIMEOUT,\n                mode=0o700,\n            )",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "TempPathFactory.getbasetemp",
+          "binding": "breaking",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "required_keyword_missing"
+          ],
+          "site_hit_symbols": [
+            "make_numbered_dir_with_cleanup"
+          ],
+          "file_hit_detectors": [
+            "required_keyword_missing"
+          ]
+        }
+      ],
+      "new_findings_in_stale_file": [
+        {
+          "detector": "required_keyword_missing",
+          "symbol": "make_numbered_dir_with_cleanup",
+          "path": "src/_pytest/tmpdir.py",
+          "line": 208,
+          "anchor": "TempPathFactory.getbasetemp"
+        }
+      ],
+      "collateral": []
+    },
+    {
+      "id": "pytest:d6dbe52bda18:src/_pytest/assertion/__init__.py",
+      "repository": "pytest",
+      "commit": "d6dbe52bda18fe2cb63c3c9060d7ef8597465655",
+      "parent": "d1cb30d9aece2b2ec750fc901232ce0ea356f68e",
+      "subject": "New assertion_text_diff_style option for text diff blocks (#14425)",
+      "stale_path": "src/_pytest/assertion/__init__.py",
+      "stale_blob": "4b946bc7074e79fb5ff1283732a00d5941351dc7",
+      "commit_blob": "a4530192407e297dcbabf2b36675c6b050254478",
+      "other_changed_python_paths": [
+        "src/_pytest/assertion/util.py",
+        "testing/test_assertion.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "src/_pytest/assertion/util.py",
+            "qualname": "assertrepr_compare",
+            "name": "assertrepr_compare",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 176,
+            "new_line": 205,
+            "is_method": false,
+            "old_parameters": "(op, left, right, *, verbose, highlighter)",
+            "new_parameters": "(op, left, right, *, verbose, highlighter, assertion_text_diff_style)",
+            "old_parameter_list": [
+              [
+                "op",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "left",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "right",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "verbose",
+                "keyword_only",
+                false
+              ],
+              [
+                "highlighter",
+                "keyword_only",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "op",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "left",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "right",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "verbose",
+                "keyword_only",
+                false
+              ],
+              [
+                "highlighter",
+                "keyword_only",
+                false
+              ],
+              [
+                "assertion_text_diff_style",
+                "keyword_only",
+                false
+              ]
+            ]
+          },
+          "line": 213,
+          "end_line": 219,
+          "call_line": 213,
+          "call_text": "util.assertrepr_compare(\n        op=op,\n        left=left,\n        right=right,\n        verbose=config.get_verbosity(Config.VERBOSITY_ASSERTIONS),\n        highlighter=highlighter,\n    )",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "pytest_assertrepr_compare",
+          "binding": "breaking",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "pytest:e37541375cbd:src/_pytest/assertion/__init__.py",
+      "repository": "pytest",
+      "commit": "e37541375cbd8abaa030f0989eb9b7624befbdaf",
+      "parent": "630a96e77dab89b04f5f38207255201b271960e7",
+      "subject": "[perf] Cap the dict extra-items diff by the truncation budget",
+      "stale_path": "src/_pytest/assertion/__init__.py",
+      "stale_blob": "e33f8b296093e981bf999db99cc81a1fdc773c68",
+      "commit_blob": "58ba6f692ab0b4e011819f568074bdd26bc1a511",
+      "other_changed_python_paths": [
+        "src/_pytest/assertion/_compare_any.py",
+        "src/_pytest/assertion/_compare_mapping.py",
+        "src/_pytest/assertion/util.py",
+        "testing/test_assertion.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "src/_pytest/assertion/util.py",
+            "qualname": "assertrepr_compare",
+            "name": "assertrepr_compare",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 135,
+            "new_line": 135,
+            "is_method": false,
+            "old_parameters": "(op, left, right, *, verbose, highlighter, assertion_text_diff_style)",
+            "new_parameters": "(op, left, right, *, verbose, highlighter, assertion_text_diff_style, extra_items_max_lines=...)",
+            "old_parameter_list": [
+              [
+                "op",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "left",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "right",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "verbose",
+                "keyword_only",
+                false
+              ],
+              [
+                "highlighter",
+                "keyword_only",
+                false
+              ],
+              [
+                "assertion_text_diff_style",
+                "keyword_only",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "op",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "left",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "right",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "verbose",
+                "keyword_only",
+                false
+              ],
+              [
+                "highlighter",
+                "keyword_only",
+                false
+              ],
+              [
+                "assertion_text_diff_style",
+                "keyword_only",
+                false
+              ],
+              [
+                "extra_items_max_lines",
+                "keyword_only",
+                true
+              ]
+            ]
+          },
+          "line": 227,
+          "end_line": 234,
+          "call_line": 227,
+          "call_text": "util.assertrepr_compare(\n            op=op,\n            left=left,\n            right=right,\n            verbose=config.get_verbosity(Config.VERBOSITY_ASSERTIONS),\n            highlighter=highlighter,\n            assertion_text_diff_style=util.get_assertion_text_diff_style(config),\n        )",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "pytest_assertrepr_compare",
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "pytest:e37541375cbd:src/_pytest/assertion/_compare_any.py",
+      "repository": "pytest",
+      "commit": "e37541375cbd8abaa030f0989eb9b7624befbdaf",
+      "parent": "630a96e77dab89b04f5f38207255201b271960e7",
+      "subject": "[perf] Cap the dict extra-items diff by the truncation budget",
+      "stale_path": "src/_pytest/assertion/_compare_any.py",
+      "stale_blob": "a1e729187a7a8e28607be09be004a32f8dbb0c38",
+      "commit_blob": "2a5bcf10bea33f89635e0f0683da69c147879623",
+      "other_changed_python_paths": [
+        "src/_pytest/assertion/__init__.py",
+        "src/_pytest/assertion/_compare_mapping.py",
+        "src/_pytest/assertion/util.py",
+        "testing/test_assertion.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "src/_pytest/assertion/_compare_mapping.py",
+            "qualname": "_compare_eq_mapping",
+            "name": "_compare_eq_mapping",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 11,
+            "new_line": 14,
+            "is_method": false,
+            "old_parameters": "(left, right, highlighter, verbose=...)",
+            "new_parameters": "(left, right, highlighter, verbose=..., extra_items_max_lines=...)",
+            "old_parameter_list": [
+              [
+                "left",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "right",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "highlighter",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "verbose",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "left",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "right",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "highlighter",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "verbose",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "extra_items_max_lines",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 73,
+          "end_line": 73,
+          "call_line": 73,
+          "call_text": "_compare_eq_mapping(left, right, highlighter, verbose)",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "_compare_eq_any",
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "pytest:e37541375cbd:src/_pytest/assertion/util.py",
+      "repository": "pytest",
+      "commit": "e37541375cbd8abaa030f0989eb9b7624befbdaf",
+      "parent": "630a96e77dab89b04f5f38207255201b271960e7",
+      "subject": "[perf] Cap the dict extra-items diff by the truncation budget",
+      "stale_path": "src/_pytest/assertion/util.py",
+      "stale_blob": "5e5ef543c139cacc5829e7b60c12e0182ced8a90",
+      "commit_blob": "3bdc9ac778a4f2ab9853d3029146fb0cdaf4bfa4",
+      "other_changed_python_paths": [
+        "src/_pytest/assertion/__init__.py",
+        "src/_pytest/assertion/_compare_any.py",
+        "src/_pytest/assertion/_compare_mapping.py",
+        "testing/test_assertion.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "src/_pytest/assertion/_compare_any.py",
+            "qualname": "_compare_eq_any",
+            "name": "_compare_eq_any",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 25,
+            "new_line": 25,
+            "is_method": false,
+            "old_parameters": "(left, right, highlighter, verbose, assertion_text_diff_style)",
+            "new_parameters": "(left, right, highlighter, verbose, assertion_text_diff_style, extra_items_max_lines=...)",
+            "old_parameter_list": [
+              [
+                "left",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "right",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "highlighter",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "verbose",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "assertion_text_diff_style",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "left",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "right",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "highlighter",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "verbose",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "assertion_text_diff_style",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "extra_items_max_lines",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 180,
+          "end_line": 186,
+          "call_line": 180,
+          "call_text": "_compare_eq_any(\n                left,\n                right,\n                highlighter,\n                verbose,\n                assertion_text_diff_style,\n            )",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "assertrepr_compare",
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "pytest:971943170245:src/_pytest/assertion/__init__.py",
+      "repository": "pytest",
+      "commit": "971943170245c247273172a47c21abd380a801bd",
+      "parent": "e37541375cbd8abaa030f0989eb9b7624befbdaf",
+      "subject": "[refactor] Stream assertion explanations through truncation",
+      "stale_path": "src/_pytest/assertion/__init__.py",
+      "stale_blob": "58ba6f692ab0b4e011819f568074bdd26bc1a511",
+      "commit_blob": "a5bed3ce47e04efdb3449b52ea1375ff055a525e",
+      "other_changed_python_paths": [
+        "src/_pytest/assertion/truncate.py",
+        "testing/python/approx.py",
+        "testing/test_assertion.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "src/_pytest/assertion/truncate.py",
+            "qualname": "truncate_if_required",
+            "name": "truncate_if_required",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 20,
+            "new_line": null,
+            "is_method": false,
+            "old_parameters": "(explanation, item)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "explanation",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "item",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 185,
+          "end_line": 185,
+          "call_line": 185,
+          "call_text": "truncate.truncate_if_required(new_expl, item)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "pytest_runtest_protocol.callbinrepr",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "pytest:fbdae4e7ef2b:src/_pytest/assertion/__init__.py",
+      "repository": "pytest",
+      "commit": "fbdae4e7ef2bbb87a7e4b75f6bf445528c0c7157",
+      "parent": "971943170245c247273172a47c21abd380a801bd",
+      "subject": "[perf] Cap all comparison formatting by the truncation budget",
+      "stale_path": "src/_pytest/assertion/__init__.py",
+      "stale_blob": "a5bed3ce47e04efdb3449b52ea1375ff055a525e",
+      "commit_blob": "ad2454ab820451d649c195be0573118cce022be2",
+      "other_changed_python_paths": [
+        "src/_pytest/assertion/_compare_any.py",
+        "src/_pytest/assertion/_compare_mapping.py",
+        "src/_pytest/assertion/_compare_sequence.py",
+        "src/_pytest/assertion/_typing.py",
+        "src/_pytest/assertion/compare_text.py",
+        "src/_pytest/assertion/util.py",
+        "testing/test_assertion.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "src/_pytest/assertion/util.py",
+            "qualname": "assertrepr_compare",
+            "name": "assertrepr_compare",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 135,
+            "new_line": 137,
+            "is_method": false,
+            "old_parameters": "(op, left, right, *, verbose, highlighter, assertion_text_diff_style, extra_items_max_lines=...)",
+            "new_parameters": "(op, left, right, *, verbose, highlighter, assertion_text_diff_style, truncation_budget=...)",
+            "old_parameter_list": [
+              [
+                "op",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "left",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "right",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "verbose",
+                "keyword_only",
+                false
+              ],
+              [
+                "highlighter",
+                "keyword_only",
+                false
+              ],
+              [
+                "assertion_text_diff_style",
+                "keyword_only",
+                false
+              ],
+              [
+                "extra_items_max_lines",
+                "keyword_only",
+                true
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "op",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "left",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "right",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "verbose",
+                "keyword_only",
+                false
+              ],
+              [
+                "highlighter",
+                "keyword_only",
+                false
+              ],
+              [
+                "assertion_text_diff_style",
+                "keyword_only",
+                false
+              ],
+              [
+                "truncation_budget",
+                "keyword_only",
+                true
+              ]
+            ]
+          },
+          "line": 237,
+          "end_line": 245,
+          "call_line": 237,
+          "call_text": "util.assertrepr_compare(\n            op=op,\n            left=left,\n            right=right,\n            verbose=config.get_verbosity(Config.VERBOSITY_ASSERTIONS),\n            highlighter=highlighter,\n            assertion_text_diff_style=util.get_assertion_text_diff_style(config),\n            extra_items_max_lines=extra_items_max_lines,\n        )",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "pytest_assertrepr_compare",
+          "binding": "breaking",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "pytest:fbdae4e7ef2b:src/_pytest/assertion/_compare_any.py",
+      "repository": "pytest",
+      "commit": "fbdae4e7ef2bbb87a7e4b75f6bf445528c0c7157",
+      "parent": "971943170245c247273172a47c21abd380a801bd",
+      "subject": "[perf] Cap all comparison formatting by the truncation budget",
+      "stale_path": "src/_pytest/assertion/_compare_any.py",
+      "stale_blob": "2a5bcf10bea33f89635e0f0683da69c147879623",
+      "commit_blob": "9a1e124bc5b852c1fc970304d7b0e8ed2652cec9",
+      "other_changed_python_paths": [
+        "src/_pytest/assertion/__init__.py",
+        "src/_pytest/assertion/_compare_mapping.py",
+        "src/_pytest/assertion/_compare_sequence.py",
+        "src/_pytest/assertion/_typing.py",
+        "src/_pytest/assertion/compare_text.py",
+        "src/_pytest/assertion/util.py",
+        "testing/test_assertion.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "src/_pytest/assertion/compare_text.py",
+            "qualname": "_compare_eq_text",
+            "name": "_compare_eq_text",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 12,
+            "new_line": 14,
+            "is_method": false,
+            "old_parameters": "(left, right, highlighter, verbose, assertion_text_diff_style)",
+            "new_parameters": "(left, right, highlighter, verbose, assertion_text_diff_style, truncation_budget=...)",
+            "old_parameter_list": [
+              [
+                "left",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "right",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "highlighter",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "verbose",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "assertion_text_diff_style",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "left",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "right",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "highlighter",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "verbose",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "assertion_text_diff_style",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "truncation_budget",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 40,
+          "end_line": 46,
+          "call_line": 40,
+          "call_text": "_compare_eq_text(\n            left,\n            right,\n            highlighter,\n            verbose,\n            assertion_text_diff_style,\n        )",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "_compare_eq_any",
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "src/_pytest/assertion/_compare_mapping.py",
+            "qualname": "_compare_eq_mapping",
+            "name": "_compare_eq_mapping",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 14,
+            "new_line": 16,
+            "is_method": false,
+            "old_parameters": "(left, right, highlighter, verbose=..., extra_items_max_lines=...)",
+            "new_parameters": "(left, right, highlighter, verbose=..., truncation_budget=...)",
+            "old_parameter_list": [
+              [
+                "left",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "right",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "highlighter",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "verbose",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "extra_items_max_lines",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "left",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "right",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "highlighter",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "verbose",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "truncation_budget",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 74,
+          "end_line": 76,
+          "call_line": 74,
+          "call_text": "_compare_eq_mapping(\n                left, right, highlighter, verbose, extra_items_max_lines\n            )",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "_compare_eq_any",
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "src/_pytest/assertion/_compare_sequence.py",
+            "qualname": "_compare_eq_iterable",
+            "name": "_compare_eq_iterable",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 13,
+            "new_line": 15,
+            "is_method": false,
+            "old_parameters": "(left, right, highlighter, verbose=...)",
+            "new_parameters": "(left, right, highlighter, verbose=..., truncation_budget=...)",
+            "old_parameter_list": [
+              [
+                "left",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "right",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "highlighter",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "verbose",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "left",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "right",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "highlighter",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "verbose",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "truncation_budget",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 79,
+          "end_line": 79,
+          "call_line": 79,
+          "call_text": "_compare_eq_iterable(left, right, highlighter, verbose)",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "_compare_eq_any",
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "pytest:fbdae4e7ef2b:src/_pytest/assertion/util.py",
+      "repository": "pytest",
+      "commit": "fbdae4e7ef2bbb87a7e4b75f6bf445528c0c7157",
+      "parent": "971943170245c247273172a47c21abd380a801bd",
+      "subject": "[perf] Cap all comparison formatting by the truncation budget",
+      "stale_path": "src/_pytest/assertion/util.py",
+      "stale_blob": "3bdc9ac778a4f2ab9853d3029146fb0cdaf4bfa4",
+      "commit_blob": "3898a6f79a8fa4fa7113ad043f5a8a20ced628ab",
+      "other_changed_python_paths": [
+        "src/_pytest/assertion/__init__.py",
+        "src/_pytest/assertion/_compare_any.py",
+        "src/_pytest/assertion/_compare_mapping.py",
+        "src/_pytest/assertion/_compare_sequence.py",
+        "src/_pytest/assertion/_typing.py",
+        "src/_pytest/assertion/compare_text.py",
+        "testing/test_assertion.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "src/_pytest/assertion/_compare_any.py",
+            "qualname": "_compare_eq_any",
+            "name": "_compare_eq_any",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 25,
+            "new_line": 27,
+            "is_method": false,
+            "old_parameters": "(left, right, highlighter, verbose, assertion_text_diff_style, extra_items_max_lines=...)",
+            "new_parameters": "(left, right, highlighter, verbose, assertion_text_diff_style, truncation_budget=...)",
+            "old_parameter_list": [
+              [
+                "left",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "right",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "highlighter",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "verbose",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "assertion_text_diff_style",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "extra_items_max_lines",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "left",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "right",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "highlighter",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "verbose",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "assertion_text_diff_style",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "truncation_budget",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 181,
+          "end_line": 188,
+          "call_line": 181,
+          "call_text": "_compare_eq_any(\n                left,\n                right,\n                highlighter,\n                verbose,\n                assertion_text_diff_style,\n                extra_items_max_lines,\n            )",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "assertrepr_compare",
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "src/_pytest/assertion/compare_text.py",
+            "qualname": "_notin_text",
+            "name": "_notin_text",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 89,
+            "new_line": 114,
+            "is_method": false,
+            "old_parameters": "(term, text, verbose=...)",
+            "new_parameters": "(term, text, verbose=..., truncation_budget=...)",
+            "old_parameter_list": [
+              [
+                "term",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "text",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "verbose",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "term",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "text",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "verbose",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "truncation_budget",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 190,
+          "end_line": 190,
+          "call_line": 190,
+          "call_text": "_notin_text(left, right, verbose)",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "assertrepr_compare",
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "pytest:184c168d876d:src/_pytest/assertion/__init__.py",
+      "repository": "pytest",
+      "commit": "184c168d876df2074cbd94b076e650c8831c80cc",
+      "parent": "924724a06611d4ca28f50c824feccf92fe67721f",
+      "subject": "Register assertion_text_diff_style with its Literal alias",
+      "stale_path": "src/_pytest/assertion/__init__.py",
+      "stale_blob": "4813bb3214b712a4f75fb60b99e4748a8213f691",
+      "commit_blob": "f888aabb3ef9e51bb5fdacd68bc63b5aae11cf27",
+      "other_changed_python_paths": [
+        "src/_pytest/assertion/util.py",
+        "testing/test_assertion.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "src/_pytest/assertion/util.py",
+            "qualname": "validate_assertion_text_diff_style",
+            "name": "validate_assertion_text_diff_style",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 66,
+            "new_line": null,
+            "is_method": false,
+            "old_parameters": "(config)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "config",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 87,
+          "end_line": 87,
+          "call_line": 87,
+          "call_text": "util.validate_assertion_text_diff_style(config)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "pytest_configure",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "src/_pytest/assertion/util.py",
+            "qualname": "get_assertion_text_diff_style",
+            "name": "get_assertion_text_diff_style",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 52,
+            "new_line": null,
+            "is_method": false,
+            "old_parameters": "(config)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "config",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 256,
+          "end_line": 256,
+          "call_line": 256,
+          "call_text": "util.get_assertion_text_diff_style(config)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "pytest_assertrepr_compare",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    }
+  ]
+}

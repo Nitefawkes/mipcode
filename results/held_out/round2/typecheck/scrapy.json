@@ -1,0 +1,4203 @@
+{
+  "schema": "mip-delta recall-mutation typecheck baseline v1",
+  "repository": "scrapy",
+  "corpus_schema": "mip-delta recall-mutation corpus v1",
+  "corpus_head": "f9d89010f691060b9af5b7968969e4ca4cb88302",
+  "max_mutations": null,
+  "wall_seconds": 154.0,
+  "commits": [
+    {
+      "commit": "180ca39b230590a2a2862c8d18c574661b1d16ad",
+      "mutations": 1,
+      "targets": {
+        "scrapy": {
+          "status": "ok",
+          "seconds": 3.33,
+          "errors": 29,
+          "errors_by_code": {
+            "var-annotated": 17,
+            "misc": 4,
+            "arg-type": 2,
+            "union-attr": 2,
+            "return": 1,
+            "override": 1,
+            "return-value": 1,
+            "assignment": 1
+          }
+        }
+      },
+      "files": 411,
+      "unwritable_files": []
+    },
+    {
+      "commit": "198e19995cdc39383c214b99fa6bb833a29ef044",
+      "mutations": 1,
+      "targets": {
+        "scrapy": {
+          "status": "ok",
+          "seconds": 3.39,
+          "errors": 9,
+          "errors_by_code": {
+            "has-type": 3,
+            "misc": 2,
+            "arg-type": 1,
+            "return": 1,
+            "override": 1,
+            "return-value": 1
+          }
+        }
+      },
+      "files": 518,
+      "unwritable_files": []
+    },
+    {
+      "commit": "3cd50142b58e75777db3b34b4856b51864539b9b",
+      "mutations": 2,
+      "targets": {
+        "scrapy": {
+          "status": "ok",
+          "seconds": 3.4,
+          "errors": 9,
+          "errors_by_code": {
+            "has-type": 3,
+            "misc": 2,
+            "arg-type": 1,
+            "return": 1,
+            "override": 1,
+            "return-value": 1
+          }
+        }
+      },
+      "files": 527,
+      "unwritable_files": []
+    },
+    {
+      "commit": "3d2e0e1ca1cb466dd4b157a7d2a27767cf758ea9",
+      "mutations": 1,
+      "targets": {
+        "scrapy": {
+          "status": "ok",
+          "seconds": 3.28,
+          "errors": 9,
+          "errors_by_code": {
+            "has-type": 3,
+            "misc": 2,
+            "arg-type": 1,
+            "return": 1,
+            "override": 1,
+            "return-value": 1
+          }
+        }
+      },
+      "files": 512,
+      "unwritable_files": []
+    },
+    {
+      "commit": "46e3fa1f04f83327529fa456c130d4ddf8a16a63",
+      "mutations": 1,
+      "targets": {
+        "scrapy": {
+          "status": "ok",
+          "seconds": 3.31,
+          "errors": 9,
+          "errors_by_code": {
+            "has-type": 3,
+            "misc": 2,
+            "arg-type": 1,
+            "return": 1,
+            "override": 1,
+            "return-value": 1
+          }
+        }
+      },
+      "files": 512,
+      "unwritable_files": []
+    },
+    {
+      "commit": "5105f55a980640aa749fdf788fb50f82f385de60",
+      "mutations": 1,
+      "targets": {
+        "scrapy": {
+          "status": "ok",
+          "seconds": 3.08,
+          "errors": 29,
+          "errors_by_code": {
+            "var-annotated": 17,
+            "misc": 4,
+            "arg-type": 2,
+            "union-attr": 2,
+            "return": 1,
+            "override": 1,
+            "return-value": 1,
+            "assignment": 1
+          }
+        }
+      },
+      "files": 411,
+      "unwritable_files": []
+    },
+    {
+      "commit": "54783efe747226b98e8eae5c655d0afe7578e74b",
+      "mutations": 1,
+      "targets": {
+        "scrapy": {
+          "status": "ok",
+          "seconds": 3.32,
+          "errors": 9,
+          "errors_by_code": {
+            "has-type": 3,
+            "misc": 2,
+            "arg-type": 1,
+            "return": 1,
+            "override": 1,
+            "return-value": 1
+          }
+        }
+      },
+      "files": 512,
+      "unwritable_files": []
+    },
+    {
+      "commit": "832e37c8d41a3a18dc76e0c25873f2b7fd0eeea5",
+      "mutations": 2,
+      "targets": {
+        "scrapy": {
+          "status": "ok",
+          "seconds": 3.86,
+          "errors": 9,
+          "errors_by_code": {
+            "has-type": 3,
+            "misc": 2,
+            "arg-type": 1,
+            "return": 1,
+            "override": 1,
+            "return-value": 1
+          }
+        }
+      },
+      "files": 539,
+      "unwritable_files": []
+    },
+    {
+      "commit": "a648c05dadadb5eb15ad2babae67010060fc6f45",
+      "mutations": 2,
+      "targets": {
+        "scrapy": {
+          "status": "ok",
+          "seconds": 3.38,
+          "errors": 10,
+          "errors_by_code": {
+            "has-type": 3,
+            "misc": 2,
+            "arg-type": 1,
+            "return": 1,
+            "override": 1,
+            "return-value": 1,
+            "assignment": 1
+          }
+        }
+      },
+      "files": 498,
+      "unwritable_files": []
+    },
+    {
+      "commit": "ad817afb88079241437320adbb211d4ee3efae4f",
+      "mutations": 2,
+      "targets": {
+        "scrapy": {
+          "status": "ok",
+          "seconds": 3.73,
+          "errors": 7,
+          "errors_by_code": {
+            "has-type": 3,
+            "misc": 1,
+            "return": 1,
+            "override": 1,
+            "return-value": 1
+          }
+        }
+      },
+      "files": 544,
+      "unwritable_files": []
+    },
+    {
+      "commit": "ae97d4f632e91973b06f8a86f7108ec7cdf620dd",
+      "mutations": 1,
+      "targets": {
+        "scrapy": {
+          "status": "ok",
+          "seconds": 3.47,
+          "errors": 10,
+          "errors_by_code": {
+            "has-type": 3,
+            "misc": 2,
+            "arg-type": 1,
+            "return": 1,
+            "override": 1,
+            "return-value": 1,
+            "assignment": 1
+          }
+        }
+      },
+      "files": 490,
+      "unwritable_files": []
+    },
+    {
+      "commit": "aeaec6a5bd8433a22c29782ea751695602f10f72",
+      "mutations": 2,
+      "targets": {
+        "scrapy": {
+          "status": "ok",
+          "seconds": 3.59,
+          "errors": 7,
+          "errors_by_code": {
+            "has-type": 3,
+            "misc": 1,
+            "return": 1,
+            "override": 1,
+            "return-value": 1
+          }
+        }
+      },
+      "files": 544,
+      "unwritable_files": []
+    },
+    {
+      "commit": "bb1b5c6785e165235c0a33afd123e53a472a7864",
+      "mutations": 1,
+      "targets": {
+        "scrapy": {
+          "status": "ok",
+          "seconds": 3.48,
+          "errors": 9,
+          "errors_by_code": {
+            "has-type": 3,
+            "misc": 2,
+            "arg-type": 1,
+            "return": 1,
+            "override": 1,
+            "return-value": 1
+          }
+        }
+      },
+      "files": 512,
+      "unwritable_files": []
+    },
+    {
+      "commit": "bb93093b7816e3cc3a3c0ebc57c9a163c40c8e5e",
+      "mutations": 3,
+      "targets": {
+        "scrapy": {
+          "status": "ok",
+          "seconds": 3.46,
+          "errors": 9,
+          "errors_by_code": {
+            "has-type": 3,
+            "misc": 2,
+            "arg-type": 1,
+            "return": 1,
+            "override": 1,
+            "return-value": 1
+          }
+        }
+      },
+      "files": 510,
+      "unwritable_files": []
+    },
+    {
+      "commit": "c49ae2115afd05afd7d0175f392e262e01b2779e",
+      "mutations": 1,
+      "targets": {
+        "scrapy": {
+          "status": "ok",
+          "seconds": 3.27,
+          "errors": 29,
+          "errors_by_code": {
+            "var-annotated": 17,
+            "misc": 4,
+            "arg-type": 2,
+            "union-attr": 2,
+            "return": 1,
+            "override": 1,
+            "return-value": 1,
+            "assignment": 1
+          }
+        }
+      },
+      "files": 411,
+      "unwritable_files": []
+    },
+    {
+      "commit": "d1bd8eb49f7aba9289e4ff692006cead8bcd9080",
+      "mutations": 4,
+      "targets": {
+        "scrapy": {
+          "status": "ok",
+          "seconds": 3.29,
+          "errors": 29,
+          "errors_by_code": {
+            "var-annotated": 17,
+            "misc": 4,
+            "arg-type": 2,
+            "union-attr": 2,
+            "return": 1,
+            "override": 1,
+            "return-value": 1,
+            "assignment": 1
+          }
+        }
+      },
+      "files": 412,
+      "unwritable_files": []
+    },
+    {
+      "commit": "e01783a493b7224ee616a97a310da8d19da11966",
+      "mutations": 5,
+      "targets": {
+        "scrapy": {
+          "status": "ok",
+          "seconds": 3.43,
+          "errors": 29,
+          "errors_by_code": {
+            "var-annotated": 19,
+            "has-type": 3,
+            "misc": 2,
+            "arg-type": 1,
+            "return": 1,
+            "override": 1,
+            "return-value": 1,
+            "assignment": 1
+          }
+        }
+      },
+      "files": 482,
+      "unwritable_files": []
+    },
+    {
+      "commit": "f1694269d8c9437461936ed449e81aa2ccb3b7cb",
+      "mutations": 1,
+      "targets": {
+        "scrapy": {
+          "status": "ok",
+          "seconds": 3.35,
+          "errors": 29,
+          "errors_by_code": {
+            "var-annotated": 19,
+            "has-type": 3,
+            "misc": 2,
+            "arg-type": 1,
+            "return": 1,
+            "override": 1,
+            "return-value": 1,
+            "assignment": 1
+          }
+        }
+      },
+      "files": 477,
+      "unwritable_files": []
+    },
+    {
+      "commit": "f3868e11fb0ef3b0aeae3ebf64a78b1deb733fed",
+      "mutations": 4,
+      "targets": {
+        "extras/qpsclient.py": {
+          "status": "ok",
+          "seconds": 2.45,
+          "errors": 20,
+          "errors_by_code": {
+            "var-annotated": 17,
+            "misc": 2,
+            "arg-type": 1
+          }
+        },
+        "scrapy": {
+          "status": "ok",
+          "seconds": 3.33,
+          "errors": 24,
+          "errors_by_code": {
+            "var-annotated": 17,
+            "misc": 2,
+            "arg-type": 1,
+            "return": 1,
+            "override": 1,
+            "return-value": 1,
+            "assignment": 1
+          }
+        }
+      },
+      "files": 437,
+      "unwritable_files": []
+    },
+    {
+      "commit": "f44abb91f6a0d7666eba0d1d25a0f63503fb7c7a",
+      "mutations": 1,
+      "targets": {
+        "scrapy": {
+          "status": "ok",
+          "seconds": 3.7,
+          "errors": 10,
+          "errors_by_code": {
+            "has-type": 3,
+            "misc": 2,
+            "arg-type": 1,
+            "return": 1,
+            "override": 1,
+            "return-value": 1,
+            "assignment": 1
+          }
+        }
+      },
+      "files": 488,
+      "unwritable_files": []
+    },
+    {
+      "commit": "f52c4efe1b47874fed1924a7dc4c0e68b289b3c5",
+      "mutations": 4,
+      "targets": {
+        "scrapy": {
+          "status": "ok",
+          "seconds": 3.33,
+          "errors": 10,
+          "errors_by_code": {
+            "has-type": 3,
+            "misc": 2,
+            "arg-type": 1,
+            "return": 1,
+            "override": 1,
+            "return-value": 1,
+            "assignment": 1
+          }
+        }
+      },
+      "files": 496,
+      "unwritable_files": []
+    },
+    {
+      "commit": "f67c87db61e54c39e0616872f611a01bbd7b2bc5",
+      "mutations": 1,
+      "targets": {
+        "scrapy": {
+          "status": "ok",
+          "seconds": 3.4,
+          "errors": 10,
+          "errors_by_code": {
+            "has-type": 3,
+            "misc": 2,
+            "arg-type": 1,
+            "return": 1,
+            "override": 1,
+            "return-value": 1,
+            "assignment": 1
+          }
+        }
+      },
+      "files": 503,
+      "unwritable_files": []
+    },
+    {
+      "commit": "fe30c1882a12651c19c5a94d71e9f14e442456c7",
+      "mutations": 1,
+      "targets": {
+        "scrapy": {
+          "status": "ok",
+          "seconds": 3.29,
+          "errors": 10,
+          "errors_by_code": {
+            "has-type": 3,
+            "misc": 2,
+            "arg-type": 1,
+            "return": 1,
+            "override": 1,
+            "return-value": 1,
+            "assignment": 1
+          }
+        }
+      },
+      "files": 505,
+      "unwritable_files": []
+    }
+  ],
+  "mutations": [
+    {
+      "id": "scrapy:180ca39b2305:scrapy/pipelines/__init__.py",
+      "commit": "180ca39b230590a2a2862c8d18c574661b1d16ad",
+      "parent": "5a7e132486f3337956f684fffcac77cb6ad5a8d2",
+      "stale_path": "scrapy/pipelines/__init__.py",
+      "stale_blob": "398e895b880f22096f60389b708e3a34123c6935",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "scrapy",
+      "seconds": 1.08,
+      "errors_commit": 29,
+      "errors_mutated": 29,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "scrapy/middleware.py",
+          "definition_qualname": "MiddlewareManager._process_chain",
+          "line": 61,
+          "end_line": 61,
+          "call_line": 61,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            60,
+            61
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scrapy:198e19995cdc:scrapy/extensions/feedexport.py",
+      "commit": "198e19995cdc39383c214b99fa6bb833a29ef044",
+      "parent": "e8d545a276f70210ae97ed0c70bb07721cec389c",
+      "stale_path": "scrapy/extensions/feedexport.py",
+      "stale_blob": "c3ed0ed0815d3b18d3423e17e921ae916da177d4",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "scrapy",
+      "seconds": 0.6,
+      "errors_commit": 9,
+      "errors_mutated": 9,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "scrapy/utils/_ftp.py",
+          "definition_qualname": "ftp_store_file",
+          "line": 450,
+          "end_line": 461,
+          "call_line": 450,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            449,
+            461
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scrapy:3cd50142b58e:scrapy/pipelines/files.py",
+      "commit": "3cd50142b58e75777db3b34b4856b51864539b9b",
+      "parent": "2aa46683b396da0c5ac94a69bf3387e6c5e2e9ff",
+      "stale_path": "scrapy/pipelines/files.py",
+      "stale_blob": "86a6ef8a2129dded9692b40ccdc180af50e21b31",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "scrapy",
+      "seconds": 0.6,
+      "errors_commit": 9,
+      "errors_mutated": 9,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "scrapy/pipelines/images.py",
+          "definition_qualname": "ImagesPipeline._update_stores",
+          "line": 507,
+          "end_line": 507,
+          "call_line": 507,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            505,
+            509
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scrapy:3cd50142b58e:scrapy/pipelines/images.py",
+      "commit": "3cd50142b58e75777db3b34b4856b51864539b9b",
+      "parent": "2aa46683b396da0c5ac94a69bf3387e6c5e2e9ff",
+      "stale_path": "scrapy/pipelines/images.py",
+      "stale_blob": "19f6309ccc5b0e34316ad3ebb34bb6f5a63e806f",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "scrapy",
+      "seconds": 0.6,
+      "errors_commit": 9,
+      "errors_mutated": 10,
+      "new_errors_in_stale_file": [
+        {
+          "path": "scrapy/pipelines/images.py",
+          "line": 133,
+          "column": 9,
+          "code": "misc",
+          "message": "\"_update_stores\" undefined in superclass"
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "scrapy/pipelines/files.py",
+          "definition_qualname": "FilesPipeline._update_stores",
+          "line": 117,
+          "end_line": 117,
+          "call_line": 117,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "misc"
+          ],
+          "enclosing_function_span": [
+            115,
+            119
+          ]
+        },
+        {
+          "index": 1,
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "scrapy/pipelines/files.py",
+          "definition_qualname": "FilesPipeline._update_stores",
+          "line": 133,
+          "end_line": 133,
+          "call_line": 133,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 133,
+              "code": "misc",
+              "message": "\"_update_stores\" undefined in superclass"
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "misc"
+          ],
+          "tc_file_hit_codes": [
+            "misc"
+          ],
+          "enclosing_function_span": [
+            132,
+            143
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scrapy:3d2e0e1ca1cb:scrapy/extensions/feedexport.py",
+      "commit": "3d2e0e1ca1cb466dd4b157a7d2a27767cf758ea9",
+      "parent": "db5bad1dddb3d1ac26feeab4fc87879113c9bbd7",
+      "stale_path": "scrapy/extensions/feedexport.py",
+      "stale_blob": "30c131d865e1655a098b00252cddc525e5533f7c",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "scrapy",
+      "seconds": 0.67,
+      "errors_commit": 9,
+      "errors_mutated": 9,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "scrapy/utils/_ftp.py",
+          "definition_qualname": "ftp_store_file",
+          "line": 396,
+          "end_line": 406,
+          "call_line": 396,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            395,
+            406
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scrapy:46e3fa1f04f8:scrapy/linkextractors/lxmlhtml.py",
+      "commit": "46e3fa1f04f83327529fa456c130d4ddf8a16a63",
+      "parent": "7ed269009cd7a62064b9046944ce8bb0e7cde6d7",
+      "stale_path": "scrapy/linkextractors/lxmlhtml.py",
+      "stale_blob": "c47452c2b5ba6acea6fa083e83df840427a03942",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "scrapy",
+      "seconds": 1.17,
+      "errors_commit": 9,
+      "errors_mutated": 10,
+      "new_errors_in_stale_file": [
+        {
+          "path": "scrapy/linkextractors/lxmlhtml.py",
+          "line": 21,
+          "column": 1,
+          "code": "attr-defined",
+          "message": "Module \"scrapy.linkextractors\" has no attribute \"_is_valid_url\""
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "scrapy/linkextractors/__init__.py",
+          "definition_qualname": "_is_valid_url",
+          "line": 362,
+          "end_line": 362,
+          "call_line": 362,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": true,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [
+            {
+              "line": 21,
+              "code": "attr-defined",
+              "message": "Module \"scrapy.linkextractors\" has no attribute \"_is_valid_url\""
+            }
+          ],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            361,
+            379
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scrapy:5105f55a9806:scrapy/core/downloader/__init__.py",
+      "commit": "5105f55a980640aa749fdf788fb50f82f385de60",
+      "parent": "7ed20ee7f32ee105c19243c6cf02cf54714c0c45",
+      "stale_path": "scrapy/core/downloader/__init__.py",
+      "stale_blob": "0d23aa85ca2a1526db9b27d20c4c20dfa39c8798",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "scrapy",
+      "seconds": 1.01,
+      "errors_commit": 29,
+      "errors_mutated": 30,
+      "new_errors_in_stale_file": [
+        {
+          "path": "scrapy/core/downloader/__init__.py",
+          "line": 142,
+          "column": 27,
+          "code": "call-arg",
+          "message": "Missing positional argument \"spider\" in call to \"download\" of \"DownloaderMiddlewareManager\""
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "scrapy/core/downloader/middleware.py",
+          "definition_qualname": "DownloaderMiddlewareManager.download",
+          "line": 142,
+          "end_line": 142,
+          "call_line": 142,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 142,
+              "code": "call-arg",
+              "message": "Missing positional argument \"spider\" in call to \"download\" of \"DownloaderMiddlewareManager\""
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "call-arg"
+          ],
+          "tc_file_hit_codes": [
+            "call-arg"
+          ],
+          "enclosing_function_span": [
+            137,
+            144
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scrapy:54783efe7472:scrapy/pipelines/images.py",
+      "commit": "54783efe747226b98e8eae5c655d0afe7578e74b",
+      "parent": "9def81fd06d0e557e71381c03645dcf71863c1d1",
+      "stale_path": "scrapy/pipelines/images.py",
+      "stale_blob": "370ef1a9fe95873a5367c99036121f29a8a59e5f",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "scrapy",
+      "seconds": 0.61,
+      "errors_commit": 9,
+      "errors_mutated": 10,
+      "new_errors_in_stale_file": [
+        {
+          "path": "scrapy/pipelines/images.py",
+          "line": 158,
+          "column": 28,
+          "code": "misc",
+          "message": "Any? not callable"
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "scrapy/pipelines/files.py",
+          "definition_qualname": "_md5sum",
+          "line": 158,
+          "end_line": 158,
+          "call_line": 158,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 158,
+              "code": "misc",
+              "message": "Any? not callable"
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "misc"
+          ],
+          "tc_file_hit_codes": [
+            "misc"
+          ],
+          "enclosing_function_span": [
+            146,
+            171
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scrapy:832e37c8d41a:scrapy/core/downloader/handlers/_base_streaming.py",
+      "commit": "832e37c8d41a3a18dc76e0c25873f2b7fd0eeea5",
+      "parent": "1b4b7946e36fd311458878893004ca18410eb848",
+      "stale_path": "scrapy/core/downloader/handlers/_base_streaming.py",
+      "stale_blob": "08eed5d2581b5d0f51af53e09aaec544c708e356",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "scrapy",
+      "seconds": 0.68,
+      "errors_commit": 9,
+      "errors_mutated": 9,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "unknown",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": false,
+          "definition_change": "signature",
+          "definition_path": "scrapy/utils/_download_handlers.py",
+          "definition_qualname": "make_response",
+          "line": 212,
+          "end_line": 215,
+          "call_line": 212,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            181,
+            257
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scrapy:832e37c8d41a:scrapy/core/downloader/handlers/http11.py",
+      "commit": "832e37c8d41a3a18dc76e0c25873f2b7fd0eeea5",
+      "parent": "1b4b7946e36fd311458878893004ca18410eb848",
+      "stale_path": "scrapy/core/downloader/handlers/http11.py",
+      "stale_blob": "10a40e29fb37a42f764c2474954b3f71e7169970",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "scrapy",
+      "seconds": 0.67,
+      "errors_commit": 9,
+      "errors_mutated": 9,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "scrapy/utils/_download_handlers.py",
+          "definition_qualname": "make_response",
+          "line": 696,
+          "end_line": 706,
+          "call_line": 696,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            692,
+            706
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scrapy:a648c05dadad:scrapy/core/engine.py",
+      "commit": "a648c05dadadb5eb15ad2babae67010060fc6f45",
+      "parent": "f52c4efe1b47874fed1924a7dc4c0e68b289b3c5",
+      "stale_path": "scrapy/core/engine.py",
+      "stale_blob": "a03f362e64bd221a5ae09b6fe3d8876bd3593dbd",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "scrapy",
+      "seconds": 1.25,
+      "errors_commit": 10,
+      "errors_mutated": 11,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [
+        {
+          "path": "scrapy/crawler.py",
+          "line": 393,
+          "column": 19,
+          "code": "call-arg",
+          "message": "Unexpected keyword argument \"mode\" for \"stop_async\" of \"ExecutionEngine\""
+        }
+      ],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "scrapy/crawler.py",
+          "definition_qualname": "Crawler.stop_async",
+          "line": 220,
+          "end_line": 220,
+          "call_line": 220,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            214,
+            220
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scrapy:a648c05dadad:scrapy/crawler.py",
+      "commit": "a648c05dadadb5eb15ad2babae67010060fc6f45",
+      "parent": "f52c4efe1b47874fed1924a7dc4c0e68b289b3c5",
+      "stale_path": "scrapy/crawler.py",
+      "stale_blob": "dd159311817841bb34ab21acbf9ec80af93c8362",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "scrapy",
+      "seconds": 1.67,
+      "errors_commit": 10,
+      "errors_mutated": 10,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "scrapy/core/engine.py",
+          "definition_qualname": "ExecutionEngine.stop_async",
+          "line": 351,
+          "end_line": 351,
+          "call_line": 351,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            343,
+            351
+          ]
+        },
+        {
+          "index": 1,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "scrapy/core/engine.py",
+          "definition_qualname": "ExecutionEngine.stop_async",
+          "line": 361,
+          "end_line": 361,
+          "call_line": 361,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            353,
+            361
+          ]
+        },
+        {
+          "index": 2,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "scrapy/core/engine.py",
+          "definition_qualname": "ExecutionEngine.stop_async",
+          "line": 590,
+          "end_line": 590,
+          "call_line": 590,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            584,
+            590
+          ]
+        },
+        {
+          "index": 3,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "scrapy/core/engine.py",
+          "definition_qualname": "ExecutionEngine.stop_async",
+          "line": 716,
+          "end_line": 716,
+          "call_line": 716,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            708,
+            717
+          ]
+        },
+        {
+          "index": 4,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "scrapy/core/engine.py",
+          "definition_qualname": "ExecutionEngine.stop",
+          "line": 906,
+          "end_line": 906,
+          "call_line": 906,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            905,
+            906
+          ]
+        },
+        {
+          "index": 5,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "scrapy/core/engine.py",
+          "definition_qualname": "ExecutionEngine.stop",
+          "line": 1005,
+          "end_line": 1005,
+          "call_line": 1005,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            1004,
+            1005
+          ]
+        },
+        {
+          "index": 6,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "scrapy/core/engine.py",
+          "definition_qualname": "ExecutionEngine.stop",
+          "line": 1171,
+          "end_line": 1171,
+          "call_line": 1171,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            1170,
+            1176
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scrapy:ad817afb8807:scrapy/core/downloader/handlers/_base_streaming.py",
+      "commit": "ad817afb88079241437320adbb211d4ee3efae4f",
+      "parent": "2aefa609f1a9c82763df4ee3c9506051f145b0b4",
+      "stale_path": "scrapy/core/downloader/handlers/_base_streaming.py",
+      "stale_blob": "6aa0e9c9a46817f244ea68861d320cdcbba7a82a",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "scrapy",
+      "seconds": 0.67,
+      "errors_commit": 7,
+      "errors_mutated": 8,
+      "new_errors_in_stale_file": [
+        {
+          "path": "scrapy/core/downloader/handlers/_base_streaming.py",
+          "line": 38,
+          "column": 1,
+          "code": "attr-defined",
+          "message": "Module \"scrapy.utils.url\" has no attribute \"_add_http_if_no_scheme\"; maybe \"add_http_if_no_scheme\"?"
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "scrapy/utils/url.py",
+          "definition_qualname": "_add_http_if_no_scheme",
+          "line": 352,
+          "end_line": 352,
+          "call_line": 352,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": true,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [
+            {
+              "line": 38,
+              "code": "attr-defined",
+              "message": "Module \"scrapy.utils.url\" has no attribute \"_add_http_if_no_scheme\"; maybe \"add_http_if_no_scheme\"?"
+            }
+          ],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            343,
+            354
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scrapy:ad817afb8807:scrapy/core/downloader/handlers/http11.py",
+      "commit": "ad817afb88079241437320adbb211d4ee3efae4f",
+      "parent": "2aefa609f1a9c82763df4ee3c9506051f145b0b4",
+      "stale_path": "scrapy/core/downloader/handlers/http11.py",
+      "stale_blob": "98a85e6ca7f1a7b3982a705d64039ced4c1cc164",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "scrapy",
+      "seconds": 0.7,
+      "errors_commit": 7,
+      "errors_mutated": 8,
+      "new_errors_in_stale_file": [
+        {
+          "path": "scrapy/core/downloader/handlers/http11.py",
+          "line": 72,
+          "column": 1,
+          "code": "attr-defined",
+          "message": "Module \"scrapy.utils.url\" has no attribute \"_add_http_if_no_scheme\"; maybe \"add_http_if_no_scheme\"?"
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "scrapy/utils/url.py",
+          "definition_qualname": "_add_http_if_no_scheme",
+          "line": 805,
+          "end_line": 805,
+          "call_line": 805,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": true,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [
+            {
+              "line": 72,
+              "code": "attr-defined",
+              "message": "Module \"scrapy.utils.url\" has no attribute \"_add_http_if_no_scheme\"; maybe \"add_http_if_no_scheme\"?"
+            }
+          ],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            798,
+            851
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scrapy:ae97d4f632e9:scrapy/crawler.py",
+      "commit": "ae97d4f632e91973b06f8a86f7108ec7cdf620dd",
+      "parent": "8026deeaac371a5d9a3edbe4886d58f61139d464",
+      "stale_path": "scrapy/crawler.py",
+      "stale_blob": "7d07c8711eb596267714d64abfabbfcf9173beb3",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "scrapy",
+      "seconds": 1.21,
+      "errors_commit": 10,
+      "errors_mutated": 10,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "scrapy/utils/reactor.py",
+          "definition_qualname": "install_reactor",
+          "line": 962,
+          "end_line": 962,
+          "call_line": 962,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            932,
+            964
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scrapy:aeaec6a5bd84:scrapy/core/downloader/handlers/_aioftp.py",
+      "commit": "aeaec6a5bd8433a22c29782ea751695602f10f72",
+      "parent": "f7b1fd3f2f57c9d01f45276c1c3194f58cb0c1ea",
+      "stale_path": "scrapy/core/downloader/handlers/_aioftp.py",
+      "stale_blob": "ea4b661bbc96e2439cfa91ff82da84f34c411512",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "scrapy",
+      "seconds": 0.59,
+      "errors_commit": 7,
+      "errors_mutated": 9,
+      "new_errors_in_stale_file": [
+        {
+          "path": "scrapy/core/downloader/handlers/_aioftp.py",
+          "line": 220,
+          "column": 5,
+          "code": "override",
+          "message": "Signature of \"_read_response\" incompatible with supertype \"scrapy.core.downloader.handlers._base_streaming.BaseStreamingDownloadHandler\""
+        },
+        {
+          "path": "scrapy/core/downloader/handlers/_aioftp.py",
+          "line": 223,
+          "column": 24,
+          "code": "call-arg",
+          "message": "Missing positional argument \"deadline\" in call to \"_read_response\" of \"BaseStreamingDownloadHandler\""
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "scrapy/core/downloader/handlers/_base_streaming.py",
+          "definition_qualname": "BaseStreamingDownloadHandler._read_response",
+          "line": 223,
+          "end_line": 223,
+          "call_line": 223,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 223,
+              "code": "call-arg",
+              "message": "Missing positional argument \"deadline\" in call to \"_read_response\" of \"BaseStreamingDownloadHandler\""
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "call-arg"
+          ],
+          "tc_file_hit_codes": [
+            "call-arg",
+            "override"
+          ],
+          "enclosing_function_span": [
+            220,
+            226
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scrapy:aeaec6a5bd84:scrapy/core/downloader/handlers/_base_streaming.py",
+      "commit": "aeaec6a5bd8433a22c29782ea751695602f10f72",
+      "parent": "f7b1fd3f2f57c9d01f45276c1c3194f58cb0c1ea",
+      "stale_path": "scrapy/core/downloader/handlers/_base_streaming.py",
+      "stale_blob": "615ec439102eac58f4e99d9c5b58989829bf1ac7",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "scrapy",
+      "seconds": 0.62,
+      "errors_commit": 7,
+      "errors_mutated": 9,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [
+        {
+          "path": "scrapy/core/downloader/handlers/_aioftp.py",
+          "line": 220,
+          "column": 5,
+          "code": "override",
+          "message": "Signature of \"_read_response\" incompatible with supertype \"scrapy.core.downloader.handlers._base_streaming.BaseStreamingDownloadHandler\""
+        },
+        {
+          "path": "scrapy/core/downloader/handlers/_aioftp.py",
+          "line": 223,
+          "column": 24,
+          "code": "call-arg",
+          "message": "Too many arguments for \"_read_response\" of \"BaseStreamingDownloadHandler\""
+        }
+      ],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "scrapy/core/downloader/handlers/_aioftp.py",
+          "definition_qualname": "AioftpDownloadHandler._read_response",
+          "line": 176,
+          "end_line": 176,
+          "call_line": 176,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            160,
+            176
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scrapy:bb1b5c6785e1:scrapy/commands/shell.py",
+      "commit": "bb1b5c6785e165235c0a33afd123e53a472a7864",
+      "parent": "b4279e9e496ddecc5fa1d0647ce928410841a58f",
+      "stale_path": "scrapy/commands/shell.py",
+      "stale_blob": "532edd4f8554013c5fd68c91d34177e710e4ab20",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "scrapy",
+      "seconds": 0.62,
+      "errors_commit": 9,
+      "errors_mutated": 11,
+      "new_errors_in_stale_file": [
+        {
+          "path": "scrapy/commands/shell.py",
+          "line": 99,
+          "column": 26,
+          "code": "attr-defined",
+          "message": "\"Crawler\" has no attribute \"_create_engine\""
+        },
+        {
+          "path": "scrapy/commands/shell.py",
+          "line": 108,
+          "column": 30,
+          "code": "attr-defined",
+          "message": "\"Crawler\" has no attribute \"_create_engine\""
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "scrapy/crawler.py",
+          "definition_qualname": "Crawler._create_engine",
+          "line": 99,
+          "end_line": 99,
+          "call_line": 99,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 99,
+              "code": "attr-defined",
+              "message": "\"Crawler\" has no attribute \"_create_engine\""
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "attr-defined"
+          ],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            97,
+            100
+          ]
+        },
+        {
+          "index": 1,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "scrapy/crawler.py",
+          "definition_qualname": "Crawler._create_engine",
+          "line": 108,
+          "end_line": 108,
+          "call_line": 108,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 108,
+              "code": "attr-defined",
+              "message": "\"Crawler\" has no attribute \"_create_engine\""
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "attr-defined"
+          ],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            107,
+            108
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scrapy:bb93093b7816:scrapy/core/scraper.py",
+      "commit": "bb93093b7816e3cc3a3c0ebc57c9a163c40c8e5e",
+      "parent": "294cada6c7bbc2d7415b9488c943cdc1e15182f8",
+      "stale_path": "scrapy/core/scraper.py",
+      "stale_blob": "6c68fc65a4b3f8d8b0a696c8eefd5b119c7b1ccf",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "scrapy",
+      "seconds": 1.19,
+      "errors_commit": 9,
+      "errors_mutated": 9,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "scrapy/core/engine.py",
+          "definition_qualname": "ExecutionEngine.close_spider_async",
+          "line": 369,
+          "end_line": 369,
+          "call_line": 369,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            358,
+            388
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scrapy:bb93093b7816:scrapy/crawler.py",
+      "commit": "bb93093b7816e3cc3a3c0ebc57c9a163c40c8e5e",
+      "parent": "294cada6c7bbc2d7415b9488c943cdc1e15182f8",
+      "stale_path": "scrapy/crawler.py",
+      "stale_blob": "0ff45b3e72be0e2680feec93ccdee5d67445a657",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "scrapy",
+      "seconds": 1.16,
+      "errors_commit": 9,
+      "errors_mutated": 9,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "scrapy/core/engine.py",
+          "definition_qualname": "ExecutionEngine.close_async",
+          "line": 305,
+          "end_line": 305,
+          "call_line": 305,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            282,
+            312
+          ]
+        },
+        {
+          "index": 1,
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "scrapy/core/engine.py",
+          "definition_qualname": "ExecutionEngine.close_async",
+          "line": 339,
+          "end_line": 339,
+          "call_line": 339,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            314,
+            346
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scrapy:bb93093b7816:scrapy/extensions/closespider.py",
+      "commit": "bb93093b7816e3cc3a3c0ebc57c9a163c40c8e5e",
+      "parent": "294cada6c7bbc2d7415b9488c943cdc1e15182f8",
+      "stale_path": "scrapy/extensions/closespider.py",
+      "stale_blob": "1c0f0a4d2d84a6c68e6df29bea4d0fe392dcf5dd",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "scrapy",
+      "seconds": 1.18,
+      "errors_commit": 9,
+      "errors_mutated": 9,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "scrapy/core/engine.py",
+          "definition_qualname": "ExecutionEngine.close_spider_async",
+          "line": 148,
+          "end_line": 148,
+          "call_line": 148,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            147,
+            148
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scrapy:c49ae2115afd:scrapy/pipelines/media.py",
+      "commit": "c49ae2115afd05afd7d0175f392e262e01b2779e",
+      "parent": "588f3d4f65e292424d227e8a0498bcba2d395781",
+      "stale_path": "scrapy/pipelines/media.py",
+      "stale_blob": "438e5e7d61576ea04b321d9f390600539ca5496d",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "scrapy",
+      "seconds": 0.67,
+      "errors_commit": 29,
+      "errors_mutated": 30,
+      "new_errors_in_stale_file": [
+        {
+          "path": "scrapy/pipelines/media.py",
+          "line": 25,
+          "column": 1,
+          "code": "attr-defined",
+          "message": "Module \"scrapy.utils.defer\" has no attribute \"_defer_sleep\"; maybe \"_defer_sleep_async\"?"
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "scrapy/utils/defer.py",
+          "definition_qualname": "_defer_sleep",
+          "line": 145,
+          "end_line": 145,
+          "call_line": 145,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": true,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [
+            {
+              "line": 25,
+              "code": "attr-defined",
+              "message": "Module \"scrapy.utils.defer\" has no attribute \"_defer_sleep\"; maybe \"_defer_sleep_async\"?"
+            }
+          ],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            134,
+            181
+          ]
+        },
+        {
+          "index": 1,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "scrapy/utils/defer.py",
+          "definition_qualname": "_defer_sleep",
+          "line": 165,
+          "end_line": 165,
+          "call_line": 165,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": true,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [
+            {
+              "line": 25,
+              "code": "attr-defined",
+              "message": "Module \"scrapy.utils.defer\" has no attribute \"_defer_sleep\"; maybe \"_defer_sleep_async\"?"
+            }
+          ],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            134,
+            181
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scrapy:d1bd8eb49f7a:scrapy/core/downloader/__init__.py",
+      "commit": "d1bd8eb49f7aba9289e4ff692006cead8bcd9080",
+      "parent": "a2463325db2fd128e27da45d6ee36e21126c1bf5",
+      "stale_path": "scrapy/core/downloader/__init__.py",
+      "stale_blob": "db4e41c6a0de89604b470e58a91c818d3d284876",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "scrapy",
+      "seconds": 1.08,
+      "errors_commit": 29,
+      "errors_mutated": 29,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "scrapy/core/downloader/handlers/__init__.py",
+          "definition_qualname": "DownloadHandlerProtocol.download_request",
+          "line": 240,
+          "end_line": 240,
+          "call_line": 240,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            234,
+            265
+          ]
+        },
+        {
+          "index": 1,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "scrapy/core/downloader/handlers/datauri.py",
+          "definition_qualname": "DataURIDownloadHandler.download_request",
+          "line": 240,
+          "end_line": 240,
+          "call_line": 240,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            234,
+            265
+          ]
+        },
+        {
+          "index": 2,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "scrapy/core/downloader/handlers/file.py",
+          "definition_qualname": "FileDownloadHandler.download_request",
+          "line": 240,
+          "end_line": 240,
+          "call_line": 240,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            234,
+            265
+          ]
+        },
+        {
+          "index": 3,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "scrapy/core/downloader/handlers/ftp.py",
+          "definition_qualname": "FTPDownloadHandler.download_request",
+          "line": 240,
+          "end_line": 240,
+          "call_line": 240,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            234,
+            265
+          ]
+        },
+        {
+          "index": 4,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "scrapy/core/downloader/handlers/http10.py",
+          "definition_qualname": "HTTP10DownloadHandler.download_request",
+          "line": 240,
+          "end_line": 240,
+          "call_line": 240,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            234,
+            265
+          ]
+        },
+        {
+          "index": 5,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "scrapy/core/downloader/handlers/http11.py",
+          "definition_qualname": "HTTP11DownloadHandler.download_request",
+          "line": 240,
+          "end_line": 240,
+          "call_line": 240,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            234,
+            265
+          ]
+        },
+        {
+          "index": 6,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "scrapy/core/downloader/handlers/http2.py",
+          "definition_qualname": "H2DownloadHandler.download_request",
+          "line": 240,
+          "end_line": 240,
+          "call_line": 240,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            234,
+            265
+          ]
+        },
+        {
+          "index": 7,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "scrapy/core/downloader/handlers/s3.py",
+          "definition_qualname": "S3DownloadHandler.download_request",
+          "line": 240,
+          "end_line": 240,
+          "call_line": 240,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            234,
+            265
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scrapy:d1bd8eb49f7a:scrapy/core/downloader/handlers/__init__.py",
+      "commit": "d1bd8eb49f7aba9289e4ff692006cead8bcd9080",
+      "parent": "a2463325db2fd128e27da45d6ee36e21126c1bf5",
+      "stale_path": "scrapy/core/downloader/handlers/__init__.py",
+      "stale_blob": "2d3d40dae4e514f4bc78028d772791ad6fdd4c86",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "scrapy",
+      "seconds": 1.05,
+      "errors_commit": 29,
+      "errors_mutated": 30,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [
+        {
+          "path": "scrapy/core/downloader/__init__.py",
+          "line": 239,
+          "column": 40,
+          "code": "attr-defined",
+          "message": "\"DownloadHandlers\" has no attribute \"download_request_async\"; maybe \"download_request\"?"
+        }
+      ],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": false,
+          "definition_change": "signature",
+          "definition_path": "scrapy/core/downloader/handlers/datauri.py",
+          "definition_qualname": "DataURIDownloadHandler.download_request",
+          "line": 107,
+          "end_line": 107,
+          "call_line": 107,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            97,
+            107
+          ]
+        },
+        {
+          "index": 1,
+          "binding": "breaking",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": false,
+          "definition_change": "signature",
+          "definition_path": "scrapy/core/downloader/handlers/file.py",
+          "definition_qualname": "FileDownloadHandler.download_request",
+          "line": 107,
+          "end_line": 107,
+          "call_line": 107,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            97,
+            107
+          ]
+        },
+        {
+          "index": 2,
+          "binding": "breaking",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": false,
+          "definition_change": "signature",
+          "definition_path": "scrapy/core/downloader/handlers/ftp.py",
+          "definition_qualname": "FTPDownloadHandler.download_request",
+          "line": 107,
+          "end_line": 107,
+          "call_line": 107,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            97,
+            107
+          ]
+        },
+        {
+          "index": 3,
+          "binding": "breaking",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": false,
+          "definition_change": "signature",
+          "definition_path": "scrapy/core/downloader/handlers/http10.py",
+          "definition_qualname": "HTTP10DownloadHandler.download_request",
+          "line": 107,
+          "end_line": 107,
+          "call_line": 107,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            97,
+            107
+          ]
+        },
+        {
+          "index": 4,
+          "binding": "breaking",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": false,
+          "definition_change": "signature",
+          "definition_path": "scrapy/core/downloader/handlers/http11.py",
+          "definition_qualname": "HTTP11DownloadHandler.download_request",
+          "line": 107,
+          "end_line": 107,
+          "call_line": 107,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            97,
+            107
+          ]
+        },
+        {
+          "index": 5,
+          "binding": "breaking",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": false,
+          "definition_change": "signature",
+          "definition_path": "scrapy/core/downloader/handlers/http2.py",
+          "definition_qualname": "H2DownloadHandler.download_request",
+          "line": 107,
+          "end_line": 107,
+          "call_line": 107,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            97,
+            107
+          ]
+        },
+        {
+          "index": 6,
+          "binding": "breaking",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": false,
+          "definition_change": "signature",
+          "definition_path": "scrapy/core/downloader/handlers/s3.py",
+          "definition_qualname": "S3DownloadHandler.download_request",
+          "line": 107,
+          "end_line": 107,
+          "call_line": 107,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            97,
+            107
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scrapy:d1bd8eb49f7a:scrapy/core/downloader/handlers/http11.py",
+      "commit": "d1bd8eb49f7aba9289e4ff692006cead8bcd9080",
+      "parent": "a2463325db2fd128e27da45d6ee36e21126c1bf5",
+      "stale_path": "scrapy/core/downloader/handlers/http11.py",
+      "stale_blob": "02aaf7c5c90e790fda4ca46a32ef934672d5b8ff",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "scrapy",
+      "seconds": 1.06,
+      "errors_commit": 29,
+      "errors_mutated": 30,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [
+        {
+          "path": "scrapy/core/downloader/handlers/s3.py",
+          "line": 66,
+          "column": 22,
+          "code": "call-arg",
+          "message": "Too few arguments"
+        }
+      ],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": false,
+          "definition_change": "signature",
+          "definition_path": "scrapy/core/downloader/handlers/__init__.py",
+          "definition_qualname": "DownloadHandlerProtocol.download_request",
+          "line": 111,
+          "end_line": 111,
+          "call_line": 111,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            94,
+            111
+          ]
+        },
+        {
+          "index": 1,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": false,
+          "definition_change": "signature",
+          "definition_path": "scrapy/core/downloader/handlers/datauri.py",
+          "definition_qualname": "DataURIDownloadHandler.download_request",
+          "line": 111,
+          "end_line": 111,
+          "call_line": 111,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            94,
+            111
+          ]
+        },
+        {
+          "index": 2,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": false,
+          "definition_change": "signature",
+          "definition_path": "scrapy/core/downloader/handlers/file.py",
+          "definition_qualname": "FileDownloadHandler.download_request",
+          "line": 111,
+          "end_line": 111,
+          "call_line": 111,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            94,
+            111
+          ]
+        },
+        {
+          "index": 3,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": false,
+          "definition_change": "signature",
+          "definition_path": "scrapy/core/downloader/handlers/ftp.py",
+          "definition_qualname": "FTPDownloadHandler.download_request",
+          "line": 111,
+          "end_line": 111,
+          "call_line": 111,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            94,
+            111
+          ]
+        },
+        {
+          "index": 4,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": false,
+          "definition_change": "signature",
+          "definition_path": "scrapy/core/downloader/handlers/http10.py",
+          "definition_qualname": "HTTP10DownloadHandler.download_request",
+          "line": 111,
+          "end_line": 111,
+          "call_line": 111,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            94,
+            111
+          ]
+        },
+        {
+          "index": 5,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": false,
+          "definition_change": "signature",
+          "definition_path": "scrapy/core/downloader/handlers/http2.py",
+          "definition_qualname": "H2DownloadHandler.download_request",
+          "line": 111,
+          "end_line": 111,
+          "call_line": 111,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            94,
+            111
+          ]
+        },
+        {
+          "index": 6,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": false,
+          "definition_change": "signature",
+          "definition_path": "scrapy/core/downloader/handlers/s3.py",
+          "definition_qualname": "S3DownloadHandler.download_request",
+          "line": 111,
+          "end_line": 111,
+          "call_line": 111,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            94,
+            111
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scrapy:d1bd8eb49f7a:scrapy/core/downloader/handlers/http2.py",
+      "commit": "d1bd8eb49f7aba9289e4ff692006cead8bcd9080",
+      "parent": "a2463325db2fd128e27da45d6ee36e21126c1bf5",
+      "stale_path": "scrapy/core/downloader/handlers/http2.py",
+      "stale_blob": "8e623609406a9b4615817b404e26cf929861076e",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "scrapy",
+      "seconds": 0.63,
+      "errors_commit": 29,
+      "errors_mutated": 29,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "scrapy/core/downloader/handlers/__init__.py",
+          "definition_qualname": "DownloadHandlerProtocol.download_request",
+          "line": 48,
+          "end_line": 48,
+          "call_line": 48,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            42,
+            48
+          ]
+        },
+        {
+          "index": 1,
+          "binding": "breaking",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "scrapy/core/downloader/handlers/datauri.py",
+          "definition_qualname": "DataURIDownloadHandler.download_request",
+          "line": 48,
+          "end_line": 48,
+          "call_line": 48,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            42,
+            48
+          ]
+        },
+        {
+          "index": 2,
+          "binding": "breaking",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "scrapy/core/downloader/handlers/file.py",
+          "definition_qualname": "FileDownloadHandler.download_request",
+          "line": 48,
+          "end_line": 48,
+          "call_line": 48,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            42,
+            48
+          ]
+        },
+        {
+          "index": 3,
+          "binding": "breaking",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "scrapy/core/downloader/handlers/ftp.py",
+          "definition_qualname": "FTPDownloadHandler.download_request",
+          "line": 48,
+          "end_line": 48,
+          "call_line": 48,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            42,
+            48
+          ]
+        },
+        {
+          "index": 4,
+          "binding": "breaking",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "scrapy/core/downloader/handlers/http10.py",
+          "definition_qualname": "HTTP10DownloadHandler.download_request",
+          "line": 48,
+          "end_line": 48,
+          "call_line": 48,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            42,
+            48
+          ]
+        },
+        {
+          "index": 5,
+          "binding": "breaking",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "scrapy/core/downloader/handlers/http11.py",
+          "definition_qualname": "HTTP11DownloadHandler.download_request",
+          "line": 48,
+          "end_line": 48,
+          "call_line": 48,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            42,
+            48
+          ]
+        },
+        {
+          "index": 6,
+          "binding": "breaking",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "scrapy/core/downloader/handlers/s3.py",
+          "definition_qualname": "S3DownloadHandler.download_request",
+          "line": 48,
+          "end_line": 48,
+          "call_line": 48,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            42,
+            48
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scrapy:e01783a493b7:scrapy/core/downloader/__init__.py",
+      "commit": "e01783a493b7224ee616a97a310da8d19da11966",
+      "parent": "b159ea8cf3b361c704b1070c1840afb1db43a544",
+      "stale_path": "scrapy/core/downloader/__init__.py",
+      "stale_blob": "2089b122475f862827accd2096d64c899857c60d",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "scrapy",
+      "seconds": 1.18,
+      "errors_commit": 29,
+      "errors_mutated": 30,
+      "new_errors_in_stale_file": [
+        {
+          "path": "scrapy/core/downloader/__init__.py",
+          "line": 24,
+          "column": 1,
+          "code": "attr-defined",
+          "message": "Module \"scrapy.utils.defer\" has no attribute \"_defer_sleep_async\""
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "scrapy/utils/defer.py",
+          "definition_qualname": "_defer_sleep_async",
+          "line": 222,
+          "end_line": 222,
+          "call_line": 222,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": true,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [
+            {
+              "line": 24,
+              "code": "attr-defined",
+              "message": "Module \"scrapy.utils.defer\" has no attribute \"_defer_sleep_async\""
+            }
+          ],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            206,
+            235
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scrapy:e01783a493b7:scrapy/core/downloader/middleware.py",
+      "commit": "e01783a493b7224ee616a97a310da8d19da11966",
+      "parent": "b159ea8cf3b361c704b1070c1840afb1db43a544",
+      "stale_path": "scrapy/core/downloader/middleware.py",
+      "stale_blob": "ab74e22a4c9a752c912689a78637cba677a18871",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "scrapy",
+      "seconds": 1.17,
+      "errors_commit": 29,
+      "errors_mutated": 30,
+      "new_errors_in_stale_file": [
+        {
+          "path": "scrapy/core/downloader/middleware.py",
+          "line": 17,
+          "column": 1,
+          "code": "attr-defined",
+          "message": "Module \"scrapy.utils.defer\" has no attribute \"_defer_sleep_async\""
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "scrapy/utils/defer.py",
+          "definition_qualname": "_defer_sleep_async",
+          "line": 84,
+          "end_line": 84,
+          "call_line": 84,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": true,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [
+            {
+              "line": 17,
+              "code": "attr-defined",
+              "message": "Module \"scrapy.utils.defer\" has no attribute \"_defer_sleep_async\""
+            }
+          ],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            73,
+            88
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scrapy:e01783a493b7:scrapy/core/scraper.py",
+      "commit": "e01783a493b7224ee616a97a310da8d19da11966",
+      "parent": "b159ea8cf3b361c704b1070c1840afb1db43a544",
+      "stale_path": "scrapy/core/scraper.py",
+      "stale_blob": "8146f0e15add283749500867685b07ed19f49612",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "scrapy",
+      "seconds": 1.18,
+      "errors_commit": 29,
+      "errors_mutated": 30,
+      "new_errors_in_stale_file": [
+        {
+          "path": "scrapy/core/scraper.py",
+          "line": 26,
+          "column": 1,
+          "code": "attr-defined",
+          "message": "Module \"scrapy.utils.defer\" has no attribute \"_defer_sleep_async\""
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "scrapy/utils/defer.py",
+          "definition_qualname": "_defer_sleep_async",
+          "line": 315,
+          "end_line": 315,
+          "call_line": 315,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": true,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [
+            {
+              "line": 26,
+              "code": "attr-defined",
+              "message": "Module \"scrapy.utils.defer\" has no attribute \"_defer_sleep_async\""
+            }
+          ],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            308,
+            349
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scrapy:e01783a493b7:scrapy/core/spidermw.py",
+      "commit": "e01783a493b7224ee616a97a310da8d19da11966",
+      "parent": "b159ea8cf3b361c704b1070c1840afb1db43a544",
+      "stale_path": "scrapy/core/spidermw.py",
+      "stale_blob": "5d1ec246c9c8c1e86cfa1538109d34e2d03d8414",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "scrapy",
+      "seconds": 1.16,
+      "errors_commit": 29,
+      "errors_mutated": 30,
+      "new_errors_in_stale_file": [
+        {
+          "path": "scrapy/core/spidermw.py",
+          "line": 25,
+          "column": 1,
+          "code": "attr-defined",
+          "message": "Module \"scrapy.utils.defer\" has no attribute \"_defer_sleep_async\""
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "scrapy/utils/defer.py",
+          "definition_qualname": "_defer_sleep_async",
+          "line": 227,
+          "end_line": 227,
+          "call_line": 227,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": true,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [
+            {
+              "line": 25,
+              "code": "attr-defined",
+              "message": "Module \"scrapy.utils.defer\" has no attribute \"_defer_sleep_async\""
+            }
+          ],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            209,
+            228
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scrapy:e01783a493b7:scrapy/pipelines/media.py",
+      "commit": "e01783a493b7224ee616a97a310da8d19da11966",
+      "parent": "b159ea8cf3b361c704b1070c1840afb1db43a544",
+      "stale_path": "scrapy/pipelines/media.py",
+      "stale_blob": "d4025bf3b8f36620c61f706d31bb2404b628b654",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "scrapy",
+      "seconds": 1.2,
+      "errors_commit": 29,
+      "errors_mutated": 30,
+      "new_errors_in_stale_file": [
+        {
+          "path": "scrapy/pipelines/media.py",
+          "line": 20,
+          "column": 1,
+          "code": "attr-defined",
+          "message": "Module \"scrapy.utils.defer\" has no attribute \"_defer_sleep_async\""
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "scrapy/utils/defer.py",
+          "definition_qualname": "_defer_sleep_async",
+          "line": 180,
+          "end_line": 180,
+          "call_line": 180,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": true,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [
+            {
+              "line": 20,
+              "code": "attr-defined",
+              "message": "Module \"scrapy.utils.defer\" has no attribute \"_defer_sleep_async\""
+            }
+          ],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            169,
+            217
+          ]
+        },
+        {
+          "index": 1,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "scrapy/utils/defer.py",
+          "definition_qualname": "_defer_sleep_async",
+          "line": 200,
+          "end_line": 200,
+          "call_line": 200,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": true,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [
+            {
+              "line": 20,
+              "code": "attr-defined",
+              "message": "Module \"scrapy.utils.defer\" has no attribute \"_defer_sleep_async\""
+            }
+          ],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            169,
+            217
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scrapy:f1694269d8c9:scrapy/extensions/feedexport.py",
+      "commit": "f1694269d8c9437461936ed449e81aa2ccb3b7cb",
+      "parent": "fe96c1f54b8f635e9274a854214b07887b9d8d61",
+      "stale_path": "scrapy/extensions/feedexport.py",
+      "stale_blob": "32abc82d3dd8b97e875144b6d81a9ae714c9fe3f",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "scrapy",
+      "seconds": 0.63,
+      "errors_commit": 29,
+      "errors_mutated": 29,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "scrapy/utils/ftp.py",
+          "definition_qualname": "ftp_store_file",
+          "line": 384,
+          "end_line": 393,
+          "call_line": 384,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            383,
+            393
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scrapy:f3868e11fb0e:extras/qpsclient.py",
+      "commit": "f3868e11fb0ef3b0aeae3ebf64a78b1deb733fed",
+      "parent": "9ca206da6401b3edbc451a13d7146d7bc5e4d98e",
+      "stale_path": "extras/qpsclient.py",
+      "stale_blob": "269b27336d614f72307932fea08b15c4978a4d37",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "extras/qpsclient.py",
+      "seconds": 0.56,
+      "errors_commit": 20,
+      "errors_mutated": 20,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "scrapy/spiders/__init__.py",
+          "definition_qualname": "Spider.start_requests",
+          "line": 38,
+          "end_line": 38,
+          "call_line": 38,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            37,
+            39
+          ]
+        },
+        {
+          "index": 1,
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "scrapy/spiders/sitemap.py",
+          "definition_qualname": "SitemapSpider.start_requests",
+          "line": 38,
+          "end_line": 38,
+          "call_line": 38,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            37,
+            39
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scrapy:f3868e11fb0e:scrapy/core/spidermw.py",
+      "commit": "f3868e11fb0ef3b0aeae3ebf64a78b1deb733fed",
+      "parent": "9ca206da6401b3edbc451a13d7146d7bc5e4d98e",
+      "stale_path": "scrapy/core/spidermw.py",
+      "stale_blob": "67342099dfaba8533a5d43fed053773c1b603ff1",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "scrapy",
+      "seconds": 1.16,
+      "errors_commit": 24,
+      "errors_mutated": 25,
+      "new_errors_in_stale_file": [
+        {
+          "path": "scrapy/core/spidermw.py",
+          "line": 456,
+          "column": 31,
+          "code": "attr-defined",
+          "message": "\"Spider\" has no attribute \"start_requests\""
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "extras/qpsclient.py",
+          "definition_qualname": "QPSSpider.start_requests",
+          "line": 456,
+          "end_line": 456,
+          "call_line": 456,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 456,
+              "code": "attr-defined",
+              "message": "\"Spider\" has no attribute \"start_requests\""
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "attr-defined"
+          ],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            438,
+            464
+          ]
+        },
+        {
+          "index": 1,
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "scrapy/spiders/__init__.py",
+          "definition_qualname": "Spider.start_requests",
+          "line": 456,
+          "end_line": 456,
+          "call_line": 456,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 456,
+              "code": "attr-defined",
+              "message": "\"Spider\" has no attribute \"start_requests\""
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "attr-defined"
+          ],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            438,
+            464
+          ]
+        },
+        {
+          "index": 2,
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "scrapy/spiders/sitemap.py",
+          "definition_qualname": "SitemapSpider.start_requests",
+          "line": 456,
+          "end_line": 456,
+          "call_line": 456,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 456,
+              "code": "attr-defined",
+              "message": "\"Spider\" has no attribute \"start_requests\""
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "attr-defined"
+          ],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            438,
+            464
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scrapy:f3868e11fb0e:scrapy/spiders/__init__.py",
+      "commit": "f3868e11fb0ef3b0aeae3ebf64a78b1deb733fed",
+      "parent": "9ca206da6401b3edbc451a13d7146d7bc5e4d98e",
+      "stale_path": "scrapy/spiders/__init__.py",
+      "stale_blob": "018e510c5828d0e19144d860a2ce35f53371bc36",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "scrapy",
+      "seconds": 1.6,
+      "errors_commit": 24,
+      "errors_mutated": 24,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "extras/qpsclient.py",
+          "definition_qualname": "QPSSpider.start_requests",
+          "line": 134,
+          "end_line": 134,
+          "call_line": 134,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            84,
+            135
+          ]
+        },
+        {
+          "index": 1,
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "scrapy/spiders/sitemap.py",
+          "definition_qualname": "SitemapSpider.start_requests",
+          "line": 134,
+          "end_line": 134,
+          "call_line": 134,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            84,
+            135
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scrapy:f3868e11fb0e:scrapy/spiders/sitemap.py",
+      "commit": "f3868e11fb0ef3b0aeae3ebf64a78b1deb733fed",
+      "parent": "9ca206da6401b3edbc451a13d7146d7bc5e4d98e",
+      "stale_path": "scrapy/spiders/sitemap.py",
+      "stale_blob": "d87ffccaf8952fc4ffcb5b76f30245f896ca9ff6",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "scrapy",
+      "seconds": 1.61,
+      "errors_commit": 24,
+      "errors_mutated": 24,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "extras/qpsclient.py",
+          "definition_qualname": "QPSSpider.start_requests",
+          "line": 57,
+          "end_line": 57,
+          "call_line": 57,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            56,
+            58
+          ]
+        },
+        {
+          "index": 1,
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "scrapy/spiders/__init__.py",
+          "definition_qualname": "Spider.start_requests",
+          "line": 57,
+          "end_line": 57,
+          "call_line": 57,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            56,
+            58
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scrapy:f44abb91f6a0:scrapy/extensions/feedexport.py",
+      "commit": "f44abb91f6a0d7666eba0d1d25a0f63503fb7c7a",
+      "parent": "f9ade922a732baefd54160ec3f8ac5a2956ee04d",
+      "stale_path": "scrapy/extensions/feedexport.py",
+      "stale_blob": "874023e2524d1b90145da02ca2a23ea2d4b2d98a",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "scrapy",
+      "seconds": 0.71,
+      "errors_commit": 10,
+      "errors_mutated": 10,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "scrapy/utils/conf.py",
+          "definition_qualname": "feed_complete_default_values_from_settings",
+          "line": 508,
+          "end_line": 510,
+          "call_line": 508,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            485,
+            539
+          ]
+        },
+        {
+          "index": 1,
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "scrapy/utils/conf.py",
+          "definition_qualname": "feed_complete_default_values_from_settings",
+          "line": 522,
+          "end_line": 524,
+          "call_line": 522,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            485,
+            539
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scrapy:f52c4efe1b47:scrapy/core/scheduler.py",
+      "commit": "f52c4efe1b47874fed1924a7dc4c0e68b289b3c5",
+      "parent": "a527168ad0888a54b665a6d00a45c720a956e1c0",
+      "stale_path": "scrapy/core/scheduler.py",
+      "stale_blob": "a511b0c7b28d1ba43dbc9972250c6dcebb215dcd",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "scrapy",
+      "seconds": 1.09,
+      "errors_commit": 10,
+      "errors_mutated": 10,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "scrapy/utils/job.py",
+          "definition_qualname": "job_dir",
+          "line": 258,
+          "end_line": 258,
+          "call_line": 258,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            254,
+            265
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scrapy:f52c4efe1b47:scrapy/dupefilters.py",
+      "commit": "f52c4efe1b47874fed1924a7dc4c0e68b289b3c5",
+      "parent": "a527168ad0888a54b665a6d00a45c720a956e1c0",
+      "stale_path": "scrapy/dupefilters.py",
+      "stale_blob": "94ed3b11fd29c08594f5ea924752c455a793e7c9",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "scrapy",
+      "seconds": 1.08,
+      "errors_commit": 10,
+      "errors_mutated": 10,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "scrapy/utils/job.py",
+          "definition_qualname": "job_dir",
+          "line": 135,
+          "end_line": 135,
+          "call_line": 135,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            132,
+            138
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scrapy:f52c4efe1b47:scrapy/extensions/spiderstate.py",
+      "commit": "f52c4efe1b47874fed1924a7dc4c0e68b289b3c5",
+      "parent": "a527168ad0888a54b665a6d00a45c720a956e1c0",
+      "stale_path": "scrapy/extensions/spiderstate.py",
+      "stale_blob": "7b8756572b6c5a847df773016b1239a423bd08f2",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "scrapy",
+      "seconds": 1.09,
+      "errors_commit": 10,
+      "errors_mutated": 10,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "scrapy/utils/job.py",
+          "definition_qualname": "job_dir",
+          "line": 26,
+          "end_line": 26,
+          "call_line": 26,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            25,
+            33
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scrapy:f52c4efe1b47:scrapy/utils/versions.py",
+      "commit": "f52c4efe1b47874fed1924a7dc4c0e68b289b3c5",
+      "parent": "a527168ad0888a54b665a6d00a45c720a956e1c0",
+      "stale_path": "scrapy/utils/versions.py",
+      "stale_blob": "6bd96a215dbff9682353e9398fe115cb97957ca6",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "scrapy",
+      "seconds": 0.55,
+      "errors_commit": 10,
+      "errors_mutated": 10,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "scrapy/utils/ssl.py",
+          "definition_qualname": "get_openssl_version",
+          "line": 22,
+          "end_line": 22,
+          "call_line": 22,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            15,
+            25
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scrapy:f67c87db61e5:scrapy/utils/log.py",
+      "commit": "f67c87db61e54c39e0616872f611a01bbd7b2bc5",
+      "parent": "a648c05dadadb5eb15ad2babae67010060fc6f45",
+      "stale_path": "scrapy/utils/log.py",
+      "stale_blob": "bb4254f0cb10d7f1eb1bf20e7eec953505af7c88",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "scrapy",
+      "seconds": 1.23,
+      "errors_commit": 10,
+      "errors_mutated": 11,
+      "new_errors_in_stale_file": [
+        {
+          "path": "scrapy/utils/log.py",
+          "line": 20,
+          "column": 1,
+          "code": "attr-defined",
+          "message": "Module \"scrapy.utils.display\" has no attribute \"_tty_supports_color\""
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "scrapy/utils/display.py",
+          "definition_qualname": "_tty_supports_color",
+          "line": 190,
+          "end_line": 190,
+          "call_line": 190,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": true,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [
+            {
+              "line": 20,
+              "code": "attr-defined",
+              "message": "Module \"scrapy.utils.display\" has no attribute \"_tty_supports_color\""
+            }
+          ],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            182,
+            198
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scrapy:fe30c1882a12:scrapy/commands/shell.py",
+      "commit": "fe30c1882a12651c19c5a94d71e9f14e442456c7",
+      "parent": "3a799fd70127aba17895e891b61d27a4340ff13c",
+      "stale_path": "scrapy/commands/shell.py",
+      "stale_blob": "3574d8e622f8bc4aa54b8d753c6fb23bfbee683d",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "scrapy",
+      "seconds": 0.56,
+      "errors_commit": 10,
+      "errors_mutated": 12,
+      "new_errors_in_stale_file": [
+        {
+          "path": "scrapy/commands/shell.py",
+          "line": 102,
+          "column": 24,
+          "code": "call-arg",
+          "message": "Unexpected keyword argument \"_start_request_processing\" for \"start_async\" of \"ExecutionEngine\""
+        },
+        {
+          "path": "scrapy/commands/shell.py",
+          "line": 119,
+          "column": 17,
+          "code": "call-arg",
+          "message": "Unexpected keyword argument \"_start_request_processing\" for \"start_async\" of \"ExecutionEngine\""
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "scrapy/core/engine.py",
+          "definition_qualname": "ExecutionEngine.start_async",
+          "line": 102,
+          "end_line": 102,
+          "call_line": 102,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 102,
+              "code": "call-arg",
+              "message": "Unexpected keyword argument \"_start_request_processing\" for \"start_async\" of \"ExecutionEngine\""
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "call-arg"
+          ],
+          "tc_file_hit_codes": [
+            "call-arg"
+          ],
+          "enclosing_function_span": [
+            99,
+            103
+          ]
+        },
+        {
+          "index": 1,
+          "binding": "breaking",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "scrapy/core/engine.py",
+          "definition_qualname": "ExecutionEngine.start_async",
+          "line": 119,
+          "end_line": 119,
+          "call_line": 119,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 119,
+              "code": "call-arg",
+              "message": "Unexpected keyword argument \"_start_request_processing\" for \"start_async\" of \"ExecutionEngine\""
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "call-arg"
+          ],
+          "tc_file_hit_codes": [
+            "call-arg"
+          ],
+          "enclosing_function_span": [
+            110,
+            124
+          ]
+        }
+      ]
+    }
+  ],
+  "environment": {
+    "mypy_version": "mypy 2.4.1 (compiled: yes)",
+    "python_version": "3.12.6",
+    "command": [
+      "python.exe",
+      "-I",
+      "-X",
+      "utf8",
+      "-m",
+      "mypy",
+      "--config-file",
+      "{config}",
+      "--cache-dir",
+      "{cache}",
+      "--no-site-packages",
+      "--ignore-missing-imports",
+      "--check-untyped-defs",
+      "--no-error-summary",
+      "--hide-error-context",
+      "--no-color-output",
+      "--show-column-numbers",
+      "--show-error-codes",
+      "--no-pretty",
+      "{target}"
+    ],
+    "config_file_contents": "[mypy]\n",
+    "incremental": true,
+    "timeout_seconds": 600.0,
+    "corpora": [
+      {
+        "repository": "requests",
+        "sha256": "7b2ae35e40a6357ba864ab211b9e7da61f11427fa50be53720aac05b0b3e2159"
+      },
+      {
+        "repository": "urllib3",
+        "sha256": "21c212587f05ece5a6badbba134bead6b584a5b0cc5c9a146dc5f681af739971"
+      },
+      {
+        "repository": "pytest",
+        "sha256": "d2f611e60583d8e18b4fa7e8ddfc80ee22218cb865e531cdcf070fb023325ec5"
+      },
+      {
+        "repository": "scrapy",
+        "sha256": "62f31fe1ed0755fab6c765cf87a0966d07f773f18ed6ec957b986fc2c9f45ce5"
+      },
+      {
+        "repository": "paramiko",
+        "sha256": "b2c286a40c23ad02a7b57cd889e6b6f5c3286e3c2080efe49f7f626f33a272c6"
+      }
+    ]
+  }
+}
