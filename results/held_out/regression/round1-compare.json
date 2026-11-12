@@ -1,0 +1,68 @@
+{
+  "repositories": {
+    "attrs": {
+      "contract_changing_commits": 52,
+      "silent_before": 49,
+      "silent_after": 52,
+      "sites_before": 18,
+      "sites_after": 0,
+      "analysis_errors": 0
+    },
+    "httpx": {
+      "contract_changing_commits": 128,
+      "silent_before": 120,
+      "silent_after": 121,
+      "sites_before": 20,
+      "sites_after": 15,
+      "analysis_errors": 0
+    },
+    "marshmallow": {
+      "contract_changing_commits": 82,
+      "silent_before": 78,
+      "silent_after": 78,
+      "sites_before": 4,
+      "sites_after": 4,
+      "analysis_errors": 0
+    },
+    "mkdocs": {
+      "contract_changing_commits": 153,
+      "silent_before": 147,
+      "silent_after": 147,
+      "sites_before": 7,
+      "sites_after": 7,
+      "analysis_errors": 0
+    },
+    "rich": {
+      "contract_changing_commits": 63,
+      "silent_before": 58,
+      "silent_after": 58,
+      "sites_before": 7,
+      "sites_after": 7,
+      "analysis_errors": 0
+    }
+  },
+  "pooled": {
+    "contract_changing_commits": 478,
+    "silent_before": 452,
+    "silent_after": 456,
+    "sites_before": 56,
+    "sites_after": 33,
+    "analysis_errors": 0
+  },
+  "removed_sites": {
+    "removed_callable_review|false_report": 23
+  },
+  "kept_sites": {
+    "delegating_wrapper_review|false_report": 12,
+    "delegating_wrapper_review|real_omission": 6,
+    "exception_contract_review|false_report": 2,
+    "override_signature_review|false_report": 5,
+    "override_signature_review|real_omission": 2,
+    "override_signature_review|review_worthy": 3,
+    "parameter_sink_review|real_omission": 1,
+    "parameter_sink_review|review_worthy": 1,
+    "removed_callable_review|real_omission": 1
+  },
+  "added_sites": [],
+  "removed_real_or_review_worthy": []
+}

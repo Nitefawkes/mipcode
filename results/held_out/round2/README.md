@@ -120,6 +120,7 @@ These are readings of upstream history. They say what the check reports on commi
 
 ## Notes on the run
 
+- **Later changes.** After this report, three causes of false reports found in the two rounds were fixed, and `removed_callable_review` returned to the default set. The [regression check](../regression/README.md) reruns both rounds with that engine. Nothing above was recomputed.
 - Each repository contributed its most recent 800 non-merge commits.
 - The readers and the third read are model judgments made from the commit diffs and the source.
 - [Replay data](replay/) holds one report per repository and configuration. [adjudication.json](adjudication.json) holds each sampled site with both readers' labels, their reasons, and the final label, and [sample-ids.json](sample-ids.json) lists the sample.

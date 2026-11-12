@@ -1,0 +1,101 @@
+{
+  "repository": "urllib3",
+  "head": "6da1f82193a6",
+  "commits_replayed": 800,
+  "horizon_commits": 25,
+  "opt_in_detectors": [],
+  "wall_seconds": 387.8,
+  "commits_changing_production_python": 371,
+  "contract_changing_commits": 111,
+  "contract_changing_commits_silent": 107,
+  "contract_changing_commits_flagged": 4,
+  "local_commits_flagged": 0,
+  "analysis_errors": 0,
+  "flagged_commits": [
+    {
+      "commit": "cefd1dbba6a2",
+      "subject": "Prevent issue in HTTPResponse().read() when decoded_content is True and then False Provided it has i",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "exception_contract_review",
+          "symbol": "HTTPResponse.read",
+          "path": "src/urllib3/response.py",
+          "line": 615,
+          "anchor": "HTTPResponse.drain_conn",
+          "provenance": "static_ast",
+          "evidence": "HTTPResponse.read newly raises RuntimeError, bypassing caller try/except (BaseSSLError, HTTPError, HTTPException, OSError)",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        }
+      ]
+    },
+    {
+      "commit": "8b4e56854344",
+      "subject": "Migrate TestConnectionPool to Hypercorn",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "parameter_sink_review",
+          "symbol": "echo_uri",
+          "path": "dummyserver/app.py",
+          "line": 115,
+          "anchor": "echo_uri",
+          "provenance": "static_ast",
+          "evidence": "new parameter rest is not read in the function body; verify its intended behavioral sink",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        }
+      ]
+    },
+    {
+      "commit": "52392654b301",
+      "subject": "Fix HTTP version in debug log (#3316)",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "override_signature_review",
+          "symbol": "EmscriptenHttpResponseWrapper.__init__",
+          "path": "src/urllib3/contrib/emscripten/response.py",
+          "line": 31,
+          "anchor": "EmscriptenHttpResponseWrapper.__init__",
+          "provenance": "static_ast",
+          "evidence": "override may omit changed base parameter version_string",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        },
+        {
+          "detector": "override_signature_review",
+          "symbol": "HTTP2Response.__init__",
+          "path": "src/urllib3/http2.py",
+          "line": 185,
+          "anchor": "HTTP2Response.__init__",
+          "provenance": "static_ast",
+          "evidence": "override may omit changed base parameter version_string",
+          "resolved_after_commits": 21,
+          "resolved_by": "site_function_edit",
+          "resolving_commit": "9316764e90ae",
+          "resolving_subject": "Probe and cache HTTP/2 support per-origin"
+        }
+      ]
+    },
+    {
+      "commit": "f7bcf6986fa9",
+      "subject": "Add HTTPResponse.shutdown() to stop blocking reads (#3527)",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "parameter_sink_review",
+          "symbol": "WrappedSocket.shutdown",
+          "path": "src/urllib3/contrib/pyopenssl.py",
+          "line": 369,
+          "anchor": "WrappedSocket.shutdown",
+          "provenance": "static_ast",
+          "evidence": "new parameter how is not read in the function body; verify its intended behavioral sink",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        }
+      ]
+    }
+  ]
+}
