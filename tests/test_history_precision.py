@@ -191,12 +191,34 @@ def test_method_removed_from_a_class_without_bases_is_still_reported():
         (
             "class Base:\n    def render(self):\n        return ''\n\n"
             "class Child(Base):\n    def render(self):\n        return 'x'\n",
-            "class Base:\n    def render(self, ctx):\n        return ctx\n\n"
+            "class Base:\n    def render(self, ctx):\n        return ''\n\n"
             "class Child(Base):\n    def render(self, ctx):\n        return 'x'\n",
         ),
     ],
-    ids=["protocol-method", "nested-callback", "overridden-hook", "override-of-base"],
+    ids=["protocol-method", "nested-callback", "overridden-hook", "override-of-trivial-base"],
 )
 def test_parameter_required_by_a_shared_signature_is_not_reported_as_unread(before_src, after_src):
     assert _detectors({"mod.py": before_src}, {"mod.py": after_src}) == []
+
+
+def _graphs(base_body: str, child_body: str, parameter: str) -> str:
+    return (
+        f"class Graph:\n    def parse(self, source{parameter}):\n{base_body}\n"
+        f"class Conjunctive(Graph):\n    def parse(self, source{parameter}):\n{child_body}"
+    )
+
+
+def test_override_that_ignores_a_parameter_its_base_consumes_is_reported():
+    before = _graphs("        return load(source)\n", "        return load_all(source)\n", "")
+    after = _graphs("        return load(source, base_iri)\n", "        return load_all(source)\n", ", base_iri=None")
+    found = [(f.detector, f.symbol) for f in analyze_delta({"graph.py": before}, {"graph.py": after})]
+    assert ("parameter_sink_review", "Conjunctive.parse") in found
+    assert ("parameter_sink_review", "Graph.parse") not in found
+
+
+def test_parameter_unread_across_a_working_method_family_is_reported_for_each_member():
+    before = _graphs("        return load(source)\n", "        return load_all(source)\n", "")
+    after = _graphs("        return load(source)\n", "        return load_all(source)\n", ", base_iri=None")
+    found = sorted(f.symbol for f in analyze_delta({"graph.py": before}, {"graph.py": after}) if f.detector == "parameter_sink_review")
+    assert found == ["Conjunctive.parse", "Graph.parse"]
 

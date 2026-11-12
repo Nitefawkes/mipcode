@@ -72,8 +72,40 @@ def _constructor_pair_reads(function: FunctionFact, parameter: str, facts: FileF
     return partner is not None and parameter in partner.local_name_reads
 
 
-def _signature_is_dictated(function: FunctionFact, facts: FileFacts | None, index: MutableResolutionIndex) -> bool:
-    """The parameter list follows a protocol, a callback convention, or an overridden method."""
+def _nearest_base_method(
+    cls: ClassFact, method: str, index: MutableResolutionIndex
+) -> tuple[FunctionFact | None, bool]:
+    """The closest workspace base definition of a method, and whether every base was resolved."""
+    seen: set[str] = set()
+    resolved = True
+    level = [base.split(".")[-1] for base in cls.bases]
+    while level:
+        following: list[str] = []
+        for name in level:
+            if name in seen or name == "object":
+                continue
+            seen.add(name)
+            bases = index.classes_by_short.get(name)
+            if not bases:
+                resolved = False
+                continue
+            for base in bases.values():
+                if method in base.methods:
+                    return base.methods[method], True
+                following.extend(item.split(".")[-1] for item in base.bases)
+        level = following
+    return None, resolved
+
+
+def _unread_parameter_is_expected(
+    function: FunctionFact, parameter: str, facts: FileFacts | None, index: MutableResolutionIndex
+) -> bool:
+    """A new parameter can go unread where the signature is fixed by something else.
+
+    Protocol methods, nested callbacks, and trivial hooks accept arguments they do not
+    use. An override is still reported when the method it overrides consumes the
+    parameter, or ignores it in a body that does real work.
+    """
     if function.name.startswith("__") and function.name.endswith("__") and function.name != "__init__":
         return True
     expected = f"{function.class_qualname}.{function.name}" if function.class_qualname else function.name
@@ -83,9 +115,13 @@ def _signature_is_dictated(function: FunctionFact, facts: FileFacts | None, inde
     cls = facts.classes.get(function.class_qualname) if facts and function.class_qualname else None
     if cls is None:
         return False
-    if any(function.name in child.methods for child in index.subclasses_of(cls.name)):
-        return True
-    return bool(cls.bases) and _class_may_inherit(cls, function.name, index)
+    base, resolved = _nearest_base_method(cls, function.name, index)
+    if base is not None:
+        return parameter not in base.local_name_reads and not base.own_calls
+    overridden = any(function.name in child.methods for child in index.subclasses_of(cls.name))
+    # A hook, or a method that an unresolved base may declare, is expected to ignore
+    # arguments only when its body does no work of its own.
+    return (overridden or not resolved) and not function.own_calls
 
 
 def _class_may_inherit(cls: ClassFact, method: str, index: MutableResolutionIndex) -> bool:
@@ -423,7 +459,7 @@ def analyze_changed_files_in_index(
                         and parameter.kind not in {"vararg", "kwarg"}
                         and len(new.parameters) > len(old.parameters)
                         and not new.is_stub
-                        and not _signature_is_dictated(new, new_file, index)
+                        and not _unread_parameter_is_expected(new, name, new_file, index)
                         and not _constructor_pair_reads(new, name, new_file)
                     ):
                         # Abstract declarations and catch-all parameters have no body to read them.
