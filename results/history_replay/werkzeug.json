@@ -3,11 +3,12 @@
   "head": "0d35bad79a9f",
   "commits_replayed": 816,
   "horizon_commits": 25,
-  "wall_seconds": 125.6,
+  "opt_in_detectors": [],
+  "wall_seconds": 113.3,
   "commits_changing_production_python": 546,
   "contract_changing_commits": 193,
-  "contract_changing_commits_silent": 179,
-  "contract_changing_commits_flagged": 14,
+  "contract_changing_commits_silent": 186,
+  "contract_changing_commits_flagged": 7,
   "local_commits_flagged": 1,
   "analysis_errors": 0,
   "flagged_commits": [
@@ -52,175 +53,10 @@
       ]
     },
     {
-      "commit": "88125beebc64",
-      "subject": "Refactor the routing code into multiple files",
-      "contract_changing": true,
-      "sites": [
-        {
-          "detector": "parameter_truthiness_review",
-          "symbol": "Map.__init__",
-          "path": "src/werkzeug/routing/map.py",
-          "line": 120,
-          "anchor": "Map.__init__",
-          "provenance": "static_ast",
-          "evidence": "new or changed None-default parameter converters is tested as a bare truth value",
-          "resolved_after_commits": 9,
-          "resolved_by": "site_function_edit",
-          "resolving_commit": "69c90350b67d",
-          "resolving_subject": "[pre-commit.ci] pre-commit autoupdate"
-        },
-        {
-          "detector": "parameter_truthiness_review",
-          "symbol": "MapAdapter.make_redirect_url",
-          "path": "src/werkzeug/routing/map.py",
-          "line": 763,
-          "anchor": "MapAdapter.make_redirect_url",
-          "provenance": "static_ast",
-          "evidence": "new or changed None-default parameter query_args is tested as a bare truth value",
-          "resolved_after_commits": 9,
-          "resolved_by": "site_function_edit",
-          "resolving_commit": "69c90350b67d",
-          "resolving_subject": "[pre-commit.ci] pre-commit autoupdate"
-        },
-        {
-          "detector": "parameter_truthiness_review",
-          "symbol": "MapAdapter.build",
-          "path": "src/werkzeug/routing/map.py",
-          "line": 913,
-          "anchor": "MapAdapter.build",
-          "provenance": "static_ast",
-          "evidence": "new or changed None-default parameter values is tested as a bare truth value",
-          "resolved_after_commits": 9,
-          "resolved_by": "site_function_edit",
-          "resolving_commit": "69c90350b67d",
-          "resolving_subject": "[pre-commit.ci] pre-commit autoupdate"
-        },
-        {
-          "detector": "parameter_truthiness_review",
-          "symbol": "MapAdapter.build",
-          "path": "src/werkzeug/routing/map.py",
-          "line": 943,
-          "anchor": "MapAdapter.build",
-          "provenance": "static_ast",
-          "evidence": "new or changed None-default parameter url_scheme is tested as a bare truth value",
-          "resolved_after_commits": 9,
-          "resolved_by": "site_function_edit",
-          "resolving_commit": "69c90350b67d",
-          "resolving_subject": "[pre-commit.ci] pre-commit autoupdate"
-        },
-        {
-          "detector": "parameter_truthiness_review",
-          "symbol": "Rule.__init__",
-          "path": "src/werkzeug/routing/rules.py",
-          "line": 477,
-          "anchor": "Rule.__init__",
-          "provenance": "static_ast",
-          "evidence": "new or changed None-default parameter defaults is tested as a bare truth value",
-          "resolved_after_commits": 9,
-          "resolved_by": "site_function_edit",
-          "resolving_commit": "69c90350b67d",
-          "resolving_subject": "[pre-commit.ci] pre-commit autoupdate"
-        }
-      ]
-    },
-    {
-      "commit": "b42d1a4b57b8",
-      "subject": "extractring http functions to sansio",
-      "contract_changing": true,
-      "sites": [
-        {
-          "detector": "parameter_truthiness_review",
-          "symbol": "is_resource_modified",
-          "path": "src/werkzeug/sansio/http.py",
-          "line": 80,
-          "anchor": "is_resource_modified",
-          "provenance": "static_ast",
-          "evidence": "new or changed None-default parameter etag is tested as a bare truth value",
-          "resolved_after_commits": 2,
-          "resolved_by": "site_function_edit",
-          "resolving_commit": "7e0d45a3b155",
-          "resolving_subject": "Support PathLike as type for filename argument in FileStorage class"
-        }
-      ]
-    },
-    {
-      "commit": "cfebee06d2e0",
-      "subject": "Refactor the datastructures code structure",
-      "contract_changing": true,
-      "sites": [
-        {
-          "detector": "parameter_truthiness_review",
-          "symbol": "WWWAuthenticate.__init__",
-          "path": "src/werkzeug/datastructures/auth_headers.py",
-          "line": 154,
-          "anchor": "WWWAuthenticate.__init__",
-          "provenance": "static_ast",
-          "evidence": "new or changed None-default parameter auth_type is tested as a bare truth value",
-          "resolved_after_commits": 1,
-          "resolved_by": "site_function_edit",
-          "resolving_commit": "8c2b4b82d0ca",
-          "resolving_subject": "don't strip leading = when parsing cookie"
-        }
-      ]
-    },
-    {
-      "commit": "5e300733ed05",
-      "subject": "deprecate tuple/bytes to iri functions",
-      "contract_changing": true,
-      "sites": [
-        {
-          "detector": "parameter_truthiness_review",
-          "symbol": "iri_to_uri",
-          "path": "src/werkzeug/urls.py",
-          "line": 963,
-          "anchor": "iri_to_uri",
-          "provenance": "static_ast",
-          "evidence": "new or changed None-default parameter safe_conversion is tested as a bare truth value",
-          "resolved_after_commits": 3,
-          "resolved_by": "site_function_edit",
-          "resolving_commit": "1c6ebef933ce",
-          "resolving_subject": "fix mypy findings"
-        }
-      ]
-    },
-    {
-      "commit": "c3b26d081071",
-      "subject": "deprecate safe_conversion in iri_to_uri",
-      "contract_changing": true,
-      "sites": [
-        {
-          "detector": "parameter_truthiness_review",
-          "symbol": "iri_to_uri",
-          "path": "src/werkzeug/urls.py",
-          "line": 988,
-          "anchor": "iri_to_uri",
-          "provenance": "static_ast",
-          "evidence": "new or changed None-default parameter safe_conversion is tested as a bare truth value",
-          "resolved_after_commits": 9,
-          "resolved_by": "site_function_edit",
-          "resolving_commit": "88f009206fad",
-          "resolving_subject": "[pre-commit.ci] pre-commit autoupdate"
-        }
-      ]
-    },
-    {
       "commit": "dbdc9621005f",
       "subject": "refactor parse and dump header functions",
       "contract_changing": true,
       "sites": [
-        {
-          "detector": "parameter_truthiness_review",
-          "symbol": "quote_header_value",
-          "path": "src/werkzeug/http.py",
-          "line": 191,
-          "anchor": "quote_header_value",
-          "provenance": "static_ast",
-          "evidence": "new or changed None-default parameter extra_chars is tested as a bare truth value",
-          "resolved_after_commits": 12,
-          "resolved_by": "site_function_edit",
-          "resolving_commit": "378ed5564cc5",
-          "resolving_subject": "[pre-commit.ci] pre-commit autoupdate"
-        },
         {
           "detector": "callback_binding_review",
           "symbol": "dump_header",
@@ -259,35 +95,6 @@
           "resolved_by": "file_edit",
           "resolving_commit": "378ed5564cc5",
           "resolving_subject": "[pre-commit.ci] pre-commit autoupdate"
-        }
-      ]
-    },
-    {
-      "commit": "c81896d994c3",
-      "subject": "deprecate bytes in headers",
-      "contract_changing": true,
-      "sites": [
-        {
-          "detector": "parameter_truthiness_review",
-          "symbol": "Headers.get",
-          "path": "src/werkzeug/datastructures/headers.py",
-          "line": 123,
-          "anchor": "Headers.get",
-          "provenance": "static_ast",
-          "evidence": "new or changed None-default parameter as_bytes is tested as a bare truth value",
-          "resolved_after_commits": null,
-          "resolved_by": "open_at_horizon"
-        },
-        {
-          "detector": "parameter_truthiness_review",
-          "symbol": "Headers.getlist",
-          "path": "src/werkzeug/datastructures/headers.py",
-          "line": 163,
-          "anchor": "Headers.getlist",
-          "provenance": "static_ast",
-          "evidence": "new or changed None-default parameter as_bytes is tested as a bare truth value",
-          "resolved_after_commits": null,
-          "resolved_by": "open_at_horizon"
         }
       ]
     },
@@ -410,26 +217,6 @@
           "evidence": "changed callable on_update is passed as a value",
           "resolved_after_commits": null,
           "resolved_by": "open_at_horizon"
-        }
-      ]
-    },
-    {
-      "commit": "6b4134a972fd",
-      "subject": "deprecated `is_resource_modified` and `is_byte_range_valid`",
-      "contract_changing": true,
-      "sites": [
-        {
-          "detector": "parameter_truthiness_review",
-          "symbol": "_is_resource_modified",
-          "path": "src/werkzeug/sansio/http.py",
-          "line": 73,
-          "anchor": "_is_resource_modified",
-          "provenance": "static_ast",
-          "evidence": "new or changed None-default parameter etag is tested as a bare truth value",
-          "resolved_after_commits": 1,
-          "resolved_by": "site_function_edit",
-          "resolving_commit": "4efac9df7eba",
-          "resolving_subject": "add links"
         }
       ]
     }

@@ -3,8 +3,8 @@
     "commits_replayed": 2944,
     "commits_changing_production_python": 1653,
     "contract_changing_commits": 459,
-    "contract_changing_commits_silent": 438,
-    "contract_changing_commits_flagged": 21,
+    "contract_changing_commits_silent": 449,
+    "contract_changing_commits_flagged": 10,
     "local_commits_flagged": 1,
     "analysis_errors": 0
   },
@@ -22,11 +22,6 @@
     "override_signature_review": {
       "sites": 1,
       "same_file_other_edit": 1
-    },
-    "parameter_truthiness_review": {
-      "sites": 19,
-      "open_at_horizon": 6,
-      "site_function_edit": 13
     },
     "removed_callable_review": {
       "sites": 1,

@@ -3,7 +3,8 @@
   "head": "d7def7dbcc59",
   "commits_replayed": 410,
   "horizon_commits": 25,
-  "wall_seconds": 47.8,
+  "opt_in_detectors": [],
+  "wall_seconds": 46.7,
   "commits_changing_production_python": 260,
   "contract_changing_commits": 51,
   "contract_changing_commits_silent": 49,
@@ -24,17 +25,6 @@
           "anchor": "Container._replace_at",
           "provenance": "static_ast",
           "evidence": "delegating wrapper Container._replace_at calls Container._previous_item_with_index without forwarding optional parameter idx",
-          "resolved_after_commits": null,
-          "resolved_by": "open_at_horizon"
-        },
-        {
-          "detector": "parameter_truthiness_review",
-          "symbol": "Array.add_line",
-          "path": "tomlkit/items.py",
-          "line": 918,
-          "anchor": "Array.add_line",
-          "provenance": "static_ast",
-          "evidence": "new or changed None-default parameter comment is tested as a bare truth value",
           "resolved_after_commits": null,
           "resolved_by": "open_at_horizon"
         }

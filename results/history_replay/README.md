@@ -18,30 +18,30 @@ Shallow local clones, replayed to the listed head with a 25-commit horizon.
 
 ## Result
 
-The first replay ran before any change made in response to it. The second ran on the same commits after those changes.
+The first replay ran before any change made in response to it. The second ran on the same commits after the detector changes described below. The third ran after `parameter_truthiness_review` became [opt-in](../../docs/usage.md#turn-on-an-opt-in-check), and it shows the current default set.
 
-| Measure | First replay | After changes |
-| --- | ---: | ---: |
-| Contract-changing commits | 464 | 459 |
-| Silent | 397 (85.6%) | 438 (95.4%) |
-| With at least one reported production site | 67 | 21 |
-| Local commits with a reported site | 5 | 1 |
-| Reported production sites | 457 | 35 |
+| Measure | First replay | After detector changes | Current default set |
+| --- | ---: | ---: | ---: |
+| Contract-changing commits | 464 | 459 | 459 |
+| Silent | 397 (85.6%) | 438 (95.4%) | 449 (97.8%) |
+| With at least one reported production site | 67 | 21 | 10 |
+| Local commits with a reported site | 5 | 1 | 1 |
+| Reported production sites | 457 | 35 | 16 |
 
 The count of contract-changing commits fell by five because `raise self.factory(...)` no longer counts as raising a named exception class.
 
-| Detector | Sites, first replay | Sites, after changes | Commits, after changes |
-| --- | ---: | ---: | ---: |
-| `parameter_sink_review` | 211 | 0 | 0 |
-| `removed_callable_review` | 182 | 1 | 1 |
-| `callback_binding_review` | 28 | 10 | 6 |
-| `parameter_truthiness_review` | 19 | 19 | 13 |
-| `exception_contract_review` | 7 | 0 | 0 |
-| `state_field_review` | 5 | 1 | 1 |
-| `delegating_wrapper_review` | 3 | 3 | 2 |
-| `override_signature_review` | 2 | 1 | 1 |
+| Detector | Sites, first replay | Sites, after detector changes | Sites, current default set | Commits, current default set |
+| --- | ---: | ---: | ---: | ---: |
+| `parameter_sink_review` | 211 | 0 | 0 | 0 |
+| `removed_callable_review` | 182 | 1 | 1 | 1 |
+| `callback_binding_review` | 28 | 10 | 10 | 6 |
+| `parameter_truthiness_review` | 19 | 19 | off | off |
+| `exception_contract_review` | 7 | 0 | 0 | 0 |
+| `state_field_review` | 5 | 1 | 1 | 1 |
+| `delegating_wrapper_review` | 3 | 3 | 3 | 2 |
+| `override_signature_review` | 2 | 1 | 1 | 1 |
 
-The pinned checks from the earlier studies were rerun after the changes. The 50-commit local corpus still produces no findings, and the ten historical cases still produce the same ten adjudicated findings. Warm write latency on the local corpus was 4.8 ms median and 28.8 ms at the 95th percentile, against 5.2 ms and 25.0 ms for the engine before these changes on the same machine.
+The pinned checks from the earlier studies were rerun with the current engine. The 50-commit local corpus still produces no findings. The ten historical cases produce eight of the ten adjudicated findings with the default set, and all ten with `parameter_truthiness_review` enabled. Warm write latency on the local corpus was 4.9 ms median and 24.6 ms at the 95th percentile, against 5.2 ms and 25.0 ms for the engine before these changes on the same machine.
 
 ## What the first replay showed
 
@@ -55,19 +55,25 @@ Two detectors produced 86% of the reported sites, and reading the commits showed
 
 Each cause has a reduced regression test in `tests/test_history_precision.py`.
 
-## What remains
+## The detector that became opt-in
 
-- **`parameter_truthiness_review` (19 sites, 13 commits)** is now the largest source. Upstream code routinely tests a `None`-default parameter by truth value, and for collections and optional strings that is usually intended. No syntactic rule separates those from the constructed case this detector was written for. Whether it belongs in the default set is an open product decision.
-- **`callback_binding_review` (10 sites)** reports a changed function that is passed as a value, including two werkzeug commits that changed `dump_header` while it is bound through `header_property`. These are legal code that upstream considered complete. They are the kind of site the detector exists to raise for review.
+After the detector changes, `parameter_truthiness_review` was the largest source, with 19 of the 35 sites in 13 commits. Upstream code routinely tests a `None`-default parameter by truth value, and for collections and optional strings that is usually intended. No syntactic rule separates those from the constructed case this detector was written for. Thirteen of its sites show a later edit to the enclosing function, but the reported site is the changed function itself, which is edited again for unrelated reasons.
+
+The detector now runs only with `--enable parameter_truthiness_review`. That has a cost. Two of the ten adjudicated findings in the [historical replay](../v2_delta_readout/historical-replay-v2.md) came from it, both in the T45 invariant case, and the default set no longer reports them.
+
+## What remains in the default set
+
+- **`callback_binding_review` (10 sites, 6 commits)** reports a changed function that is passed as a value, including two werkzeug commits that changed `dump_header` while it is bound through `header_property`. These are legal code that upstream considered complete. They are the kind of site the detector exists to raise for review.
 - The other six sites were not adjudicated.
 
-None of the 35 remaining sites was confirmed as an upstream omission. Thirteen of the truthiness sites show a later edit to the enclosing function, but the reported site is the changed function itself, which is edited again for unrelated reasons. Treat the resolution columns in the per-repository data as leads to read, not as confirmations.
+None of the 16 remaining sites was confirmed as an upstream omission. Treat the resolution columns in the per-repository data as leads to read, not as confirmations.
 
 ## Data
 
-- [Summary after changes](summary.json) and [first-replay summary](baseline-summary.json). The first replay used an earlier resolution label, `site_edit`, that counted any change to the site's file.
-- Per-repository reports after changes: [click](click.json), [packaging](packaging.json), [platformdirs](platformdirs.json), [tomlkit](tomlkit.json), [werkzeug](werkzeug.json). Each lists the flagged commits, their sites, and how later commits resolved them.
+- [Summary for the current default set](summary.json), with per-repository reports: [click](click.json), [packaging](packaging.json), [platformdirs](platformdirs.json), [tomlkit](tomlkit.json), [werkzeug](werkzeug.json). Each lists the flagged commits, their sites, and how later commits resolved them.
+- [Summary after the detector changes](with-truthiness/summary.json), with the truthiness detector still on, and its per-repository reports: [click](with-truthiness/click.json), [packaging](with-truthiness/packaging.json), [platformdirs](with-truthiness/platformdirs.json), [tomlkit](with-truthiness/tomlkit.json), [werkzeug](with-truthiness/werkzeug.json). Reproduce it with `--enable parameter_truthiness_review`.
+- [First-replay summary](baseline-summary.json). The first replay used an earlier resolution label, `site_edit`, that counted any change to the site's file.
 
 ## Limits
 
-The five repositories are small, typed, well-tested libraries, and three of them were also used to tune earlier versions of the check. The detector changes were made after reading this run's reports, so the second replay is a fit to these histories and not a held-out measurement. A replay over repositories that were not consulted would test whether the quieter behavior generalizes.
+The five repositories are small, typed, well-tested libraries, and three of them were also used to tune earlier versions of the check. The detector changes and the opt-in decision were made after reading this run's reports, so the later replays are a fit to these histories and not a held-out measurement. A replay over repositories that were not consulted would test whether the quieter behavior generalizes.

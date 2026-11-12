@@ -1,0 +1,14 @@
+{
+  "repository": "platformdirs",
+  "head": "f9323b0d6836",
+  "commits_replayed": 349,
+  "horizon_commits": 25,
+  "wall_seconds": 33.2,
+  "commits_changing_production_python": 129,
+  "contract_changing_commits": 48,
+  "contract_changing_commits_silent": 48,
+  "contract_changing_commits_flagged": 0,
+  "local_commits_flagged": 0,
+  "analysis_errors": 0,
+  "flagged_commits": []
+}
