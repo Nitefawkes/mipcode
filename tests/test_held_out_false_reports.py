@@ -193,6 +193,24 @@ def test_method_replaced_by_a_class_level_alias_is_still_bound():
     assert analyze_delta(before, after) == []
 
 
+STATUS = "class {name}:\n    @classmethod\n    def phrase(cls, value):\n        return str(value)\n"
+STATUS_CALLER = "from status import codes\n\ndef reason(value):\n    return codes.phrase(value)\n"
+
+
+def test_class_renamed_to_its_alias_keeps_its_methods():
+    # httpx: `codes = StatusCode` became `class codes`, and callers already used `codes`.
+    before = {"status.py": STATUS.format(name="StatusCode") + "\ncodes = StatusCode\n", "models.py": STATUS_CALLER}
+    after = {**before, "status.py": STATUS.format(name="codes")}
+    assert analyze_delta(before, after) == []
+
+
+def test_class_renamed_without_an_alias_still_reports_callers_of_the_old_name():
+    caller = "from status import StatusCode\n\ndef reason(value):\n    return StatusCode.phrase(value)\n"
+    before = {"status.py": STATUS.format(name="StatusCode"), "models.py": caller}
+    after = {**before, "status.py": STATUS.format(name="codes")}
+    assert _reports(analyze_delta(before, after)) == [("removed_callable_review", "models.py", 4)]
+
+
 def test_removed_method_with_no_other_binding_is_still_reported():
     before = {
         "builder.py": (

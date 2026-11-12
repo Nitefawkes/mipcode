@@ -5,7 +5,7 @@ from typing import Iterable, Mapping
 
 from .cache import FactCache
 from .facts import parse_file
-from .model import ClassFact, FileFacts, Finding, FunctionFact, ObservedCallEdge
+from .model import CallFact, ClassFact, FileFacts, Finding, FunctionFact, ObservedCallEdge
 from .resolve import (
     MutableResolutionIndex,
     build_index,
@@ -168,6 +168,17 @@ def _still_bound(old: FunctionFact, new_file: FileFacts | None) -> bool:
         )
     owner = new_file.functions.get(old.qualname.rsplit(".", 1)[0])
     return owner is not None and old.name in owner.local_name_stores
+
+
+def _named_class_has_method(fn: FunctionFact, old: FunctionFact, call: CallFact, caller: FileFacts) -> bool:
+    """The call names a class in the removed method's module, and that class has the method."""
+    if fn.module != old.module or fn.name != old.name or fn.class_qualname is None:
+        return False
+    if len(call.callee_chain) < 2:
+        return False
+    receiver = call.callee_chain[-2]
+    alias = caller.imports.get(receiver)
+    return fn.class_qualname.rsplit(".", 1)[-1] == (alias[1] if alias and alias[1] else receiver)
 
 
 def _class_may_inherit(cls: ClassFact, method: str, index: MutableResolutionIndex) -> bool:
@@ -546,9 +557,11 @@ def analyze_changed_files_in_index(
             if any(
                 (fn.module == old.module and fn.qualname == old.qualname)
                 or (fn.path == caller_facts.path and fn.name == old.name)
+                or _named_class_has_method(fn, old, call, caller_facts)
                 for fn, _ in current
             ):
-                # Still defined, or defined under the same name in the caller's own file.
+                # Still defined, defined under the same name in the caller's own file, or
+                # defined on the class the call names after that class was renamed.
                 continue
             if before_index is None:
                 previous_files = {
