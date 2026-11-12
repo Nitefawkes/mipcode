@@ -12,6 +12,9 @@ Key properties:
     delta `<= 300` bytes, never forcing single-frame paging).
 - `test` optionally enables `ScopedCallCollector` (`disable_k8`) via `sitecustomize.py`
   in Arm B and ingests observed runtime call edges into `DeltaSession`.
+- Arm L (`arm="L"`) is Arm B plus a completion check: the first `finalize` while
+  obligations are still open returns them instead of closing the session. A second
+  `finalize` closes it as is. The tool schemas are unchanged.
 """
 from __future__ import annotations
 
@@ -358,8 +361,8 @@ class ContainedGatewaySession:
         max_response_bytes: int = 16384,
         max_visible_bytes: int = 4 * 1024 * 1024,
     ) -> None:
-        if arm not in ("A", "B", "R"):
-            raise ValueError("arm must be 'A', 'B', or 'R'")
+        if arm not in ("A", "B", "R", "L"):
+            raise ValueError("arm must be 'A', 'B', 'R', or 'L'")
         self.root = Path(root).resolve(strict=True)
         self.arm = arm
         self.evidence_dir = Path(evidence_dir).resolve()
@@ -370,7 +373,7 @@ class ContainedGatewaySession:
         self.ledger_path.touch(exist_ok=False)
 
         self.test_commands = dict(test_commands or {})
-        self.enable_test_monitoring = enable_test_monitoring and (arm == "B")
+        self.enable_test_monitoring = enable_test_monitoring and arm in ("B", "L")
         self.max_calls = max_calls
         self.max_response_bytes = max_response_bytes
         self.max_visible_bytes = max_visible_bytes
@@ -390,8 +393,11 @@ class ContainedGatewaySession:
         self._baseline = self._snapshot()
         self._expected = {name: sha256_bytes(data) for name, data in self._baseline.items()}
         self.impact: DeltaImpactSideband | None = (
-            DeltaImpactSideband(self.root, stub_texts=stub_texts) if arm == "B" else None
+            DeltaImpactSideband(self.root, stub_texts=stub_texts) if arm in ("B", "L") else None
         )
+        self._finalize_held = False
+        if arm == "L":
+            self.metrics["finalize_holds"] = 0
         self._reminder_written_paths: set[str] = set()
         self._reminder_contract_changed: bool = False
         self._reminder_test_emitted: bool = False
@@ -681,6 +687,18 @@ class ContainedGatewaySession:
     def finalize(self) -> dict[str, Any]:
         if self.finalized:
             return {"status": "FINALIZED", "patch_sha256": self.patch_sha256}
+        if self.arm == "L" and self.impact is not None and not self._finalize_held:
+            open_text = self.impact.delta_session.finalize_advisory()
+            if open_text:
+                # Listed once. The agent decides whether the remaining sites are intentional.
+                self._finalize_held = True
+                self.metrics["finalize_holds"] += 1
+                self.metrics["advisory_utf8_bytes"] += len(open_text.encode("utf-8"))
+                return {
+                    "status": "OPEN_OBLIGATIONS",
+                    "impact": open_text,
+                    "detail": "Review these sites, then call finalize again to close the session.",
+                }
         current = self._snapshot()
         now = {name: sha256_bytes(data) for name, data in current.items()}
         if now != self._expected:
@@ -827,7 +845,7 @@ def main_mcp_cli(argv: list[str] | None = None) -> int:
         cfg["arm"],
         Path(cfg["evidence"]) / "session",
         test_commands=cfg.get("test_commands"),
-        enable_test_monitoring=(cfg["arm"] == "B"),
+        enable_test_monitoring=(cfg["arm"] in ("B", "L")),
     )
     server = StdioMcpGatewayServer(session, Path(cfg["evidence"]) / "transport")
     server.serve(sys.stdin.buffer, sys.stdout.buffer)
