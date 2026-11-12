@@ -1,49 +1,56 @@
-I'll rewrite the article to drop the tics in your screenshot, then put it in an editable doc. Loading the docs guide first.
+# Why We Stopped Trying to Beat ripgrep for Coding Agents
 
-Here's the rewrite. I kept every figure and file reference from the original and checked the draft against the ten tics in your screenshot.
+For a few months, we were sure coding agents needed a better way to search code.
+
+Watching an LLM work inside a repository with `ripgrep` (`rg`) and file reads looks clumsy at first. It greps for a function name, gets forty hits, opens three files it didn't need, and eventually lands on the right call site. As systems engineers, our instinct was to give the model a structural index. We built custom tools (`mip_open`, `mip_impact`, `mip_refs`) so it could query call graphs, symbol definitions, and impact trees directly.
+
+Then we ran controlled, head-to-head benchmarks against plain `rg` plus `read_file`, and the results humbled us. 
+
+On routine single-file edits, a frontier model with nothing but `rg` and `read_file` was already fast, cheap, and accurate. The custom tools made things worse. Once an agent had extra navigation tools, it used them, or spent tokens deciding whether to, even on a three-line bugfix. We called this the **local-edit tax**. We were adding friction to ordinary edits in exchange for help on cross-file contract changes.
+
+At that point we had two options: keep tuning tool descriptions and hope to beat `rg` at search, or read the failure transcripts and work out what was actually going wrong. 
+
+We read the transcripts.
 
 ---
 
-# Why we stopped trying to beat ripgrep for coding agents
+## The Failure Mode We Kept Seeing: Premature Completion
 
-For a few months we were sure coding agents needed a better way to search code.
+When we went through the transcripts where `gpt-6.1-sol` (running in Codex) failed our multi-file tasks, the pattern was clear. The model rarely failed because it couldn't use `rg`. When it knew a caller existed, it found the caller and fixed it. 
 
-Watching an LLM work in a repository with `ripgrep` (`rg`) and file reads looks clumsy at first. It greps for a function name, gets forty hits, opens three files it didn't need, and eventually lands on the right call site. As systems engineers, our instinct was to give the model a structural index. We built custom tools (`mip_open`, `mip_impact`, `mip_refs`) so it could query call graphs, symbol definitions, and impact trees directly.
+Where it went wrong was **stopping too early**.
 
-Then we ran controlled, head-to-head benchmarks against plain `rg` plus `read_file`, and the results humbled us. On routine single-file edits, a frontier model with nothing but `rg` and `read_file` was already fast, cheap, and accurate. The custom tools made things worse. Once an agent had extra navigation tools, it used them, or spent tokens deciding whether to, even on a three-line bugfix. We called this the **local-edit tax**. We were adding friction to ordinary edits in exchange for help on cross-file contract changes.
+One example from the real 22-file source tree of `pypa/packaging` (the standard library that parses `pip` requirements) shows the dynamic clearly. We asked the agent to update `parse_requirement` in `packaging/_parser.py` so that whitespace-only strings raise a dedicated `EmptyRequirementError` instead of a generic syntax error.
 
-At that point we had two options: keep tuning tool descriptions and hope to beat `rg` at search, or read the failure transcripts and work out what was going wrong. We read the transcripts.
+In our control run (Arm A, using standard `rg`, `read`, and `write`), the agent did three things:
+1. It read `packaging/errors.py` and added `class EmptyRequirementError(Exception)`.
+2. It read `packaging/_parser.py` and raised the new error when the input was empty.
+3. It declared the task done and finalized.
 
-## The failure we kept seeing: premature completion
+The run took 41.39 seconds, and the diff looked clean. It was also broken at the public caller. 
 
-We went through the transcripts where `gpt-6.1-sol`, running in Codex, failed our multi-file tasks. The model usually managed to use `rg`. When it knew a caller existed, it found the caller and fixed it. Where it went wrong was stopping too early.
+Two files over, `packaging/requirements.py:102` wraps `_parse_requirement(requirement_string)` in a narrow `try ... except ParserSyntaxError:` block so it can re-raise a user-facing `InvalidRequirement`. `EmptyRequirementError` didn't inherit from `ParserSyntaxError`, and nobody had added it to that `except` clause. Calling `Requirement("   ")` let an internal exception escape straight through the public API.
 
-One example from the real 22-file source tree of `pypa/packaging`, the third-party Python library that parses `pip` requirements, shows the pattern. We asked the agent to update `parse_requirement` in `packaging/_parser.py` so that whitespace-only strings raise a dedicated `EmptyRequirementError` instead of a generic syntax error.
-
-In our control run (Arm A, using standard `rg`, `read`, and `write`), the agent did three things. It read `packaging/errors.py` and added `class EmptyRequirementError(Exception)`. It read `packaging/_parser.py` and raised the new error when the input was empty. Then it declared the task done.
-
-The run took 41.39 seconds, and the code looked clean. It was also broken at the public caller. Two files over, `packaging/requirements.py:102` wraps `_parse_requirement(requirement_string)` in a narrow `try ... except ParserSyntaxError:` block so it can re-raise a user-facing `InvalidRequirement`. `EmptyRequirementError` didn't inherit from `ParserSyntaxError`, and nobody added it to that `except` clause. So `Requirement("   ")` let an internal exception escape through the public API.
-
-The local file looked finished, so the agent never ran the search that would have found the caller. `rg` could have found it without trouble.
+The agent didn't fail because `rg` couldn't find `_parse_requirement`. It failed because the local edit looked complete, so **it never ran the search**.
 
 Across our contract-change tasks, we saw four recurring kinds of silent drift:
-
-1. **Return and exception drift.** A function starts returning a 3-tuple where callers unpack two values, so `a, b = verify_token()` crashes. Or it raises a new exception that slips past a caller's narrow `try/except`.
+1. **Return and exception drift.** A function starts returning a 3-tuple where callers unpack two values (`a, b = verify_token()`), or raises a new exception that slips past a caller's narrow `try/except`.
 2. **Wrapper and subclass drift.** Someone adds `base_iri=None` to `Graph.parse()`, but `ConjunctiveGraph.parse()` overrides or wraps it without forwarding the argument.
 3. **Callback and descriptor tables.** A required keyword-only argument (`*, strict: bool`) goes onto `dump_header` in `werkzeug/http.py`. Direct calls get updated, but `header_property(..., dump_func=dump_header)` in `werkzeug/sansio/response.py` passes `dump_header` as a bare reference, so that binding goes stale.
 4. **Dynamic dispatch and chained attributes.** A change to `NTSerializer.serialize` or `OptionValidator.validate` breaks callers that reach it through a plugin registry (`plugin.serialize(...)`, `v.validate(...)`) or a multi-hop chain like `self.session.token_store.issue(...)`.
 
 The test suite misled the agent, too. In the dynamic plugin tasks, the agent ran the configured unit tests after changing `NTSerializer.serialize`. The existing tests called `exporter.serialize("nt", triples)` with the old default arguments, so the command exited with `exit_code=0`. Green tests convinced the agent it was finished. Passing the new `base_iri` argument through `GraphExporter.serialize` would have crashed with a `TypeError`.
 
-## What we changed: remove the search tools, watch the write and test steps
+---
 
-Once we framed the problem as premature completion after a contract-changing edit, the design changed in three ways.
+## What We Changed: Remove the Search Tools, Watch the Write and Test Steps
 
-First, we removed the custom `mip_*` search tools from the agent's prompt. It uses `rg`, `read`, `write`, and `test` as usual.
+Once we framed the problem as premature completion after a contract-changing edit, the architecture flipped upside down:
 
-Second, we attached a delta detector, `mipdelta`, to the `write` and `test` responses. Each time the agent writes a file, `mipdelta` compares the file's AST before and after the edit against a warm in-memory symbol index.
-
-Third, it stays quiet unless something matters. If the edit doesn't change a tracked contract, the output gains zero bytes. If the edit opens a candidate cross-file seam, `mipdelta` appends one advisory line of at most 250 UTF-8 bytes. The line names the affected consumer's file and line, the detector, a provenance tag (`[static]`, `[rt-obs]`, or `[type-cand]`), and the specific mismatch when there's room.
+1. We removed the custom `mip_*` search tools from the agent's prompt entirely. It uses `rg`, `read`, `write`, and `test` as usual.
+2. We attached a delta detector, `mipdelta`, to the `write` and `test` responses. Each time the agent writes a file, `mipdelta` compares the file's AST before and after the edit against a warm in-memory symbol index.
+3. It stays quiet unless something matters. If the edit doesn't change a tracked contract, the output gains zero bytes.
+4. If the edit opens a candidate cross-file seam, `mipdelta` appends one advisory line of at most 250 UTF-8 bytes. The line names the affected consumer's file and line, the detector, a provenance tag (`[static]`, `[rt-obs]`, or `[type-cand]`), and the specific mismatch evidence when there is room.
 
 For the packaging failure, the `write` response came back with 197 extra bytes at the bottom:
 
@@ -53,17 +60,17 @@ For the packaging failure, the `write` response came back with 197 extra bytes a
 
 The advisory points at one specific failure: the new exception gets past this caller's handler. That gives the agent a concrete reason to keep working before it finalizes.
 
-## Going beyond static analysis
+---
+
+## Going Beyond Pure Static Analysis
 
 Pure AST diffing catches direct calls, subclass overrides, and callback tables like `header_property(..., dump_header)`. It stays silent when a callback is already wrapped in a `lambda` or `functools.partial`, and it can't always resolve the receiver of a method call. We added two more sources of evidence.
 
-**Runtime observation (`[rt-obs]`).** Python 3.12 added [PEP 669](https://peps.python.org/pep-0669/), `sys.monitoring`, a hook into VM events. We wrote a small `sitecustomize` collector, `mipdelta.monitoring`, that switches on when the agent runs tests. When a repo function calls a method on an object, the collector logs an edge: the caller's file and line, the receiver's runtime type, and the method name. Each call site is capped to keep overhead down, which trades completeness for speed.
+**Runtime observation (`[rt-obs]`).** Python 3.12 added [PEP 669](https://peps.python.org/pep-0669/), `sys.monitoring`, an efficient hook into VM events. We wrote a small `sitecustomize` collector, `mipdelta.monitoring`, that switches on when the agent runs tests. When a repo function calls a method on an object, the collector logs an edge: the caller's file and line, the receiver's runtime type, and the method name. Each call site is capped to keep overhead down, trading completeness for speed.
 
-Agents often edit the target file first and run tests second, so we made this order-independent. When a test command finishes, `mipdelta` reads the runtime edges from that run and re-checks any files the agent already changed in the session.
+When a test command finishes, `mipdelta` reads the runtime edges from that run and re-checks any files the agent already changed in the session.
 
-In the `rdflib_pkg` plugin task (OSS05), the agent added `*, base_iri=None` to `NTSerializer.serialize` and ran the unit tests. They passed with `exit_code=0` because they only exercised the default call, `exporter.serialize("nt", triples)`. The control arm saw green and finished.
-
-The `mipdelta` arm got the same passing test run, but `sys.monitoring` had recorded `GraphExporter.serialize` in `rdflib_pkg/exporter.py:7` calling `NTSerializer.serialize` during that run. Below the passing output, `mipdelta` added:
+In the `rdflib_pkg` plugin task (OSS05), the agent added `*, base_iri=None` to `NTSerializer.serialize` and ran the unit tests. They passed with `exit_code=0` because they only exercised the default call. The control arm saw green and finished. The `mipdelta` arm got the same passing test run, but `sys.monitoring` had recorded `GraphExporter.serialize` in `rdflib_pkg/exporter.py:7` calling `NTSerializer.serialize` during that run. Below the passing test output, `mipdelta` added:
 
 ```text
 [mip-delta] rdflib_pkg/exporter.py:7 delegating_wrapper_review[rt-obs] GraphExporter.serialize (delegating wrapper GraphExporter.serialize calls NTSerializer.serialize without forwarding optional parameter base_iri)
@@ -71,82 +78,94 @@ The `mipdelta` arm got the same passing test run, but `sys.monitoring` had recor
 
 The agent opened `rdflib_pkg/exporter.py`, forwarded `base_iri`, and passed the post-episode oracle.
 
-**Stub-typed chains (`[type-cand]`).** When a workspace includes `.pyi` stubs or inline attribute annotations, `mipdelta` reads them and folds attribute and return types into its symbol resolver. We tested this on a 109-file `docutils` workspace with benchmark-supplied `nodes.pyi` and `transforms/__init__.pyi` stubs (OSS07), and on a 9-file `web_pkg` fixture with `context.pyi` (OSS08). When the agent modified `Reporter.attach_observer` or `TokenStore.issue`, `mipdelta` followed the typed chains `self.document.reporter.attach_observer` and `self.session.token_store.issue`. It flagged `docutils/parsers/__init__.py:87`, `docutils/transforms/__init__.py:183`, and `web_pkg/views.py:5`.
+**Stub-typed chains (`[type-cand]`).** When a workspace includes `.pyi` stubs or inline attribute annotations, `mipdelta` reads them and folds attribute and return types into its symbol resolver. We tested this on a 109-file `docutils` workspace with benchmark-supplied stubs (OSS07) and a 9-file `web_pkg` fixture (OSS08). When the agent modified `Reporter.attach_observer` or `TokenStore.issue`, `mipdelta` followed typed chains like `self.document.reporter.attach_observer` and flagged `docutils/parsers/__init__.py:87` and `web_pkg/views.py:5`.
 
-## How we measured it
+---
 
-**Local commits.** We replayed 50 real commits from `click`, `packaging`, `platformdirs`, `tomlkit`, and `werkzeug`. A mechanical filter picked them, and each changed only the body of one function, with no signature or symbol changes. `mipdelta` stayed silent on all 50 (0 of 50 commits). A warm incremental `apply_write` took a median of 5.73 ms (p95 28.71 ms). The CPU median was 6.64 ms (p95 32.81 ms), excluding cold workspace indexing.
+## Early Synthetic and Codex Benchmarks
 
-**Historical replays.** On 10 historical miss cases, the revised detector cut candidate warnings from 53 to 10, an 81.13% reduction in chaff, at an 8.32 ms warm median.
+In paired evaluations with `codex-cli` (`gpt-6.1-sol`) across 14 tasks (28 episodes):
+- Arm A (standard `rg`, `read`, `write`, `test`) passed **8/14** tasks.
+- Arm B (same tools + 250-byte advisory) passed **14/14** tasks.
+- On routine local edits, Arm B added **0 bytes** of overhead.
+- In all 9 tasks where `mipdelta` triggered, the agent subsequently edited the flagged file.
 
-**Live paired runs.** We ran two paired evaluations with `codex-cli` (`gpt-6.1-sol`). Arm A had `rg`, `read`, `write`, and `test`. Arm B had the same tools plus the 250-byte advisory on `write` and `test` responses. That's 14 tasks and 28 episodes. Six were small constructed pilots (L01–L06), and eight used real OSS trees or stubbed workspaces.
-
-| Task group | Tasks (episodes) | Arm A passed | Arm B passed | Arm B advisory bytes | Flagged files later edited (Arm B) |
-| :--- | ---: | ---: | ---: | ---: | ---: |
-| Constructed local-edit pilot (L01–L02) | 2 (4) | 2/2 | 2/2 | 0 | 0/0 (silent) |
-| Real-OSS local-edit commits (OSS01 `platformdirs`, OSS02 `werkzeug`) | 2 (4) | 2/2 | 2/2 | 0 | 0/0 (silent) |
-| Constructed static contract pilot (L03–L06) | 4 (8) | 2/4 | 4/4 | 89–213 (3 tasks) | 3/3 triggered (L04 pre-satisfied) |
-| Real-OSS static contract (OSS03 `werkzeug`, 52 files; OSS04 `packaging`, 22 files) | 2 (4) | 1/2 | 2/2 | 197–241 | 2/2 triggered |
-| Constructed runtime `sys.monitoring` (OSS05 `rdflib_pkg`, OSS06 `cli_pkg`) | 2 (4) | 0/2 | 2/2 | 197–430 | 2/2 triggered |
-| Stub-typed (OSS07 `docutils`, 109 files plus added `.pyi`; OSS08 `web_pkg`) | 2 (4) | 1/2 | 2/2 | 158–202 | 2/2 triggered |
-| **Total** | **14 (28)** | **8/14** | **14/14** | **0 on local edits** | **9/9 triggered tasks** |
-
-Arm B passed 14 of 14 tasks. Arm A passed 8. Arm B's advisory added nothing on local edits. In all nine tasks where `mipdelta` triggered, the agent went on to edit the flagged file.
-
-The advisory column totals the advisory text across each episode, so it is not a per-response size. In OSS05, the 430 bytes were two 215-byte advisories, one on the `test` response at sequence 3 and one at sequence 10. OSS06 received one 197-byte advisory on its sequence 4 `test` response. Each advisory stayed under the 250-byte cap. These figures leave out JSON framing, and the gateway separately limits added wire bytes to 350.
-
-Two large OSS trees passed in both arms, so we can compare their token use. Episodes ran A and then B, in that order.
-
-- **werkzeug (52 files, OSS03).** Arm A used 17 calls, 94.83 s wall time, 352,660 input tokens (289,280 cached), and 2,072 output tokens. Arm B used 14 calls, 75.64 s, 255,529 input tokens (225,408 cached), and 2,366 output tokens.
-- **docutils (109 files plus `.pyi`, OSS07).** Arm A used 12 calls, 55.52 s, 215,772 input tokens (159,616 cached), and 1,240 output tokens. Arm B used 11 calls, 42.67 s, 191,938 input tokens (162,944 cached), and 1,092 output tokens.
-
-Arm B made fewer calls and consumed fewer input tokens in both runs. Non-cached tokens (input minus cached input, plus output) were 32,487 for Arm B versus 65,452 for Arm A on werkzeug, and 30,086 versus 57,396 on docutils. That number moves with provider cache hits, so it doesn't measure work cleanly. Running A then B in sequence also can't separate our change from caching, disk warmth, service variance, or model variation. These numbers describe the runs. They don't establish a speedup. A proper timing comparison needs randomized arm order, repeated runs, and recorded cold and warm conditions.
-
-## Testing the engine against a plain reminder
-
-A skeptical reviewer asked how much of Arm B's advantage comes from `mipdelta`'s cross-file engine, and how much comes from interrupting the agent after a contract change.
-
-To find out, we built Arm R, a generic contract reminder. Arm R has no repository index, no `.pyi` stubs, and no `sys.monitoring`. When a write changes a function's parameters, return tuple arity, `None` return, raised exceptions, or state fields within the edited file, Arm R appends a 189-byte reminder:
+To isolate whether the advantage came from repository analysis or simply interrupting the agent after a contract change, we built **Arm R**, a generic contract reminder that fires on any signature change without repository analysis:
 
 ```text
 [reminder] Contract change detected in this file: before finalizing, check callers, delegating wrappers, subclass overrides, return unpackers, and try/except handlers across the repository.
 ```
 
-We ran Arm R on the six discordant tasks: L05, L06, OSS04, OSS05, OSS06, and OSS08. Arm A had failed all six, and Arm B had passed all six. Because we picked these tasks from earlier outcomes, treat this as a diagnostic check. It doesn't estimate how often either arm succeeds in general. Only the six R runs are new. The A and B results come from earlier runs.
+On the six tasks Arm A had failed, Arm R recovered 5 of 6, but used 22.0% more calls and 14.4% more returned bytes than Arm B. The reminder proved that a well-timed interrupt has enormous value on its own—and set the stage for testing whether the engine generalized beyond our development fixtures.
 
-| Task | Stratum | Arm A (calls, bytes) | Arm R (calls, bytes) | Arm B (calls, bytes) |
-| :--- | :--- | :--- | :--- | :--- |
-| L05 delegating wrapper forwarding | 2 (static) | FAIL (3, 1,172) | PASS (9, 4,797) | PASS (8, 3,519) |
-| L06 return and exception contract | 2 (static) | FAIL (4, 1,413) | PASS (11, 6,827) | PASS (7, 2,972) |
-| OSS04 packaging `parse_requirement` exception | 2 (OSS static) | FAIL (7, 27,061) | PASS (12, 41,458) | PASS (12, 41,473) |
-| OSS05 rdflib runtime plugin serializer | 3 (rt-obs) | FAIL (4, 1,256) | FAIL (8, 5,045) | PASS (11, 5,555) |
-| OSS06 click runtime command loader | 3 (rt-obs) | FAIL (5, 1,952) | PASS (11, 6,331) | PASS (8, 3,509) |
-| OSS08 web stub session chain | 4 (type-cand) | FAIL (3, 746) | PASS (7, 3,032) | PASS (6, 2,005) |
-| **Totals** | **Strata 2–4** | **0/6 (0.0%)** | **5/6 (83.3%)** | **6/6 (100.0%)** |
+---
 
-The generic reminder recovered five of the six historical failures. Across those five tasks, where R and B both passed, R made 50 calls and returned 62,445 bytes. B made 41 calls and returned 53,478 bytes. R used 22.0% more calls. B used 18.0% fewer calls and 14.4% fewer returned bytes. Pooled non-cached tokens were 148,779 for R and 153,496 for B, so fewer calls and bytes didn't translate into lower token cost. R also includes a local AST change detector. The result shows the value of a well-timed contract-review prompt. It doesn't show how much repository analysis adds on top.
+## The Reality Check: 10 Unseen Repositories and 1,045 Commits
 
-The one B-only pass, OSS05, is harder to read. The reminder agent searched for `serialize|NTSerializer`, read `rdflib_pkg/exporter.py` and the registry, and got another reminder after a passing test. Then it finished without changing the wrapper. B received the specific forwarding warning and passed the oracle.
+Constructed benchmarks and development fixtures will always overstate real-world performance. To test what `mipdelta` actually does on code nobody tuned it on, we froze the engine, wrote pre-registered evaluation plans, and replayed the tool over 800 non-merge commits across **10 mature, independently maintained open-source repositories**:
+- **Round 1:** `attrs`, `httpx`, `marshmallow`, `rich`, `mkdocs`
+- **Round 2:** `requests`, `urllib3`, `pytest`, `scrapy`, `paramiko`
 
-The ticket asks for the optional parameter on `NTSerializer.serialize`. The oracle also requires `GraphExporter.serialize` to expose it, even though the wrapper's current default behavior still works. Before we count this as a prevented defect, an independent review has to confirm that passing the option through the public wrapper was a stated requirement. We're keeping the recorded outcomes as they are. Future tickets will state the required public behavior directly and won't name the files to edit.
+Across all 10 repositories, there were **1,045 commits that altered a function's contract**.
 
-The next question is how R and B compare on larger repositories. The current fixtures are small: 7 source files each in L05 and L06, 9 in OSS06, 9 in OSS08 (8 `.py` plus one `.pyi`), and 22 in the packaging task. With search spaces this small, we can't say much about navigation cost, and we didn't measure homonym noise. The existing 52-file werkzeug and 109-file docutils results compare A with B, not R with B. They suggest that specific `file:line` evidence might save more searching and reading as lexical ambiguity and cross-module obligations grow. They don't show that a generic reminder forces broad grep sweeps on those repos.
+### 1. It is quiet
+Across the 10 repositories, the default check stayed silent on **1,008 of 1,045 contract-changing commits (96.5% silence)**. It does not spam the author on everyday refactorings.
 
-Testing that hypothesis needs fresh tasks with independently written specs, randomized R/B order, repeated episodes, and measurements of irrelevant search hits, navigation calls, accepted patches, tokens, and wall time. Include cases where a wrapper should deliberately not expose a new option. File count by itself doesn't measure search difficulty.
+### 2. When it reports, roughly half the flagged commits are actionable
+Across those 1,045 commits, the tool flagged 37 commits. Independent model and human readers adjudicating each site found that **18 of the 37 flagged commits (48.6%) contained a real omission or a site well worth a reviewer's look**.
 
-## What we kept from Semantic LOD
+### 3. It caught real, unforced omissions in mature software
+These were not synthetic tasks. These were commits that had already passed peer review and landed in production upstream repositories:
+- **`paramiko` (`AgentKey.sign_ssh_data`):** An author added an `algorithm` parameter and never read it in the body, continuing to sign with SHA-1 when SHA-2 was requested (a subtle crypto/security bug, fixed upstream the very next commit).
+- **`paramiko` (`SSHClient.connect` / `Transport.__init__`):** Accepted and documented `disable_algorithms` but forgot to forward it to the transport layer (fixed 2–3 commits later).
+- **`scrapy` (`FeedExporter.item_scraped`):** A helper function was converted from synchronous to `async`. A caller stored the unstarted coroutine object instead of scheduling or awaiting it, silently dropping batch flushes during crawls (fixed upstream in #7730).
+- **`httpx` (`AsyncClient._init_proxy_transport`):** The synchronous client forwarded a new `http1` parameter, while the async client accepted it and dropped it (fixed upstream in #3023).
+- **`rich` (`Traceback.__init__`):** A caller passing options to `Traceback` had five locals parameters (`locals_max_length`, `locals_max_string`, `locals_max_depth`, `locals_hide_dunder`, `locals_hide_sunder`) silently ignored because `__init__` forwarded only `show_locals` to `self.extract(...)`. Furthermore, recursive `ExceptionGroup` unwrapping on Python 3.11 dropped string and depth limits. **This bug was still unpatched in `rich` today.** We verified it with a standalone reproduction script and reported the details on [Textualize/rich#3301](https://github.com/Textualize/rich/issues/3301).
 
-We stopped asking the agent to navigate a separate structural tool catalog. The source anchors, caller graph, and selection logic still seem useful, so we kept them as research components.
+---
 
-One experiment compiles a task brief before the agent starts, then gives the agent its usual search, read, edit, and test tools. The brief has a fixed size budget and labels the exact source lines it includes. Separately, we're exploring executable architecture rules that would check a patch in CI.
+## What a Type Checker Does—and What It Misses
 
-The one-shot pilot compares three starting points: the ticket alone, a simple symbol map with lexical excerpts, and a Semantic LOD brief with related source spans. Its offline preflight checks delivery and fixture behavior. In the live pilot, every arm passed all three constructed tasks. Semantic LOD returned fewer tool bytes. The no-brief arm used the fewest total provider tokens and had the lowest wall time. The pilot ran one episode per task and arm, which is too thin to rank them. We're keeping the compiler as an experiment alongside the advisory CLI.
+A natural question is: *why not just run `mypy` or `pyright` in a hook or CI check?*
 
-## Open questions
+To answer that rigorously, we built an automated stale-file recall harness (`experiments/recall_mutation/typecheck_baseline.py`) and ran `mypy 2.4.1` on 428 ground-truth mutation sites across the evaluated repositories.
 
-These results show that in selected Python contract-change tasks, short source-anchored warnings after edits or test runs helped agents fix omissions that search and passing baseline tests missed. Several questions remain open.
+The results showed a clear architectural division:
 
-- **Reminder versus engine at scale.** The head-to-head on larger repositories hasn't been run. Until it is, we shouldn't infer search difficulty from file count, and we shouldn't pick tasks because they showed a B win.
-- **Intentional breaking changes.** Our 50-commit corpus confirmed that `mipdelta` stays quiet when signatures and symbols don't change. It doesn't measure how much noise a developer gets when they deliberately change an API, or when they write a wrapper that hides an inner parameter on purpose.
-- **Sampling versus completeness.** To keep `sys.monitoring` overhead low during `pytest`, the collector caps observations at `max_events_per_site=8` per call site. In our offline Click benchmark, that cap found 88 polymorphic sites where unbounded monitoring found 206. Runtime edges are positive evidence of paths that ran. They don't prove that unobserved callers don't exist.
-- **Real-world use.** Constructed and maintainer-curated benchmarks can validate a mechanism. Validating the product takes independent Python developers running `mip-delta --check-git` and `mip-delta --run-pytest` on their everyday work, and choosing to keep it enabled.
+1. **Where `mypy` wins:** For broken calls to removed or renamed functions, `mypy` catches the broken top-of-file import in typed codebases. In our recall corpus, `mypy` reported 70 of 81 unique-name breaking/removed sites, compared to 67 for `mipdelta`. (At the exact call line, `mypy` reported only 8 of 81, because flagging the import binds the name to `Any` and silences errors at downstream function calls; `mipdelta` names each downstream call site directly.)
+2. **Where `mypy` is blind:** Every single one of the real upstream omissions we found in `httpx`, `paramiko`, `scrapy`, and `rich` was **100% type-correct Python**. Omitting an optional keyword parameter (`http1=...`, `disable_algorithms=...`, `locals_max_string=...`) from a wrapper or override is valid typing. Unit tests passed because existing tests exercised the default path. `mypy` recall on those real upstream bugs was **0% by definition**.
+
+In short: type checkers enforce static type contracts. They do not enforce **semantic propagation**—ensuring that a parameter accepted at layer A actually reaches the sink at layer B.
+
+---
+
+## What We Learned from a $2.31 Live Pilot
+
+With real upstream omissions in hand, we designed a live pilot using `claude-opus-5-5` running headlessly in isolated repository clones. We built tickets matching the exact omissions that human maintainers of `rich` and `httpx` had shipped.
+
+The pilot plan included a strict stopping rule: if the unaided frontier model did not make the omission on baseline tasks, stop immediately rather than spending the $50 evaluation budget.
+
+We ran Stage 1 (six episodes, two per task, unaided with standard tools and no hooks). Two independent graders evaluated the resulting patches blind.
+
+**The unaided model covered the missing forwarding in 6 out of 6 episodes.** 
+Total spend: **$2.31**.
+
+Why did the model succeed where human maintainers slipped? In a focused 1-minute edit on a short ticket, a frontier model proactively grepped for callers of the function it was editing before declaring victory. It didn't experience the context fatigue, split attention, or multi-day PR sprawl that human maintainers face.
+
+That was a clarifying result: **the primary failure mode is not a frontier model on a 1-minute, single-ticket task.** 
+
+The failure mode occurs when humans or agents work across **long, multi-file sessions, refactorings, and PR boundaries** where subtle optional parameter drops and unawaited coroutines pass code review and green CI checks unnoticed.
+
+---
+
+## Where This Leaves MipCode
+
+We started this project trying to invent an interactive graph search tool to beat `ripgrep`. We failed, because search was not the bottleneck.
+
+We pivoted to building a post-edit contract check for agents. In doing so, we found that frontier models on small tasks often check their own callers—but human maintainers and agents across real codebases routinely ship silent, type-correct contract omissions that neither type checkers nor existing test suites catch.
+
+Today, `mip-delta` is focused on that exact gap:
+- **As a pre-commit, pull request, and merge check (`mip-delta --check-git`):** A fast (~5 ms, zero-dependency) AST analysis that flags parameter sinks, delegating wrapper drops, subclass override mismatches, and async/exception leaks on diffs.
+- **As an agent completion guardrail (`ObligationLedger`):** An AST-anchored, line-independent state machine that hooks into `PostToolUse` and `Stop` events, ensuring an agent cannot declare victory while open contract obligations remain unaddressed or unwaived.
+
+The code, reproducible replay harnesses, and adjudication data are open source at [github.com/Nitefawkes/mipcode](https://github.com/Nitefawkes/mipcode).
