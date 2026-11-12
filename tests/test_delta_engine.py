@@ -23,7 +23,7 @@ class DeltaEngineTests(unittest.TestCase):
         self.assertEqual(matches[0].start_line, 3)
         self.assertIn("encode", matches[0].symbol)
 
-    def test_callback_value_binding_is_reported_for_changed_function(self):
+    def test_enabled_callback_value_binding_is_reported_for_changed_function(self):
         before = {
             "formatting.py": "def dump_header(value):\n    return str(value)\n",
             "response.py": (
@@ -40,7 +40,7 @@ class DeltaEngineTests(unittest.TestCase):
             "response.py": before["response.py"],
         }
 
-        found = analyze_delta(before, after)
+        found = analyze_delta(before, after, enable=["callback_binding_review"])
         matches = [row for row in found if row.detector == "callback_binding_review"]
 
         self.assertEqual(len(matches), 1)

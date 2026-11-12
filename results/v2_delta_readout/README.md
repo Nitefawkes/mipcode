@@ -13,6 +13,6 @@ These reports and data accompany the [engineering article](../../docs/engineerin
 
 The [manifest](manifest.json) records original and preview hashes. Preview copies replace machine-local run roots. Raw provider traces and live runner configuration are retained separately.
 
-These reports describe the v0.6.0 engine. Since then, `parameter_truthiness_review` has become [opt-in](../../docs/usage.md#turn-on-an-opt-in-check). It produced two of the ten historical replay findings, both in the T45 invariant case. The current default set reproduces the other eight, and `--enable parameter_truthiness_review` restores all ten.
+These reports describe the v0.6.0 engine. Since then, `parameter_truthiness_review` has become [opt-in](../../docs/usage.md#turn-on-an-opt-in-check). It produced two of the ten historical replay findings, both in the T45 invariant case. `removed_callable_review` and `callback_binding_review` became opt-in after the [held-out study](../held_out/README.md). `callback_binding_review` produced three more of the ten, the adjudicated werkzeug `dump_header` defect in case T11-B. The current default set reproduces the other five, and enabling all three checks restores all ten.
 
 The paired studies cover selected tasks. Only the reminder arm ran anew in the later comparison. The OSS05 ticket and oracle differ on whether the public exporter must expose the new option. The article explains how those limits affect the results.

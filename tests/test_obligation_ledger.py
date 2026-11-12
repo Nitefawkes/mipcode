@@ -68,7 +68,8 @@ def test_lines_added_above_a_site_do_not_reopen_it():
 def test_identical_sites_in_one_scope_are_counted_separately():
     binding = "from lib import dump\n\nA = prop(dump)\nB = prop(dump)\nC = prop(dump)\n"
     session = DeltaSession.from_workspace(
-        {"lib.py": "def dump(v):\n    return v\n", "table.py": binding}
+        {"lib.py": "def dump(v):\n    return v\n", "table.py": binding},
+        enable=["callback_binding_review"],
     )
     opened = session.apply_write("lib.py", "def dump(v, *, strict):\n    return v if strict else None\n")
     assert opened.open_obligations == 3

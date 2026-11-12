@@ -12,19 +12,27 @@ Use `--root` to limit the analysis to a subdirectory. Git mode reads tracked and
 
 The [bundled example](../README.md#quick-start) uses candidate mode. It compares a proposed replacement with an existing file and reports locations to review.
 
-At resolved calls, the check can flag new required arguments, removed parameters, renamed keywords, changes to positional binding, and changes between synchronous and async definitions. It also reports surviving calls whose previous resolved definition was removed. Signature binding uses explicit positional and keyword arguments. Decorators, argument unpacking, dynamic dispatch, and indirect imports can limit coverage.
+At resolved calls, the check can flag new required arguments, removed parameters, renamed keywords, changes to positional binding, and changes between synchronous and async definitions. With an [opt-in check](#turn-on-an-opt-in-check), it also reports surviving calls whose previous resolved definition was removed. Signature binding uses explicit positional and keyword arguments. Decorators, argument unpacking, dynamic dispatch, and indirect imports can limit coverage.
 
 A newly raised exception is compared with narrow `try`/`except` handlers at the call and at one unguarded caller above it. A handler for a base class counts as catching the exception. Builtin classes and classes defined in the workspace are followed through their bases. The check stays quiet when both the raised class and a handler class come from outside the workspace, because their relationship is unknown.
 
 ## Turn on an opt-in check
 
-One check is off by default. `parameter_truthiness_review` reports a new or changed `None`-default parameter that the function tests as a bare truth value, as in `if base:`. That test treats an empty string, zero, and an empty collection like `None`. Upstream code often intends this, so the check produced the most reports on complete commits in the [history replay](../results/history_replay/README.md). Turn it on with `--enable`:
+Three checks are off by default because most of their reports on complete upstream commits were false.
+
+| Check | Reports | Why it is off by default |
+| --- | --- | --- |
+| `removed_callable_review` | A surviving call whose resolved definition was removed | On [held-out repositories](../results/held_out/README.md), 23 of its 24 reports were false: the name was still bound after a move, rename, or rebinding. A type checker reports most real cases at the import. |
+| `callback_binding_review` | A changed function that is passed as a value | 11 of its 12 held-out reports were false, mostly after an optional parameter was added. |
+| `parameter_truthiness_review` | A new or changed `None`-default parameter tested as a bare truth value, as in `if base:` | Upstream code often intends this. It produced the most reports in the [first history replay](../results/history_replay/README.md). |
+
+Turn a check on with `--enable`, which can be repeated:
 
 ```sh
-mip-delta --check-git --enable parameter_truthiness_review
+mip-delta --check-git --enable removed_callable_review --enable callback_binding_review
 ```
 
-`--enable` works with every mode, including `--hook`. A ledger keeps a site from this check only while the check is enabled, so add the flag to both hook commands and to every check that shares a ledger. From Python, pass `enable=["parameter_truthiness_review"]` to `analyze_delta` or `DeltaSession.from_workspace`.
+Consider the first two for code that no type checker covers. `--enable` works with every mode, including `--hook`. A ledger keeps a site from an opt-in check only while that check is enabled, so add the flag to both hook commands and to every check that shares a ledger. From Python, pass `enable=[...]` to `analyze_delta` or `DeltaSession.from_workspace`.
 
 ## Track what is still open
 
