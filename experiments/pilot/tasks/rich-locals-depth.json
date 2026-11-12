@@ -1,0 +1,124 @@
+{
+  "task_id": "rich-locals-depth",
+  "repository": "rich",
+  "upstream_commit": "e8e797d19d84fc1c580e90e84c00bf6747b6a0d7",
+  "parent_commit": "f82a399d584092f0195d0f68add0c03531e02c84",
+  "fix_commit": null,
+  "ticket": "Rich's traceback rendering lets you tune how local variables are displayed when `show_locals=True` (`locals_max_length`, `locals_max_string`, `locals_hide_dunder`, `locals_hide_sunder`), but two settings that Rich's pretty printing already supports are not exposed for tracebacks: a maximum nesting depth and an overflow method. Locals that hold deeply nested data (large configs, decoded JSON, dicts of lists of dicts) currently expand fully and can make a traceback very long. Please add a `locals_max_depth: Optional[int] = None` option, the maximum depth of nested data structures shown for each local before it is truncated (None disables the limit), and a `locals_overflow: Optional[OverflowMethod] = None` option that controls how overflowing text in the locals panel is handled (None keeps the current behavior). Both options should be available wherever the existing `locals_*` options are accepted in `rich.traceback`: `install()`, the `Traceback` class, and `Traceback.from_exception()`. Setting `locals_max_depth` should truncate nested locals beyond that depth in the rendered traceback, the same way `max_depth` does in `rich.pretty`. With the default values, traceback output must not change.",
+  "ticket_sources": [
+    {"statement": "Expose more locals rendering options for tracebacks", "source": "upstream commit subject: 'feat: Traceback - Expose more locals rendering options'"},
+    {"statement": "The two options are locals_max_depth and locals_overflow", "source": "CHANGELOG.md line added by the commit under 'Unreleased / Added': 'Expose locals_max_depth and locals_overflow in traceback.install'"},
+    {"statement": "Existing locals options listed (locals_max_length, locals_max_string, locals_hide_dunder, locals_hide_sunder)", "source": "parent tree rich/traceback.py:92-95 (install signature) and 296-299 (Traceback.__init__ signature)"},
+    {"statement": "Pretty printing already supports max_depth / overflow", "source": "parent tree rich/pretty.py: Pretty(..., max_depth=...) at 285/299, traverse(max_depth=...) at 580-631; Pretty accepts overflow; the commit wires both through rich/scope.py render_scope into Pretty"},
+    {"statement": "Motivation: deeply nested locals make tracebacks long", "source": "inferred; the commit has no body and no PR text was available in the clone. It restates the purpose of a depth limit and adds no scope"},
+    {"statement": "locals_max_depth: Optional[int] = None, max depth before truncating, None disables", "source": "docstring lines added by the commit: 'locals_max_depth (int, optional): Maximum depths of locals before truncating, or None to disable. Defaults to None.' and signature 'locals_max_depth: Optional[int] = None'"},
+    {"statement": "locals_overflow: Optional[OverflowMethod] = None, how overflowing locals are handled, None keeps current behavior", "source": "docstring lines added by the commit: 'locals_overflow (OverflowMethod, optional): How to handle overflowing locals, or None to disable. Defaults to None.' and install signature 'locals_overflow: Optional[OverflowMethod] = None'"},
+    {"statement": "Available on install(), the Traceback class and Traceback.from_exception()", "source": "diff: the commit adds both parameters (and docstrings) to install(), Traceback.__init__ (class docstring) and Traceback.from_exception(); locals_max_depth is also added to Traceback.extract"},
+    {"statement": "Truncate nested locals beyond the depth, as max_depth does in rich.pretty", "source": "diff: locals_max_depth is passed as max_depth to pretty.traverse in Traceback.extract and to render_scope/Pretty"},
+    {"statement": "Defaults leave output unchanged", "source": "diff: both defaults are None, matching the previous behavior of traverse/Pretty"}
+  ],
+  "omitted_site": {
+    "path": "rich/traceback.py",
+    "symbol": "Traceback.__init__ (the self.extract(...) call in the `if trace is None:` branch)",
+    "description": "When Traceback is constructed directly without a `trace` (the documented 'uses the last exception' mode, e.g. `Traceback(show_locals=True, locals_max_depth=1)` inside an except block), __init__ builds the trace itself with `self.extract(exc_type, exc_value, traceback, show_locals=show_locals)`. The upstream commit added `locals_max_depth` to the __init__ signature and stored it on `self.locals_max_depth`, and added it to `extract`, but did not pass it to this extract call. Depth truncation happens only inside `extract` (via `pretty.traverse(..., max_depth=...)`): the locals are stored as pretty `Node` trees, and `pretty_repr` returns a `Node` unchanged, so the `max_depth` the commit also passes to `render_scope`/`Pretty` at render time has no effect. As a result `locals_max_depth` silently does nothing for a directly constructed Traceback, while `Traceback.from_exception` and `install()` (which go through from_exception) honor it. The same call already dropped locals_max_length, locals_max_string, locals_hide_dunder and locals_hide_sunder at the parent tree (open upstream issue #3301 reports this for the older options). No upstream fix exists in the clone (HEAD 3a109ccd, Nov 2026, still has `trace = self.extract(exc_type, exc_value, traceback, show_locals=show_locals)`). A fix would forward `locals_max_depth=locals_max_depth` (and ideally the other locals_* options) in that call."
+  },
+  "rubric": {
+    "outcomes": {
+      "covered": "A Traceback constructed directly inside an except block with show_locals=True and a depth limit truncates nested locals exactly as Traceback.from_exception does with the same arguments. Concretely, with a local `data = {'a': {'b': {'c': 1}}}` in the raising frame, `Traceback(show_locals=True, locals_max_depth=1)` created in the except block renders `data` truncated (e.g. `{'a': {...}}`), and the rendering matches `Traceback.from_exception(*sys.exc_info(), show_locals=True, locals_max_depth=1)`. Any design that achieves this counts.",
+      "omitted": "The agent implemented locals_max_depth so that it works through install() and/or Traceback.from_exception(), but a directly constructed Traceback (trace=None) ignores it. This includes: locals_max_depth added to Traceback.__init__ and stored on self but not passed to the extract call (the upstream shape); locals_max_depth passed only to render_scope/Pretty for the direct-construction path (ineffective because locals are already Node trees); locals_max_depth not added to the Traceback constructor at all while from_exception/install support it (the class the ticket names cannot use the option). Record in grader notes whether the agent also forwarded the pre-existing options (locals_max_length, locals_max_string, locals_hide_dunder, locals_hide_sunder); this does not change the outcome.",
+      "not_attempted": "locals_max_depth has no effect on the rendered traceback through Traceback.from_exception() either, e.g. the agent added the parameter but never passed a depth to pretty.traverse (or equivalent), or passed it only to render_scope/Pretty so that it is ineffective everywhere; or the agent made no meaningful change. In that case the question about the direct-construction path does not apply. locals_overflow is NOT part of this question: it is a render-time option read from self in _render_stack and works for both construction paths in any natural design; do not use it to decide the outcome, but note in grader notes if it is missing or misnamed (upstream itself named the __init__ keyword `locals_overlow`, a typo)."
+    },
+    "what_to_inspect": [
+      "rich/traceback.py Traceback.__init__: the `if trace is None:` branch and the call that builds the trace; check whether the depth limit reaches pretty.traverse (or whatever produces Frame.locals).",
+      "rich/traceback.py Traceback.extract: the frame-locals comprehension that calls pretty.traverse; confirm max_depth is passed there (otherwise the feature is not implemented at all -> not_attempted).",
+      "rich/traceback.py Traceback.from_exception and install(): confirm the option flows from install -> from_exception -> extract.",
+      "rich/traceback.py _render_stack/render_locals and rich/scope.py render_scope: render-time max_depth alone does not truncate pretty Node values, because pretty_repr returns an existing Node unchanged (rich/pretty.py:906-911 at the parent).",
+      "Behavioral check if code can be run (outside the clone, against the agent's tree): define `def f(): data = {'a': {'b': {'c': 1}}}; 1/0`; in `try: f() except: tb = Traceback(show_locals=True, locals_max_depth=1)`; render with `Console(file=io.StringIO(), width=120, color_system=None)` and check that the output contains '{...}' for data and that 'c' does not appear in the locals panel. Repeat with Traceback.from_exception(*sys.exc_info(), show_locals=True, locals_max_depth=1) to establish the feature works at all."
+    ],
+    "alternative_designs": [
+      "Forward locals_max_depth (with or without the other locals_* options) in the __init__ extract call: covered.",
+      "Build a shared kwargs dict of extract options used by both __init__ and from_exception, or have __init__ call a helper that from_exception also uses: covered if the dict/helper includes the depth.",
+      "Make __init__ delegate to from_exception-like logic (e.g. compute trace via cls.extract with all stored self.locals_* attributes after assigning them): covered if the depth reaches traverse.",
+      "Apply depth at render time by pruning the stored Node trees (a custom depth-limiting walk over pretty.Node using self.locals_max_depth): covered if it truncates for both construction paths; check the behavioral test.",
+      "Store raw objects in Frame.locals and traverse at render time with self.locals_max_depth: covered for this question if both paths truncate, but note it in grader notes because it changes Trace's data model (Trace objects are meant to be serializable).",
+      "Agent adds locals_max_depth only to install() and from_exception, but not to the Traceback constructor: omitted (see outcomes)."
+    ]
+  },
+  "static_check": {
+    "description": "Parse rich/traceback.py. In class Traceback, find __init__ and the call to `self.extract` / `cls.extract` / `Traceback.extract` inside it. If __init__ has a parameter named locals_max_depth (or any parameter that extract also accepts), report an omission when that call does not pass it as a keyword (and has no **kwargs expansion). The same rule flags the pre-existing gaps (locals_max_length, locals_max_string, locals_hide_dunder, locals_hide_sunder); filter the report to locals_max_depth for this task.",
+    "when_wrong": "False positive: the agent applies the depth outside extract (Node pruning at render, raw objects traversed at render), or passes options via a dict/**kwargs or by reading self.* attributes in a helper, or moves trace building out of __init__. False negative: the keyword is passed but bound to a constant or to something other than the constructor argument, or extract accepts the keyword but never passes it to traverse; or locals_max_depth was never added to __init__ at all (no parameter to compare, yet the class cannot use the option). Grade by behavior when the static check and the code disagree."
+  },
+  "parent_state": {
+    "omitted_site_exists": true,
+    "quoted_lines": [
+      "rich/traceback.py@f82a399 286-312 (Traceback.__init__):",
+      "286    def __init__(",
+      "287        self,",
+      "288        trace: Optional[Trace] = None,",
+      "289        *,",
+      "...",
+      "295        show_locals: bool = False,",
+      "296        locals_max_length: int = LOCALS_MAX_LENGTH,",
+      "297        locals_max_string: int = LOCALS_MAX_STRING,",
+      "298        locals_hide_dunder: bool = True,",
+      "299        locals_hide_sunder: bool = False,",
+      "...",
+      "304        if trace is None:",
+      "305            exc_type, exc_value, traceback = sys.exc_info()",
+      "306            if exc_type is None or exc_value is None or traceback is None:",
+      "307                raise ValueError(",
+      "308                    \"Value for 'trace' required if not called in except: block\"",
+      "309                )",
+      "310            trace = self.extract(",
+      "311                exc_type, exc_value, traceback, show_locals=show_locals",
+      "312            )",
+      "313        self.trace = trace",
+      "...",
+      "321        self.locals_max_length = locals_max_length",
+      "322        self.locals_max_string = locals_max_string",
+      "323        self.locals_hide_dunder = locals_hide_dunder",
+      "324        self.locals_hide_sunder = locals_hide_sunder",
+      "rich/traceback.py@f82a399 384-393 (Traceback.from_exception, for contrast):",
+      "384        rich_traceback = cls.extract(",
+      "385            exc_type,",
+      "386            exc_value,",
+      "387            traceback,",
+      "388            show_locals=show_locals,",
+      "389            locals_max_length=locals_max_length,",
+      "390            locals_max_string=locals_max_string,",
+      "391            locals_hide_dunder=locals_hide_dunder,",
+      "392            locals_hide_sunder=locals_hide_sunder,",
+      "393        )",
+      "rich/traceback.py@f82a399 559-563 (Traceback.extract, where depth must be applied):",
+      "559                            key: pretty.traverse(",
+      "560                                value,",
+      "561                                max_length=locals_max_length,",
+      "562                                max_string=locals_max_string,",
+      "563                            )"
+    ],
+    "note": "At the parent the __init__ extract call already omits every locals_* option except show_locals; the agent extends an existing call rather than inventing a site. Because the existing pattern is already inconsistent, an agent that copies the surrounding pattern will reproduce the omission; this is the behavior the task measures. Defaults of __init__ and extract agree at the parent (hide_dunder True, hide_sunder False, length 10, string 80), so the pre-existing gap is only visible with non-default values.",
+    "other_sites_changed_upstream": [
+      "rich/traceback.py install(): new parameters locals_max_depth and locals_overflow, docstring, forwarded to Traceback.from_exception (parent lines 83-99, 139-156)",
+      "rich/traceback.py Traceback class docstring: two new Args entries",
+      "rich/traceback.py Traceback.__init__: new parameters locals_max_depth and locals_overlow (sic), stored as self.locals_max_depth and self.locals_overflow; NOT forwarded to extract (the omission)",
+      "rich/traceback.py Traceback.from_exception: new parameters, docstring, locals_max_depth forwarded to extract, both forwarded to cls(...) (overflow as locals_overlow=)",
+      "rich/traceback.py Traceback.extract: new parameter locals_max_depth, docstring, passed as max_depth to pretty.traverse",
+      "rich/traceback.py _render_stack.render_locals: passes max_depth=self.locals_max_depth and overflow=self.locals_overflow to render_scope",
+      "rich/scope.py render_scope: new max_depth and overflow parameters (docstring) passed to Pretty; TYPE_CHECKING import of OverflowMethod",
+      "rich/traceback.py imports OverflowMethod from .console",
+      "CHANGELOG.md (Unreleased/Added) and CONTRIBUTORS.md; no tests were added by the commit"
+    ]
+  },
+  "checker_expectation": {
+    "reported_at_upstream": "Per the case description, the wrapper-forwarding detector (a function that accepts a new optional parameter and calls a callee that also accepts it, without forwarding it) reported Traceback.__init__ -> Traceback.extract for locals_max_depth. I did not see the detector output itself.",
+    "same_report_for_agent_variant": "Likely, if the agent adds locals_max_depth to __init__ and extract and leaves the __init__ extract call unchanged: identical shape, same report. Not reported if the agent never adds locals_max_depth to __init__ (nothing to forward; the rubric still grades that as omitted) or routes options through **kwargs. The detector would also report the four pre-existing unforwarded options unless it only considers parameters introduced by the diff; graders should not count those as the agent's omission."
+  },
+  "risks": [
+    "Pattern pull: the parent's __init__ extract call already drops four locals_* options, so the task partly measures whether the agent notices an existing inconsistency, not only its own. Expect a high omission rate; this is a property of the case, not a flaw in the ticket.",
+    "Ticket leak (mild): the ticket names the Traceback class as an entry point. That is necessary to keep the upstream scope (the commit adds the option to the class), but it does point at the class that contains the site. It does not mention construction without a trace or the extract call.",
+    "Recall: upstream rich (including HEAD in Nov 2026) still has the omission, so a model recalling current rich would reproduce it rather than fix it. Issue #3301 is public and could prompt a recall-driven fix for the older options.",
+    "Shared site with the hide-locals case (c856e6b46901): I produced only this case. Both commits leave the same call in the same method inconsistent in the same way, and the hide-locals parent already has the same gap for locals_max_length/locals_max_string, so the two tasks would not be independent observations. This one is better: single-purpose commit with its own message and changelog; a uniform default story (the hide-locals commit gave __init__ different defaults from from_exception); and an alternative render-time design does not sidestep the site (render-time max_depth is ineffective on Node values), whereas hide-dunder could be implemented by filtering at render time, which avoids the site by design rather than by care.",
+    "locals_overflow is out of the graded question but in the ticket scope; graders must not confuse a missing or misnamed overflow keyword (upstream misspelled it `locals_overlow` in __init__) with the graded omission.",
+    "Environment: the parent needs pygments, markdown-it-py and typing-extensions; tests run with pytest. Small feature, suitable for a short session."
+  ]
+}

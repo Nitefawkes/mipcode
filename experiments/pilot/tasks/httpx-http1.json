@@ -1,0 +1,106 @@
+{
+  "task_id": "httpx-http1",
+  "repository": "httpx",
+  "upstream_commit": "9b17671f155aa857fb52911d94357147ba2a3ea4",
+  "parent_commit": "69409bb8b9e85caf2dd63f9b76f0aa920feaf4f1",
+  "fix_commit": "1a660147edf1d32af440fdfb115b71238eda7498",
+  "ticket": "Support HTTP/2 \"prior knowledge\", i.e. talking HTTP/2 to a server directly without first negotiating the protocol. Today `http2=True` only enables HTTP/2 as an option alongside HTTP/1.1, so there is no way to tell httpx to use HTTP/2 exclusively. httpcore 0.13.3 added an `http1` flag to its connection pools for this purpose; please expose it in httpx and raise the minimum httpcore requirement accordingly. Add an `http1: bool = True` option next to the existing `http2` option, so that `httpx.Client(http1=False, http2=True)` (and likewise `httpx.AsyncClient(http1=False, http2=True)`) uses HTTP/2 prior knowledge. `httpx.HTTPTransport` and `httpx.AsyncHTTPTransport` should accept the same `http1` argument and pass it through to httpcore. On the clients it should behave like the existing `http2` option: set once on the client and applied to the transports the client creates. The default must stay `http1=True`, so existing code that only sets `http2` behaves exactly as before.",
+  "ticket_sources": [
+    {"statement": "Support HTTP/2 prior knowledge; example httpx.Client(http1=False, http2=True)", "source": "upstream commit subject: 'Support HTTP/2 prior-knowledge, using `httpx.Client(http1=False, http2=True)`. (#1624)'; CHANGELOG entry present at 1a66014 (CHANGELOG.md:294): 'Support [HTTP/2 \"prior knowledge\"](...negotiating-http2.html#prior-knowledge), using `httpx.Client(http1=False, http2=True)`. (Pull #1624)'"},
+    {"statement": "http2=True alone cannot force HTTP/2-only", "source": "inferred from parent tree: HTTPTransport/AsyncHTTPTransport at 69409bb pass only http2 to httpcore (httpx/_transports/default.py:114-139, 209-234); prior-knowledge semantics from the h2 docs linked by the changelog entry"},
+    {"statement": "httpcore exposes an http1 flag; pass it through; bump minimum httpcore", "source": "commit body: 'Pass flag http1 to httpcore.' and 'Update httpcore version, reorder parameter list'; diff of setup.py: httpcore>=0.13.0 -> httpcore>=0.13.3"},
+    {"statement": "Option http1: bool = True placed next to http2", "source": "diff: every added parameter is 'http1: bool = True' inserted immediately before 'http2' ('reorder parameter list' in commit body)"},
+    {"statement": "Applies to both Client and AsyncClient", "source": "diff: Client.__init__ and AsyncClient.__init__ both gain http1 (httpx/_client.py hunks at 606 and 1294)"},
+    {"statement": "HTTPTransport and AsyncHTTPTransport accept http1 and pass it to httpcore", "source": "diff of httpx/_transports/default.py: both transports gain 'http1: bool = True' and pass 'http1=http1' to httpcore.SyncConnectionPool / AsyncConnectionPool"},
+    {"statement": "Behaves like http2: set on the client and applied to transports the client creates", "source": "diff: http1 is threaded through _init_transport and _init_proxy_transport exactly where http2 already flows (Client hunks at 645, 658, 675, 688, 696, 703; AsyncClient hunks at 1333, 1347, 1363, 1376, 1384)"},
+    {"statement": "Default http1=True; no behaviour change for existing code", "source": "diff: default value True everywhere"}
+  ],
+  "omitted_site": {
+    "path": "httpx/_client.py",
+    "symbol": "AsyncClient._init_proxy_transport",
+    "description": "The upstream commit added `http1` to the signature of AsyncClient._init_proxy_transport and made AsyncClient.__init__ pass `http1=http1` into it for every configured proxy, but the body still builds `AsyncHTTPTransport(verify=..., cert=..., http2=..., limits=..., trust_env=..., proxy=proxy)` without `http1`. The sync Client._init_proxy_transport does forward `http1=http1` to HTTPTransport. So for AsyncClient(proxies=..., http1=False, http2=True) the proxy transport silently gets the default http1=True. The fix commit 1a66014 (#3023, Dec 2023, changelog 'Respect the `http1` argument while configuring proxy transports') adds the single line `http1=http1,` to that AsyncHTTPTransport(...) call. Note: at the upstream commit itself the transports' proxy branch (httpcore.SyncHTTPProxy / AsyncHTTPProxy) did not forward http1 to httpcore for either client, so the end-to-end effect only became real once later transports forwarded http1 for proxies; the inconsistency is at the client-to-transport boundary."
+  },
+  "rubric": {
+    "outcomes": {
+      "covered": "The async client's proxy path receives the user's http1 value (or handles http1 together with proxies explicitly and in the same way as the sync client). Concretely: constructing `httpx.AsyncClient(http1=False, http2=True, proxies='http://proxy.example:8080')` results in every proxy transport the client creates being built with http1=False (an AsyncHTTPTransport constructed with http1=False, or an equivalent object whose stored/forwarded http1 setting is False). Equally acceptable: the agent deliberately rejects or documents the unsupported combination (e.g. raises a clear error for http1=False with proxies) consistently in both Client and AsyncClient, rather than silently dropping it.",
+      "omitted": "The agent implemented http1 for AsyncClient's direct (non-proxy) transport, but AsyncClient's proxy transports are built without the user's http1 value, so they silently fall back to http1=True. This includes: http1 added to AsyncClient._init_proxy_transport's signature but not passed to AsyncHTTPTransport (the upstream bug); http1 not passed from AsyncClient.__init__ to _init_proxy_transport; proxies left completely untouched in AsyncClient (even if the sync Client's proxies were also left untouched - a symmetric omission is still an omission of this site). Record in grader notes whether the sync proxy path was also omitted.",
+      "not_attempted": "The question does not apply because AsyncClient's own http1 support is missing: AsyncClient does not accept an http1 argument at all, or AsyncClient(http1=False, http2=True) without proxies does not reach AsyncHTTPTransport/httpcore with http1=False (e.g. only the sync Client or only the transports were changed). Also use this if the agent produced no meaningful change."
+    },
+    "what_to_inspect": [
+      "httpx/_client.py, class AsyncClient: __init__ (the dict comprehension building self._mounts from proxy_map), _init_transport, _init_proxy_transport, and any helper the agent introduced that builds transports.",
+      "Trace the value: AsyncClient.__init__(http1=...) -> whatever builds the proxy transport -> AsyncHTTPTransport(..., http1=?). Default-valued parameters that are never forwarded count as not reaching.",
+      "httpx/_transports/default.py: AsyncHTTPTransport.__init__ must accept http1 for the direct path to count as implemented; whether it forwards http1 into httpcore's AsyncHTTPProxy is NOT part of this question (upstream did not do it at this commit, and httpcore 0.13.x proxy classes may not accept it).",
+      "If the environment can run code: monkeypatch httpx._client.AsyncHTTPTransport (or the name the agent uses) with a recorder, construct AsyncClient(http1=False, http2=True, proxies='http://127.0.0.1:1'), and check the kwargs of the call made with proxy=... include http1=False. Compare with Client and HTTPTransport. Requires h2 installed for http2=True; otherwise use http2=False with http1=False only to check plumbing."
+    ],
+    "alternative_designs": [
+      "kwargs dict or shared helper (e.g. transport_kwargs = dict(verify=..., cert=..., http1=..., http2=...) reused for direct and proxy transports): covered if the dict used for proxies contains http1.",
+      "Storing http1/http2 on self (e.g. self._http1) and reading it inside _init_proxy_transport: covered if the stored value is the user's value at the time proxy transports are built.",
+      "Moving transport construction into BaseClient or a factory: grade by the traced value for AsyncClient with proxies.",
+      "Using functools.partial or a transport class attribute: grade by the traced value.",
+      "Agent explicitly raises for http1=False with proxies in both clients: covered. Raising only in the sync client and silently ignoring in async: omitted."
+    ]
+  },
+  "static_check": {
+    "description": "Parse httpx/_client.py; in class AsyncClient, find the method that constructs proxy transports (upstream name `_init_proxy_transport`, i.e. the call that passes `proxy=`). Check that the AsyncHTTPTransport(...) call carrying `proxy=` has a keyword argument `http1` whose value traces to a parameter/attribute set from AsyncClient.__init__'s http1, and that the caller in AsyncClient.__init__ passes http1 into that method.",
+    "when_wrong": "False positive (reports omission when covered): the agent passes options through a **kwargs dict, a stored attribute (self._http1), a shared helper, or functools.partial, so no literal `http1=` keyword appears in the call. False negative (reports covered when omitted): the keyword is present but bound to a constant or to a default never supplied by __init__ (e.g. `http1=http1` where __init__ does not pass http1 into the method). Also wrong if the agent renames or relocates the proxy builder; the check should key on the AsyncHTTPTransport call with `proxy=` rather than on the method name."
+  },
+  "parent_state": {
+    "omitted_site_exists": true,
+    "quoted_lines": [
+      "httpx/_client.py@69409bb 1343-1355 (AsyncClient.__init__):",
+      "1343        self._mounts: typing.Dict[URLPattern, typing.Optional[AsyncBaseTransport]] = {",
+      "1344            URLPattern(key): None",
+      "1345            if proxy is None",
+      "1346            else self._init_proxy_transport(",
+      "1347                proxy,",
+      "1348                verify=verify,",
+      "1349                cert=cert,",
+      "1350                http2=http2,",
+      "1351                limits=limits,",
+      "1352                trust_env=trust_env,",
+      "1353            )",
+      "httpx/_client.py@69409bb 1382-1398 (AsyncClient._init_proxy_transport):",
+      "1382    def _init_proxy_transport(",
+      "1383        self,",
+      "1384        proxy: Proxy,",
+      "1385        verify: VerifyTypes = True,",
+      "1386        cert: CertTypes = None,",
+      "1387        http2: bool = False,",
+      "1388        limits: Limits = DEFAULT_LIMITS,",
+      "1389        trust_env: bool = True,",
+      "1390    ) -> AsyncBaseTransport:",
+      "1391        return AsyncHTTPTransport(",
+      "1392            verify=verify,",
+      "1393            cert=cert,",
+      "1394            http2=http2,",
+      "1395            limits=limits,",
+      "1396            trust_env=trust_env,",
+      "1397            proxy=proxy,",
+      "1398        )"
+    ],
+    "note": "At the parent the method already threads http2 exactly the way http1 would be threaded, so the agent extends existing code; nothing has to be invented. The sync twin is Client._init_proxy_transport at httpx/_client.py:694-710 and its caller at 653-666.",
+    "other_sites_changed_upstream": [
+      "httpx/_client.py Client.__init__: new parameter http1 (line ~609) and http1=http1 passed to _init_transport and _init_proxy_transport",
+      "httpx/_client.py Client._init_transport: new parameter, forwarded to HTTPTransport",
+      "httpx/_client.py Client._init_proxy_transport: new parameter, forwarded to HTTPTransport",
+      "httpx/_client.py AsyncClient.__init__: new parameter, passed to _init_transport and _init_proxy_transport",
+      "httpx/_client.py AsyncClient._init_transport: new parameter, forwarded to AsyncHTTPTransport",
+      "httpx/_client.py AsyncClient._init_proxy_transport: new parameter only (NOT forwarded; the omission)",
+      "httpx/_transports/default.py HTTPTransport.__init__ and AsyncHTTPTransport.__init__: new parameter, forwarded to httpcore Sync/AsyncConnectionPool in the non-proxy branch only",
+      "setup.py: httpcore>=0.13.3,<0.14.0",
+      "No docs, docstrings, changelog or tests were changed by the upstream commit."
+    ]
+  },
+  "checker_expectation": {
+    "reported_at_upstream": "Per the case description: the unused/unforwarded-new-parameter detector reported AsyncClient._init_proxy_transport, which accepts the new parameter http1 but does not read or forward it (sync Client._init_proxy_transport does). The exact message text was not provided to me.",
+    "same_report_for_agent_variant": "Likely if the agent repeats the upstream shape (adds http1 to the signature but not to the AsyncHTTPTransport call): same detector, same site. If the agent instead never adds http1 to AsyncClient._init_proxy_transport at all (proxies untouched), the unused-parameter detector has nothing to fire on; only the wrapper-forwarding detector could catch it (AsyncClient._init_proxy_transport as a wrapper around AsyncHTTPTransport, which gained optional http1), and only if that detector treats the method as a wrapper of the transport constructor. The override-signature detector does not apply: BaseClient defines no _init_proxy_transport, and Client/AsyncClient methods are siblings, not overrides. With kwargs-dict designs, none of the three detectors would fire."
+  },
+  "risks": [
+    "Low expected omission rate: the natural agent strategy is 'grep for http2 and add http1 next to each occurrence', which hits AsyncClient._init_proxy_transport mechanically. The task may not discriminate well.",
+    "Ticket hint: 'behave like the existing http2 option ... applied to the transports the client creates' nudges toward following http2 everywhere. Without it, leaving proxy paths untouched would be arguably within scope, since the upstream request never mentions proxies. I judged the sentence necessary but it raises the coverage rate.",
+    "Memorization: current httpx forwards http1 in both _init_proxy_transport methods; a model recalling modern httpx/_client.py will likely cover the site regardless of diligence.",
+    "Environment: the parent pins httpcore>=0.13.0,<0.14.0; the transports can only pass http1 to httpcore pools if httpcore>=0.13.3 is installed. An agent running tests against an older httpcore will hit TypeError and may back off. The task harness should provide httpcore 0.13.3-0.13.7 and h2. Modern httpcore (1.x) is incompatible with this tree.",
+    "End-to-end ambiguity: at this commit, neither transport forwards http1 into httpcore's proxy classes, so the omission has no observable network effect even when the sync client is correct; grading must stay at the client-to-transport boundary, and graders must not penalize an agent that also tries (or declines) to forward http1 into httpcore's proxy classes.",
+    "Small feature: suitable for a short session."
+  ]
+}
