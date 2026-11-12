@@ -5,7 +5,7 @@ from mipdelta.delta import analyze_delta
 
 # These cases were reduced while both detectors ran by default. They are opt-in now,
 # so the tests enable them to keep checking what each case was written for.
-ENABLED = ["removed_callable_review", "callback_binding_review"]
+ENABLED = ["callback_binding_review"]
 
 
 def _detectors(before, after):

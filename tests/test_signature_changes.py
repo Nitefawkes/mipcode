@@ -3,7 +3,7 @@ import pytest
 
 from mipdelta.delta import analyze_delta
 
-ENABLED = ["removed_callable_review", "callback_binding_review"]
+ENABLED = ["callback_binding_review"]
 from mipdelta.session import DeltaSession
 
 

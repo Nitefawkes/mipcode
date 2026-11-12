@@ -184,6 +184,12 @@ def signature_review_reason(
                     break
 
     if old.is_async != new.is_async:
+        if new.is_async and new.is_generator:
+            # Calling an async generator returns an async iterator at once: nothing is awaited.
+            # A caller breaks only if it iterated the old generator with a plain `for`.
+            if old.is_generator and not isinstance(call._result_consumer, (ast.AsyncFor, ast.comprehension)):
+                return "target became an async generator; review how the call result is iterated"
+            return None
         if new.is_async and not _consumes_async_result(call, caller):
             return "target became async; review how the call result is consumed"
         if not new.is_async and isinstance(call._result_consumer, ast.Await):

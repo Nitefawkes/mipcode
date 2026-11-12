@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import ast
+import operator
 from dataclasses import replace
 from pathlib import PurePosixPath
 
@@ -109,10 +110,84 @@ def _extract_narrow_caught_exceptions(handlers: list[ast.ExceptHandler]) -> tupl
     return tuple(sorted(caught))
 
 
+_FOLDABLE = {
+    ast.Add: operator.add,
+    ast.Sub: operator.sub,
+    ast.Mult: operator.mul,
+    ast.FloorDiv: operator.floordiv,
+    ast.LShift: operator.lshift,
+    ast.Pow: operator.pow,
+}
+
+
+def _fold_number(node: ast.expr) -> int | float | None:
+    """Value of a small arithmetic expression over number literals, such as `2**16`."""
+    if isinstance(node, ast.Constant):
+        return node.value if type(node.value) in (int, float) else None
+    if isinstance(node, ast.UnaryOp) and isinstance(node.op, (ast.USub, ast.UAdd)):
+        value = _fold_number(node.operand)
+        if value is None:
+            return None
+        return -value if isinstance(node.op, ast.USub) else value
+    if isinstance(node, ast.BinOp) and type(node.op) in _FOLDABLE:
+        left, right = _fold_number(node.left), _fold_number(node.right)
+        if left is None or right is None:
+            return None
+        if isinstance(node.op, (ast.Pow, ast.LShift)) and not (abs(left) <= 2**32 and abs(right) <= 64):
+            # Keep the result small enough to compute while parsing.
+            return None
+        try:
+            return _FOLDABLE[type(node.op)](left, right)
+        except (ArithmeticError, TypeError, ValueError):
+            return None
+    return None
+
+
 def _default_text(node: ast.expr | None) -> str | None:
+    """Text that is equal for defaults of equal value, where that is cheap to know."""
     if node is None:
         return None
+    if not isinstance(node, ast.Constant):
+        value = _fold_number(node)
+        if value is not None:
+            node = ast.Constant(value=value, kind=None)
     return ast.dump(node, include_attributes=False)
+
+
+_OWN_SCOPE = (
+    ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef, ast.Lambda,
+    ast.ListComp, ast.SetComp, ast.DictComp, ast.GeneratorExp,
+)
+
+
+def _module_bindings(tree: ast.Module) -> tuple[frozenset[str], dict[str, str]]:
+    """Names assigned at module scope, and the values of those assigned exactly once."""
+    stores: dict[str, int] = {}
+    rebound_elsewhere: set[str] = set()
+    pending: list[ast.AST] = list(tree.body)
+    while pending:
+        node = pending.pop()
+        if isinstance(node, _OWN_SCOPE):
+            rebound_elsewhere.update(
+                name for item in ast.walk(node) if isinstance(item, ast.Global) for name in item.names
+            )
+            continue
+        if isinstance(node, ast.Name) and not isinstance(node.ctx, ast.Load):
+            stores[node.id] = stores.get(node.id, 0) + 1
+        pending.extend(ast.iter_child_nodes(node))
+
+    constants: dict[str, str] = {}
+    for statement in tree.body:
+        if isinstance(statement, ast.Assign) and len(statement.targets) == 1:
+            target, value = statement.targets[0], statement.value
+        elif isinstance(statement, ast.AnnAssign) and statement.value is not None:
+            target, value = statement.target, statement.value
+        else:
+            continue
+        if isinstance(target, ast.Name) and stores.get(target.id) == 1 and target.id not in rebound_elsewhere:
+            reference = _default_text(ast.Name(id=target.id, ctx=ast.Load()))
+            constants[reference] = _default_text(value)
+    return frozenset(stores), constants
 
 
 def _parameters(args: ast.arguments) -> tuple[tuple[ParameterFact, ...], tuple[tuple[str, str], ...]]:
@@ -540,7 +615,16 @@ class _ModuleScanner(_CallContextScanner):
                 ann = _annotation_head(stmt.annotation)
                 if ann:
                     attr_annotations[stmt.target.id] = ann
-        row = ClassFact(self.path, self.module, qual, node.name, bases, node.lineno, {}, attr_annotations)
+        assigned_names = frozenset(
+            target.id
+            for stmt in node.body
+            if isinstance(stmt, (ast.Assign, ast.AnnAssign)) and stmt.value is not None
+            for target in (stmt.targets if isinstance(stmt, ast.Assign) else [stmt.target])
+            if isinstance(target, ast.Name)
+        )
+        row = ClassFact(
+            self.path, self.module, qual, node.name, bases, node.lineno, {}, attr_annotations, assigned_names
+        )
         self.classes[qual] = row
         self.class_stack.append(node.name)
         for child in node.body:
@@ -698,6 +782,7 @@ def parse_file(path: str, text: str, *, prior_facts: FileFacts | None = None) ->
         return FileFacts(normalized, module_name(normalized), {}, {}, [], {}, f"{exc.msg} at line {exc.lineno}")
     scanner = _ModuleScanner(normalized, text.splitlines(), prior_facts=prior_facts)
     scanner.visit(tree)
+    module_name_stores, constant_defaults = _module_bindings(tree)
     return FileFacts(
         normalized,
         scanner.module,
@@ -705,4 +790,6 @@ def parse_file(path: str, text: str, *, prior_facts: FileFacts | None = None) ->
         scanner.classes,
         scanner.calls,
         scanner.imports,
+        module_name_stores=module_name_stores,
+        constant_defaults=constant_defaults,
     )

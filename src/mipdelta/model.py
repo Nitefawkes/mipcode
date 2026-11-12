@@ -143,6 +143,21 @@ class FunctionFact:
         return isinstance(self._ast_node, ast.AsyncFunctionDef)
 
     @property
+    def is_generator(self) -> bool:
+        """The function's own body yields. A yield in a nested function does not count."""
+        node = self._ast_node
+        if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            return False
+        pending = list(node.body)
+        while pending:
+            item = pending.pop()
+            if isinstance(item, (ast.Yield, ast.YieldFrom)):
+                return True
+            if not isinstance(item, (ast.FunctionDef, ast.AsyncFunctionDef, ast.Lambda, ast.ClassDef)):
+                pending.extend(ast.iter_child_nodes(item))
+        return False
+
+    @property
     def body_dump(self) -> str:
         if self._body_dump_cache is None:
             if self._ast_node is not None:
@@ -162,6 +177,8 @@ class ClassFact:
     line: int
     methods: dict[str, FunctionFact]
     attr_annotations: dict[str, str] = field(default_factory=dict)
+    # Names assigned in the class body, such as `finish = _finish`.
+    assigned_names: frozenset[str] = frozenset()
 
 
 @dataclass
@@ -173,6 +190,11 @@ class FileFacts:
     calls: list[CallFact]
     imports: dict[str, tuple[str, str | None]]
     parse_error: str | None = None
+    # Names assigned at module scope, outside any function or class.
+    module_name_stores: frozenset[str] = frozenset()
+    # For a module name assigned exactly once: the default text of a reference to it,
+    # mapped to the default text of its value.
+    constant_defaults: dict[str, str] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)

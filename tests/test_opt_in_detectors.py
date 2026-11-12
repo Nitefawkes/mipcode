@@ -48,17 +48,16 @@ BOUND_BEFORE = {"lib.py": "def dump(v):\n    return v\n", "table.py": "from lib 
 BOUND_AFTER = {"lib.py": "def dump(v, *, strict):\n    return v if strict else None\n", "table.py": BOUND_BEFORE["table.py"]}
 
 
-@pytest.mark.parametrize(
-    ("detector", "before", "after"),
-    [
-        ("removed_callable_review", REMOVED_BEFORE, REMOVED_AFTER),
-        ("callback_binding_review", BOUND_BEFORE, BOUND_AFTER),
-    ],
-)
-def test_noisy_cross_file_detectors_are_off_unless_enabled(detector, before, after):
+def test_callback_binding_review_is_off_unless_enabled():
+    detector = "callback_binding_review"
     assert detector in OPT_IN_DETECTORS
-    assert detector not in _detectors(analyze_delta(before, after))
-    assert detector in _detectors(analyze_delta(before, after, enable=[detector]))
+    assert detector not in _detectors(analyze_delta(BOUND_BEFORE, BOUND_AFTER))
+    assert detector in _detectors(analyze_delta(BOUND_BEFORE, BOUND_AFTER, enable=[detector]))
+
+
+def test_removed_callable_review_reports_by_default():
+    assert "removed_callable_review" not in OPT_IN_DETECTORS
+    assert _detectors(analyze_delta(REMOVED_BEFORE, REMOVED_AFTER)) == ["removed_callable_review"]
 
 
 def test_unknown_detector_name_is_rejected():

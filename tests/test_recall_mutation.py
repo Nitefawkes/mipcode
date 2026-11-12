@@ -111,7 +111,6 @@ def test_removed_function_is_breaking_removed(tmp_path):
             "pkg/core.py": "def keep():\n    return 0\n",
             "pkg/use.py": "def show():\n    return 2\n",
         },
-        enable=("removed_callable_review",),
     )
     [mutation] = report["mutations"]
     [site] = mutation["sites"]
