@@ -66,6 +66,8 @@ After an edit to a Python file, the first hook adds newly opened sites as contex
 
 The hooks use `CLAUDE_PROJECT_DIR` as the workspace and keep one ledger per session under `.mipdelta/` at the top of the repository. The comparison baseline is the commit that was current when the session's first site opened, so a commit made during the session does not hide open sites. A hook reads only the changed files unless one of them changes a contract that other files can depend on. A hook never fails the tool call: a file that does not parse yet, or a directory outside a Git repository, produces no output. Set `MIPDELTA_HOOK_DEBUG=1` to see the reason on stderr.
 
+Each ledger also has an append-only event log beside it: `ledger-<session>.json` writes `ledger-<session>.events.jsonl`. The hooks, `--check-git --ledger`, and `--waive` append one JSON line per opened, discharged, or waived site, per stop block, and per run, with its duration. The log holds names, paths, and line numbers, not source text. A failure to write it is ignored. A session that opens no site leaves no log. To summarize the logs across sessions, see the [dogfood experiment](../experiments/dogfood/README.md).
+
 Other agent harnesses can call `mip-delta --check-git --ledger PATH` after edits and add `--open` before finishing.
 
 ## Run before a commit
