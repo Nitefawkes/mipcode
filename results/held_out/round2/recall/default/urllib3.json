@@ -1,0 +1,2205 @@
+{
+  "schema": "mip-delta recall-mutation corpus v1",
+  "materialization": "Tree M is the tree of `commit` with the file at `stale_path` replaced by the blob `stale_blob` (the parent's version of that file). Every other path is exactly as in `commit`. Line numbers of sites refer to the `stale_blob` text, which is also the text of that file in M.",
+  "repository": "urllib3",
+  "head": "6da1f82193a6665544381002914aa82563386191",
+  "limit": 800,
+  "opt_in_detectors": [],
+  "wall_seconds": 93.5,
+  "counts": {
+    "changed_definitions_removed": 56,
+    "changed_definitions_signature": 44,
+    "commits_changing_production_python": 371,
+    "commits_examined": 800,
+    "commits_with_changed_definitions": 41,
+    "commits_with_mutations": 11,
+    "definitions_skipped_duplicate_qualname": 4,
+    "mutations": 12,
+    "sites": 32
+  },
+  "mutations": [
+    {
+      "id": "urllib3:111e609250bc:src/urllib3/connectionpool.py",
+      "repository": "urllib3",
+      "commit": "111e609250bc7bf67b080b124298e0cf59efef9d",
+      "parent": "1c6405832e5348c740bc3b67b8b171b5da100a26",
+      "subject": "Wrap proxy TLS, connection, and timeout errors with ProxyError",
+      "stale_path": "src/urllib3/connectionpool.py",
+      "stale_blob": "3167e6a8524bc0a6c886091901f686c79c0ca393",
+      "commit_blob": "de5bb1f5e230e4be88b235867705abbcb0d3b393",
+      "other_changed_python_paths": [
+        "src/urllib3/connection.py",
+        "src/urllib3/exceptions.py",
+        "test/with_dummyserver/test_proxy_poolmanager.py",
+        "test/with_dummyserver/test_socketlevel.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "src/urllib3/connection.py",
+            "qualname": "_should_wrap_https_proxy_error",
+            "name": "_should_wrap_https_proxy_error",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 593,
+            "new_line": null,
+            "is_method": false,
+            "old_parameters": "(err)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "err",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 1033,
+          "end_line": 1033,
+          "call_line": 1033,
+          "call_text": "_should_wrap_https_proxy_error(e)",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "HTTPSConnectionPool._validate_conn",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "src/urllib3/connection.py",
+            "qualname": "_wrap_https_proxy_error",
+            "name": "_wrap_https_proxy_error",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 598,
+            "new_line": null,
+            "is_method": false,
+            "old_parameters": "(err, hostname)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "err",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "hostname",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 1036,
+          "end_line": 1036,
+          "call_line": 1036,
+          "call_text": "_wrap_https_proxy_error(e, cast(str, self.proxy.host))",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "HTTPSConnectionPool._validate_conn",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "urllib3:f070ec2e6f6c:src/urllib3/connection.py",
+      "repository": "urllib3",
+      "commit": "f070ec2e6f6c545f40d9196e5246df10c72e48e1",
+      "parent": "33afb5c96c435ab7118b5f41e26f96c290fef55b",
+      "subject": "Respect 'SSLContext.hostname_checks_common_name' when available and set",
+      "stale_path": "src/urllib3/connection.py",
+      "stale_blob": "7f37a860159eea97f515efc742e9f24884d8b9bd",
+      "commit_blob": "6e52a1099e1cad360724db5c10046204aa20c6a6",
+      "other_changed_python_paths": [
+        "src/urllib3/util/ssl_.py",
+        "src/urllib3/util/ssl_match_hostname.py",
+        "src/urllib3/util/ssltransport.py",
+        "test/conftest.py",
+        "test/test_connection.py",
+        "test/test_util.py",
+        "test/with_dummyserver/test_https.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "src/urllib3/util/ssl_match_hostname.py",
+            "qualname": "match_hostname",
+            "name": "match_hostname",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 88,
+            "new_line": 89,
+            "is_method": false,
+            "old_parameters": "(cert, hostname)",
+            "new_parameters": "(cert, hostname, hostname_checks_common_name=...)",
+            "old_parameter_list": [
+              [
+                "cert",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "hostname",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "cert",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "hostname",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "hostname_checks_common_name",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 588,
+          "end_line": 588,
+          "call_line": 588,
+          "call_text": "match_hostname(cert, asserted_hostname)",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "_match_hostname",
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "urllib3:ea96fde9450b:src/urllib3/connection.py",
+      "repository": "urllib3",
+      "commit": "ea96fde9450b2d0d233f0414c7be0a75148fae8b",
+      "parent": "2459900b10f54326745a597cc1cf2bf8a18f0d56",
+      "subject": "Change proxy TLS flow to match destination TLS flow",
+      "stale_path": "src/urllib3/connection.py",
+      "stale_blob": "8e87bd4144646d7b919e3b6ab4e0d83877015568",
+      "commit_blob": "3c3d2247511ae2bd2273f3e8dcb5a2072b54aced",
+      "other_changed_python_paths": [
+        "src/urllib3/util/proxy.py",
+        "test/conftest.py",
+        "test/test_util.py",
+        "test/with_dummyserver/test_proxy_poolmanager.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "src/urllib3/util/proxy.py",
+            "qualname": "create_proxy_ssl_context",
+            "name": "create_proxy_ssl_context",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 47,
+            "new_line": null,
+            "is_method": false,
+            "old_parameters": "(ssl_version=..., cert_reqs=..., ca_certs=..., ca_cert_dir=..., ca_cert_data=...)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "ssl_version",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "cert_reqs",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "ca_certs",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "ca_cert_dir",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "ca_cert_data",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 582,
+          "end_line": 588,
+          "call_line": 582,
+          "call_text": "create_proxy_ssl_context(\n            self.ssl_version,\n            self.cert_reqs,\n            self.ca_certs,\n            self.ca_cert_dir,\n            self.ca_cert_data,\n        )",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "HTTPSConnection._connect_tls_proxy",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "urllib3:45fc38b67f98:src/urllib3/connectionpool.py",
+      "repository": "urllib3",
+      "commit": "45fc38b67f98be57af34cafa1fbae51f0a8c81ba",
+      "parent": "dda4beee0784e6f55a55bba42e5bf77f2b7b2447",
+      "subject": "Fix incorrect error message during connection errors to HTTPS websites using a HTTP proxy",
+      "stale_path": "src/urllib3/connectionpool.py",
+      "stale_blob": "85be4dd72ce5e709fb048fcb6113087b8419186e",
+      "commit_blob": "ae61481e178b166514880e9c7d774377c7156ccd",
+      "other_changed_python_paths": [
+        "src/urllib3/connection.py",
+        "test/test_connection.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "src/urllib3/connection.py",
+            "qualname": "_wrap_proxy_error",
+            "name": "_wrap_proxy_error",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 688,
+            "new_line": 689,
+            "is_method": false,
+            "old_parameters": "(err)",
+            "new_parameters": "(err, proxy_scheme)",
+            "old_parameter_list": [
+              [
+                "err",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "err",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "proxy_scheme",
+                "positional_or_keyword",
+                false
+              ]
+            ]
+          },
+          "line": 424,
+          "end_line": 424,
+          "call_line": 424,
+          "call_text": "_wrap_proxy_error(new_e)",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "HTTPConnectionPool._make_request",
+          "binding": "breaking",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "call_signature_review"
+          ],
+          "site_hit_symbols": [
+            "_wrap_proxy_error"
+          ],
+          "file_hit_detectors": [
+            "call_signature_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "src/urllib3/connection.py",
+            "qualname": "_wrap_proxy_error",
+            "name": "_wrap_proxy_error",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 688,
+            "new_line": 689,
+            "is_method": false,
+            "old_parameters": "(err)",
+            "new_parameters": "(err, proxy_scheme)",
+            "old_parameter_list": [
+              [
+                "err",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "err",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "proxy_scheme",
+                "positional_or_keyword",
+                false
+              ]
+            ]
+          },
+          "line": 790,
+          "end_line": 790,
+          "call_line": 790,
+          "call_text": "_wrap_proxy_error(new_e)",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "HTTPConnectionPool.urlopen",
+          "binding": "breaking",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "call_signature_review"
+          ],
+          "site_hit_symbols": [
+            "_wrap_proxy_error"
+          ],
+          "file_hit_detectors": [
+            "call_signature_review"
+          ]
+        }
+      ],
+      "new_findings_in_stale_file": [
+        {
+          "detector": "call_signature_review",
+          "symbol": "_wrap_proxy_error",
+          "path": "src/urllib3/connectionpool.py",
+          "line": 424,
+          "anchor": "HTTPConnectionPool._make_request"
+        },
+        {
+          "detector": "call_signature_review",
+          "symbol": "_wrap_proxy_error",
+          "path": "src/urllib3/connectionpool.py",
+          "line": 790,
+          "anchor": "HTTPConnectionPool.urlopen"
+        }
+      ],
+      "collateral": []
+    },
+    {
+      "id": "urllib3:e5eac0cbfb69:src/urllib3/contrib/pyopenssl.py",
+      "repository": "urllib3",
+      "commit": "e5eac0cbfb6920fcc0b6dd584f23eeb14277ab3f",
+      "parent": "ab64be1fa572360eb6c813f131dd0d98d51820c6",
+      "subject": "Drop support for OpenSSL <1.1.1 (#2705)",
+      "stale_path": "src/urllib3/contrib/pyopenssl.py",
+      "stale_blob": "91ef63bd0a2821d46b042a1da6c9c5d20e3361df",
+      "commit_blob": "641bb7d080001aa8e7e6e27425f41207439ee4cb",
+      "other_changed_python_paths": [
+        "noxfile.py",
+        "src/urllib3/__init__.py",
+        "src/urllib3/connection.py",
+        "src/urllib3/contrib/securetransport.py",
+        "src/urllib3/exceptions.py",
+        "src/urllib3/util/__init__.py",
+        "src/urllib3/util/ssl_.py",
+        "test/test_ssl.py",
+        "test/test_util.py",
+        "test/with_dummyserver/test_socketlevel.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "src/urllib3/util/ssl_.py",
+            "qualname": "_is_ge_openssl_v1_1_1",
+            "name": "_is_ge_openssl_v1_1_1",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 28,
+            "new_line": null,
+            "is_method": false,
+            "old_parameters": "(openssl_version_text, openssl_version_number)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "openssl_version_text",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "openssl_version_number",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 82,
+          "end_line": 84,
+          "call_line": 82,
+          "call_text": "util.ssl_._is_ge_openssl_v1_1_1(\n    openssl_backend.openssl_version_text(), openssl_backend.openssl_version_number()\n)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "urllib3:279b9c965396:src/urllib3/connectionpool.py",
+      "repository": "urllib3",
+      "commit": "279b9c965396d3347b20918fe3e7e500f5634611",
+      "parent": "b14ad3569a884d5d003e77b5bc5cef7e82c0ac5a",
+      "subject": "Change HTTPConnection.getresponse() to return urllib3.HTTPResponse",
+      "stale_path": "src/urllib3/connectionpool.py",
+      "stale_blob": "8c39c179bf2cd3a97142f2e1c61b0d772c337593",
+      "commit_blob": "65be538ca06c0778e478cae81b6730b87ef2461a",
+      "other_changed_python_paths": [
+        "noxfile.py",
+        "src/urllib3/_request_methods.py",
+        "src/urllib3/connection.py",
+        "src/urllib3/poolmanager.py",
+        "src/urllib3/response.py",
+        "test/test_connection.py",
+        "test/test_connectionpool.py",
+        "test/with_dummyserver/test_connection.py",
+        "test/with_dummyserver/test_socketlevel.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "src/urllib3/connection.py",
+            "qualname": "HTTPConnection.request",
+            "name": "request",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 289,
+            "new_line": 305,
+            "is_method": true,
+            "old_parameters": "(self, method, url, body=..., headers=..., chunked=...)",
+            "new_parameters": "(self, method, url, body=..., headers=..., chunked=..., preload_content=..., decode_content=..., enforce_content_length=...)",
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "method",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "url",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "body",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "headers",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "chunked",
+                "positional_or_keyword",
+                true
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "method",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "url",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "body",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "headers",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "chunked",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "preload_content",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "decode_content",
+                "positional_or_keyword",
+                true
+              ],
+              [
+                "enforce_content_length",
+                "positional_or_keyword",
+                true
+              ]
+            ]
+          },
+          "line": 444,
+          "end_line": 444,
+          "call_line": 444,
+          "call_text": "conn.request(method, url, **httplib_request_kw)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "HTTPConnectionPool._make_request",
+          "binding": "unknown",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 3,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "src/urllib3/response.py",
+            "qualname": "HTTPResponse.from_httplib",
+            "name": "from_httplib",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 824,
+            "new_line": null,
+            "is_method": true,
+            "old_parameters": "(ResponseCls, r, **response_kw)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "ResponseCls",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "r",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "response_kw",
+                "var_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 752,
+          "end_line": 758,
+          "call_line": 752,
+          "call_text": "self.ResponseCls.from_httplib(\n                httplib_response,\n                pool=self,\n                connection=response_conn,\n                retries=retries,\n                **response_kw,\n            )",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "HTTPConnectionPool.urlopen",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "urllib3:c2d37391b96e:dummyserver/testcase.py",
+      "repository": "urllib3",
+      "commit": "c2d37391b96ef398df662086422ac960beced071",
+      "parent": "b5d20d9a11e23d8b2c841c88d7ccfeddfbca721f",
+      "subject": "Fix Tornado event_loop warning on Python 3.10 and later (#2777)",
+      "stale_path": "dummyserver/testcase.py",
+      "stale_blob": "2d44d5beb00a36958d4642dfbc4d7204d3f26520",
+      "commit_blob": "47320f62d24f24d6a89568ba5ae55c0a8fbf0c82",
+      "other_changed_python_paths": [
+        "dummyserver/server.py",
+        "test/conftest.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "dummyserver/server.py",
+            "qualname": "run_tornado_app",
+            "name": "run_tornado_app",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 175,
+            "new_line": 186,
+            "is_method": false,
+            "old_parameters": "(app, io_loop, certs, scheme, host)",
+            "new_parameters": "(app, certs, scheme, host)",
+            "old_parameter_list": [
+              [
+                "app",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "io_loop",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "certs",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "scheme",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "host",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "app",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "certs",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "scheme",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "host",
+                "positional_or_keyword",
+                false
+              ]
+            ]
+          },
+          "line": 168,
+          "end_line": 170,
+          "call_line": 168,
+          "call_text": "run_tornado_app(\n            app, cls.io_loop, cls.certs, cls.scheme, cls.host\n        )",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "HTTPDummyServerTestCase._start_server",
+          "binding": "breaking",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "call_signature_review"
+          ],
+          "site_hit_symbols": [
+            "run_tornado_app"
+          ],
+          "file_hit_detectors": [
+            "call_signature_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "dummyserver/server.py",
+            "qualname": "run_loop_in_thread",
+            "name": "run_loop_in_thread",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 200,
+            "new_line": 246,
+            "is_method": false,
+            "old_parameters": "(io_loop)",
+            "new_parameters": "()",
+            "old_parameter_list": [
+              [
+                "io_loop",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": []
+          },
+          "line": 171,
+          "end_line": 171,
+          "call_line": 171,
+          "call_text": "run_loop_in_thread(cls.io_loop)",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "HTTPDummyServerTestCase._start_server",
+          "binding": "breaking",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "call_signature_review"
+          ],
+          "site_hit_symbols": [
+            "run_tornado_app"
+          ],
+          "file_hit_detectors": [
+            "call_signature_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "dummyserver/server.py",
+            "qualname": "run_tornado_app",
+            "name": "run_tornado_app",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 175,
+            "new_line": 186,
+            "is_method": false,
+            "old_parameters": "(app, io_loop, certs, scheme, host)",
+            "new_parameters": "(app, certs, scheme, host)",
+            "old_parameter_list": [
+              [
+                "app",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "io_loop",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "certs",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "scheme",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "host",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "app",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "certs",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "scheme",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "host",
+                "positional_or_keyword",
+                false
+              ]
+            ]
+          },
+          "line": 233,
+          "end_line": 235,
+          "call_line": 233,
+          "call_text": "run_tornado_app(\n            app, cls.io_loop, None, \"http\", cls.http_host\n        )",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "HTTPDummyProxyTestCase.setup_class",
+          "binding": "breaking",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "call_signature_review"
+          ],
+          "site_hit_symbols": [
+            "run_tornado_app"
+          ],
+          "file_hit_detectors": [
+            "call_signature_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "dummyserver/server.py",
+            "qualname": "run_tornado_app",
+            "name": "run_tornado_app",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 175,
+            "new_line": 186,
+            "is_method": false,
+            "old_parameters": "(app, io_loop, certs, scheme, host)",
+            "new_parameters": "(app, certs, scheme, host)",
+            "old_parameter_list": [
+              [
+                "app",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "io_loop",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "certs",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "scheme",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "host",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "app",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "certs",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "scheme",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "host",
+                "positional_or_keyword",
+                false
+              ]
+            ]
+          },
+          "line": 238,
+          "end_line": 240,
+          "call_line": 238,
+          "call_text": "run_tornado_app(\n            app, cls.io_loop, cls.https_certs, \"https\", cls.http_host\n        )",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "HTTPDummyProxyTestCase.setup_class",
+          "binding": "breaking",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "call_signature_review"
+          ],
+          "site_hit_symbols": [
+            "run_tornado_app"
+          ],
+          "file_hit_detectors": [
+            "call_signature_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "dummyserver/server.py",
+            "qualname": "run_tornado_app",
+            "name": "run_tornado_app",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 175,
+            "new_line": 186,
+            "is_method": false,
+            "old_parameters": "(app, io_loop, certs, scheme, host)",
+            "new_parameters": "(app, certs, scheme, host)",
+            "old_parameter_list": [
+              [
+                "app",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "io_loop",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "certs",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "scheme",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "host",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "app",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "certs",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "scheme",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "host",
+                "positional_or_keyword",
+                false
+              ]
+            ]
+          },
+          "line": 243,
+          "end_line": 245,
+          "call_line": 243,
+          "call_text": "run_tornado_app(\n            app, cls.io_loop, None, \"http\", cls.proxy_host\n        )",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "HTTPDummyProxyTestCase.setup_class",
+          "binding": "breaking",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "call_signature_review"
+          ],
+          "site_hit_symbols": [
+            "run_tornado_app"
+          ],
+          "file_hit_detectors": [
+            "call_signature_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "dummyserver/server.py",
+            "qualname": "run_tornado_app",
+            "name": "run_tornado_app",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 175,
+            "new_line": 186,
+            "is_method": false,
+            "old_parameters": "(app, io_loop, certs, scheme, host)",
+            "new_parameters": "(app, certs, scheme, host)",
+            "old_parameter_list": [
+              [
+                "app",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "io_loop",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "certs",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "scheme",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "host",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "app",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "certs",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "scheme",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "host",
+                "positional_or_keyword",
+                false
+              ]
+            ]
+          },
+          "line": 251,
+          "end_line": 253,
+          "call_line": 251,
+          "call_text": "run_tornado_app(\n            app, cls.io_loop, cls.https_certs, \"https\", cls.proxy_host\n        )",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "HTTPDummyProxyTestCase.setup_class",
+          "binding": "breaking",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "call_signature_review"
+          ],
+          "site_hit_symbols": [
+            "run_tornado_app"
+          ],
+          "file_hit_detectors": [
+            "call_signature_review"
+          ]
+        },
+        {
+          "definition": {
+            "path": "dummyserver/server.py",
+            "qualname": "run_loop_in_thread",
+            "name": "run_loop_in_thread",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 200,
+            "new_line": 246,
+            "is_method": false,
+            "old_parameters": "(io_loop)",
+            "new_parameters": "()",
+            "old_parameter_list": [
+              [
+                "io_loop",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": []
+          },
+          "line": 255,
+          "end_line": 255,
+          "call_line": 255,
+          "call_text": "run_loop_in_thread(cls.io_loop)",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "HTTPDummyProxyTestCase.setup_class",
+          "binding": "breaking",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": true,
+          "file_hit": true,
+          "site_hit_detectors": [
+            "call_signature_review"
+          ],
+          "site_hit_symbols": [
+            "run_tornado_app"
+          ],
+          "file_hit_detectors": [
+            "call_signature_review"
+          ]
+        }
+      ],
+      "new_findings_in_stale_file": [
+        {
+          "detector": "call_signature_review",
+          "symbol": "run_tornado_app",
+          "path": "dummyserver/testcase.py",
+          "line": 168,
+          "anchor": "HTTPDummyServerTestCase._start_server"
+        },
+        {
+          "detector": "call_signature_review",
+          "symbol": "run_tornado_app",
+          "path": "dummyserver/testcase.py",
+          "line": 233,
+          "anchor": "HTTPDummyProxyTestCase.setup_class"
+        },
+        {
+          "detector": "call_signature_review",
+          "symbol": "run_tornado_app",
+          "path": "dummyserver/testcase.py",
+          "line": 238,
+          "anchor": "HTTPDummyProxyTestCase.setup_class"
+        },
+        {
+          "detector": "call_signature_review",
+          "symbol": "run_tornado_app",
+          "path": "dummyserver/testcase.py",
+          "line": 243,
+          "anchor": "HTTPDummyProxyTestCase.setup_class"
+        },
+        {
+          "detector": "call_signature_review",
+          "symbol": "run_tornado_app",
+          "path": "dummyserver/testcase.py",
+          "line": 251,
+          "anchor": "HTTPDummyProxyTestCase.setup_class"
+        }
+      ],
+      "collateral": []
+    },
+    {
+      "id": "urllib3:e0243ada1afb:src/urllib3/connection.py",
+      "repository": "urllib3",
+      "commit": "e0243ada1afb46f46ac9c5c25b8d638327a6e883",
+      "parent": "c2d37391b96ef398df662086422ac960beced071",
+      "subject": "Create BaseHTTPConnection APIs",
+      "stale_path": "src/urllib3/connection.py",
+      "stale_blob": "679c451426c3c4c88870cd1d0211f0609b831b07",
+      "commit_blob": "1eb9b54cb66d9922c8474befee2c7605a170e537",
+      "other_changed_python_paths": [
+        "docs/conf.py",
+        "noxfile.py",
+        "src/urllib3/__init__.py",
+        "src/urllib3/_base_connection.py",
+        "src/urllib3/_request_methods.py",
+        "src/urllib3/connectionpool.py",
+        "src/urllib3/response.py",
+        "src/urllib3/util/connection.py",
+        "src/urllib3/util/retry.py",
+        "src/urllib3/util/timeout.py",
+        "src/urllib3/util/url.py",
+        "test/test_connectionpool.py",
+        "test/with_dummyserver/test_connection.py",
+        "test/with_dummyserver/test_connectionpool.py",
+        "test/with_dummyserver/test_https.py",
+        "test/with_dummyserver/test_proxy_poolmanager.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "src/urllib3/connectionpool.py",
+            "qualname": "HTTPSConnectionPool._prepare_conn",
+            "name": "_prepare_conn",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 1014,
+            "new_line": null,
+            "is_method": true,
+            "old_parameters": "(self, conn)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "conn",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 262,
+          "end_line": 262,
+          "call_line": 262,
+          "call_text": "self._prepare_conn(conn)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "HTTPConnection.connect",
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 2,
+          "name_defined_in_stale_file": true,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "urllib3:e0243ada1afb:src/urllib3/connectionpool.py",
+      "repository": "urllib3",
+      "commit": "e0243ada1afb46f46ac9c5c25b8d638327a6e883",
+      "parent": "c2d37391b96ef398df662086422ac960beced071",
+      "subject": "Create BaseHTTPConnection APIs",
+      "stale_path": "src/urllib3/connectionpool.py",
+      "stale_blob": "35c5c23b748a555815a2ab161714706985979aed",
+      "commit_blob": "9d5206616cf411a4984450deec2ad8fd45d9ea5b",
+      "other_changed_python_paths": [
+        "docs/conf.py",
+        "noxfile.py",
+        "src/urllib3/__init__.py",
+        "src/urllib3/_base_connection.py",
+        "src/urllib3/_request_methods.py",
+        "src/urllib3/connection.py",
+        "src/urllib3/response.py",
+        "src/urllib3/util/connection.py",
+        "src/urllib3/util/retry.py",
+        "src/urllib3/util/timeout.py",
+        "src/urllib3/util/url.py",
+        "test/test_connectionpool.py",
+        "test/with_dummyserver/test_connection.py",
+        "test/with_dummyserver/test_connectionpool.py",
+        "test/with_dummyserver/test_https.py",
+        "test/with_dummyserver/test_proxy_poolmanager.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "src/urllib3/connection.py",
+            "qualname": "HTTPConnection._prepare_conn",
+            "name": "_prepare_conn",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 252,
+            "new_line": null,
+            "is_method": true,
+            "old_parameters": "(self, conn)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "self",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "conn",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 1084,
+          "end_line": 1084,
+          "call_line": 1084,
+          "call_text": "self._prepare_conn(conn)",
+          "call_form": "attribute",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "HTTPSConnectionPool._new_conn",
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "uniqueness_reason": "multiple_definitions",
+          "definitions_of_name_in_parent": 2,
+          "name_defined_in_stale_file": true,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "urllib3:3b354498929a:dummyserver/testcase.py",
+      "repository": "urllib3",
+      "commit": "3b354498929a63f350bd5cdfc9bae8ecc5ff8af4",
+      "parent": "052617c5da9b04bd8d14507f511a4bddba4caf55",
+      "subject": "Clarify Tornado involvement in dummyserver names",
+      "stale_path": "dummyserver/testcase.py",
+      "stale_blob": "a681106732ca0a01e74910cb983f06562916cd41",
+      "commit_blob": "77d3d8ba95e411af8e2247dcfca833e2807e8652",
+      "other_changed_python_paths": [
+        "dummyserver/https_proxy.py",
+        "dummyserver/server.py",
+        "dummyserver/tornadoserver.py",
+        "test/conftest.py",
+        "test/contrib/test_socks.py",
+        "test/test_connectionpool.py",
+        "test/test_ssltransport.py",
+        "test/with_dummyserver/test_connectionpool.py",
+        "test/with_dummyserver/test_https.py",
+        "test/with_dummyserver/test_poolmanager.py",
+        "test/with_dummyserver/test_proxy_poolmanager.py",
+        "test/with_dummyserver/test_socketlevel.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "dummyserver/server.py",
+            "qualname": "run_loop_in_thread",
+            "name": "run_loop_in_thread",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 265,
+            "new_line": null,
+            "is_method": false,
+            "old_parameters": "()",
+            "new_parameters": null,
+            "old_parameter_list": [],
+            "new_parameter_list": null
+          },
+          "line": 175,
+          "end_line": 175,
+          "call_line": 175,
+          "call_text": "run_loop_in_thread()",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "HTTPDummyServerTestCase._start_server",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "dummyserver/server.py",
+            "qualname": "run_loop_in_thread",
+            "name": "run_loop_in_thread",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 265,
+            "new_line": null,
+            "is_method": false,
+            "old_parameters": "()",
+            "new_parameters": null,
+            "old_parameter_list": [],
+            "new_parameter_list": null
+          },
+          "line": 243,
+          "end_line": 243,
+          "call_line": 243,
+          "call_text": "run_loop_in_thread()",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "HTTPDummyProxyTestCase.setup_class",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "urllib3:11a92fa41655:dummyserver/testcase.py",
+      "repository": "urllib3",
+      "commit": "11a92fa416556c4a4d40306ecc7b67f83b20bac0",
+      "parent": "59c122730badac2426dfbdecfe6be8afe0cd21c2",
+      "subject": "Remove Tornado from test suite",
+      "stale_path": "dummyserver/testcase.py",
+      "stale_blob": "0628f8963a1cd51ffb673a8bfc7f35e9c9c7a363",
+      "commit_blob": "7eed47668b7a009871f7ac7df9cc4908314e035a",
+      "other_changed_python_paths": [
+        "dummyserver/handlers.py",
+        "dummyserver/https_proxy.py",
+        "dummyserver/proxy.py",
+        "dummyserver/socketserver.py",
+        "dummyserver/tornadoserver.py",
+        "test/conftest.py",
+        "test/contrib/emscripten/conftest.py",
+        "test/contrib/test_socks.py",
+        "test/test_collections.py",
+        "test/test_connectionpool.py",
+        "test/test_ssltransport.py",
+        "test/with_dummyserver/test_connectionpool.py",
+        "test/with_dummyserver/test_https.py",
+        "test/with_dummyserver/test_poolmanager.py",
+        "test/with_dummyserver/test_proxy_poolmanager.py",
+        "test/with_dummyserver/test_socketlevel.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "dummyserver/tornadoserver.py",
+            "qualname": "run_tornado_loop_in_thread",
+            "name": "run_tornado_loop_in_thread",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 266,
+            "new_line": null,
+            "is_method": false,
+            "old_parameters": "()",
+            "new_parameters": null,
+            "old_parameter_list": [],
+            "new_parameter_list": null
+          },
+          "line": 180,
+          "end_line": 180,
+          "call_line": 180,
+          "call_text": "run_tornado_loop_in_thread()",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "HTTPDummyServerTestCase._start_server",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "dummyserver/tornadoserver.py",
+            "qualname": "run_tornado_app",
+            "name": "run_tornado_app",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 187,
+            "new_line": null,
+            "is_method": false,
+            "old_parameters": "(app, certs, scheme, host)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "app",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "certs",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "scheme",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "host",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 184,
+          "end_line": 186,
+          "call_line": 184,
+          "call_text": "run_tornado_app(\n                    app, cls.certs, cls.scheme, cls.host\n                )",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "HTTPDummyServerTestCase._start_server.run_app",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "dummyserver/tornadoserver.py",
+            "qualname": "run_tornado_loop_in_thread",
+            "name": "run_tornado_loop_in_thread",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 266,
+            "new_line": null,
+            "is_method": false,
+            "old_parameters": "()",
+            "new_parameters": null,
+            "old_parameter_list": [],
+            "new_parameter_list": null
+          },
+          "line": 249,
+          "end_line": 249,
+          "call_line": 249,
+          "call_text": "run_tornado_loop_in_thread()",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "HTTPDummyProxyTestCase.setup_class",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "dummyserver/tornadoserver.py",
+            "qualname": "run_tornado_app",
+            "name": "run_tornado_app",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 187,
+            "new_line": null,
+            "is_method": false,
+            "old_parameters": "(app, certs, scheme, host)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "app",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "certs",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "scheme",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "host",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 253,
+          "end_line": 255,
+          "call_line": 253,
+          "call_text": "run_tornado_app(\n                    app, None, \"http\", cls.http_host\n                )",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "HTTPDummyProxyTestCase.setup_class.run_app",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "dummyserver/tornadoserver.py",
+            "qualname": "run_tornado_app",
+            "name": "run_tornado_app",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 187,
+            "new_line": null,
+            "is_method": false,
+            "old_parameters": "(app, certs, scheme, host)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "app",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "certs",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "scheme",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "host",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 258,
+          "end_line": 260,
+          "call_line": 258,
+          "call_text": "run_tornado_app(\n                    app, cls.https_certs, \"https\", cls.http_host\n                )",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "HTTPDummyProxyTestCase.setup_class.run_app",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "dummyserver/tornadoserver.py",
+            "qualname": "run_tornado_app",
+            "name": "run_tornado_app",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 187,
+            "new_line": null,
+            "is_method": false,
+            "old_parameters": "(app, certs, scheme, host)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "app",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "certs",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "scheme",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "host",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 263,
+          "end_line": 265,
+          "call_line": 263,
+          "call_text": "run_tornado_app(\n                    app, None, \"http\", cls.proxy_host\n                )",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "HTTPDummyProxyTestCase.setup_class.run_app",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "dummyserver/tornadoserver.py",
+            "qualname": "run_tornado_app",
+            "name": "run_tornado_app",
+            "change": "removed",
+            "removed_behind_module_getattr": false,
+            "old_line": 187,
+            "new_line": null,
+            "is_method": false,
+            "old_parameters": "(app, certs, scheme, host)",
+            "new_parameters": null,
+            "old_parameter_list": [
+              [
+                "app",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "certs",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "scheme",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "host",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": null
+          },
+          "line": 271,
+          "end_line": 273,
+          "call_line": 271,
+          "call_text": "run_tornado_app(\n                    app, cls.https_certs, \"https\", cls.proxy_host\n                )",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "HTTPDummyProxyTestCase.setup_class.run_app",
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    },
+    {
+      "id": "urllib3:5487206c70d3:dummyserver/testcase.py",
+      "repository": "urllib3",
+      "commit": "5487206c70d3a5324fec4c4e5b2da7daec1c3d19",
+      "parent": "d494c47cbd6a82a94de02621426c973b562ceb86",
+      "subject": "Factorize hypercon.Config() creation",
+      "stale_path": "dummyserver/testcase.py",
+      "stale_blob": "66a43606a575ab45c7954798c0a0c754ed6f52d7",
+      "commit_blob": "58eac499a7107edc1dfe08b578c8117418fd8753",
+      "other_changed_python_paths": [
+        "dummyserver/hypercornserver.py",
+        "test/conftest.py",
+        "test/contrib/emscripten/conftest.py"
+      ],
+      "analysis_error": null,
+      "sites": [
+        {
+          "definition": {
+            "path": "dummyserver/hypercornserver.py",
+            "qualname": "run_hypercorn_in_thread",
+            "name": "run_hypercorn_in_thread",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 44,
+            "new_line": 46,
+            "is_method": false,
+            "old_parameters": "(config, app)",
+            "new_parameters": "(host, certs, app)",
+            "old_parameter_list": [
+              [
+                "config",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "app",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "host",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "certs",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "app",
+                "positional_or_keyword",
+                false
+              ]
+            ]
+          },
+          "line": 218,
+          "end_line": 218,
+          "call_line": 218,
+          "call_text": "run_hypercorn_in_thread(config, hypercorn_app)",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "HypercornDummyServerTestCase.setup_class",
+          "binding": "breaking",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "dummyserver/hypercornserver.py",
+            "qualname": "run_hypercorn_in_thread",
+            "name": "run_hypercorn_in_thread",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 44,
+            "new_line": 46,
+            "is_method": false,
+            "old_parameters": "(config, app)",
+            "new_parameters": "(host, certs, app)",
+            "old_parameter_list": [
+              [
+                "config",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "app",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "host",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "certs",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "app",
+                "positional_or_keyword",
+                false
+              ]
+            ]
+          },
+          "line": 269,
+          "end_line": 269,
+          "call_line": 269,
+          "call_text": "run_hypercorn_in_thread(http_server_config, hypercorn_app)",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "HypercornDummyProxyTestCase.setup_class",
+          "binding": "breaking",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "dummyserver/hypercornserver.py",
+            "qualname": "run_hypercorn_in_thread",
+            "name": "run_hypercorn_in_thread",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 44,
+            "new_line": 46,
+            "is_method": false,
+            "old_parameters": "(config, app)",
+            "new_parameters": "(host, certs, app)",
+            "old_parameter_list": [
+              [
+                "config",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "app",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "host",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "certs",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "app",
+                "positional_or_keyword",
+                false
+              ]
+            ]
+          },
+          "line": 281,
+          "end_line": 281,
+          "call_line": 281,
+          "call_text": "run_hypercorn_in_thread(https_server_config, hypercorn_app)",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "HypercornDummyProxyTestCase.setup_class",
+          "binding": "breaking",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "dummyserver/hypercornserver.py",
+            "qualname": "run_hypercorn_in_thread",
+            "name": "run_hypercorn_in_thread",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 44,
+            "new_line": 46,
+            "is_method": false,
+            "old_parameters": "(config, app)",
+            "new_parameters": "(host, certs, app)",
+            "old_parameter_list": [
+              [
+                "config",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "app",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "host",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "certs",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "app",
+                "positional_or_keyword",
+                false
+              ]
+            ]
+          },
+          "line": 289,
+          "end_line": 289,
+          "call_line": 289,
+          "call_text": "run_hypercorn_in_thread(http_proxy_config, ProxyApp())",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "HypercornDummyProxyTestCase.setup_class",
+          "binding": "breaking",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        },
+        {
+          "definition": {
+            "path": "dummyserver/hypercornserver.py",
+            "qualname": "run_hypercorn_in_thread",
+            "name": "run_hypercorn_in_thread",
+            "change": "signature",
+            "removed_behind_module_getattr": false,
+            "old_line": 44,
+            "new_line": 46,
+            "is_method": false,
+            "old_parameters": "(config, app)",
+            "new_parameters": "(host, certs, app)",
+            "old_parameter_list": [
+              [
+                "config",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "app",
+                "positional_or_keyword",
+                false
+              ]
+            ],
+            "new_parameter_list": [
+              [
+                "host",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "certs",
+                "positional_or_keyword",
+                false
+              ],
+              [
+                "app",
+                "positional_or_keyword",
+                false
+              ]
+            ]
+          },
+          "line": 301,
+          "end_line": 301,
+          "call_line": 301,
+          "call_text": "run_hypercorn_in_thread(https_proxy_config, ProxyApp(upstream_ca_certs))",
+          "call_form": "name",
+          "call_rewritten_in_commit": true,
+          "enclosing_function": "HypercornDummyProxyTestCase.setup_class",
+          "binding": "breaking",
+          "name_uniqueness": "unique",
+          "uniqueness_reason": "single_definition",
+          "definitions_of_name_in_parent": 1,
+          "name_defined_in_stale_file": false,
+          "site_hit": false,
+          "file_hit": false,
+          "site_hit_detectors": [],
+          "site_hit_symbols": [],
+          "file_hit_detectors": []
+        }
+      ],
+      "new_findings_in_stale_file": [],
+      "collateral": []
+    }
+  ]
+}

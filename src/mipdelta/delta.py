@@ -30,9 +30,14 @@ _DETECTOR_PRIORITY = {
     "optional_keyword_contract": 10,
 }
 
-# Detectors that report only when a caller names them. History replay found that
-# upstream code routinely tests a None-default parameter by truth value on purpose.
-OPT_IN_DETECTORS = frozenset({"parameter_truthiness_review"})
+# Detectors that report only when a caller names them.
+# - parameter_truthiness_review: upstream code routinely tests a None-default parameter
+#   by truth value on purpose.
+# - removed_callable_review, callback_binding_review: on held-out repositories 34 of
+#   their 36 reports were false, and a type checker reports most of what they find.
+OPT_IN_DETECTORS = frozenset(
+    {"parameter_truthiness_review", "removed_callable_review", "callback_binding_review"}
+)
 
 
 def enabled_detectors(enable: Iterable[str]) -> frozenset[str]:
@@ -908,8 +913,7 @@ def analyze_changed_files_in_index(
 
     # 7. Opt-in: intra-function bare truthiness on newly added/changed None-default parameters
     #    (O(1) via bare_truthy_checks)
-    truthiness_candidates = changed_nullable_params if "parameter_truthiness_review" in enabled else {}
-    for (path, qualname), nullable_names in sorted(truthiness_candidates.items()):
+    for (path, qualname), nullable_names in sorted(changed_nullable_params.items()):
         fn = after_changed[path].functions.get(qualname)
         if fn is None:
             continue
@@ -928,6 +932,7 @@ def analyze_changed_files_in_index(
                     )
                 )
 
+    findings = [f for f in findings if f.detector not in OPT_IN_DETECTORS or f.detector in enabled]
     return deduplicate_findings(findings), cross_file_triggered, candidate_calls_inspected
 
 

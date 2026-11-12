@@ -42,6 +42,25 @@ def test_changed_only_analysis_honors_the_same_switch():
     assert _detectors(analyze_changed_only(*files, enable=[TRUTHINESS])[0]) == [TRUTHINESS]
 
 
+REMOVED_BEFORE = {"lib.py": "def old(x):\n    return x\n", "app.py": "from lib import old\n\ndef use():\n    return old(1)\n"}
+REMOVED_AFTER = {"lib.py": "def new(x):\n    return x\n", "app.py": REMOVED_BEFORE["app.py"]}
+BOUND_BEFORE = {"lib.py": "def dump(v):\n    return v\n", "table.py": "from lib import dump\n\nA = prop(dump)\n"}
+BOUND_AFTER = {"lib.py": "def dump(v, *, strict):\n    return v if strict else None\n", "table.py": BOUND_BEFORE["table.py"]}
+
+
+@pytest.mark.parametrize(
+    ("detector", "before", "after"),
+    [
+        ("removed_callable_review", REMOVED_BEFORE, REMOVED_AFTER),
+        ("callback_binding_review", BOUND_BEFORE, BOUND_AFTER),
+    ],
+)
+def test_noisy_cross_file_detectors_are_off_unless_enabled(detector, before, after):
+    assert detector in OPT_IN_DETECTORS
+    assert detector not in _detectors(analyze_delta(before, after))
+    assert detector in _detectors(analyze_delta(before, after, enable=[detector]))
+
+
 def test_unknown_detector_name_is_rejected():
     with pytest.raises(ValueError, match="call_signature_review"):
         analyze_delta({"serialize.py": BEFORE}, {"serialize.py": AFTER}, enable=["call_signature_review"])

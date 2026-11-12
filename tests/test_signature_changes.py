@@ -2,6 +2,8 @@
 import pytest
 
 from mipdelta.delta import analyze_delta
+
+ENABLED = ["removed_callable_review", "callback_binding_review"]
 from mipdelta.session import DeltaSession
 
 
@@ -23,7 +25,7 @@ def test_broken_calls_report_the_import_alias_location(before_def, after_def, ex
     caller = f"from lib import run as invoke\n\ndef entry():\n    return {expression}\n"
     before = {"lib.py": before_def + "\n", "client.py": caller}
     after = dict(before, **{"lib.py": after_def + "\n"})
-    findings = analyze_delta(before, after)
+    findings = analyze_delta(before, after, enable=ENABLED)
     assert [(f.detector, f.symbol, f.path, f.start_line, f.resolution_source) for f in findings] == [
         ("call_signature_review", "run", "client.py", 4, "static_ast"),
     ]
@@ -35,7 +37,7 @@ def test_required_keyword_still_uses_the_existing_detector_without_a_duplicate()
         "client.py": "from lib import run as invoke\ninvoke(1)\n",
     }
     after = {**before, "lib.py": "def run(x, *, flag): return x if flag else 0\n"}
-    assert [(f.detector, f.path, f.start_line) for f in analyze_delta(before, after)] == [
+    assert [(f.detector, f.path, f.start_line) for f in analyze_delta(before, after, enable=ENABLED)] == [
         ("required_keyword_missing", "client.py", 2)
     ]
 
@@ -57,7 +59,7 @@ def test_required_keyword_still_uses_the_existing_detector_without_a_duplicate()
 def test_compatible_or_unresolved_calls_do_not_get_signature_findings(before_def, after_def, before_call, after_call):
     before = {"lib.py": before_def + "\n", "client.py": f"from lib import run as invoke\n{before_call}\n"}
     after = {"lib.py": after_def + "\n", "client.py": f"from lib import run as invoke\n{after_call}\n"}
-    assert [f for f in analyze_delta(before, after) if f.detector == "call_signature_review"] == []
+    assert [f for f in analyze_delta(before, after, enable=ENABLED) if f.detector == "call_signature_review"] == []
 
 
 @pytest.mark.parametrize("expression", ["await invoke(1)", "await asyncio.gather(invoke(1))"])
@@ -65,7 +67,7 @@ def test_async_migration_handles_calls_awaited_or_passed_to_async_runner(express
     before = {"lib.py": "def run(x): return x\n", "client.py": "from lib import run as invoke\ninvoke(1)\n"}
     after = {"lib.py": "async def run(x): return x\n",
              "client.py": f"import asyncio\nfrom lib import run as invoke\nasync def main():\n    return {expression}\n"}
-    assert analyze_delta(before, after) == []
+    assert analyze_delta(before, after, enable=ENABLED) == []
 
 
 def test_required_positional_in_a_bound_method_accounts_for_receiver():
@@ -86,7 +88,7 @@ def test_required_positional_in_a_bound_method_accounts_for_receiver():
 def test_reorder_still_reports_an_unchanged_call_in_the_edited_file():
     before = {"lib.py": "def run(x, y): return x-y\n\nrun(1, 2)\n"}
     after = {"lib.py": "def run(y, x): return x-y\n\nrun(1, 2)\n"}
-    assert [(f.detector, f.start_line) for f in analyze_delta(before, after)] == [
+    assert [(f.detector, f.start_line) for f in analyze_delta(before, after, enable=ENABLED)] == [
         ("call_signature_review", 3)
     ]
 
@@ -100,7 +102,7 @@ def test_partial_caller_migration_still_reports_a_missing_argument():
         "lib.py": "def run(x, y, z): return x + y + z\n",
         "client.py": "from lib import run\n\nrun(1, 2)\n",
     }
-    assert [(f.detector, f.path, f.start_line) for f in analyze_delta(before, after)] == [
+    assert [(f.detector, f.path, f.start_line) for f in analyze_delta(before, after, enable=ENABLED)] == [
         ("call_signature_review", "client.py", 3)
     ]
 
@@ -112,7 +114,7 @@ def test_parameter_shadowing_an_import_is_not_a_caller(replacement):
         "client.py": "from lib import run\n\ndef wrapper(run):\n    return run(1)\n",
     }
     after = {**before, "lib.py": replacement}
-    assert analyze_delta(before, after) == []
+    assert analyze_delta(before, after, enable=ENABLED) == []
 
 
 def test_sync_replacement_reports_a_call_that_still_awaits_it():
@@ -121,7 +123,7 @@ def test_sync_replacement_reports_a_call_that_still_awaits_it():
         "client.py": "from lib import run\n\nasync def main():\n    return await run(1)\n",
     }
     after = dict(before, **{"lib.py": "def run(x): return x\n"})
-    assert [(f.detector, f.start_line) for f in analyze_delta(before, after)] == [
+    assert [(f.detector, f.start_line) for f in analyze_delta(before, after, enable=ENABLED)] == [
         ("call_signature_review", 4)
     ]
 
@@ -138,7 +140,7 @@ def test_removed_definition_reports_only_callers_bound_to_it(replacement):
         del after["lib.py"]
     else:
         after["lib.py"] = replacement
-    findings = analyze_delta(before, after)
+    findings = analyze_delta(before, after, enable=ENABLED)
     assert [(f.detector, f.symbol, f.path, f.start_line) for f in findings] == [
         ("removed_callable_review", "run", "client.py", 4),
     ]
@@ -147,13 +149,13 @@ def test_removed_definition_reports_only_callers_bound_to_it(replacement):
 def test_migrated_import_does_not_report_removed_callable():
     before = {"lib.py": "def run(x): return x\n", "client.py": "from lib import run as invoke\ninvoke(1)\n"}
     after = {"lib.py": "def renamed(x): return x\n", "client.py": "from lib import renamed as invoke\ninvoke(1)\n"}
-    assert analyze_delta(before, after) == []
+    assert analyze_delta(before, after, enable=ENABLED) == []
 
 
 def test_module_move_does_not_satisfy_a_stale_import_with_the_same_leaf_name():
     before = {"lib.py": "def run(x): return x\n", "client.py": "from lib import run\nrun(1)\n"}
     after = {"moved/lib.py": before["lib.py"], "client.py": before["client.py"]}
-    assert [(f.detector, f.path, f.start_line) for f in analyze_delta(before, after)] == [
+    assert [(f.detector, f.path, f.start_line) for f in analyze_delta(before, after, enable=ENABLED)] == [
         ("removed_callable_review", "client.py", 2)
     ]
 
@@ -162,4 +164,4 @@ def test_reexport_at_the_original_import_location_preserves_callers():
     before = {"lib.py": "def run(x): return x\n", "client.py": "from lib import run\nrun(1)\n"}
     after = {**before, "lib.py": "from moved import implementation as run\n",
              "moved.py": "def implementation(x): return x\n"}
-    assert analyze_delta(before, after) == []
+    assert analyze_delta(before, after, enable=ENABLED) == []

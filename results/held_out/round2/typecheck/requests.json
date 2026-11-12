@@ -1,0 +1,61 @@
+{
+  "schema": "mip-delta recall-mutation typecheck baseline v1",
+  "repository": "requests",
+  "corpus_schema": "mip-delta recall-mutation corpus v1",
+  "corpus_head": "3c7baaa05ab4aa49cc819ce3a819d260de19c157",
+  "max_mutations": null,
+  "wall_seconds": 0.0,
+  "commits": [],
+  "mutations": [],
+  "environment": {
+    "mypy_version": "mypy 2.4.1 (compiled: yes)",
+    "python_version": "3.12.6",
+    "command": [
+      "python.exe",
+      "-I",
+      "-X",
+      "utf8",
+      "-m",
+      "mypy",
+      "--config-file",
+      "{config}",
+      "--cache-dir",
+      "{cache}",
+      "--no-site-packages",
+      "--ignore-missing-imports",
+      "--check-untyped-defs",
+      "--no-error-summary",
+      "--hide-error-context",
+      "--no-color-output",
+      "--show-column-numbers",
+      "--show-error-codes",
+      "--no-pretty",
+      "{target}"
+    ],
+    "config_file_contents": "[mypy]\n",
+    "incremental": true,
+    "timeout_seconds": 600.0,
+    "corpora": [
+      {
+        "repository": "requests",
+        "sha256": "7b2ae35e40a6357ba864ab211b9e7da61f11427fa50be53720aac05b0b3e2159"
+      },
+      {
+        "repository": "urllib3",
+        "sha256": "21c212587f05ece5a6badbba134bead6b584a5b0cc5c9a146dc5f681af739971"
+      },
+      {
+        "repository": "pytest",
+        "sha256": "d2f611e60583d8e18b4fa7e8ddfc80ee22218cb865e531cdcf070fb023325ec5"
+      },
+      {
+        "repository": "scrapy",
+        "sha256": "62f31fe1ed0755fab6c765cf87a0966d07f773f18ed6ec957b986fc2c9f45ce5"
+      },
+      {
+        "repository": "paramiko",
+        "sha256": "b2c286a40c23ad02a7b57cd889e6b6f5c3286e3c2080efe49f7f626f33a272c6"
+      }
+    ]
+  }
+}

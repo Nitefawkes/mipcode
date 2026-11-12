@@ -35,14 +35,16 @@ def _commit(repo: Path, files: dict[str, str | None], message: str) -> None:
     _git(repo, "commit", "-q", "-m", message)
 
 
-def _history(tmp_path: Path, parent: dict[str, str], child: dict[str, str | None]) -> dict:
+def _history(
+    tmp_path: Path, parent: dict[str, str], child: dict[str, str | None], enable: tuple[str, ...] = ()
+) -> dict:
     repo = tmp_path / "repo"
     repo.mkdir()
     _git(repo, "init", "-q")
     _git(repo, "config", "core.autocrlf", "false")
     _commit(repo, parent, "parent")
     _commit(repo, child, "child")
-    return build_and_score.build_repository(repo, None)
+    return build_and_score.build_repository(repo, None, enable)
 
 
 def _sites(report: dict) -> list[dict]:
@@ -109,6 +111,7 @@ def test_removed_function_is_breaking_removed(tmp_path):
             "pkg/core.py": "def keep():\n    return 0\n",
             "pkg/use.py": "def show():\n    return 2\n",
         },
+        enable=("removed_callable_review",),
     )
     [mutation] = report["mutations"]
     [site] = mutation["sites"]

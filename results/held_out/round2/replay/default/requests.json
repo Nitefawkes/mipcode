@@ -1,0 +1,15 @@
+{
+  "repository": "requests",
+  "head": "3c7baaa05ab4",
+  "commits_replayed": 800,
+  "horizon_commits": 25,
+  "opt_in_detectors": [],
+  "wall_seconds": 497.8,
+  "commits_changing_production_python": 236,
+  "contract_changing_commits": 29,
+  "contract_changing_commits_silent": 29,
+  "contract_changing_commits_flagged": 0,
+  "local_commits_flagged": 0,
+  "analysis_errors": 0,
+  "flagged_commits": []
+}

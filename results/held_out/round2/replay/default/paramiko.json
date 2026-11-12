@@ -1,0 +1,121 @@
+{
+  "repository": "paramiko",
+  "head": "0e9ccb91e0f9",
+  "commits_replayed": 800,
+  "horizon_commits": 25,
+  "opt_in_detectors": [],
+  "wall_seconds": 376.9,
+  "commits_changing_production_python": 404,
+  "contract_changing_commits": 93,
+  "contract_changing_commits_silent": 91,
+  "contract_changing_commits_flagged": 2,
+  "local_commits_flagged": 0,
+  "analysis_errors": 0,
+  "flagged_commits": [
+    {
+      "commit": "b5a7c1c327ff",
+      "subject": "Add docstring and signature support for disable_algorithms",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "parameter_sink_review",
+          "symbol": "SSHClient.connect",
+          "path": "paramiko/client.py",
+          "line": 218,
+          "anchor": "SSHClient.connect",
+          "provenance": "static_ast",
+          "evidence": "new parameter disable_algorithms is not read in the function body; verify its intended behavioral sink",
+          "resolved_after_commits": 2,
+          "resolved_by": "site_function_edit",
+          "resolving_commit": "dceaa61d44b9",
+          "resolving_subject": "Client->Transport for disable_algorithms"
+        },
+        {
+          "detector": "parameter_sink_review",
+          "symbol": "Transport.__init__",
+          "path": "paramiko/transport.py",
+          "line": 302,
+          "anchor": "Transport.__init__",
+          "provenance": "static_ast",
+          "evidence": "new parameter disable_algorithms is not read in the function body; verify its intended behavioral sink",
+          "resolved_after_commits": 3,
+          "resolved_by": "site_function_edit",
+          "resolving_commit": "b2cb9c1a2529",
+          "resolving_subject": "Basic impl of algorithm filtering"
+        }
+      ]
+    },
+    {
+      "commit": "363a28d94cad",
+      "subject": "Add support for RSA SHA2 host and public keys",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "parameter_sink_review",
+          "symbol": "AgentKey.sign_ssh_data",
+          "path": "paramiko/agent.py",
+          "line": 414,
+          "anchor": "AgentKey.sign_ssh_data",
+          "provenance": "static_ast",
+          "evidence": "new parameter algorithm is not read in the function body; verify its intended behavioral sink",
+          "resolved_after_commits": 1,
+          "resolved_by": "site_function_edit",
+          "resolving_commit": "2b66625659e6",
+          "resolving_subject": "Add agent RSA-SHA2 support, also tweak changelog w/ more tickets"
+        },
+        {
+          "detector": "parameter_sink_review",
+          "symbol": "DSSKey.sign_ssh_data",
+          "path": "paramiko/dsskey.py",
+          "line": 108,
+          "anchor": "DSSKey.sign_ssh_data",
+          "provenance": "static_ast",
+          "evidence": "new parameter algorithm is not read in the function body; verify its intended behavioral sink",
+          "resolved_after_commits": 11,
+          "resolved_by": "site_function_edit",
+          "resolving_commit": "11232cca7be7",
+          "resolving_subject": "Add six to `install_requires`"
+        },
+        {
+          "detector": "parameter_sink_review",
+          "symbol": "ECDSAKey.sign_ssh_data",
+          "path": "paramiko/ecdsakey.py",
+          "line": 214,
+          "anchor": "ECDSAKey.sign_ssh_data",
+          "provenance": "static_ast",
+          "evidence": "new parameter algorithm is not read in the function body; verify its intended behavioral sink",
+          "resolved_after_commits": 11,
+          "resolved_by": "site_function_edit",
+          "resolving_commit": "11232cca7be7",
+          "resolving_subject": "Add six to `install_requires`"
+        },
+        {
+          "detector": "parameter_sink_review",
+          "symbol": "Ed25519Key.sign_ssh_data",
+          "path": "paramiko/ed25519key.py",
+          "line": 194,
+          "anchor": "Ed25519Key.sign_ssh_data",
+          "provenance": "static_ast",
+          "evidence": "new parameter algorithm is not read in the function body; verify its intended behavioral sink",
+          "resolved_after_commits": 11,
+          "resolved_by": "site_function_edit",
+          "resolving_commit": "11232cca7be7",
+          "resolving_subject": "Add six to `install_requires`"
+        },
+        {
+          "detector": "parameter_sink_review",
+          "symbol": "PKey.sign_ssh_data",
+          "path": "paramiko/pkey.py",
+          "line": 199,
+          "anchor": "PKey.sign_ssh_data",
+          "provenance": "static_ast",
+          "evidence": "new parameter algorithm is not read in the function body; verify its intended behavioral sink",
+          "resolved_after_commits": 11,
+          "resolved_by": "site_function_edit",
+          "resolving_commit": "11232cca7be7",
+          "resolving_subject": "Add six to `install_requires`"
+        }
+      ]
+    }
+  ]
+}

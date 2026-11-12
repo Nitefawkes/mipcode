@@ -1,0 +1,92 @@
+{
+  "task_id": "httpx-redirects",
+  "repository": "httpx",
+  "upstream_commit": "541a0afe5636248e5251894903b86ef17aaf5ebc",
+  "parent_commit": "ee24e6718035e048ec86f3490a964b08fd49031c",
+  "fix_commit": "47266d763bdef9dc99f9c9d09d49d441b87802e6",
+  "ticket": "Add support for configuring redirect behaviour on the client: `httpx.Client(allow_redirects=<bool>)`, and the same for `httpx.AsyncClient`. At the moment redirect following can only be controlled per call, through the `allow_redirects` argument of `client.request()`, `client.get()`, `client.send()`, `client.stream()` and friends, which always defaults to True. Users who never want redirects followed (or want a client-wide policy) have to repeat the flag on every call. The client-level setting should default to True, so existing behaviour does not change. A per-request `allow_redirects` argument, when given explicitly, should still take precedence; when it is not given, the request should use the client's setting, following the same 'use the client default' convention the client already uses for per-request `auth` and `timeout`. The configured value should be available on the client as `client.allow_redirects`.",
+  "ticket_sources": [
+    {"statement": "Add Client(allow_redirects=<bool>)", "source": "upstream commit subject 'Add Client(allow_redirect=<...>) (#1790)'; CHANGELOG 0.19.0 entry added in 0d7c4ca: 'Add support for `Client(allow_redirects=<bool>)`. (Pull #1790)'"},
+    {"statement": "Same for AsyncClient", "source": "diff: AsyncClient.request/stream/send/get/options/head/post/put/patch/delete all switched to the USE_CLIENT_DEFAULT default and AsyncClient.send resolves self.allow_redirects (httpx/_client.py hunks at 1448-1909)"},
+    {"statement": "Currently only per-call, defaulting to True", "source": "parent tree httpx/_client.py@ee24e67: 'allow_redirects: bool = True' on request/stream/send/get/... (lines 747, 803, 845, 1010, ...)"},
+    {"statement": "Default True", "source": "diff: BaseClient.__init__ gains 'allow_redirects: bool = True'"},
+    {"statement": "Per-request value overrides; omitted per-request value uses client setting, same convention as auth and timeout", "source": "diff: per-request parameters become 'allow_redirects: typing.Union[bool, UseClientDefault] = USE_CLIENT_DEFAULT' and send() resolves 'self.allow_redirects if isinstance(allow_redirects, UseClientDefault) else allow_redirects', mirroring the existing timeout handling"},
+    {"statement": "Exposed as client.allow_redirects", "source": "diff: 'self.allow_redirects = allow_redirects' in BaseClient.__init__"}
+  ],
+  "omitted_site": {
+    "path": "httpx/_client.py",
+    "symbol": "Client.__init__ and AsyncClient.__init__",
+    "description": "The upstream commit added `allow_redirects: bool = True` only to BaseClient.__init__ (and stored self.allow_redirects there), and changed all request methods and send() in both clients to fall back to self.allow_redirects. But the public constructors Client.__init__ and AsyncClient.__init__, which declare their own explicit keyword-only parameter lists and call super().__init__(...) with an explicit argument list, were not changed: they neither accept allow_redirects nor forward it. So the advertised `httpx.Client(allow_redirects=False)` raises TypeError (unexpected keyword argument) and the client-level setting is always True. This shipped in 0.19.0. The fix commit 47266d7 (#1808, 'Switch follow redirects default') renamed the option to follow_redirects, changed its default to False, and added `follow_redirects: bool = False` to both Client.__init__ and AsyncClient.__init__, forwarding it to super().__init__."
+  },
+  "rubric": {
+    "outcomes": {
+      "covered": "Both public constructors accept the option and it takes effect: `httpx.Client(allow_redirects=False)` and `httpx.AsyncClient(allow_redirects=False)` construct without error, `client.allow_redirects` (or the agent's equivalent attribute) is False, and a request made without a per-request flag to an endpoint returning a 3xx does not follow the redirect (the 3xx response is returned with response.next_request set), while passing allow_redirects=True on that request does follow it. Equivalent alternative names (e.g. follow_redirects) are acceptable only if the ticket's spelling is also accepted or the agent's choice is consistent across both constructors.",
+      "omitted": "The agent implemented a client-level redirect setting (some client-level value is consulted by send()/request methods when no per-request value is given), but at least one of Client.__init__ / AsyncClient.__init__ does not accept the option (TypeError), or accepts it but does not store/forward it so the client-level value stays at the default. Record in grader notes which constructor(s) failed; a sync-only implementation where AsyncClient(allow_redirects=False) raises or is ignored is graded omitted.",
+      "not_attempted": "There is no working client-level mechanism at all: send()/request methods still hard-default to True with no fallback to any client-level value in either client, or the agent made no meaningful change. If the constructors accept and store the option but no request path ever reads it (in both clients), grade not_attempted, since the question of constructor forwarding cannot be separated from a missing feature."
+    },
+    "what_to_inspect": [
+      "httpx/_client.py: signatures of BaseClient.__init__, Client.__init__, AsyncClient.__init__, and the super().__init__(...) calls in the two subclasses.",
+      "Client.send and AsyncClient.send (and _send_handling_redirects/_send_handling_auth if the agent moved the resolution there): how the per-request default is resolved against the client-level value.",
+      "Per-request method signatures (request, stream, get, options, head, post, put, patch, delete) in both clients: their default must not be a hard True that masks the client setting.",
+      "If code can run: build both clients with transport=httpx.MockTransport(handler) where the handler returns 302 with Location for '/redirect' and 200 elsewhere; assert behaviour for client-level False with no per-request flag, and for per-request True overriding it. For AsyncClient use an async runner."
+    ],
+    "alternative_designs": [
+      "Option added directly to Client.__init__ and AsyncClient.__init__ and stored there, without touching BaseClient: covered if send() reads it.",
+      "Constructors take **kwargs forwarded to BaseClient: covered if the option reaches the stored attribute (verify by tracing, not by signature).",
+      "Per-request default changed to None (instead of a sentinel) meaning 'use client default': acceptable design; grade on behaviour.",
+      "Resolution done in request()/stream() rather than send(): acceptable if every public entry point the ticket names honours the client default; if send() ignores it, note it but grade the constructor question on the paths that do.",
+      "Agent exposes it only as a settable attribute (client.allow_redirects = False) but not as a constructor argument: omitted (the ticket asks for the constructor option)."
+    ]
+  },
+  "static_check": {
+    "description": "In httpx/_client.py, for each of class Client and class AsyncClient: the __init__ signature contains a parameter named allow_redirects (or **kwargs), and either the super().__init__(...) call passes allow_redirects (or **kwargs), or the method assigns the client-level attribute from it. Flag the class if neither holds. Equivalently: flag any subclass __init__ whose explicit parameter list lacks a keyword parameter that BaseClient.__init__ newly gained.",
+    "when_wrong": "False positive when the agent stores the setting through a different path (a classmethod factory, a property setter called after construction, a renamed option such as follow_redirects) or forwards via **kwargs that a literal name check misses. False negative when the parameter is present and forwarded but send() never consults it (the feature is broken elsewhere, which is not_attempted rather than covered), or when it is forwarded under a different keyword name than BaseClient expects (which would raise TypeError at runtime)."
+  },
+  "parent_state": {
+    "omitted_site_exists": true,
+    "quoted_lines": [
+      "httpx/_client.py@ee24e67 600-632 (Client.__init__):",
+      "600    def __init__(",
+      "601        self,",
+      "602        *,",
+      "...",
+      "613        timeout: TimeoutTypes = DEFAULT_TIMEOUT_CONFIG,",
+      "614        limits: Limits = DEFAULT_LIMITS,",
+      "615        max_redirects: int = DEFAULT_MAX_REDIRECTS,",
+      "...",
+      "622        super().__init__(",
+      "623            auth=auth,",
+      "624            params=params,",
+      "625            headers=headers,",
+      "626            cookies=cookies,",
+      "627            timeout=timeout,",
+      "628            max_redirects=max_redirects,",
+      "629            event_hooks=event_hooks,",
+      "630            base_url=base_url,",
+      "631            trust_env=trust_env,",
+      "632        )",
+      "httpx/_client.py@ee24e67 1305-1337 (AsyncClient.__init__): identical structure; max_redirects at 1320 and forwarded at 1333.",
+      "httpx/_client.py@ee24e67 160-182 (BaseClient.__init__): keyword-only parameters ending '168        max_redirects: int = DEFAULT_MAX_REDIRECTS,' and '182        self.max_redirects = max_redirects'."
+    ],
+    "note": "max_redirects, the closest existing analogue, is already declared in all three constructors and forwarded from both subclasses, so the agent has an obvious template; nothing has to be invented.",
+    "other_sites_changed_upstream": [
+      "BaseClient.__init__: new parameter allow_redirects: bool = True; self.allow_redirects = allow_redirects",
+      "Client.request, stream, send, get, options, head, post, put, patch, delete: per-request default changed from True to USE_CLIENT_DEFAULT (typing.Union[bool, UseClientDefault])",
+      "Client.send: resolves allow_redirects against self.allow_redirects",
+      "AsyncClient: same ten methods and the same resolution in AsyncClient.send",
+      "Not changed upstream: Client.__init__, AsyncClient.__init__ (the omission), the Client/AsyncClient docstring parameter lists, top-level httpx.get/request in _api.py (they keep their own allow_redirects=True and pass it explicitly), docs, tests."
+    ]
+  },
+  "checker_expectation": {
+    "reported_at_upstream": "The case description does not say which detector fired or its message. The most plausible report is the override-signature detector: Client.__init__ and AsyncClient.__init__ override BaseClient.__init__ and, after the commit, lack its new keyword parameter allow_redirects. The wrapper-forwarding detector could also plausibly report both, since each __init__ is a thin wrapper around super().__init__ with an explicit argument list that does not forward the new optional parameter. The unused-parameter detector does not apply (no function accepts allow_redirects without using it).",
+    "same_report_for_agent_variant": "Yes, for the common variant (agent adds the option to BaseClient only, or to Client but not AsyncClient): the subclass __init__ signature diverges from its base, so the same override/wrapper reports appear for the affected class. Not caught: an agent that adds the option to the subclass signatures but forgets to pass it to super() (unused-parameter detector should fire instead), or an agent that adds it to neither the base nor the subclasses but stores nothing (no new parameter, so nothing to report)."
+  },
+  "risks": [
+    "The ticket unavoidably names the omitted site: the requested public API is literally 'Client(allow_redirects=...)', i.e. the constructor that upstream forgot. Any agent that tries its feature once, or writes a single test, will discover the TypeError. The task therefore mostly measures whether the agent also covers AsyncClient's constructor and whether it verifies its own change, not attention to a hidden site. Consider it a weak or control task.",
+    "Expected omission rate is low for the same reason; upstream's miss looks like an untested refactor rather than a subtle site.",
+    "Memorization: modern httpx has follow_redirects (default False) on Client/AsyncClient constructors; a model may rename the option or flip the default. The rubric accepts consistent renames for coverage, but graders should note scope drift (changed default is a behaviour change the ticket forbids, graded separately from this question).",
+    "Environment: parent is mid-2021 httpx (httpcore 0.13.x, rfc3986<2, charset_normalizer); tests need those pins, but the feature can be checked with MockTransport without network.",
+    "Scope ambiguity: upstream did not change the top-level httpx.get()/request() API; an agent that also changes those is not wrong but its diff is larger.",
+    "Small feature: suitable for a short session."
+  ]
+}

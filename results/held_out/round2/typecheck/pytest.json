@@ -1,0 +1,1323 @@
+{
+  "schema": "mip-delta recall-mutation typecheck baseline v1",
+  "repository": "pytest",
+  "corpus_schema": "mip-delta recall-mutation corpus v1",
+  "corpus_head": "d5afeaffaa52b149e49300c90b173336994c2147",
+  "max_mutations": null,
+  "wall_seconds": 76.3,
+  "commits": [
+    {
+      "commit": "0263914bf9cec5677783cda7557717e4a9660452",
+      "mutations": 1,
+      "targets": {
+        "src/_pytest": {
+          "status": "ok",
+          "seconds": 4.24,
+          "errors": 2,
+          "errors_by_code": {
+            "has-type": 2
+          }
+        }
+      },
+      "files": 272,
+      "unwritable_files": []
+    },
+    {
+      "commit": "05c837dc3178814b581fd378cdda9363c2392ecd",
+      "mutations": 1,
+      "targets": {
+        "src/_pytest": {
+          "status": "ok",
+          "seconds": 4.27,
+          "errors": 2,
+          "errors_by_code": {
+            "has-type": 2
+          }
+        }
+      },
+      "files": 272,
+      "unwritable_files": []
+    },
+    {
+      "commit": "15c2e193f22d6d7e6c78fae4b0643b710af4eb89",
+      "mutations": 1,
+      "targets": {
+        "src/_pytest": {
+          "status": "ok",
+          "seconds": 4.48,
+          "errors": 0,
+          "errors_by_code": {}
+        }
+      },
+      "files": 270,
+      "unwritable_files": []
+    },
+    {
+      "commit": "184c168d876df2074cbd94b076e650c8831c80cc",
+      "mutations": 1,
+      "targets": {
+        "src/_pytest": {
+          "status": "ok",
+          "seconds": 4.44,
+          "errors": 2,
+          "errors_by_code": {
+            "has-type": 2
+          }
+        }
+      },
+      "files": 280,
+      "unwritable_files": []
+    },
+    {
+      "commit": "4f07180276575856ebe3d35d02c8b415316ba56d",
+      "mutations": 1,
+      "targets": {
+        "src/_pytest": {
+          "status": "ok",
+          "seconds": 3.4,
+          "errors": 0,
+          "errors_by_code": {}
+        }
+      },
+      "files": 270,
+      "unwritable_files": []
+    },
+    {
+      "commit": "971943170245c247273172a47c21abd380a801bd",
+      "mutations": 1,
+      "targets": {
+        "src/_pytest": {
+          "status": "ok",
+          "seconds": 3.42,
+          "errors": 2,
+          "errors_by_code": {
+            "has-type": 2
+          }
+        }
+      },
+      "files": 280,
+      "unwritable_files": []
+    },
+    {
+      "commit": "d4907e8499fc4c36493b61437b56cf2eabfdcebf",
+      "mutations": 1,
+      "targets": {
+        "src/_pytest": {
+          "status": "ok",
+          "seconds": 3.34,
+          "errors": 2,
+          "errors_by_code": {
+            "has-type": 2
+          }
+        }
+      },
+      "files": 272,
+      "unwritable_files": []
+    },
+    {
+      "commit": "d6dbe52bda18fe2cb63c3c9060d7ef8597465655",
+      "mutations": 1,
+      "targets": {
+        "src/_pytest": {
+          "status": "ok",
+          "seconds": 3.48,
+          "errors": 2,
+          "errors_by_code": {
+            "has-type": 2
+          }
+        }
+      },
+      "files": 272,
+      "unwritable_files": []
+    },
+    {
+      "commit": "e37541375cbd8abaa030f0989eb9b7624befbdaf",
+      "mutations": 3,
+      "targets": {
+        "src/_pytest": {
+          "status": "ok",
+          "seconds": 3.38,
+          "errors": 2,
+          "errors_by_code": {
+            "has-type": 2
+          }
+        }
+      },
+      "files": 280,
+      "unwritable_files": []
+    },
+    {
+      "commit": "e94518ddef13db739e9ab2c35d11e4f8904f6d13",
+      "mutations": 1,
+      "targets": {
+        "src/_pytest": {
+          "status": "ok",
+          "seconds": 3.29,
+          "errors": 0,
+          "errors_by_code": {}
+        }
+      },
+      "files": 270,
+      "unwritable_files": []
+    },
+    {
+      "commit": "fbdae4e7ef2bbb87a7e4b75f6bf445528c0c7157",
+      "mutations": 3,
+      "targets": {
+        "src/_pytest": {
+          "status": "ok",
+          "seconds": 3.32,
+          "errors": 2,
+          "errors_by_code": {
+            "has-type": 2
+          }
+        }
+      },
+      "files": 280,
+      "unwritable_files": []
+    }
+  ],
+  "mutations": [
+    {
+      "id": "pytest:0263914bf9ce:src/_pytest/tmpdir.py",
+      "commit": "0263914bf9cec5677783cda7557717e4a9660452",
+      "parent": "deb9f5f79b0537a5e80cc26dd11bfb217e263a72",
+      "stale_path": "src/_pytest/tmpdir.py",
+      "stale_blob": "66ca9f190e38ed95995f0ded13d9d401a0517c93",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "src/_pytest",
+      "seconds": 1.88,
+      "errors_commit": 2,
+      "errors_mutated": 3,
+      "new_errors_in_stale_file": [
+        {
+          "path": "src/_pytest/tmpdir.py",
+          "line": 208,
+          "column": 24,
+          "code": "call-arg",
+          "message": "Missing named argument \"register\" for \"make_numbered_dir_with_cleanup\""
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "src/_pytest/pathlib.py",
+          "definition_qualname": "make_numbered_dir_with_cleanup",
+          "line": 208,
+          "end_line": 214,
+          "call_line": 208,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 208,
+              "code": "call-arg",
+              "message": "Missing named argument \"register\" for \"make_numbered_dir_with_cleanup\""
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "call-arg"
+          ],
+          "tc_file_hit_codes": [
+            "call-arg"
+          ],
+          "enclosing_function_span": [
+            140,
+            218
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pytest:05c837dc3178:src/_pytest/assertion/__init__.py",
+      "commit": "05c837dc3178814b581fd378cdda9363c2392ecd",
+      "parent": "6f93bd03849570ce53f7bb3608e29442378b4d1a",
+      "stale_path": "src/_pytest/assertion/__init__.py",
+      "stale_blob": "22f3ca8e258cc48effeb34154821f8b1e5cf151b",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "src/_pytest",
+      "seconds": 1.53,
+      "errors_commit": 2,
+      "errors_mutated": 3,
+      "new_errors_in_stale_file": [
+        {
+          "path": "src/_pytest/assertion/__init__.py",
+          "line": 208,
+          "column": 12,
+          "code": "call-arg",
+          "message": "Unexpected keyword argument \"config\" for \"assertrepr_compare\""
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "src/_pytest/assertion/util.py",
+          "definition_qualname": "assertrepr_compare",
+          "line": 208,
+          "end_line": 208,
+          "call_line": 208,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 208,
+              "code": "call-arg",
+              "message": "Unexpected keyword argument \"config\" for \"assertrepr_compare\""
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "call-arg"
+          ],
+          "tc_file_hit_codes": [
+            "call-arg"
+          ],
+          "enclosing_function_span": [
+            205,
+            208
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pytest:15c2e193f22d:src/_pytest/config/__init__.py",
+      "commit": "15c2e193f22d6d7e6c78fae4b0643b710af4eb89",
+      "parent": "ebcd836c5ad997fd1b700eda0b92c296b2637058",
+      "stale_path": "src/_pytest/config/__init__.py",
+      "stale_blob": "4df15c4db7f874be05c770ba1c38a9473c8f73ff",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "src/_pytest",
+      "seconds": 3.47,
+      "errors_commit": 0,
+      "errors_mutated": 1,
+      "new_errors_in_stale_file": [
+        {
+          "path": "src/_pytest/config/__init__.py",
+          "line": 1252,
+          "column": 59,
+          "code": "call-arg",
+          "message": "Missing named argument \"override_ini\" for \"determine_setup\""
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "src/_pytest/config/findpaths.py",
+          "definition_qualname": "determine_setup",
+          "line": 1252,
+          "end_line": 1257,
+          "call_line": 1252,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 1252,
+              "code": "call-arg",
+              "message": "Missing named argument \"override_ini\" for \"determine_setup\""
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "call-arg"
+          ],
+          "tc_file_hit_codes": [
+            "call-arg"
+          ],
+          "enclosing_function_span": [
+            1248,
+            1275
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pytest:184c168d876d:src/_pytest/assertion/__init__.py",
+      "commit": "184c168d876df2074cbd94b076e650c8831c80cc",
+      "parent": "924724a06611d4ca28f50c824feccf92fe67721f",
+      "stale_path": "src/_pytest/assertion/__init__.py",
+      "stale_blob": "4813bb3214b712a4f75fb60b99e4748a8213f691",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "src/_pytest",
+      "seconds": 1.8,
+      "errors_commit": 2,
+      "errors_mutated": 7,
+      "new_errors_in_stale_file": [
+        {
+          "path": "src/_pytest/assertion/__init__.py",
+          "line": 68,
+          "column": 17,
+          "code": "attr-defined",
+          "message": "Module has no attribute \"ASSERTION_TEXT_DIFF_STYLE_NDIFF\""
+        },
+        {
+          "path": "src/_pytest/assertion/__init__.py",
+          "line": 71,
+          "column": 16,
+          "code": "attr-defined",
+          "message": "Module has no attribute \"ASSERTION_TEXT_DIFF_STYLE_NDIFF\""
+        },
+        {
+          "path": "src/_pytest/assertion/__init__.py",
+          "line": 72,
+          "column": 16,
+          "code": "attr-defined",
+          "message": "Module has no attribute \"ASSERTION_TEXT_DIFF_STYLE_BLOCK\""
+        },
+        {
+          "path": "src/_pytest/assertion/__init__.py",
+          "line": 87,
+          "column": 5,
+          "code": "attr-defined",
+          "message": "Module has no attribute \"validate_assertion_text_diff_style\""
+        },
+        {
+          "path": "src/_pytest/assertion/__init__.py",
+          "line": 256,
+          "column": 35,
+          "code": "attr-defined",
+          "message": "Module has no attribute \"get_assertion_text_diff_style\""
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "src/_pytest/assertion/util.py",
+          "definition_qualname": "validate_assertion_text_diff_style",
+          "line": 87,
+          "end_line": 87,
+          "call_line": 87,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 87,
+              "code": "attr-defined",
+              "message": "Module has no attribute \"validate_assertion_text_diff_style\""
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "attr-defined"
+          ],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            86,
+            87
+          ]
+        },
+        {
+          "index": 1,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "src/_pytest/assertion/util.py",
+          "definition_qualname": "get_assertion_text_diff_style",
+          "line": 256,
+          "end_line": 256,
+          "call_line": 256,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 256,
+              "code": "attr-defined",
+              "message": "Module has no attribute \"get_assertion_text_diff_style\""
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "attr-defined"
+          ],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            226,
+            259
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pytest:4f0718027657:src/_pytest/config/__init__.py",
+      "commit": "4f07180276575856ebe3d35d02c8b415316ba56d",
+      "parent": "95e0cf22fa1f9fa01a372216572f97a8e614205c",
+      "stale_path": "src/_pytest/config/__init__.py",
+      "stale_blob": "6e94328c1bae6fc8ff041877fcc8a4937bbe3504",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "src/_pytest",
+      "seconds": 1.59,
+      "errors_commit": 0,
+      "errors_mutated": 1,
+      "new_errors_in_stale_file": [
+        {
+          "path": "src/_pytest/config/__init__.py",
+          "line": 1541,
+          "column": 20,
+          "code": "attr-defined",
+          "message": "\"Parser\" has no attribute \"parse_setoption\""
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "src/_pytest/config/argparsing.py",
+          "definition_qualname": "Parser.parse_setoption",
+          "line": 1541,
+          "end_line": 1543,
+          "call_line": 1541,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 1541,
+              "code": "attr-defined",
+              "message": "\"Parser\" has no attribute \"parse_setoption\""
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "attr-defined"
+          ],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            1530,
+            1553
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pytest:971943170245:src/_pytest/assertion/__init__.py",
+      "commit": "971943170245c247273172a47c21abd380a801bd",
+      "parent": "e37541375cbd8abaa030f0989eb9b7624befbdaf",
+      "stale_path": "src/_pytest/assertion/__init__.py",
+      "stale_blob": "58ba6f692ab0b4e011819f568074bdd26bc1a511",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "src/_pytest",
+      "seconds": 1.47,
+      "errors_commit": 2,
+      "errors_mutated": 3,
+      "new_errors_in_stale_file": [
+        {
+          "path": "src/_pytest/assertion/__init__.py",
+          "line": 185,
+          "column": 28,
+          "code": "attr-defined",
+          "message": "Module has no attribute \"truncate_if_required\""
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "src/_pytest/assertion/truncate.py",
+          "definition_qualname": "truncate_if_required",
+          "line": 185,
+          "end_line": 185,
+          "call_line": 185,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 185,
+              "code": "attr-defined",
+              "message": "Module has no attribute \"truncate_if_required\""
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "attr-defined"
+          ],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            165,
+            191
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pytest:d4907e8499fc:src/_pytest/nodes.py",
+      "commit": "d4907e8499fc4c36493b61437b56cf2eabfdcebf",
+      "parent": "d889ca0f3b8c45f92ef90f34e67ddbaa2c988134",
+      "stale_path": "src/_pytest/nodes.py",
+      "stale_blob": "bc1dfc90d966e5b00caad586079fc7a7d80409c1",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "src/_pytest",
+      "seconds": 1.62,
+      "errors_commit": 2,
+      "errors_mutated": 3,
+      "new_errors_in_stale_file": [
+        {
+          "path": "src/_pytest/nodes.py",
+          "line": 35,
+          "column": 1,
+          "code": "attr-defined",
+          "message": "Module \"_pytest.deprecated\" has no attribute \"NODE_CTOR_FSPATH_ARG\""
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "src/_pytest/config/compat.py",
+          "definition_qualname": "_check_path",
+          "line": 88,
+          "end_line": 88,
+          "call_line": 88,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            74,
+            92
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pytest:d6dbe52bda18:src/_pytest/assertion/__init__.py",
+      "commit": "d6dbe52bda18fe2cb63c3c9060d7ef8597465655",
+      "parent": "d1cb30d9aece2b2ec750fc901232ce0ea356f68e",
+      "stale_path": "src/_pytest/assertion/__init__.py",
+      "stale_blob": "4b946bc7074e79fb5ff1283732a00d5941351dc7",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "src/_pytest",
+      "seconds": 1.47,
+      "errors_commit": 2,
+      "errors_mutated": 3,
+      "new_errors_in_stale_file": [
+        {
+          "path": "src/_pytest/assertion/__init__.py",
+          "line": 213,
+          "column": 12,
+          "code": "call-arg",
+          "message": "Missing named argument \"assertion_text_diff_style\" for \"assertrepr_compare\""
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "src/_pytest/assertion/util.py",
+          "definition_qualname": "assertrepr_compare",
+          "line": 213,
+          "end_line": 219,
+          "call_line": 213,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 213,
+              "code": "call-arg",
+              "message": "Missing named argument \"assertion_text_diff_style\" for \"assertrepr_compare\""
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "call-arg"
+          ],
+          "tc_file_hit_codes": [
+            "call-arg"
+          ],
+          "enclosing_function_span": [
+            205,
+            219
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pytest:e37541375cbd:src/_pytest/assertion/__init__.py",
+      "commit": "e37541375cbd8abaa030f0989eb9b7624befbdaf",
+      "parent": "630a96e77dab89b04f5f38207255201b271960e7",
+      "stale_path": "src/_pytest/assertion/__init__.py",
+      "stale_blob": "e33f8b296093e981bf999db99cc81a1fdc773c68",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "src/_pytest",
+      "seconds": 1.41,
+      "errors_commit": 2,
+      "errors_mutated": 2,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "src/_pytest/assertion/util.py",
+          "definition_qualname": "assertrepr_compare",
+          "line": 227,
+          "end_line": 234,
+          "call_line": 227,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            218,
+            236
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pytest:e37541375cbd:src/_pytest/assertion/_compare_any.py",
+      "commit": "e37541375cbd8abaa030f0989eb9b7624befbdaf",
+      "parent": "630a96e77dab89b04f5f38207255201b271960e7",
+      "stale_path": "src/_pytest/assertion/_compare_any.py",
+      "stale_blob": "a1e729187a7a8e28607be09be004a32f8dbb0c38",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "src/_pytest",
+      "seconds": 1.48,
+      "errors_commit": 2,
+      "errors_mutated": 3,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [
+        {
+          "path": "src/_pytest/assertion/util.py",
+          "line": 181,
+          "column": 22,
+          "code": "call-arg",
+          "message": "Too many arguments for \"_compare_eq_any\""
+        }
+      ],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "src/_pytest/assertion/_compare_mapping.py",
+          "definition_qualname": "_compare_eq_mapping",
+          "line": 73,
+          "end_line": 73,
+          "call_line": 73,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            25,
+            76
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pytest:e37541375cbd:src/_pytest/assertion/util.py",
+      "commit": "e37541375cbd8abaa030f0989eb9b7624befbdaf",
+      "parent": "630a96e77dab89b04f5f38207255201b271960e7",
+      "stale_path": "src/_pytest/assertion/util.py",
+      "stale_blob": "5e5ef543c139cacc5829e7b60c12e0182ced8a90",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "src/_pytest",
+      "seconds": 1.48,
+      "errors_commit": 2,
+      "errors_mutated": 3,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [
+        {
+          "path": "src/_pytest/assertion/__init__.py",
+          "line": 235,
+          "column": 9,
+          "code": "call-arg",
+          "message": "Unexpected keyword argument \"extra_items_max_lines\" for \"assertrepr_compare\""
+        }
+      ],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "src/_pytest/assertion/_compare_any.py",
+          "definition_qualname": "_compare_eq_any",
+          "line": 180,
+          "end_line": 186,
+          "call_line": 180,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            135,
+            215
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pytest:e94518ddef13:src/_pytest/config/__init__.py",
+      "commit": "e94518ddef13db739e9ab2c35d11e4f8904f6d13",
+      "parent": "bda322a4932d9d55638202896017239a8ea7fdd2",
+      "stale_path": "src/_pytest/config/__init__.py",
+      "stale_blob": "8e47bb0a28c67af6271a1727d27dc435557bb331",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "src/_pytest",
+      "seconds": 1.41,
+      "errors_commit": 0,
+      "errors_mutated": 1,
+      "new_errors_in_stale_file": [
+        {
+          "path": "src/_pytest/config/__init__.py",
+          "line": 1160,
+          "column": 17,
+          "code": "attr-defined",
+          "message": "\"Parser\" has no attribute \"_getparser\""
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "src/_pytest/config/argparsing.py",
+          "definition_qualname": "Parser._getparser",
+          "line": 1160,
+          "end_line": 1160,
+          "call_line": 1160,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 1160,
+              "code": "attr-defined",
+              "message": "\"Parser\" has no attribute \"_getparser\""
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "attr-defined"
+          ],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            1142,
+            1167
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pytest:fbdae4e7ef2b:src/_pytest/assertion/__init__.py",
+      "commit": "fbdae4e7ef2bbb87a7e4b75f6bf445528c0c7157",
+      "parent": "971943170245c247273172a47c21abd380a801bd",
+      "stale_path": "src/_pytest/assertion/__init__.py",
+      "stale_blob": "a5bed3ce47e04efdb3449b52ea1375ff055a525e",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "src/_pytest",
+      "seconds": 1.41,
+      "errors_commit": 2,
+      "errors_mutated": 3,
+      "new_errors_in_stale_file": [
+        {
+          "path": "src/_pytest/assertion/__init__.py",
+          "line": 237,
+          "column": 9,
+          "code": "call-arg",
+          "message": "Unexpected keyword argument \"extra_items_max_lines\" for \"assertrepr_compare\""
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "src/_pytest/assertion/util.py",
+          "definition_qualname": "assertrepr_compare",
+          "line": 237,
+          "end_line": 245,
+          "call_line": 237,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 237,
+              "code": "call-arg",
+              "message": "Unexpected keyword argument \"extra_items_max_lines\" for \"assertrepr_compare\""
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "call-arg"
+          ],
+          "tc_file_hit_codes": [
+            "call-arg"
+          ],
+          "enclosing_function_span": [
+            220,
+            247
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pytest:fbdae4e7ef2b:src/_pytest/assertion/_compare_any.py",
+      "commit": "fbdae4e7ef2bbb87a7e4b75f6bf445528c0c7157",
+      "parent": "971943170245c247273172a47c21abd380a801bd",
+      "stale_path": "src/_pytest/assertion/_compare_any.py",
+      "stale_blob": "2a5bcf10bea33f89635e0f0683da69c147879623",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "src/_pytest",
+      "seconds": 1.44,
+      "errors_commit": 2,
+      "errors_mutated": 4,
+      "new_errors_in_stale_file": [
+        {
+          "path": "src/_pytest/assertion/_compare_any.py",
+          "line": 75,
+          "column": 52,
+          "code": "arg-type",
+          "message": "Argument 5 to \"_compare_eq_mapping\" has incompatible type \"int | None\"; expected \"TruncationBudget\""
+        }
+      ],
+      "new_errors_elsewhere": [
+        {
+          "path": "src/_pytest/assertion/util.py",
+          "line": 189,
+          "column": 17,
+          "code": "arg-type",
+          "message": "Argument 6 to \"_compare_eq_any\" has incompatible type \"TruncationBudget\"; expected \"int | None\""
+        }
+      ],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "src/_pytest/assertion/compare_text.py",
+          "definition_qualname": "_compare_eq_text",
+          "line": 40,
+          "end_line": 46,
+          "call_line": 40,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "arg-type"
+          ],
+          "enclosing_function_span": [
+            25,
+            79
+          ]
+        },
+        {
+          "index": 1,
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "src/_pytest/assertion/_compare_mapping.py",
+          "definition_qualname": "_compare_eq_mapping",
+          "line": 74,
+          "end_line": 76,
+          "call_line": 74,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 75,
+              "code": "arg-type",
+              "message": "Argument 5 to \"_compare_eq_mapping\" has incompatible type \"int | None\"; expected \"TruncationBudget\""
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "arg-type"
+          ],
+          "tc_file_hit_codes": [
+            "arg-type"
+          ],
+          "enclosing_function_span": [
+            25,
+            79
+          ]
+        },
+        {
+          "index": 2,
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "src/_pytest/assertion/_compare_sequence.py",
+          "definition_qualname": "_compare_eq_iterable",
+          "line": 79,
+          "end_line": 79,
+          "call_line": 79,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "arg-type"
+          ],
+          "enclosing_function_span": [
+            25,
+            79
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pytest:fbdae4e7ef2b:src/_pytest/assertion/util.py",
+      "commit": "fbdae4e7ef2bbb87a7e4b75f6bf445528c0c7157",
+      "parent": "971943170245c247273172a47c21abd380a801bd",
+      "stale_path": "src/_pytest/assertion/util.py",
+      "stale_blob": "3bdc9ac778a4f2ab9853d3029146fb0cdaf4bfa4",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "src/_pytest",
+      "seconds": 1.45,
+      "errors_commit": 2,
+      "errors_mutated": 4,
+      "new_errors_in_stale_file": [
+        {
+          "path": "src/_pytest/assertion/util.py",
+          "line": 187,
+          "column": 17,
+          "code": "arg-type",
+          "message": "Argument 6 to \"_compare_eq_any\" has incompatible type \"int | None\"; expected \"TruncationBudget\""
+        }
+      ],
+      "new_errors_elsewhere": [
+        {
+          "path": "src/_pytest/assertion/__init__.py",
+          "line": 246,
+          "column": 13,
+          "code": "call-arg",
+          "message": "Unexpected keyword argument \"truncation_budget\" for \"assertrepr_compare\""
+        }
+      ],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "src/_pytest/assertion/_compare_any.py",
+          "definition_qualname": "_compare_eq_any",
+          "line": 181,
+          "end_line": 188,
+          "call_line": 181,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 187,
+              "code": "arg-type",
+              "message": "Argument 6 to \"_compare_eq_any\" has incompatible type \"int | None\"; expected \"TruncationBudget\""
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "arg-type"
+          ],
+          "tc_file_hit_codes": [
+            "arg-type"
+          ],
+          "enclosing_function_span": [
+            135,
+            217
+          ]
+        },
+        {
+          "index": 1,
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "src/_pytest/assertion/compare_text.py",
+          "definition_qualname": "_notin_text",
+          "line": 190,
+          "end_line": 190,
+          "call_line": 190,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "arg-type"
+          ],
+          "enclosing_function_span": [
+            135,
+            217
+          ]
+        }
+      ]
+    }
+  ],
+  "environment": {
+    "mypy_version": "mypy 2.4.1 (compiled: yes)",
+    "python_version": "3.12.6",
+    "command": [
+      "python.exe",
+      "-I",
+      "-X",
+      "utf8",
+      "-m",
+      "mypy",
+      "--config-file",
+      "{config}",
+      "--cache-dir",
+      "{cache}",
+      "--no-site-packages",
+      "--ignore-missing-imports",
+      "--check-untyped-defs",
+      "--no-error-summary",
+      "--hide-error-context",
+      "--no-color-output",
+      "--show-column-numbers",
+      "--show-error-codes",
+      "--no-pretty",
+      "{target}"
+    ],
+    "config_file_contents": "[mypy]\n",
+    "incremental": true,
+    "timeout_seconds": 600.0,
+    "corpora": [
+      {
+        "repository": "requests",
+        "sha256": "7b2ae35e40a6357ba864ab211b9e7da61f11427fa50be53720aac05b0b3e2159"
+      },
+      {
+        "repository": "urllib3",
+        "sha256": "21c212587f05ece5a6badbba134bead6b584a5b0cc5c9a146dc5f681af739971"
+      },
+      {
+        "repository": "pytest",
+        "sha256": "d2f611e60583d8e18b4fa7e8ddfc80ee22218cb865e531cdcf070fb023325ec5"
+      },
+      {
+        "repository": "scrapy",
+        "sha256": "62f31fe1ed0755fab6c765cf87a0966d07f773f18ed6ec957b986fc2c9f45ce5"
+      },
+      {
+        "repository": "paramiko",
+        "sha256": "b2c286a40c23ad02a7b57cd889e6b6f5c3286e3c2080efe49f7f626f33a272c6"
+      }
+    ]
+  }
+}

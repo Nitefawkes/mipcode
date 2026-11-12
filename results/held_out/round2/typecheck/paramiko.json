@@ -1,0 +1,3377 @@
+{
+  "schema": "mip-delta recall-mutation typecheck baseline v1",
+  "repository": "paramiko",
+  "corpus_schema": "mip-delta recall-mutation corpus v1",
+  "corpus_head": "0e9ccb91e0f9a68f2587233d523ad7fe46e730fe",
+  "max_mutations": null,
+  "wall_seconds": 28.8,
+  "commits": [
+    {
+      "commit": "1ecc933b34510525aee8cad9956c3b8e642783ec",
+      "mutations": 3,
+      "targets": {
+        "paramiko": {
+          "status": "ok",
+          "seconds": 1.75,
+          "errors": 230,
+          "errors_by_code": {
+            "union-attr": 83,
+            "assignment": 25,
+            "attr-defined": 25,
+            "misc": 19,
+            "has-type": 13,
+            "call-arg": 12,
+            "index": 11,
+            "str-bytes-safe": 11,
+            "operator": 10,
+            "var-annotated": 8,
+            "arg-type": 6,
+            "override": 6,
+            "no-redef": 1
+          }
+        }
+      },
+      "files": 69,
+      "unwritable_files": []
+    },
+    {
+      "commit": "363a28d94cada17f012c1604a3c99c71a2bda003",
+      "mutations": 5,
+      "targets": {
+        "paramiko": {
+          "status": "ok",
+          "seconds": 1.75,
+          "errors": 256,
+          "errors_by_code": {
+            "union-attr": 99,
+            "assignment": 28,
+            "attr-defined": 26,
+            "misc": 19,
+            "operator": 13,
+            "has-type": 12,
+            "call-arg": 12,
+            "index": 11,
+            "str-bytes-safe": 11,
+            "var-annotated": 10,
+            "arg-type": 10,
+            "name-defined": 3,
+            "no-redef": 2
+          }
+        }
+      },
+      "files": 84,
+      "unwritable_files": []
+    },
+    {
+      "commit": "39871d2fd8b9d2f3faba8573294e3482905feecb",
+      "mutations": 1,
+      "targets": {
+        "paramiko": {
+          "status": "ok",
+          "seconds": 1.84,
+          "errors": 270,
+          "errors_by_code": {
+            "union-attr": 105,
+            "assignment": 32,
+            "attr-defined": 29,
+            "misc": 19,
+            "operator": 13,
+            "has-type": 12,
+            "call-arg": 12,
+            "index": 11,
+            "str-bytes-safe": 11,
+            "var-annotated": 10,
+            "arg-type": 9,
+            "override": 6,
+            "no-redef": 1
+          }
+        }
+      },
+      "files": 87,
+      "unwritable_files": []
+    },
+    {
+      "commit": "8367147e883583bba71cd660d1bae880a66eb27c",
+      "mutations": 3,
+      "targets": {
+        "paramiko": {
+          "status": "ok",
+          "seconds": 1.85,
+          "errors": 252,
+          "errors_by_code": {
+            "union-attr": 100,
+            "assignment": 29,
+            "attr-defined": 26,
+            "misc": 19,
+            "operator": 13,
+            "has-type": 12,
+            "call-arg": 12,
+            "index": 11,
+            "str-bytes-safe": 11,
+            "var-annotated": 9,
+            "arg-type": 9,
+            "no-redef": 1
+          }
+        }
+      },
+      "files": 85,
+      "unwritable_files": []
+    },
+    {
+      "commit": "8e5198394252790111d72071a365bfe1f918b1c6",
+      "mutations": 1,
+      "targets": {
+        "paramiko": {
+          "status": "ok",
+          "seconds": 1.78,
+          "errors": 228,
+          "errors_by_code": {
+            "union-attr": 96,
+            "attr-defined": 25,
+            "assignment": 24,
+            "misc": 13,
+            "operator": 13,
+            "index": 11,
+            "str-bytes-safe": 11,
+            "var-annotated": 10,
+            "arg-type": 10,
+            "call-arg": 9,
+            "name-defined": 3,
+            "str-format": 1,
+            "no-redef": 1,
+            "type-var": 1
+          }
+        }
+      },
+      "files": 80,
+      "unwritable_files": []
+    },
+    {
+      "commit": "9fddb6e99fb981cd31eb8187dd2f47746b3625d8",
+      "mutations": 1,
+      "targets": {
+        "paramiko": {
+          "status": "ok",
+          "seconds": 1.76,
+          "errors": 269,
+          "errors_by_code": {
+            "union-attr": 105,
+            "assignment": 32,
+            "attr-defined": 29,
+            "misc": 19,
+            "operator": 13,
+            "has-type": 12,
+            "call-arg": 12,
+            "index": 11,
+            "str-bytes-safe": 11,
+            "var-annotated": 9,
+            "arg-type": 9,
+            "override": 6,
+            "no-redef": 1
+          }
+        }
+      },
+      "files": 87,
+      "unwritable_files": []
+    },
+    {
+      "commit": "acd4bc1dee5a594a3534b6d76f7dfc6ebd55f71b",
+      "mutations": 2,
+      "targets": {
+        "paramiko": {
+          "status": "ok",
+          "seconds": 1.71,
+          "errors": 233,
+          "errors_by_code": {
+            "union-attr": 83,
+            "attr-defined": 27,
+            "assignment": 25,
+            "misc": 19,
+            "has-type": 13,
+            "call-arg": 12,
+            "index": 11,
+            "str-bytes-safe": 11,
+            "operator": 10,
+            "var-annotated": 8,
+            "arg-type": 7,
+            "override": 6,
+            "no-redef": 1
+          }
+        }
+      },
+      "files": 69,
+      "unwritable_files": []
+    }
+  ],
+  "mutations": [
+    {
+      "id": "paramiko:1ecc933b3451:paramiko/auth_handler.py",
+      "commit": "1ecc933b34510525aee8cad9956c3b8e642783ec",
+      "parent": "9bf5fcae57e6ca995275037eea9d6305f70d7cdb",
+      "stale_path": "paramiko/auth_handler.py",
+      "stale_blob": "9a4d79c4656c8a7a79fd791e6e9946d228e67b33",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "paramiko",
+      "seconds": 0.81,
+      "errors_commit": 230,
+      "errors_mutated": 233,
+      "new_errors_in_stale_file": [
+        {
+          "path": "paramiko/auth_handler.py",
+          "line": 681,
+          "column": 13,
+          "code": "attr-defined",
+          "message": "\"CallableProxyType[Any]\" has no attribute \"auth_handler\""
+        },
+        {
+          "path": "paramiko/auth_handler.py",
+          "line": 684,
+          "column": 13,
+          "code": "attr-defined",
+          "message": "\"CallableProxyType[Any]\" has no attribute \"_expected_packet\""
+        },
+        {
+          "path": "paramiko/auth_handler.py",
+          "line": 800,
+          "column": 9,
+          "code": "attr-defined",
+          "message": "\"CallableProxyType[Any]\" has no attribute \"saved_exception\""
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "paramiko/ssh_gss.py",
+          "definition_qualname": "GSSAuth",
+          "line": 393,
+          "end_line": 393,
+          "call_line": 393,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            362,
+            493
+          ]
+        },
+        {
+          "index": 1,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "paramiko/ssh_gss.py",
+          "definition_qualname": "_SSH_GSSAuth.ssh_gss_oids",
+          "line": 394,
+          "end_line": 394,
+          "call_line": 394,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            362,
+            493
+          ]
+        },
+        {
+          "index": 2,
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "paramiko/ssh_gss.py",
+          "definition_qualname": "_SSH_GSSAPI_OLD.ssh_init_sec_context",
+          "line": 410,
+          "end_line": 412,
+          "call_line": 410,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            362,
+            493
+          ]
+        },
+        {
+          "index": 3,
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "paramiko/ssh_gss.py",
+          "definition_qualname": "_SSH_GSSAPI_NEW.ssh_init_sec_context",
+          "line": 410,
+          "end_line": 412,
+          "call_line": 410,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            362,
+            493
+          ]
+        },
+        {
+          "index": 4,
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "paramiko/ssh_gss.py",
+          "definition_qualname": "_SSH_SSPI.ssh_init_sec_context",
+          "line": 410,
+          "end_line": 412,
+          "call_line": 410,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            362,
+            493
+          ]
+        },
+        {
+          "index": 5,
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "paramiko/ssh_gss.py",
+          "definition_qualname": "_SSH_GSSAPI_OLD.ssh_init_sec_context",
+          "line": 422,
+          "end_line": 427,
+          "call_line": 422,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            362,
+            493
+          ]
+        },
+        {
+          "index": 6,
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "paramiko/ssh_gss.py",
+          "definition_qualname": "_SSH_GSSAPI_NEW.ssh_init_sec_context",
+          "line": 422,
+          "end_line": 427,
+          "call_line": 422,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            362,
+            493
+          ]
+        },
+        {
+          "index": 7,
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "paramiko/ssh_gss.py",
+          "definition_qualname": "_SSH_SSPI.ssh_init_sec_context",
+          "line": 422,
+          "end_line": 427,
+          "call_line": 422,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            362,
+            493
+          ]
+        },
+        {
+          "index": 8,
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "paramiko/ssh_gss.py",
+          "definition_qualname": "_SSH_GSSAPI_OLD.ssh_get_mic",
+          "line": 447,
+          "end_line": 447,
+          "call_line": 447,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            362,
+            493
+          ]
+        },
+        {
+          "index": 9,
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "paramiko/ssh_gss.py",
+          "definition_qualname": "_SSH_GSSAPI_NEW.ssh_get_mic",
+          "line": 447,
+          "end_line": 447,
+          "call_line": 447,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            362,
+            493
+          ]
+        },
+        {
+          "index": 10,
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "paramiko/ssh_gss.py",
+          "definition_qualname": "_SSH_SSPI.ssh_get_mic",
+          "line": 447,
+          "end_line": 447,
+          "call_line": 447,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            362,
+            493
+          ]
+        },
+        {
+          "index": 11,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "paramiko/ssh_gss.py",
+          "definition_qualname": "_SSH_GSSAuth.set_username",
+          "line": 480,
+          "end_line": 480,
+          "call_line": 480,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            362,
+            493
+          ]
+        },
+        {
+          "index": 12,
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "paramiko/ssh_gss.py",
+          "definition_qualname": "_SSH_GSSAPI_OLD.ssh_get_mic",
+          "line": 481,
+          "end_line": 481,
+          "call_line": 481,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            362,
+            493
+          ]
+        },
+        {
+          "index": 13,
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "paramiko/ssh_gss.py",
+          "definition_qualname": "_SSH_GSSAPI_NEW.ssh_get_mic",
+          "line": 481,
+          "end_line": 481,
+          "call_line": 481,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            362,
+            493
+          ]
+        },
+        {
+          "index": 14,
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "paramiko/ssh_gss.py",
+          "definition_qualname": "_SSH_SSPI.ssh_get_mic",
+          "line": 481,
+          "end_line": 481,
+          "call_line": 481,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            362,
+            493
+          ]
+        },
+        {
+          "index": 15,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "paramiko/server.py",
+          "definition_qualname": "ServerInterface.enable_auth_gssapi",
+          "line": 567,
+          "end_line": 567,
+          "call_line": 567,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            532,
+            713
+          ]
+        },
+        {
+          "index": 16,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "paramiko/ssh_gss.py",
+          "definition_qualname": "GSSAuth",
+          "line": 652,
+          "end_line": 652,
+          "call_line": 652,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            532,
+            713
+          ]
+        },
+        {
+          "index": 17,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "paramiko/ssh_gss.py",
+          "definition_qualname": "_SSH_GSSAuth.ssh_check_mech",
+          "line": 666,
+          "end_line": 666,
+          "call_line": 666,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            532,
+            713
+          ]
+        },
+        {
+          "index": 18,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "paramiko/ssh_gss.py",
+          "definition_qualname": "_SSH_GSSAuth.ssh_gss_oids",
+          "line": 675,
+          "end_line": 675,
+          "call_line": 675,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            532,
+            713
+          ]
+        },
+        {
+          "index": 19,
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "paramiko/ssh_gss.py",
+          "definition_qualname": "_SSH_GSSAPI_OLD.ssh_check_mic",
+          "line": 699,
+          "end_line": 701,
+          "call_line": 699,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            532,
+            713
+          ]
+        },
+        {
+          "index": 20,
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "paramiko/ssh_gss.py",
+          "definition_qualname": "_SSH_GSSAPI_NEW.ssh_check_mic",
+          "line": 699,
+          "end_line": 701,
+          "call_line": 699,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            532,
+            713
+          ]
+        },
+        {
+          "index": 21,
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "paramiko/ssh_gss.py",
+          "definition_qualname": "_SSH_SSPI.ssh_check_mic",
+          "line": 699,
+          "end_line": 701,
+          "call_line": 699,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            532,
+            713
+          ]
+        },
+        {
+          "index": 22,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "paramiko/server.py",
+          "definition_qualname": "ServerInterface.check_auth_gssapi_keyex",
+          "line": 707,
+          "end_line": 709,
+          "call_line": 707,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            532,
+            713
+          ]
+        },
+        {
+          "index": 23,
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "paramiko/ssh_gss.py",
+          "definition_qualname": "_SSH_GSSAPI_OLD.ssh_accept_sec_context",
+          "line": 891,
+          "end_line": 893,
+          "call_line": 891,
+          "site_hit": false,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            885,
+            909
+          ]
+        },
+        {
+          "index": 24,
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "paramiko/ssh_gss.py",
+          "definition_qualname": "_SSH_GSSAPI_NEW.ssh_accept_sec_context",
+          "line": 891,
+          "end_line": 893,
+          "call_line": 891,
+          "site_hit": false,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            885,
+            909
+          ]
+        },
+        {
+          "index": 25,
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "paramiko/ssh_gss.py",
+          "definition_qualname": "_SSH_SSPI.ssh_accept_sec_context",
+          "line": 891,
+          "end_line": 893,
+          "call_line": 891,
+          "site_hit": false,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            885,
+            909
+          ]
+        },
+        {
+          "index": 26,
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "paramiko/ssh_gss.py",
+          "definition_qualname": "_SSH_GSSAPI_OLD.ssh_check_mic",
+          "line": 917,
+          "end_line": 919,
+          "call_line": 917,
+          "site_hit": false,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            911,
+            933
+          ]
+        },
+        {
+          "index": 27,
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "paramiko/ssh_gss.py",
+          "definition_qualname": "_SSH_GSSAPI_NEW.ssh_check_mic",
+          "line": 917,
+          "end_line": 919,
+          "call_line": 917,
+          "site_hit": false,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            911,
+            933
+          ]
+        },
+        {
+          "index": 28,
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "paramiko/ssh_gss.py",
+          "definition_qualname": "_SSH_SSPI.ssh_check_mic",
+          "line": 917,
+          "end_line": 919,
+          "call_line": 917,
+          "site_hit": false,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            911,
+            933
+          ]
+        },
+        {
+          "index": 29,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "paramiko/server.py",
+          "definition_qualname": "ServerInterface.check_auth_gssapi_with_mic",
+          "line": 929,
+          "end_line": 931,
+          "call_line": 929,
+          "site_hit": false,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            911,
+            933
+          ]
+        }
+      ]
+    },
+    {
+      "id": "paramiko:1ecc933b3451:paramiko/client.py",
+      "commit": "1ecc933b34510525aee8cad9956c3b8e642783ec",
+      "parent": "9bf5fcae57e6ca995275037eea9d6305f70d7cdb",
+      "stale_path": "paramiko/client.py",
+      "stale_blob": "7b844afb82f71e1d7ed55d54e426d06a804bde7b",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "paramiko",
+      "seconds": 0.8,
+      "errors_commit": 230,
+      "errors_mutated": 232,
+      "new_errors_in_stale_file": [
+        {
+          "path": "paramiko/client.py",
+          "line": 712,
+          "column": 24,
+          "code": "union-attr",
+          "message": "Item \"None\" of \"Any | None\" has no attribute \"gss_kex_used\""
+        },
+        {
+          "path": "paramiko/client.py",
+          "line": 714,
+          "column": 17,
+          "code": "union-attr",
+          "message": "Item \"None\" of \"Any | None\" has no attribute \"auth_gssapi_keyex\""
+        },
+        {
+          "path": "paramiko/client.py",
+          "line": 725,
+          "column": 24,
+          "code": "union-attr",
+          "message": "Item \"None\" of \"Any | None\" has no attribute \"auth_gssapi_with_mic\""
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "paramiko/transport.py",
+          "definition_qualname": "Transport.set_gss_host",
+          "line": 418,
+          "end_line": 424,
+          "call_line": 418,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "union-attr"
+          ],
+          "enclosing_function_span": [
+            216,
+            522
+          ]
+        },
+        {
+          "index": 1,
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "paramiko/auth_handler.py",
+          "definition_qualname": "AuthHandler.auth_gssapi_keyex",
+          "line": 714,
+          "end_line": 714,
+          "call_line": 714,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 714,
+              "code": "union-attr",
+              "message": "Item \"None\" of \"Any | None\" has no attribute \"auth_gssapi_keyex\""
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "union-attr"
+          ],
+          "tc_file_hit_codes": [
+            "union-attr"
+          ],
+          "enclosing_function_span": [
+            677,
+            842
+          ]
+        },
+        {
+          "index": 2,
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "paramiko/transport.py",
+          "definition_qualname": "Transport.auth_gssapi_keyex",
+          "line": 714,
+          "end_line": 714,
+          "call_line": 714,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 714,
+              "code": "union-attr",
+              "message": "Item \"None\" of \"Any | None\" has no attribute \"auth_gssapi_keyex\""
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "union-attr"
+          ],
+          "tc_file_hit_codes": [
+            "union-attr"
+          ],
+          "enclosing_function_span": [
+            677,
+            842
+          ]
+        },
+        {
+          "index": 3,
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "paramiko/transport.py",
+          "definition_qualname": "ServiceRequestingTransport.auth_gssapi_keyex",
+          "line": 714,
+          "end_line": 714,
+          "call_line": 714,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 714,
+              "code": "union-attr",
+              "message": "Item \"None\" of \"Any | None\" has no attribute \"auth_gssapi_keyex\""
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "union-attr"
+          ],
+          "tc_file_hit_codes": [
+            "union-attr"
+          ],
+          "enclosing_function_span": [
+            677,
+            842
+          ]
+        },
+        {
+          "index": 4,
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "paramiko/auth_handler.py",
+          "definition_qualname": "AuthHandler.auth_gssapi_with_mic",
+          "line": 725,
+          "end_line": 727,
+          "call_line": 725,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 725,
+              "code": "union-attr",
+              "message": "Item \"None\" of \"Any | None\" has no attribute \"auth_gssapi_with_mic\""
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "union-attr"
+          ],
+          "tc_file_hit_codes": [
+            "union-attr"
+          ],
+          "enclosing_function_span": [
+            677,
+            842
+          ]
+        },
+        {
+          "index": 5,
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "paramiko/transport.py",
+          "definition_qualname": "Transport.auth_gssapi_with_mic",
+          "line": 725,
+          "end_line": 727,
+          "call_line": 725,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 725,
+              "code": "union-attr",
+              "message": "Item \"None\" of \"Any | None\" has no attribute \"auth_gssapi_with_mic\""
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "union-attr"
+          ],
+          "tc_file_hit_codes": [
+            "union-attr"
+          ],
+          "enclosing_function_span": [
+            677,
+            842
+          ]
+        },
+        {
+          "index": 6,
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "paramiko/transport.py",
+          "definition_qualname": "ServiceRequestingTransport.auth_gssapi_with_mic",
+          "line": 725,
+          "end_line": 727,
+          "call_line": 725,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 725,
+              "code": "union-attr",
+              "message": "Item \"None\" of \"Any | None\" has no attribute \"auth_gssapi_with_mic\""
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "union-attr"
+          ],
+          "tc_file_hit_codes": [
+            "union-attr"
+          ],
+          "enclosing_function_span": [
+            677,
+            842
+          ]
+        }
+      ]
+    },
+    {
+      "id": "paramiko:1ecc933b3451:paramiko/transport.py",
+      "commit": "1ecc933b34510525aee8cad9956c3b8e642783ec",
+      "parent": "9bf5fcae57e6ca995275037eea9d6305f70d7cdb",
+      "stale_path": "paramiko/transport.py",
+      "stale_blob": "cbeb3940f48b90bc556db14c52e26d36d880eb87",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "paramiko",
+      "seconds": 0.83,
+      "errors_commit": 230,
+      "errors_mutated": 233,
+      "new_errors_in_stale_file": [
+        {
+          "path": "paramiko/transport.py",
+          "line": 522,
+          "column": 35,
+          "code": "assignment",
+          "message": "Incompatible types in assignment (expression has type \"tuple[str, str, str, str, str, str, str, str, str]\", variable has type \"tuple[str, str, str, str, str, str]\")"
+        },
+        {
+          "path": "paramiko/transport.py",
+          "line": 1801,
+          "column": 9,
+          "code": "attr-defined",
+          "message": "\"AuthHandler\" has no attribute \"auth_gssapi_with_mic\""
+        },
+        {
+          "path": "paramiko/transport.py",
+          "line": 1826,
+          "column": 9,
+          "code": "attr-defined",
+          "message": "\"AuthHandler\" has no attribute \"auth_gssapi_keyex\""
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "paramiko/ssh_gss.py",
+          "definition_qualname": "GSSAuth",
+          "line": 521,
+          "end_line": 521,
+          "call_line": 521,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "assignment",
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            356,
+            591
+          ]
+        },
+        {
+          "index": 1,
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "paramiko/auth_handler.py",
+          "definition_qualname": "AuthHandler.auth_gssapi_with_mic",
+          "line": 1447,
+          "end_line": 1449,
+          "call_line": 1447,
+          "site_hit": false,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "assignment",
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            1332,
+            1460
+          ]
+        },
+        {
+          "index": 2,
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "paramiko/auth_handler.py",
+          "definition_qualname": "AuthHandler.auth_gssapi_keyex",
+          "line": 1452,
+          "end_line": 1452,
+          "call_line": 1452,
+          "site_hit": false,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "assignment",
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            1332,
+            1460
+          ]
+        },
+        {
+          "index": 3,
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "paramiko/auth_handler.py",
+          "definition_qualname": "AuthHandler.auth_gssapi_with_mic",
+          "line": 1801,
+          "end_line": 1803,
+          "call_line": 1801,
+          "site_hit": false,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 1801,
+              "code": "attr-defined",
+              "message": "\"AuthHandler\" has no attribute \"auth_gssapi_with_mic\""
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "attr-defined"
+          ],
+          "tc_file_hit_codes": [
+            "assignment",
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            1780,
+            1804
+          ]
+        },
+        {
+          "index": 4,
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "paramiko/auth_handler.py",
+          "definition_qualname": "AuthHandler.auth_gssapi_keyex",
+          "line": 1826,
+          "end_line": 1826,
+          "call_line": 1826,
+          "site_hit": false,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 1826,
+              "code": "attr-defined",
+              "message": "\"AuthHandler\" has no attribute \"auth_gssapi_keyex\""
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "attr-defined"
+          ],
+          "tc_file_hit_codes": [
+            "assignment",
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            1806,
+            1827
+          ]
+        },
+        {
+          "index": 5,
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "paramiko/auth_handler.py",
+          "definition_qualname": "AuthHandler.auth_gssapi_with_mic",
+          "line": 3465,
+          "end_line": 3467,
+          "call_line": 3465,
+          "site_hit": false,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "assignment",
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            3460,
+            3467
+          ]
+        },
+        {
+          "index": 6,
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "paramiko/auth_handler.py",
+          "definition_qualname": "AuthHandler.auth_gssapi_keyex",
+          "line": 3474,
+          "end_line": 3474,
+          "call_line": 3474,
+          "site_hit": false,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "assignment",
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            3469,
+            3474
+          ]
+        }
+      ]
+    },
+    {
+      "id": "paramiko:363a28d94cad:paramiko/auth_handler.py",
+      "commit": "363a28d94cada17f012c1604a3c99c71a2bda003",
+      "parent": "dfffaeaa0170c784307d1c89dad60528a59b6ff2",
+      "stale_path": "paramiko/auth_handler.py",
+      "stale_blob": "011e57f327777e5b8735d5acb69468c569649015",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "paramiko",
+      "seconds": 0.85,
+      "errors_commit": 256,
+      "errors_mutated": 259,
+      "new_errors_in_stale_file": [
+        {
+          "path": "paramiko/auth_handler.py",
+          "line": 292,
+          "column": 20,
+          "code": "union-attr",
+          "message": "Item \"None\" of \"Any | None\" has no attribute \"public_blob\""
+        },
+        {
+          "path": "paramiko/auth_handler.py",
+          "line": 293,
+          "column": 34,
+          "code": "union-attr",
+          "message": "Item \"None\" of \"Any | None\" has no attribute \"public_blob\""
+        },
+        {
+          "path": "paramiko/auth_handler.py",
+          "line": 294,
+          "column": 34,
+          "code": "union-attr",
+          "message": "Item \"None\" of \"Any | None\" has no attribute \"public_blob\""
+        },
+        {
+          "path": "paramiko/auth_handler.py",
+          "line": 296,
+          "column": 34,
+          "code": "union-attr",
+          "message": "Item \"None\" of \"Any | None\" has no attribute \"get_name\""
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "paramiko/agent.py",
+          "definition_qualname": "AgentKey.sign_ssh_data",
+          "line": 301,
+          "end_line": 301,
+          "call_line": 301,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "union-attr"
+          ],
+          "enclosing_function_span": [
+            272,
+            407
+          ]
+        },
+        {
+          "index": 1,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "paramiko/dsskey.py",
+          "definition_qualname": "DSSKey.sign_ssh_data",
+          "line": 301,
+          "end_line": 301,
+          "call_line": 301,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "union-attr"
+          ],
+          "enclosing_function_span": [
+            272,
+            407
+          ]
+        },
+        {
+          "index": 2,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "paramiko/ecdsakey.py",
+          "definition_qualname": "ECDSAKey.sign_ssh_data",
+          "line": 301,
+          "end_line": 301,
+          "call_line": 301,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "union-attr"
+          ],
+          "enclosing_function_span": [
+            272,
+            407
+          ]
+        },
+        {
+          "index": 3,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "paramiko/ed25519key.py",
+          "definition_qualname": "Ed25519Key.sign_ssh_data",
+          "line": 301,
+          "end_line": 301,
+          "call_line": 301,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "union-attr"
+          ],
+          "enclosing_function_span": [
+            272,
+            407
+          ]
+        },
+        {
+          "index": 4,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "paramiko/pkey.py",
+          "definition_qualname": "PKey.sign_ssh_data",
+          "line": 301,
+          "end_line": 301,
+          "call_line": 301,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "union-attr"
+          ],
+          "enclosing_function_span": [
+            272,
+            407
+          ]
+        },
+        {
+          "index": 5,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "paramiko/rsakey.py",
+          "definition_qualname": "RSAKey.sign_ssh_data",
+          "line": 301,
+          "end_line": 301,
+          "call_line": 301,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "union-attr"
+          ],
+          "enclosing_function_span": [
+            272,
+            407
+          ]
+        }
+      ]
+    },
+    {
+      "id": "paramiko:363a28d94cad:paramiko/kex_curve25519.py",
+      "commit": "363a28d94cada17f012c1604a3c99c71a2bda003",
+      "parent": "dfffaeaa0170c784307d1c89dad60528a59b6ff2",
+      "stale_path": "paramiko/kex_curve25519.py",
+      "stale_blob": "59710c1aadc4fbfd7e6cc222555ba5eec9e2137e",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "paramiko",
+      "seconds": 0.86,
+      "errors_commit": 256,
+      "errors_mutated": 256,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "paramiko/agent.py",
+          "definition_qualname": "AgentKey.sign_ssh_data",
+          "line": 92,
+          "end_line": 92,
+          "call_line": 92,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            69,
+            100
+          ]
+        },
+        {
+          "index": 1,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "paramiko/dsskey.py",
+          "definition_qualname": "DSSKey.sign_ssh_data",
+          "line": 92,
+          "end_line": 92,
+          "call_line": 92,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            69,
+            100
+          ]
+        },
+        {
+          "index": 2,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "paramiko/ecdsakey.py",
+          "definition_qualname": "ECDSAKey.sign_ssh_data",
+          "line": 92,
+          "end_line": 92,
+          "call_line": 92,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            69,
+            100
+          ]
+        },
+        {
+          "index": 3,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "paramiko/ed25519key.py",
+          "definition_qualname": "Ed25519Key.sign_ssh_data",
+          "line": 92,
+          "end_line": 92,
+          "call_line": 92,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            69,
+            100
+          ]
+        },
+        {
+          "index": 4,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "paramiko/pkey.py",
+          "definition_qualname": "PKey.sign_ssh_data",
+          "line": 92,
+          "end_line": 92,
+          "call_line": 92,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            69,
+            100
+          ]
+        },
+        {
+          "index": 5,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "paramiko/rsakey.py",
+          "definition_qualname": "RSAKey.sign_ssh_data",
+          "line": 92,
+          "end_line": 92,
+          "call_line": 92,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            69,
+            100
+          ]
+        }
+      ]
+    },
+    {
+      "id": "paramiko:363a28d94cad:paramiko/kex_ecdh_nist.py",
+      "commit": "363a28d94cada17f012c1604a3c99c71a2bda003",
+      "parent": "dfffaeaa0170c784307d1c89dad60528a59b6ff2",
+      "stale_path": "paramiko/kex_ecdh_nist.py",
+      "stale_blob": "ad5c9c79d84c602feb80ec84210661df227d570e",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "paramiko",
+      "seconds": 0.84,
+      "errors_commit": 256,
+      "errors_mutated": 256,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "paramiko/agent.py",
+          "definition_qualname": "AgentKey.sign_ssh_data",
+          "line": 93,
+          "end_line": 93,
+          "call_line": 93,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            65,
+            106
+          ]
+        },
+        {
+          "index": 1,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "paramiko/dsskey.py",
+          "definition_qualname": "DSSKey.sign_ssh_data",
+          "line": 93,
+          "end_line": 93,
+          "call_line": 93,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            65,
+            106
+          ]
+        },
+        {
+          "index": 2,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "paramiko/ecdsakey.py",
+          "definition_qualname": "ECDSAKey.sign_ssh_data",
+          "line": 93,
+          "end_line": 93,
+          "call_line": 93,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            65,
+            106
+          ]
+        },
+        {
+          "index": 3,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "paramiko/ed25519key.py",
+          "definition_qualname": "Ed25519Key.sign_ssh_data",
+          "line": 93,
+          "end_line": 93,
+          "call_line": 93,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            65,
+            106
+          ]
+        },
+        {
+          "index": 4,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "paramiko/pkey.py",
+          "definition_qualname": "PKey.sign_ssh_data",
+          "line": 93,
+          "end_line": 93,
+          "call_line": 93,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            65,
+            106
+          ]
+        },
+        {
+          "index": 5,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "paramiko/rsakey.py",
+          "definition_qualname": "RSAKey.sign_ssh_data",
+          "line": 93,
+          "end_line": 93,
+          "call_line": 93,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            65,
+            106
+          ]
+        }
+      ]
+    },
+    {
+      "id": "paramiko:363a28d94cad:paramiko/kex_gex.py",
+      "commit": "363a28d94cada17f012c1604a3c99c71a2bda003",
+      "parent": "dfffaeaa0170c784307d1c89dad60528a59b6ff2",
+      "stale_path": "paramiko/kex_gex.py",
+      "stale_blob": "fb8f01fdc3a465b8da60ef1a3b1e8c5f2754c869",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "paramiko",
+      "seconds": 0.83,
+      "errors_commit": 256,
+      "errors_mutated": 256,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "paramiko/agent.py",
+          "definition_qualname": "AgentKey.sign_ssh_data",
+          "line": 243,
+          "end_line": 243,
+          "call_line": 243,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            212,
+            251
+          ]
+        },
+        {
+          "index": 1,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "paramiko/dsskey.py",
+          "definition_qualname": "DSSKey.sign_ssh_data",
+          "line": 243,
+          "end_line": 243,
+          "call_line": 243,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            212,
+            251
+          ]
+        },
+        {
+          "index": 2,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "paramiko/ecdsakey.py",
+          "definition_qualname": "ECDSAKey.sign_ssh_data",
+          "line": 243,
+          "end_line": 243,
+          "call_line": 243,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            212,
+            251
+          ]
+        },
+        {
+          "index": 3,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "paramiko/ed25519key.py",
+          "definition_qualname": "Ed25519Key.sign_ssh_data",
+          "line": 243,
+          "end_line": 243,
+          "call_line": 243,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            212,
+            251
+          ]
+        },
+        {
+          "index": 4,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "paramiko/pkey.py",
+          "definition_qualname": "PKey.sign_ssh_data",
+          "line": 243,
+          "end_line": 243,
+          "call_line": 243,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            212,
+            251
+          ]
+        },
+        {
+          "index": 5,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "paramiko/rsakey.py",
+          "definition_qualname": "RSAKey.sign_ssh_data",
+          "line": 243,
+          "end_line": 243,
+          "call_line": 243,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            212,
+            251
+          ]
+        }
+      ]
+    },
+    {
+      "id": "paramiko:363a28d94cad:paramiko/kex_group1.py",
+      "commit": "363a28d94cada17f012c1604a3c99c71a2bda003",
+      "parent": "dfffaeaa0170c784307d1c89dad60528a59b6ff2",
+      "stale_path": "paramiko/kex_group1.py",
+      "stale_blob": "dce3fd91ab51fcc274ce3b44171be0895d12838e",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "paramiko",
+      "seconds": 0.8,
+      "errors_commit": 256,
+      "errors_mutated": 256,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "paramiko/agent.py",
+          "definition_qualname": "AgentKey.sign_ssh_data",
+          "line": 146,
+          "end_line": 146,
+          "call_line": 146,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            123,
+            154
+          ]
+        },
+        {
+          "index": 1,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "paramiko/dsskey.py",
+          "definition_qualname": "DSSKey.sign_ssh_data",
+          "line": 146,
+          "end_line": 146,
+          "call_line": 146,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            123,
+            154
+          ]
+        },
+        {
+          "index": 2,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "paramiko/ecdsakey.py",
+          "definition_qualname": "ECDSAKey.sign_ssh_data",
+          "line": 146,
+          "end_line": 146,
+          "call_line": 146,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            123,
+            154
+          ]
+        },
+        {
+          "index": 3,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "paramiko/ed25519key.py",
+          "definition_qualname": "Ed25519Key.sign_ssh_data",
+          "line": 146,
+          "end_line": 146,
+          "call_line": 146,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            123,
+            154
+          ]
+        },
+        {
+          "index": 4,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "paramiko/pkey.py",
+          "definition_qualname": "PKey.sign_ssh_data",
+          "line": 146,
+          "end_line": 146,
+          "call_line": 146,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            123,
+            154
+          ]
+        },
+        {
+          "index": 5,
+          "binding": "compatible",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "paramiko/rsakey.py",
+          "definition_qualname": "RSAKey.sign_ssh_data",
+          "line": 146,
+          "end_line": 146,
+          "call_line": 146,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            123,
+            154
+          ]
+        }
+      ]
+    },
+    {
+      "id": "paramiko:39871d2fd8b9:paramiko/transport.py",
+      "commit": "39871d2fd8b9d2f3faba8573294e3482905feecb",
+      "parent": "d2e7c0c75ae7de7c823d70c9feb2a9813d6c585a",
+      "stale_path": "paramiko/transport.py",
+      "stale_blob": "ecd8c7bc54d1e546d1c16e914bbfe0a45b20d8f2",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "paramiko",
+      "seconds": 0.9,
+      "errors_commit": 270,
+      "errors_mutated": 270,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": false,
+          "definition_change": "signature",
+          "definition_path": "paramiko/packet.py",
+          "definition_qualname": "Packetizer.set_inbound_cipher",
+          "line": 2731,
+          "end_line": 2733,
+          "call_line": 2731,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            2705,
+            2746
+          ]
+        },
+        {
+          "index": 1,
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": false,
+          "definition_change": "signature",
+          "definition_path": "paramiko/packet.py",
+          "definition_qualname": "Packetizer.set_outbound_cipher",
+          "line": 2785,
+          "end_line": 2787,
+          "call_line": 2785,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            2748,
+            2811
+          ]
+        }
+      ]
+    },
+    {
+      "id": "paramiko:8367147e8835:paramiko/agent.py",
+      "commit": "8367147e883583bba71cd660d1bae880a66eb27c",
+      "parent": "53460723a6ab342129ac456ef6a4ba5ef676b577",
+      "stale_path": "paramiko/agent.py",
+      "stale_blob": "f2d57ea56c388fd9008e70e6dc7402d62c2880cc",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "paramiko",
+      "seconds": 0.81,
+      "errors_commit": 252,
+      "errors_mutated": 253,
+      "new_errors_in_stale_file": [
+        {
+          "path": "paramiko/agent.py",
+          "line": 37,
+          "column": 1,
+          "code": "attr-defined",
+          "message": "Module \"paramiko.util\" has no attribute \"retry_on_signal\""
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "paramiko/util.py",
+          "definition_qualname": "retry_on_signal",
+          "line": 216,
+          "end_line": 216,
+          "call_line": 216,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": true,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [
+            {
+              "line": 37,
+              "code": "attr-defined",
+              "message": "Module \"paramiko.util\" has no attribute \"retry_on_signal\""
+            }
+          ],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            207,
+            232
+          ]
+        }
+      ]
+    },
+    {
+      "id": "paramiko:8367147e8835:paramiko/client.py",
+      "commit": "8367147e883583bba71cd660d1bae880a66eb27c",
+      "parent": "53460723a6ab342129ac456ef6a4ba5ef676b577",
+      "stale_path": "paramiko/client.py",
+      "stale_blob": "2dd25e91791330b9d622198a0c8feb747441c25b",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "paramiko",
+      "seconds": 0.87,
+      "errors_commit": 252,
+      "errors_mutated": 253,
+      "new_errors_in_stale_file": [
+        {
+          "path": "paramiko/client.py",
+          "line": 45,
+          "column": 1,
+          "code": "attr-defined",
+          "message": "Module \"paramiko.util\" has no attribute \"retry_on_signal\""
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "paramiko/util.py",
+          "definition_qualname": "retry_on_signal",
+          "line": 357,
+          "end_line": 357,
+          "call_line": 357,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": true,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [
+            {
+              "line": 45,
+              "code": "attr-defined",
+              "message": "Module \"paramiko.util\" has no attribute \"retry_on_signal\""
+            }
+          ],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            217,
+            461
+          ]
+        }
+      ]
+    },
+    {
+      "id": "paramiko:8367147e8835:paramiko/transport.py",
+      "commit": "8367147e883583bba71cd660d1bae880a66eb27c",
+      "parent": "53460723a6ab342129ac456ef6a4ba5ef676b577",
+      "stale_path": "paramiko/transport.py",
+      "stale_blob": "6c14218cb06bca0f4fa03eecc9f55b84a68577a4",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "paramiko",
+      "seconds": 0.83,
+      "errors_commit": 252,
+      "errors_mutated": 253,
+      "new_errors_in_stale_file": [
+        {
+          "path": "paramiko/transport.py",
+          "line": 114,
+          "column": 1,
+          "code": "attr-defined",
+          "message": "Module \"paramiko.util\" has no attribute \"retry_on_signal\""
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "paramiko/util.py",
+          "definition_qualname": "retry_on_signal",
+          "line": 439,
+          "end_line": 439,
+          "call_line": 439,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": true,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [
+            {
+              "line": 114,
+              "code": "attr-defined",
+              "message": "Module \"paramiko.util\" has no attribute \"retry_on_signal\""
+            }
+          ],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            327,
+            529
+          ]
+        }
+      ]
+    },
+    {
+      "id": "paramiko:8e5198394252:paramiko/transport.py",
+      "commit": "8e5198394252790111d72071a365bfe1f918b1c6",
+      "parent": "d88807841331042b8ff291c2156333a971d8b510",
+      "stale_path": "paramiko/transport.py",
+      "stale_blob": "5687778eefc29f161b2d580470eac8305a606f60",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "paramiko",
+      "seconds": 0.8,
+      "errors_commit": 228,
+      "errors_mutated": 226,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "paramiko/packet.py",
+          "definition_qualname": "Packetizer.set_inbound_cipher",
+          "line": 2445,
+          "end_line": 2447,
+          "call_line": 2445,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            2420,
+            2453
+          ]
+        },
+        {
+          "index": 1,
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "paramiko/packet.py",
+          "definition_qualname": "Packetizer.set_outbound_cipher",
+          "line": 2484,
+          "end_line": 2486,
+          "call_line": 2484,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            2455,
+            2496
+          ]
+        }
+      ]
+    },
+    {
+      "id": "paramiko:9fddb6e99fb9:paramiko/sftp_client.py",
+      "commit": "9fddb6e99fb981cd31eb8187dd2f47746b3625d8",
+      "parent": "63fd01aa39b0d7cba587380a61b38590004c755d",
+      "stale_path": "paramiko/sftp_client.py",
+      "stale_blob": "31ac1292b4989610e7e2f089637118697a540222",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "paramiko",
+      "seconds": 0.83,
+      "errors_commit": 269,
+      "errors_mutated": 269,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "paramiko/sftp_file.py",
+          "definition_qualname": "SFTPFile.prefetch",
+          "line": 785,
+          "end_line": 785,
+          "call_line": 785,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            761,
+            788
+          ]
+        }
+      ]
+    },
+    {
+      "id": "paramiko:acd4bc1dee5a:paramiko/ecdsakey.py",
+      "commit": "acd4bc1dee5a594a3534b6d76f7dfc6ebd55f71b",
+      "parent": "6fa15569100fc222af4153f763d19620d64d9e4f",
+      "stale_path": "paramiko/ecdsakey.py",
+      "stale_blob": "271971acd0339b64315d2b363d51f4a9b7050b4c",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "paramiko",
+      "seconds": 0.8,
+      "errors_commit": 233,
+      "errors_mutated": 235,
+      "new_errors_in_stale_file": [
+        {
+          "path": "paramiko/ecdsakey.py",
+          "line": 247,
+          "column": 5,
+          "code": "override",
+          "message": "Signature of \"write_private_key_file\" incompatible with supertype \"paramiko.pkey.PKey\""
+        },
+        {
+          "path": "paramiko/ecdsakey.py",
+          "line": 255,
+          "column": 5,
+          "code": "override",
+          "message": "Signature of \"write_private_key\" incompatible with supertype \"paramiko.pkey.PKey\""
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "paramiko/pkey.py",
+          "definition_qualname": "PKey._write_private_key_file",
+          "line": 248,
+          "end_line": 253,
+          "call_line": 248,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "override"
+          ],
+          "enclosing_function_span": [
+            247,
+            253
+          ]
+        },
+        {
+          "index": 1,
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "paramiko/pkey.py",
+          "definition_qualname": "PKey._write_private_key",
+          "line": 256,
+          "end_line": 261,
+          "call_line": 256,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "override"
+          ],
+          "enclosing_function_span": [
+            255,
+            261
+          ]
+        }
+      ]
+    },
+    {
+      "id": "paramiko:acd4bc1dee5a:paramiko/rsakey.py",
+      "commit": "acd4bc1dee5a594a3534b6d76f7dfc6ebd55f71b",
+      "parent": "6fa15569100fc222af4153f763d19620d64d9e4f",
+      "stale_path": "paramiko/rsakey.py",
+      "stale_blob": "5ca43544152185986c953c0db76030129e08c458",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "paramiko",
+      "seconds": 0.82,
+      "errors_commit": 233,
+      "errors_mutated": 235,
+      "new_errors_in_stale_file": [
+        {
+          "path": "paramiko/rsakey.py",
+          "line": 168,
+          "column": 5,
+          "code": "override",
+          "message": "Signature of \"write_private_key_file\" incompatible with supertype \"paramiko.pkey.PKey\""
+        },
+        {
+          "path": "paramiko/rsakey.py",
+          "line": 176,
+          "column": 5,
+          "code": "override",
+          "message": "Signature of \"write_private_key\" incompatible with supertype \"paramiko.pkey.PKey\""
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "paramiko/pkey.py",
+          "definition_qualname": "PKey._write_private_key_file",
+          "line": 169,
+          "end_line": 174,
+          "call_line": 169,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "override"
+          ],
+          "enclosing_function_span": [
+            168,
+            174
+          ]
+        },
+        {
+          "index": 1,
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "paramiko/pkey.py",
+          "definition_qualname": "PKey._write_private_key",
+          "line": 177,
+          "end_line": 182,
+          "call_line": 177,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "override"
+          ],
+          "enclosing_function_span": [
+            176,
+            182
+          ]
+        }
+      ]
+    }
+  ],
+  "environment": {
+    "mypy_version": "mypy 2.4.1 (compiled: yes)",
+    "python_version": "3.12.6",
+    "command": [
+      "python.exe",
+      "-I",
+      "-X",
+      "utf8",
+      "-m",
+      "mypy",
+      "--config-file",
+      "{config}",
+      "--cache-dir",
+      "{cache}",
+      "--no-site-packages",
+      "--ignore-missing-imports",
+      "--check-untyped-defs",
+      "--no-error-summary",
+      "--hide-error-context",
+      "--no-color-output",
+      "--show-column-numbers",
+      "--show-error-codes",
+      "--no-pretty",
+      "{target}"
+    ],
+    "config_file_contents": "[mypy]\n",
+    "incremental": true,
+    "timeout_seconds": 600.0,
+    "corpora": [
+      {
+        "repository": "requests",
+        "sha256": "7b2ae35e40a6357ba864ab211b9e7da61f11427fa50be53720aac05b0b3e2159"
+      },
+      {
+        "repository": "urllib3",
+        "sha256": "21c212587f05ece5a6badbba134bead6b584a5b0cc5c9a146dc5f681af739971"
+      },
+      {
+        "repository": "pytest",
+        "sha256": "d2f611e60583d8e18b4fa7e8ddfc80ee22218cb865e531cdcf070fb023325ec5"
+      },
+      {
+        "repository": "scrapy",
+        "sha256": "62f31fe1ed0755fab6c765cf87a0966d07f773f18ed6ec957b986fc2c9f45ce5"
+      },
+      {
+        "repository": "paramiko",
+        "sha256": "b2c286a40c23ad02a7b57cd889e6b6f5c3286e3c2080efe49f7f626f33a272c6"
+      }
+    ]
+  }
+}

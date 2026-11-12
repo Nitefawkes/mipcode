@@ -24,7 +24,9 @@ class GatewayIntegrationTests(unittest.TestCase):
                 p.parent.mkdir(parents=True, exist_ok=True)
                 p.write_bytes(txt.encode("utf-8"))
         sess_a = ContainedGatewaySession(root_a, "A", ev_a, test_commands=test_commands)
-        sess_b = ContainedGatewaySession(root_b, "B", ev_b, test_commands=test_commands)
+        sess_b = ContainedGatewaySession(
+            root_b, "B", ev_b, test_commands=test_commands, enable=["callback_binding_review"]
+        )
         return sess_a, sess_b
 
     def test_arm_a_and_arm_b_have_identical_tool_schemas_and_zero_mip_tools(self):

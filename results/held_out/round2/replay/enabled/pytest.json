@@ -1,0 +1,119 @@
+{
+  "repository": "pytest",
+  "head": "d5afeaffaa52",
+  "commits_replayed": 800,
+  "horizon_commits": 25,
+  "opt_in_detectors": [
+    "callback_binding_review",
+    "removed_callable_review"
+  ],
+  "wall_seconds": 844.7,
+  "commits_changing_production_python": 388,
+  "contract_changing_commits": 116,
+  "contract_changing_commits_silent": 112,
+  "contract_changing_commits_flagged": 4,
+  "local_commits_flagged": 0,
+  "analysis_errors": 0,
+  "flagged_commits": [
+    {
+      "commit": "b5c3275aa07d",
+      "subject": "assertion/util: improve typing",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "removed_callable_review",
+          "symbol": "isdatacls",
+          "path": "src/_pytest/assertion/util.py",
+          "line": 261,
+          "anchor": "_compare_eq_any",
+          "provenance": "static_ast",
+          "evidence": "previous declaration at src/_pytest/assertion/util.py:141 was removed; review this call",
+          "resolved_after_commits": 2,
+          "resolved_by": "site_function_edit",
+          "resolving_commit": "5898e9c7a1b8",
+          "resolving_subject": "[automated] Update plugin list (#14384)"
+        },
+        {
+          "detector": "removed_callable_review",
+          "symbol": "isdatacls",
+          "path": "src/_pytest/assertion/util.py",
+          "line": 546,
+          "anchor": "_compare_eq_cls",
+          "provenance": "static_ast",
+          "evidence": "previous declaration at src/_pytest/assertion/util.py:141 was removed; review this call",
+          "resolved_after_commits": 2,
+          "resolved_by": "site_function_edit",
+          "resolving_commit": "5898e9c7a1b8",
+          "resolving_subject": "[automated] Update plugin list (#14384)"
+        }
+      ]
+    },
+    {
+      "commit": "ce2bc5744dd7",
+      "subject": "fix: show correct program name in argparse help/errors",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "callback_binding_review",
+          "symbol": "main",
+          "path": "src/_pytest/config/__init__.py",
+          "line": 269,
+          "anchor": "",
+          "provenance": "static_ast",
+          "evidence": "changed callable main is passed as a value",
+          "resolved_after_commits": 1,
+          "resolved_by": "file_edit",
+          "resolving_commit": "f3051d2b7630",
+          "resolving_subject": "refactor: address review feedback on prog name implementation"
+        }
+      ]
+    },
+    {
+      "commit": "f3051d2b7630",
+      "subject": "refactor: address review feedback on prog name implementation",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "callback_binding_review",
+          "symbol": "main",
+          "path": "src/_pytest/config/__init__.py",
+          "line": 265,
+          "anchor": "",
+          "provenance": "static_ast",
+          "evidence": "changed callable main is passed as a value",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        }
+      ]
+    },
+    {
+      "commit": "58d8b55beb7b",
+      "subject": "Move comparison helpers to their own files out of ``assertion/util.py`` (#14520)",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "delegating_wrapper_review",
+          "symbol": "_compare_gt_set",
+          "path": "src/_pytest/assertion/_compare_set.py",
+          "line": 44,
+          "anchor": "_compare_gt_set",
+          "provenance": "static_ast",
+          "evidence": "delegating wrapper _compare_gt_set calls _compare_gte_set without forwarding optional parameter verbose",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        },
+        {
+          "detector": "delegating_wrapper_review",
+          "symbol": "_compare_lt_set",
+          "path": "src/_pytest/assertion/_compare_set.py",
+          "line": 56,
+          "anchor": "_compare_lt_set",
+          "provenance": "static_ast",
+          "evidence": "delegating wrapper _compare_lt_set calls _compare_lte_set without forwarding optional parameter verbose",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "repository": "pytest",
+  "head": "d5afeaffaa52",
+  "commits_replayed": 800,
+  "horizon_commits": 25,
+  "opt_in_detectors": [],
+  "wall_seconds": 840.8,
+  "commits_changing_production_python": 388,
+  "contract_changing_commits": 116,
+  "contract_changing_commits_silent": 115,
+  "contract_changing_commits_flagged": 1,
+  "local_commits_flagged": 0,
+  "analysis_errors": 0,
+  "flagged_commits": [
+    {
+      "commit": "58d8b55beb7b",
+      "subject": "Move comparison helpers to their own files out of ``assertion/util.py`` (#14520)",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "delegating_wrapper_review",
+          "symbol": "_compare_gt_set",
+          "path": "src/_pytest/assertion/_compare_set.py",
+          "line": 44,
+          "anchor": "_compare_gt_set",
+          "provenance": "static_ast",
+          "evidence": "delegating wrapper _compare_gt_set calls _compare_gte_set without forwarding optional parameter verbose",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        },
+        {
+          "detector": "delegating_wrapper_review",
+          "symbol": "_compare_lt_set",
+          "path": "src/_pytest/assertion/_compare_set.py",
+          "line": 56,
+          "anchor": "_compare_lt_set",
+          "provenance": "static_ast",
+          "evidence": "delegating wrapper _compare_lt_set calls _compare_lte_set without forwarding optional parameter verbose",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        }
+      ]
+    }
+  ]
+}

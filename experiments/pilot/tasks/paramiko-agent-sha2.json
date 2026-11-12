@@ -1,0 +1,117 @@
+{
+  "task_id": "paramiko-agent-sha2",
+  "repository": "paramiko",
+  "upstream_commit": "363a28d94cada17f012c1604a3c99c71a2bda003",
+  "parent_commit": "dfffaeaa0170c784307d1c89dad60528a59b6ff2",
+  "fix_commit": "2b66625659e66858cb5f557325c5fdd9c35fd073",
+  "ticket": "Add support for the SHA-2 variants of RSA signatures from RFC 8332 (`rsa-sha2-256` and `rsa-sha2-512`), together with the limited SSH extension negotiation from RFC 8308 needed to use them; today Paramiko only produces and accepts SHA-1 `ssh-rsa` signatures. During key exchange, a client verifying an RSA server host key should prefer `rsa-sha2-512`, then `rsa-sha2-256`, then legacy `ssh-rsa`, and a server configured with an RSA host key should offer all three; the relative order of other key families such as ed25519 and ecdsa must not change. In client mode, key exchange should advertise `ext-info-c` and parse the server's `MSG_EXT_INFO`, in particular `server-sig-algs`; in server mode, send `MSG_EXT_INFO` containing only `server-sig-algs` to clients that advertise `ext-info-c`, controlled by a new `Transport(server_sig_algs=True)` keyword argument. When a client authenticates with an RSA key or certificate, it should choose the signature algorithm from a new `Transport.preferred_pubkeys` list (SHA2-512, SHA2-256, then SHA-1, honoring `disabled_algorithms`): the first entry the server also lists in `server-sig-algs`, or the first entry of our list when the server sends none, and the authentication request must be signed with the algorithm it names. Server mode should accept public key authentication with SHA-2 RSA signatures from clients. To support this, `PKey.sign_ssh_data` should grow an optional `algorithm` keyword argument (default `None` for most key classes and `\"ssh-rsa\"` for `RSAKey`), and places where key exchange aborts because the peers share no acceptable algorithm should raise a new `SSHException` subclass, `IncompatiblePeer`, exported from the `paramiko` package with unchanged messages. Behavior for non-RSA keys must stay the same.",
+  "ticket_sources": [
+    {"statement": "Support RFC 8332 SHA-2 RSA signature algorithms plus limited RFC 8308 extension negotiation", "source": "commit subject 'Add support for RSA SHA2 host and public keys'; changelog entry added by the commit (sites/www/changelog.rst): ':feature:`1643` Add support for SHA-2 variants of RSA key verification algorithms (as described in :rfc:`8332`) as well as limited SSH extension negotiation (:rfc:`8308`).'"},
+    {"statement": "Today only SHA-1 ssh-rsa", "source": "parent tree: RSAKey.sign_ssh_data hard-codes hashes.SHA1() and 'ssh-rsa' (paramiko/rsakey.py:114-122), verify_ssh_sig rejects anything but 'ssh-rsa' (125-126)"},
+    {"statement": "Client host key preference rsa-sha2-512, rsa-sha2-256, ssh-rsa; other families unchanged; server with RSA host key offers all three", "source": "changelog bullets added by the commit: 'Client verification of server host key during key exchange will now prefer rsa-sha2-512, rsa-sha2-256, and legacy ssh-rsa algorithms, in that order', 'the preference order of other algorithm families such as ed25519 and ecdsa has not changed', 'Server mode will now offer all 3 RSA algorithms for host key verification during key exchange ... if it has been configured with an RSA host key.'"},
+    {"statement": "Client advertises ext-info-c and parses MSG_EXT_INFO/server-sig-algs", "source": "changelog: 'Client mode key exchange now sends the ext-info-c flag signaling support for MSG_EXT_INFO, and support for parsing the latter (specifically, its server-sig-algs flag) has been added.'"},
+    {"statement": "Server sends MSG_EXT_INFO with server-sig-algs to ext-info-c clients; Transport(server_sig_algs=True)", "source": "changelog: 'basic support for sending MSG_EXT_INFO (containing server-sig-algs only) to clients advertising ext-info-c'; Transport.__init__ docstring added by the commit: ':param bool server_sig_algs: Whether to send an extra message to compatible clients, in server mode, with a list of supported pubkey algorithms. Default: True.'"},
+    {"statement": "Client RSA pubkey auth algorithm selection via preferred_pubkeys and disabled_algorithms; server-sig-algs agreement; fallback to first in our list", "source": "changelog: 'the list of algorithms to consider is based on the new preferred_pubkeys list ... and disabled_algorithms; this list ... prefers SHA2-512, SHA2-256 and SHA1', 'When the server does not send server-sig-algs, Paramiko will attempt the first algorithm in the above list.', 'When the server does send server-sig-algs, the first algorithm supported by both ends is used, or if there is none, it falls back to the previous behavior.'; 'Transport grew a _preferred_pubkeys attribute and matching preferred_pubkeys property ... This allows client pubkey authentication to honor the disabled_algorithms feature.'"},
+    {"statement": "Authentication request signed with the algorithm it names", "source": "diff of auth_handler.py: the algorithm placed in the userauth request is the one passed to sign_ssh_data (`sig = self.private_key.sign_ssh_data(blob, algorithm)`); RFC 8332 requires the signature format to match the announced algorithm. This restates required protocol behavior; it adds no scope"},
+    {"statement": "Server accepts SHA-2 RSA pubkey auth", "source": "changelog: 'Server mode is now capable of pubkey auth involving SHA-2 signatures from clients, provided one's server implementation actually provides for doing so.'"},
+    {"statement": "PKey.sign_ssh_data gains optional algorithm kwarg, default None generally and 'ssh-rsa' for RSAKey", "source": "changelog: 'PKey.sign_ssh_data: Grew an extra, optional algorithm keyword argument (defaulting to None for most subclasses, and to \"ssh-rsa\" for RSAKey).'; pkey.py docstring added: ':param str algorithm: the signature algorithm to use, if different from the key's internal name. Default: None.'"},
+    {"statement": "IncompatiblePeer exception subclass of SSHException, exported, raised where kex aborts on algorithm incompatibility, messages unchanged", "source": "changelog: 'A new SSHException subclass was added, IncompatiblePeer, and is raised in all spots where key exchange aborts due to algorithmic incompatibility.' and '... the attributes and message text are the same ... backwards compatible'; diff of paramiko/__init__.py exports IncompatiblePeer"},
+    {"statement": "Non-RSA behavior unchanged", "source": "diff: _finalize_pubkey_algorithm short-circuits for non-RSA key types; changelog note that other families' order is unchanged"}
+  ],
+  "omitted_site": {
+    "path": "paramiko/agent.py",
+    "symbol": "AgentKey.sign_ssh_data",
+    "description": "AgentKey represents a private key held by a local SSH agent; SSHClient uses agent keys by default (allow_agent=True). The upstream commit changed its signature to `sign_ssh_data(self, data, algorithm=None)` so it would accept the algorithm now passed by the auth handler, but the body still sends the SSH2_AGENTC_SIGN_REQUEST with a flags field of 0 (`msg.add_int(0)`). With flags 0 the agent produces a SHA-1 `ssh-rsa` signature. Meanwhile the auth handler, for an agent key whose name is `ssh-rsa`, announces `rsa-sha2-512` or `rsa-sha2-256` in the userauth request. The request then carries a signature that does not match the announced algorithm, so servers reject public key authentication with agent-held RSA keys whenever SHA-2 is negotiated, which is the default against modern servers. The fix 2b66625 (10 days later, released together in 2.9.0) adds the agent protocol flags SSH_AGENT_RSA_SHA2_256 = 2 and SSH_AGENT_RSA_SHA2_512 = 4, an ALGORITHM_FLAG_MAP from algorithm name to flag, and sends `msg.add_int(ALGORITHM_FLAG_MAP.get(algorithm, 0))`."
+  },
+  "rubric": {
+    "outcomes": {
+      "covered": "When client public key authentication negotiates a SHA-2 RSA algorithm for a key held in an SSH agent, the sign request sent to the agent asks for that algorithm (flags field 2 for rsa-sha2-256, 4 for rsa-sha2-512, per the ssh-agent protocol), so the returned signature matches the algorithm announced in the userauth request. SHA-1/ssh-rsa or no algorithm still sends flags 0, and non-RSA agent keys are unaffected. Equivalent mechanisms count (different constant names, a dict or if/elif mapping, computing flags in the auth handler and passing them through), as long as an agent-held RSA key yields an rsa-sha2-* signature whenever rsa-sha2-* is announced.",
+      "omitted": "The agent implemented SHA-2 client pubkey auth for in-process RSA keys (RSAKey signs with the requested hash and labels the signature accordingly), but agent-held RSA keys do not get SHA-2 signatures. Includes: AgentKey.sign_ssh_data accepts `algorithm` (or **kwargs) and ignores it, still sending flags 0 (the upstream shape: announced and actual algorithm mismatch); AgentKey.sign_ssh_data not updated at all so passing the algorithm raises TypeError for agent keys; the auth handler passes the algorithm only to RSAKey instances (or selects SHA-2 only for isinstance(key, RSAKey)) so agent RSA keys silently stay on ssh-rsa even though SHA-2 was negotiated; AgentKey raises for SHA-2 requests while the auth handler keeps requesting SHA-2 for agent keys. Record in grader notes which variant occurred, in particular whether the wire request is inconsistent (mismatch) or merely SHA-1-only for agent keys.",
+      "not_attempted": "The question does not apply because client public key authentication with an in-process RSAKey does not produce SHA-2 signatures at all: e.g. the auth handler never selects rsa-sha2-* or never passes an algorithm to sign_ssh_data, or RSAKey.sign_ssh_data still always signs with SHA-1. Also use this if the agent produced no meaningful change or only implemented host-key/kex parts. Do not use this outcome merely because other parts of the ticket (server-side EXT_INFO, IncompatiblePeer, server pubkey auth) are missing; record those as partial-implementation notes."
+    },
+    "what_to_inspect": [
+      "paramiko/agent.py AgentKey.sign_ssh_data: is the algorithm argument read, and what integer is written after the data string in the SSH2_AGENTC_SIGN_REQUEST message for 'rsa-sha2-256', 'rsa-sha2-512', 'ssh-rsa' and None?",
+      "paramiko/auth_handler.py client publickey path (_parse_service_accept at the parent, or whatever the agent introduced): how the announced algorithm is computed for a key, and whether that algorithm is passed to sign_ssh_data for every key class, including AgentKey (key name 'ssh-rsa', not an RSAKey instance).",
+      "paramiko/rsakey.py RSAKey.sign_ssh_data: confirms the in-process path works (needed to rule out not_attempted).",
+      "Behavioral check if code can run (outside the clone, against the agent's tree): stub agent object with `_send_message(msg)` that records msg and returns (14, Message containing a string); build `AgentKey(stub, blob)` where blob is a Message with string 'ssh-rsa' plus dummy fields; call sign_ssh_data(b'data', 'rsa-sha2-256') (or the agent's calling convention) and read back byte 13, string blob, string data, uint32 flags; expect 2, 4 for rsa-sha2-512, 0 with no algorithm. The upstream test tests/test_agent.py in 2b66625 does exactly this. Additionally trace the auth handler with a fake transport whose server_extensions contains server-sig-algs 'rsa-sha2-512' and an AgentKey: the announced algorithm and the flags must agree."
+    ],
+    "alternative_designs": [
+      "Mapping table in agent.py (upstream fix shape) or if/elif on the algorithm string: covered.",
+      "Auth handler computes agent flags and calls a new AgentKey method or passes flags: covered if the flags reach the agent sign request.",
+      "AgentKey inspects the returned signature's algorithm name and the auth handler announces the algorithm actually returned (sign first, then build the request): covered only if SHA-2 is actually requested from the agent; if the agent is always asked with flags 0 and the client then announces ssh-rsa, grade omitted (consistent but SHA-1-only).",
+      "Agent keeps a generic **kwargs on sign_ssh_data overrides: grade by whether AgentKey uses the algorithm.",
+      "Agent decides agent keys should never use SHA-2 and documents it: omitted (the ticket's client-RSA-auth behavior is not delivered for agent-held RSA keys), note the deliberate choice."
+    ]
+  },
+  "static_check": {
+    "description": "Parse paramiko/agent.py. In class AgentKey, find sign_ssh_data. Report an omission if its signature has a parameter named `algorithm` (or any parameter beyond `data`) that is never referenced in the body, or if the integer written after the data string in the sign-request message is a literal 0. Additionally, in paramiko/auth_handler.py, report if the call that signs the userauth blob passes the algorithm only under an isinstance(..., RSAKey) guard.",
+    "when_wrong": "False positive: flags computed outside AgentKey and passed in (e.g. an instance attribute set by the auth handler, or a separate method), or a literal 0 kept only in an else-branch for non-SHA-2 algorithms. False negative: the parameter is referenced but not used for the flags (e.g. only logged), or **kwargs swallows it, or the auth handler never announces SHA-2 for agent keys (no unused parameter, yet agent keys get no SHA-2). Note that DSSKey, ECDSAKey and Ed25519Key legitimately ignore `algorithm`, so an unused-parameter rule applied repo-wide produces noise there; restrict it to AgentKey (and RSA-capable classes)."
+  },
+  "parent_state": {
+    "omitted_site_exists": true,
+    "quoted_lines": [
+      "paramiko/agent.py@dfffaea 40-43:",
+      "40 cSSH2_AGENTC_REQUEST_IDENTITIES = byte_chr(11)",
+      "41 SSH2_AGENT_IDENTITIES_ANSWER = 12",
+      "42 cSSH2_AGENTC_SIGN_REQUEST = byte_chr(13)",
+      "43 SSH2_AGENT_SIGN_RESPONSE = 14",
+      "paramiko/agent.py@dfffaea 388-423 (AgentKey):",
+      "388 class AgentKey(PKey):",
+      "...",
+      "399         self.name = Message(blob).get_text()",
+      "...",
+      "407     def get_name(self):",
+      "408         return self.name",
+      "...",
+      "414     def sign_ssh_data(self, data):",
+      "415         msg = Message()",
+      "416         msg.add_byte(cSSH2_AGENTC_SIGN_REQUEST)",
+      "417         msg.add_string(self.blob)",
+      "418         msg.add_string(data)",
+      "419         msg.add_int(0)",
+      "420         ptype, result = self.agent._send_message(msg)",
+      "421         if ptype != SSH2_AGENT_SIGN_RESPONSE:",
+      "422             raise SSHException(\"key cannot be used for signing\")",
+      "423         return result.get_binary()",
+      "paramiko/auth_handler.py@dfffaea 288-302 (client publickey request):",
+      "288             elif self.auth_method == \"publickey\":",
+      "289                 m.add_boolean(True)",
+      "...",
+      "292                 if self.private_key.public_blob:",
+      "293                     m.add_string(self.private_key.public_blob.key_type)",
+      "294                     m.add_string(self.private_key.public_blob.key_blob)",
+      "295                 else:",
+      "296                     m.add_string(self.private_key.get_name())",
+      "297                     m.add_string(self.private_key)",
+      "298                 blob = self._get_session_blob(",
+      "299                     self.private_key, \"ssh-connection\", self.username",
+      "300                 )",
+      "301                 sig = self.private_key.sign_ssh_data(blob)"
+    ],
+    "note": "AgentKey is a PKey subclass with its own sign_ssh_data override, and the hard-coded flags field `msg.add_int(0)` is the exact place the SHA-2 request belongs. Any implementation that passes an algorithm to private_key.sign_ssh_data must touch every override, so the agent meets this site naturally; nothing has to be invented. The flag values (2, 4) come from the public ssh-agent protocol draft, not from the repository.",
+    "other_sites_changed_upstream": [
+      "paramiko/pkey.py PKey.sign_ssh_data: new algorithm=None kwarg and docstring (versionchanged 2.9)",
+      "paramiko/rsakey.py: HASHES map for ssh-rsa / rsa-sha2-256 / rsa-sha2-512 and their -cert-v01 variants; sign_ssh_data(data, algorithm='ssh-rsa') signs with the mapped hash and labels the signature; verify_ssh_sig accepts any HASHES algorithm",
+      "paramiko/dsskey.py, ecdsakey.py, ed25519key.py: sign_ssh_data gains algorithm=None (ignored, correctly)",
+      "paramiko/agent.py AgentKey.sign_ssh_data: gains algorithm=None (ignored; the omission)",
+      "paramiko/kex_group1.py, kex_gex.py, kex_ecdh_nist.py, kex_curve25519.py: server host-key signature uses sign_ssh_data(H, self.transport.host_key_type)",
+      "paramiko/auth_handler.py: _get_algorithm_and_bits and _finalize_pubkey_algorithm (server-sig-algs agreement against transport.preferred_pubkeys); client publickey request announces and signs with the finalized algorithm; server side finalizes the algorithm for PK_OK and verification",
+      "paramiko/transport.py: rsa-sha2-512/256 in _preferred_keys and new _preferred_pubkeys + preferred_pubkeys property; _key_info entries for rsa-sha2-* and certs; server_sig_algs kwarg; server_key_dict registers RSA host key under rsa-sha2-*; server preferred keys for RSA host keys; ext-info-c appended to client kex list; _parse_kex_init split (_really_parse_kex_init, _get_latest_kex_init) and ext-info detection; server sends MSG_EXT_INFO; _parse_ext_info handler storing server_extensions; IncompatiblePeer raised for kex/cipher/mac/compression/key mismatches",
+      "paramiko/common.py: MSG_EXT_INFO (7) and cMSG_EXT_INFO, message name",
+      "paramiko/ssh_exception.py: IncompatiblePeer; paramiko/__init__.py exports it",
+      "sites/www/changelog.rst entry; tests in test_kex.py, test_pkey.py, test_transport.py (not required of the agent)"
+    ]
+  },
+  "checker_expectation": {
+    "reported_at_upstream": "Per the case description, the unused-new-parameter detector reported AgentKey.sign_ssh_data: the `algorithm` parameter added by the commit is never read. The same detector would also see DSSKey/ECDSAKey/Ed25519Key.sign_ssh_data and PKey.sign_ssh_data (base stub) with an unread `algorithm`; whether it reported those as well was not given to me. Those are true-but-benign findings.",
+    "same_report_for_agent_variant": "Likely for the commonest agent variant (add `algorithm=None` to every override, implement it only in RSAKey). Not reported if the agent guards the call with isinstance(key, RSAKey) and leaves AgentKey's signature untouched, or swallows the argument with **kwargs; the behavioral rubric still classifies those as omitted. Precision of the detector on this repo is limited by the benign non-RSA overrides."
+  },
+  "risks": [
+    "Large feature: about 280 non-test lines across 15 files at the upstream commit (transport kex negotiation, EXT_INFO in both directions, auth handler client and server paths, key classes, new exception). Many agents will not finish within a short session, and partial implementations will be common. The rubric makes the client RSA-auth path the gate for applicability, so partial work on server/kex parts does not by itself make the case not_attempted, but expect a high not_attempted rate and long sessions. I kept the full upstream scope as instructed; narrowing the ticket to client RSA auth would make this a better short task but would no longer match the original request.",
+    "Recall: Paramiko 2.9.0 (Dec 2021) shipped this commit and the fix together; every released version since then has SSH_AGENT_RSA_SHA2_256/512 and ALGORITHM_FLAG_MAP in agent.py, and the ssh-agent flag values are well known. A model recalling paramiko will probably cover the site regardless of diligence; expect a low omission rate.",
+    "Possible staging: the fix landed 10 days later on the same branch before release and also updated the changelog to cite more tickets, so the agent part may have been planned as a follow-up rather than missed. The upstream commit message does not announce it, so I treat it as an omission, but this is uncertain.",
+    "Ticket leak: the ticket says the authentication request 'must be signed with the algorithm it names', which is a protocol requirement and makes the mismatch clearly a defect. It does not mention agents. I judged that sentence necessary for the rubric's 'covered' criterion to be part of the request; without it the ticket is still the same scope.",
+    "Environment: the parent targets Python 2.7/3.x via py3compat, needs cryptography>=2.5, bcrypt, pynacl; dev-requirements.txt pins pytest==4.4.2, pytest-relaxed==1.1.5 and mock==2.0.0, which do not run on current Python (pytest 4.4 predates Python 3.10 support). Recent cryptography releases have removed or deprecated APIs older paramiko relies on (e.g. backend arguments, some key-loading helpers), so the harness should pin a cryptography of that era (around 36.x) and Python 3.8-3.10. Testing against a real agent requires ssh-agent; unit-level stubs suffice for grading.",
+    "Rubric judgment call: an agent that consistently keeps agent-held RSA keys on ssh-rsa (no wire mismatch) is graded omitted, not covered. Graders who view consistency as the core issue may disagree; the grader notes field should record the variant so it can be re-scored."
+  ]
+}

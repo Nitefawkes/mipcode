@@ -1,0 +1,2050 @@
+{
+  "schema": "mip-delta recall-mutation typecheck baseline v1",
+  "repository": "urllib3",
+  "corpus_schema": "mip-delta recall-mutation corpus v1",
+  "corpus_head": "6da1f82193a6665544381002914aa82563386191",
+  "max_mutations": null,
+  "wall_seconds": 33.2,
+  "commits": [
+    {
+      "commit": "111e609250bc7bf67b080b124298e0cf59efef9d",
+      "mutations": 1,
+      "targets": {
+        "src/urllib3": {
+          "status": "ok",
+          "seconds": 1.98,
+          "errors": 35,
+          "errors_by_code": {
+            "assignment": 8,
+            "misc": 6,
+            "attr-defined": 4,
+            "arg-type": 4,
+            "override": 3,
+            "index": 3,
+            "str-format": 2,
+            "call-arg": 2,
+            "return-value": 1,
+            "str-unpack": 1,
+            "truthy-function": 1
+          }
+        }
+      },
+      "files": 75,
+      "unwritable_files": []
+    },
+    {
+      "commit": "11a92fa416556c4a4d40306ecc7b67f83b20bac0",
+      "mutations": 1,
+      "targets": {
+        "dummyserver": {
+          "status": "ok",
+          "seconds": 1.55,
+          "errors": 1,
+          "errors_by_code": {
+            "arg-type": 1
+          }
+        }
+      },
+      "files": 80,
+      "unwritable_files": []
+    },
+    {
+      "commit": "279b9c965396d3347b20918fe3e7e500f5634611",
+      "mutations": 1,
+      "targets": {
+        "src/urllib3": {
+          "status": "ok",
+          "seconds": 1.87,
+          "errors": 19,
+          "errors_by_code": {
+            "misc": 6,
+            "attr-defined": 4,
+            "assignment": 3,
+            "override": 2,
+            "index": 2,
+            "arg-type": 1,
+            "truthy-function": 1
+          }
+        }
+      },
+      "files": 76,
+      "unwritable_files": []
+    },
+    {
+      "commit": "3b354498929a63f350bd5cdfc9bae8ecc5ff8af4",
+      "mutations": 1,
+      "targets": {
+        "dummyserver": {
+          "status": "ok",
+          "seconds": 1.69,
+          "errors": 1,
+          "errors_by_code": {
+            "arg-type": 1
+          }
+        }
+      },
+      "files": 71,
+      "unwritable_files": []
+    },
+    {
+      "commit": "45fc38b67f98be57af34cafa1fbae51f0a8c81ba",
+      "mutations": 1,
+      "targets": {
+        "src/urllib3": {
+          "status": "ok",
+          "seconds": 1.82,
+          "errors": 20,
+          "errors_by_code": {
+            "misc": 6,
+            "attr-defined": 4,
+            "assignment": 3,
+            "call-arg": 2,
+            "index": 2,
+            "arg-type": 1,
+            "override": 1,
+            "truthy-function": 1
+          }
+        }
+      },
+      "files": 75,
+      "unwritable_files": []
+    },
+    {
+      "commit": "5487206c70d3a5324fec4c4e5b2da7daec1c3d19",
+      "mutations": 1,
+      "targets": {
+        "dummyserver": {
+          "status": "ok",
+          "seconds": 1.46,
+          "errors": 2,
+          "errors_by_code": {
+            "arg-type": 2
+          }
+        }
+      },
+      "files": 82,
+      "unwritable_files": []
+    },
+    {
+      "commit": "c2d37391b96ef398df662086422ac960beced071",
+      "mutations": 1,
+      "targets": {
+        "dummyserver": {
+          "status": "ok",
+          "seconds": 1.7,
+          "errors": 1,
+          "errors_by_code": {
+            "arg-type": 1
+          }
+        }
+      },
+      "files": 76,
+      "unwritable_files": []
+    },
+    {
+      "commit": "e0243ada1afb46f46ac9c5c25b8d638327a6e883",
+      "mutations": 2,
+      "targets": {
+        "src/urllib3": {
+          "status": "ok",
+          "seconds": 2.11,
+          "errors": 15,
+          "errors_by_code": {
+            "misc": 6,
+            "attr-defined": 4,
+            "override": 2,
+            "index": 2,
+            "arg-type": 1
+          }
+        }
+      },
+      "files": 77,
+      "unwritable_files": []
+    },
+    {
+      "commit": "e5eac0cbfb6920fcc0b6dd584f23eeb14277ab3f",
+      "mutations": 1,
+      "targets": {
+        "src/urllib3": {
+          "status": "ok",
+          "seconds": 1.81,
+          "errors": 20,
+          "errors_by_code": {
+            "misc": 6,
+            "attr-defined": 4,
+            "assignment": 3,
+            "call-arg": 2,
+            "index": 2,
+            "arg-type": 1,
+            "override": 1,
+            "truthy-function": 1
+          }
+        }
+      },
+      "files": 75,
+      "unwritable_files": []
+    },
+    {
+      "commit": "ea96fde9450b2d0d233f0414c7be0a75148fae8b",
+      "mutations": 1,
+      "targets": {
+        "src/urllib3": {
+          "status": "ok",
+          "seconds": 1.92,
+          "errors": 21,
+          "errors_by_code": {
+            "misc": 6,
+            "attr-defined": 4,
+            "assignment": 3,
+            "arg-type": 2,
+            "call-arg": 2,
+            "index": 2,
+            "override": 1,
+            "truthy-function": 1
+          }
+        }
+      },
+      "files": 75,
+      "unwritable_files": []
+    },
+    {
+      "commit": "f070ec2e6f6c545f40d9196e5246df10c72e48e1",
+      "mutations": 1,
+      "targets": {
+        "src/urllib3": {
+          "status": "ok",
+          "seconds": 2.0,
+          "errors": 21,
+          "errors_by_code": {
+            "misc": 6,
+            "attr-defined": 4,
+            "assignment": 3,
+            "arg-type": 2,
+            "call-arg": 2,
+            "index": 2,
+            "override": 1,
+            "truthy-function": 1
+          }
+        }
+      },
+      "files": 75,
+      "unwritable_files": []
+    }
+  ],
+  "mutations": [
+    {
+      "id": "urllib3:111e609250bc:src/urllib3/connectionpool.py",
+      "commit": "111e609250bc7bf67b080b124298e0cf59efef9d",
+      "parent": "1c6405832e5348c740bc3b67b8b171b5da100a26",
+      "stale_path": "src/urllib3/connectionpool.py",
+      "stale_blob": "3167e6a8524bc0a6c886091901f686c79c0ca393",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "src/urllib3",
+      "seconds": 1.09,
+      "errors_commit": 35,
+      "errors_mutated": 38,
+      "new_errors_in_stale_file": [
+        {
+          "path": "src/urllib3/connectionpool.py",
+          "line": 22,
+          "column": 1,
+          "code": "attr-defined",
+          "message": "Module \"urllib3.connection\" has no attribute \"_should_wrap_https_proxy_error\""
+        },
+        {
+          "path": "src/urllib3/connectionpool.py",
+          "line": 22,
+          "column": 1,
+          "code": "attr-defined",
+          "message": "Module \"urllib3.connection\" has no attribute \"_wrap_https_proxy_error\"; maybe \"_wrap_proxy_error\"?"
+        },
+        {
+          "path": "src/urllib3/connectionpool.py",
+          "line": 36,
+          "column": 1,
+          "code": "attr-defined",
+          "message": "Module \"urllib3.exceptions\" has no attribute \"HTTPSProxyError\"; maybe \"ProxyError\"?"
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "src/urllib3/connection.py",
+          "definition_qualname": "_should_wrap_https_proxy_error",
+          "line": 1033,
+          "end_line": 1033,
+          "call_line": 1033,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": true,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [
+            {
+              "line": 22,
+              "code": "attr-defined",
+              "message": "Module \"urllib3.connection\" has no attribute \"_should_wrap_https_proxy_error\""
+            }
+          ],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            1018,
+            1047
+          ]
+        },
+        {
+          "index": 1,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "src/urllib3/connection.py",
+          "definition_qualname": "_wrap_https_proxy_error",
+          "line": 1036,
+          "end_line": 1036,
+          "call_line": 1036,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": true,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [
+            {
+              "line": 22,
+              "code": "attr-defined",
+              "message": "Module \"urllib3.connection\" has no attribute \"_wrap_https_proxy_error\"; maybe \"_wrap_proxy_error\"?"
+            }
+          ],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            1018,
+            1047
+          ]
+        }
+      ]
+    },
+    {
+      "id": "urllib3:11a92fa41655:dummyserver/testcase.py",
+      "commit": "11a92fa416556c4a4d40306ecc7b67f83b20bac0",
+      "parent": "59c122730badac2426dfbdecfe6be8afe0cd21c2",
+      "stale_path": "dummyserver/testcase.py",
+      "stale_blob": "0628f8963a1cd51ffb673a8bfc7f35e9c9c7a363",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "dummyserver",
+      "seconds": 0.66,
+      "errors_commit": 1,
+      "errors_mutated": 1,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "dummyserver/tornadoserver.py",
+          "definition_qualname": "run_tornado_loop_in_thread",
+          "line": 180,
+          "end_line": 180,
+          "call_line": 180,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            178,
+            189
+          ]
+        },
+        {
+          "index": 1,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "dummyserver/tornadoserver.py",
+          "definition_qualname": "run_tornado_app",
+          "line": 184,
+          "end_line": 186,
+          "call_line": 184,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            182,
+            186
+          ]
+        },
+        {
+          "index": 2,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "dummyserver/tornadoserver.py",
+          "definition_qualname": "run_tornado_loop_in_thread",
+          "line": 249,
+          "end_line": 249,
+          "call_line": 249,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            247,
+            276
+          ]
+        },
+        {
+          "index": 3,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "dummyserver/tornadoserver.py",
+          "definition_qualname": "run_tornado_app",
+          "line": 253,
+          "end_line": 255,
+          "call_line": 253,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            251,
+            273
+          ]
+        },
+        {
+          "index": 4,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "dummyserver/tornadoserver.py",
+          "definition_qualname": "run_tornado_app",
+          "line": 258,
+          "end_line": 260,
+          "call_line": 258,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            251,
+            273
+          ]
+        },
+        {
+          "index": 5,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "dummyserver/tornadoserver.py",
+          "definition_qualname": "run_tornado_app",
+          "line": 263,
+          "end_line": 265,
+          "call_line": 263,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            251,
+            273
+          ]
+        },
+        {
+          "index": 6,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "dummyserver/tornadoserver.py",
+          "definition_qualname": "run_tornado_app",
+          "line": 271,
+          "end_line": 273,
+          "call_line": 271,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            251,
+            273
+          ]
+        }
+      ]
+    },
+    {
+      "id": "urllib3:279b9c965396:src/urllib3/connectionpool.py",
+      "commit": "279b9c965396d3347b20918fe3e7e500f5634611",
+      "parent": "b14ad3569a884d5d003e77b5bc5cef7e82c0ac5a",
+      "stale_path": "src/urllib3/connectionpool.py",
+      "stale_blob": "8c39c179bf2cd3a97142f2e1c61b0d772c337593",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "src/urllib3",
+      "seconds": 0.75,
+      "errors_commit": 19,
+      "errors_mutated": 24,
+      "new_errors_in_stale_file": [
+        {
+          "path": "src/urllib3/connectionpool.py",
+          "line": 490,
+          "column": 13,
+          "code": "attr-defined",
+          "message": "\"HTTPResponse\" has no attribute \"length\""
+        },
+        {
+          "path": "src/urllib3/connectionpool.py",
+          "line": 494,
+          "column": 35,
+          "code": "arg-type",
+          "message": "Argument 1 to \"assert_header_parsing\" has incompatible type \"HTTPMessage | None\"; expected \"HTTPMessage\""
+        },
+        {
+          "path": "src/urllib3/connectionpool.py",
+          "line": 503,
+          "column": 16,
+          "code": "return-value",
+          "message": "Incompatible return value type (got \"urllib3.response.HTTPResponse\", expected \"http.client.HTTPResponse\")"
+        },
+        {
+          "path": "src/urllib3/connectionpool.py",
+          "line": 752,
+          "column": 24,
+          "code": "attr-defined",
+          "message": "\"type[urllib3.response.HTTPResponse]\" has no attribute \"from_httplib\""
+        }
+      ],
+      "new_errors_elsewhere": [
+        {
+          "path": "src/urllib3/poolmanager.py",
+          "line": 471,
+          "column": 63,
+          "code": "arg-type",
+          "message": "Argument \"response\" to \"increment\" of \"Retry\" has incompatible type \"BaseHTTPResponse\"; expected \"HTTPResponse | None\""
+        }
+      ],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "unknown",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "src/urllib3/connection.py",
+          "definition_qualname": "HTTPConnection.request",
+          "line": 444,
+          "end_line": 444,
+          "call_line": 444,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "arg-type",
+            "attr-defined",
+            "return-value"
+          ],
+          "enclosing_function_span": [
+            382,
+            503
+          ]
+        },
+        {
+          "index": 1,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "src/urllib3/response.py",
+          "definition_qualname": "HTTPResponse.from_httplib",
+          "line": 752,
+          "end_line": 758,
+          "call_line": 752,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 752,
+              "code": "attr-defined",
+              "message": "\"type[urllib3.response.HTTPResponse]\" has no attribute \"from_httplib\""
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "attr-defined"
+          ],
+          "tc_file_hit_codes": [
+            "arg-type",
+            "attr-defined",
+            "return-value"
+          ],
+          "enclosing_function_span": [
+            542,
+            908
+          ]
+        }
+      ]
+    },
+    {
+      "id": "urllib3:3b354498929a:dummyserver/testcase.py",
+      "commit": "3b354498929a63f350bd5cdfc9bae8ecc5ff8af4",
+      "parent": "052617c5da9b04bd8d14507f511a4bddba4caf55",
+      "stale_path": "dummyserver/testcase.py",
+      "stale_blob": "a681106732ca0a01e74910cb983f06562916cd41",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "dummyserver",
+      "seconds": 0.59,
+      "errors_commit": 1,
+      "errors_mutated": 1,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "dummyserver/server.py",
+          "definition_qualname": "run_loop_in_thread",
+          "line": 175,
+          "end_line": 175,
+          "call_line": 175,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            173,
+            184
+          ]
+        },
+        {
+          "index": 1,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "dummyserver/server.py",
+          "definition_qualname": "run_loop_in_thread",
+          "line": 243,
+          "end_line": 243,
+          "call_line": 243,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            241,
+            270
+          ]
+        }
+      ]
+    },
+    {
+      "id": "urllib3:45fc38b67f98:src/urllib3/connectionpool.py",
+      "commit": "45fc38b67f98be57af34cafa1fbae51f0a8c81ba",
+      "parent": "dda4beee0784e6f55a55bba42e5bf77f2b7b2447",
+      "stale_path": "src/urllib3/connectionpool.py",
+      "stale_blob": "85be4dd72ce5e709fb048fcb6113087b8419186e",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "src/urllib3",
+      "seconds": 0.69,
+      "errors_commit": 20,
+      "errors_mutated": 22,
+      "new_errors_in_stale_file": [
+        {
+          "path": "src/urllib3/connectionpool.py",
+          "line": 424,
+          "column": 25,
+          "code": "call-arg",
+          "message": "Missing positional argument \"proxy_scheme\" in call to \"_wrap_proxy_error\""
+        },
+        {
+          "path": "src/urllib3/connectionpool.py",
+          "line": 790,
+          "column": 25,
+          "code": "call-arg",
+          "message": "Missing positional argument \"proxy_scheme\" in call to \"_wrap_proxy_error\""
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "src/urllib3/connection.py",
+          "definition_qualname": "_wrap_proxy_error",
+          "line": 424,
+          "end_line": 424,
+          "call_line": 424,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 424,
+              "code": "call-arg",
+              "message": "Missing positional argument \"proxy_scheme\" in call to \"_wrap_proxy_error\""
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "call-arg"
+          ],
+          "tc_file_hit_codes": [
+            "call-arg"
+          ],
+          "enclosing_function_span": [
+            371,
+            492
+          ]
+        },
+        {
+          "index": 1,
+          "binding": "breaking",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "src/urllib3/connection.py",
+          "definition_qualname": "_wrap_proxy_error",
+          "line": 790,
+          "end_line": 790,
+          "call_line": 790,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 790,
+              "code": "call-arg",
+              "message": "Missing positional argument \"proxy_scheme\" in call to \"_wrap_proxy_error\""
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "call-arg"
+          ],
+          "tc_file_hit_codes": [
+            "call-arg"
+          ],
+          "enclosing_function_span": [
+            537,
+            903
+          ]
+        }
+      ]
+    },
+    {
+      "id": "urllib3:5487206c70d3:dummyserver/testcase.py",
+      "commit": "5487206c70d3a5324fec4c4e5b2da7daec1c3d19",
+      "parent": "d494c47cbd6a82a94de02621426c973b562ceb86",
+      "stale_path": "dummyserver/testcase.py",
+      "stale_blob": "66a43606a575ab45c7954798c0a0c754ed6f52d7",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "dummyserver",
+      "seconds": 0.47,
+      "errors_commit": 2,
+      "errors_mutated": 7,
+      "new_errors_in_stale_file": [
+        {
+          "path": "dummyserver/testcase.py",
+          "line": 218,
+          "column": 33,
+          "code": "call-arg",
+          "message": "Missing positional argument \"app\" in call to \"run_hypercorn_in_thread\""
+        },
+        {
+          "path": "dummyserver/testcase.py",
+          "line": 269,
+          "column": 17,
+          "code": "call-arg",
+          "message": "Missing positional argument \"app\" in call to \"run_hypercorn_in_thread\""
+        },
+        {
+          "path": "dummyserver/testcase.py",
+          "line": 281,
+          "column": 17,
+          "code": "call-arg",
+          "message": "Missing positional argument \"app\" in call to \"run_hypercorn_in_thread\""
+        },
+        {
+          "path": "dummyserver/testcase.py",
+          "line": 289,
+          "column": 76,
+          "code": "call-arg",
+          "message": "Missing positional argument \"certs\" in call to \"run_hypercorn_in_thread\""
+        },
+        {
+          "path": "dummyserver/testcase.py",
+          "line": 301,
+          "column": 61,
+          "code": "call-arg",
+          "message": "Missing positional argument \"certs\" in call to \"run_hypercorn_in_thread\""
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "dummyserver/hypercornserver.py",
+          "definition_qualname": "run_hypercorn_in_thread",
+          "line": 218,
+          "end_line": 218,
+          "call_line": 218,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 218,
+              "code": "call-arg",
+              "message": "Missing positional argument \"app\" in call to \"run_hypercorn_in_thread\""
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "call-arg"
+          ],
+          "tc_file_hit_codes": [
+            "call-arg"
+          ],
+          "enclosing_function_span": [
+            208,
+            220
+          ]
+        },
+        {
+          "index": 1,
+          "binding": "breaking",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "dummyserver/hypercornserver.py",
+          "definition_qualname": "run_hypercorn_in_thread",
+          "line": 269,
+          "end_line": 269,
+          "call_line": 269,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 269,
+              "code": "call-arg",
+              "message": "Missing positional argument \"app\" in call to \"run_hypercorn_in_thread\""
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "call-arg"
+          ],
+          "tc_file_hit_codes": [
+            "call-arg"
+          ],
+          "enclosing_function_span": [
+            264,
+            307
+          ]
+        },
+        {
+          "index": 2,
+          "binding": "breaking",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "dummyserver/hypercornserver.py",
+          "definition_qualname": "run_hypercorn_in_thread",
+          "line": 281,
+          "end_line": 281,
+          "call_line": 281,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 281,
+              "code": "call-arg",
+              "message": "Missing positional argument \"app\" in call to \"run_hypercorn_in_thread\""
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "call-arg"
+          ],
+          "tc_file_hit_codes": [
+            "call-arg"
+          ],
+          "enclosing_function_span": [
+            264,
+            307
+          ]
+        },
+        {
+          "index": 3,
+          "binding": "breaking",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "dummyserver/hypercornserver.py",
+          "definition_qualname": "run_hypercorn_in_thread",
+          "line": 289,
+          "end_line": 289,
+          "call_line": 289,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 289,
+              "code": "call-arg",
+              "message": "Missing positional argument \"certs\" in call to \"run_hypercorn_in_thread\""
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "call-arg"
+          ],
+          "tc_file_hit_codes": [
+            "call-arg"
+          ],
+          "enclosing_function_span": [
+            264,
+            307
+          ]
+        },
+        {
+          "index": 4,
+          "binding": "breaking",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "dummyserver/hypercornserver.py",
+          "definition_qualname": "run_hypercorn_in_thread",
+          "line": 301,
+          "end_line": 301,
+          "call_line": 301,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 301,
+              "code": "call-arg",
+              "message": "Missing positional argument \"certs\" in call to \"run_hypercorn_in_thread\""
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "call-arg"
+          ],
+          "tc_file_hit_codes": [
+            "call-arg"
+          ],
+          "enclosing_function_span": [
+            264,
+            307
+          ]
+        }
+      ]
+    },
+    {
+      "id": "urllib3:c2d37391b96e:dummyserver/testcase.py",
+      "commit": "c2d37391b96ef398df662086422ac960beced071",
+      "parent": "b5d20d9a11e23d8b2c841c88d7ccfeddfbca721f",
+      "stale_path": "dummyserver/testcase.py",
+      "stale_blob": "2d44d5beb00a36958d4642dfbc4d7204d3f26520",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "dummyserver",
+      "seconds": 0.8,
+      "errors_commit": 1,
+      "errors_mutated": 15,
+      "new_errors_in_stale_file": [
+        {
+          "path": "dummyserver/testcase.py",
+          "line": 168,
+          "column": 32,
+          "code": "call-arg",
+          "message": "Too many arguments for \"run_tornado_app\""
+        },
+        {
+          "path": "dummyserver/testcase.py",
+          "line": 169,
+          "column": 31,
+          "code": "arg-type",
+          "message": "Argument 3 to \"run_tornado_app\" has incompatible type \"dict[str, Any]\"; expected \"str\""
+        },
+        {
+          "path": "dummyserver/testcase.py",
+          "line": 171,
+          "column": 29,
+          "code": "assignment",
+          "message": "Incompatible types in assignment (expression has type \"_GeneratorContextManager[Any, None, None]\", variable has type \"Thread\")"
+        },
+        {
+          "path": "dummyserver/testcase.py",
+          "line": 171,
+          "column": 29,
+          "code": "call-arg",
+          "message": "Too many arguments for \"run_loop_in_thread\""
+        },
+        {
+          "path": "dummyserver/testcase.py",
+          "line": 233,
+          "column": 42,
+          "code": "call-arg",
+          "message": "Too many arguments for \"run_tornado_app\""
+        },
+        {
+          "path": "dummyserver/testcase.py",
+          "line": 234,
+          "column": 31,
+          "code": "arg-type",
+          "message": "Argument 3 to \"run_tornado_app\" has incompatible type \"None\"; expected \"str\""
+        },
+        {
+          "path": "dummyserver/testcase.py",
+          "line": 238,
+          "column": 44,
+          "code": "call-arg",
+          "message": "Too many arguments for \"run_tornado_app\""
+        },
+        {
+          "path": "dummyserver/testcase.py",
+          "line": 239,
+          "column": 31,
+          "code": "arg-type",
+          "message": "Argument 3 to \"run_tornado_app\" has incompatible type \"dict[str, Any]\"; expected \"str\""
+        },
+        {
+          "path": "dummyserver/testcase.py",
+          "line": 243,
+          "column": 44,
+          "code": "call-arg",
+          "message": "Too many arguments for \"run_tornado_app\""
+        },
+        {
+          "path": "dummyserver/testcase.py",
+          "line": 244,
+          "column": 31,
+          "code": "arg-type",
+          "message": "Argument 3 to \"run_tornado_app\" has incompatible type \"None\"; expected \"str\""
+        },
+        {
+          "path": "dummyserver/testcase.py",
+          "line": 251,
+          "column": 56,
+          "code": "call-arg",
+          "message": "Too many arguments for \"run_tornado_app\""
+        },
+        {
+          "path": "dummyserver/testcase.py",
+          "line": 252,
+          "column": 31,
+          "code": "arg-type",
+          "message": "Argument 3 to \"run_tornado_app\" has incompatible type \"dict[str, Any]\"; expected \"str\""
+        },
+        {
+          "path": "dummyserver/testcase.py",
+          "line": 255,
+          "column": 29,
+          "code": "assignment",
+          "message": "Incompatible types in assignment (expression has type \"_GeneratorContextManager[Any, None, None]\", variable has type \"Thread\")"
+        },
+        {
+          "path": "dummyserver/testcase.py",
+          "line": 255,
+          "column": 29,
+          "code": "call-arg",
+          "message": "Too many arguments for \"run_loop_in_thread\""
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "dummyserver/server.py",
+          "definition_qualname": "run_tornado_app",
+          "line": 168,
+          "end_line": 170,
+          "call_line": 168,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 168,
+              "code": "call-arg",
+              "message": "Too many arguments for \"run_tornado_app\""
+            },
+            {
+              "line": 169,
+              "code": "arg-type",
+              "message": "Argument 3 to \"run_tornado_app\" has incompatible type \"dict[str, Any]\"; expected \"str\""
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "arg-type",
+            "call-arg"
+          ],
+          "tc_file_hit_codes": [
+            "arg-type",
+            "assignment",
+            "call-arg"
+          ],
+          "enclosing_function_span": [
+            165,
+            171
+          ]
+        },
+        {
+          "index": 1,
+          "binding": "breaking",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "dummyserver/server.py",
+          "definition_qualname": "run_loop_in_thread",
+          "line": 171,
+          "end_line": 171,
+          "call_line": 171,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 171,
+              "code": "assignment",
+              "message": "Incompatible types in assignment (expression has type \"_GeneratorContextManager[Any, None, None]\", variable has type \"Thread\")"
+            },
+            {
+              "line": 171,
+              "code": "call-arg",
+              "message": "Too many arguments for \"run_loop_in_thread\""
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "assignment",
+            "call-arg"
+          ],
+          "tc_file_hit_codes": [
+            "arg-type",
+            "assignment",
+            "call-arg"
+          ],
+          "enclosing_function_span": [
+            165,
+            171
+          ]
+        },
+        {
+          "index": 2,
+          "binding": "breaking",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "dummyserver/server.py",
+          "definition_qualname": "run_tornado_app",
+          "line": 233,
+          "end_line": 235,
+          "call_line": 233,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 233,
+              "code": "call-arg",
+              "message": "Too many arguments for \"run_tornado_app\""
+            },
+            {
+              "line": 234,
+              "code": "arg-type",
+              "message": "Argument 3 to \"run_tornado_app\" has incompatible type \"None\"; expected \"str\""
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "arg-type",
+            "call-arg"
+          ],
+          "tc_file_hit_codes": [
+            "arg-type",
+            "assignment",
+            "call-arg"
+          ],
+          "enclosing_function_span": [
+            229,
+            255
+          ]
+        },
+        {
+          "index": 3,
+          "binding": "breaking",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "dummyserver/server.py",
+          "definition_qualname": "run_tornado_app",
+          "line": 238,
+          "end_line": 240,
+          "call_line": 238,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 238,
+              "code": "call-arg",
+              "message": "Too many arguments for \"run_tornado_app\""
+            },
+            {
+              "line": 239,
+              "code": "arg-type",
+              "message": "Argument 3 to \"run_tornado_app\" has incompatible type \"dict[str, Any]\"; expected \"str\""
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "arg-type",
+            "call-arg"
+          ],
+          "tc_file_hit_codes": [
+            "arg-type",
+            "assignment",
+            "call-arg"
+          ],
+          "enclosing_function_span": [
+            229,
+            255
+          ]
+        },
+        {
+          "index": 4,
+          "binding": "breaking",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "dummyserver/server.py",
+          "definition_qualname": "run_tornado_app",
+          "line": 243,
+          "end_line": 245,
+          "call_line": 243,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 243,
+              "code": "call-arg",
+              "message": "Too many arguments for \"run_tornado_app\""
+            },
+            {
+              "line": 244,
+              "code": "arg-type",
+              "message": "Argument 3 to \"run_tornado_app\" has incompatible type \"None\"; expected \"str\""
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "arg-type",
+            "call-arg"
+          ],
+          "tc_file_hit_codes": [
+            "arg-type",
+            "assignment",
+            "call-arg"
+          ],
+          "enclosing_function_span": [
+            229,
+            255
+          ]
+        },
+        {
+          "index": 5,
+          "binding": "breaking",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "dummyserver/server.py",
+          "definition_qualname": "run_tornado_app",
+          "line": 251,
+          "end_line": 253,
+          "call_line": 251,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 251,
+              "code": "call-arg",
+              "message": "Too many arguments for \"run_tornado_app\""
+            },
+            {
+              "line": 252,
+              "code": "arg-type",
+              "message": "Argument 3 to \"run_tornado_app\" has incompatible type \"dict[str, Any]\"; expected \"str\""
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "arg-type",
+            "call-arg"
+          ],
+          "tc_file_hit_codes": [
+            "arg-type",
+            "assignment",
+            "call-arg"
+          ],
+          "enclosing_function_span": [
+            229,
+            255
+          ]
+        },
+        {
+          "index": 6,
+          "binding": "breaking",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "dummyserver/server.py",
+          "definition_qualname": "run_loop_in_thread",
+          "line": 255,
+          "end_line": 255,
+          "call_line": 255,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 255,
+              "code": "assignment",
+              "message": "Incompatible types in assignment (expression has type \"_GeneratorContextManager[Any, None, None]\", variable has type \"Thread\")"
+            },
+            {
+              "line": 255,
+              "code": "call-arg",
+              "message": "Too many arguments for \"run_loop_in_thread\""
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "assignment",
+            "call-arg"
+          ],
+          "tc_file_hit_codes": [
+            "arg-type",
+            "assignment",
+            "call-arg"
+          ],
+          "enclosing_function_span": [
+            229,
+            255
+          ]
+        }
+      ]
+    },
+    {
+      "id": "urllib3:e0243ada1afb:src/urllib3/connection.py",
+      "commit": "e0243ada1afb46f46ac9c5c25b8d638327a6e883",
+      "parent": "c2d37391b96ef398df662086422ac960beced071",
+      "stale_path": "src/urllib3/connection.py",
+      "stale_blob": "679c451426c3c4c88870cd1d0211f0609b831b07",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "src/urllib3",
+      "seconds": 0.8,
+      "errors_commit": 15,
+      "errors_mutated": 21,
+      "new_errors_in_stale_file": [],
+      "new_errors_elsewhere": [
+        {
+          "path": "src/urllib3/connectionpool.py",
+          "line": 175,
+          "column": 9,
+          "code": "assignment",
+          "message": "Incompatible types in assignment (expression has type \"type[HTTPConnection]\", variable has type \"type[BaseHTTPConnection] | type[BaseHTTPSConnection]\")"
+        },
+        {
+          "path": "src/urllib3/connectionpool.py",
+          "line": 978,
+          "column": 50,
+          "code": "assignment",
+          "message": "Incompatible types in assignment (expression has type \"type[HTTPSConnection]\", variable has type \"type[BaseHTTPSConnection]\")"
+        },
+        {
+          "path": "src/urllib3/connectionpool.py",
+          "line": 1037,
+          "column": 9,
+          "code": "call-arg",
+          "message": "Unexpected keyword argument \"scheme\" for \"set_tunnel\" of \"HTTPConnection\""
+        },
+        {
+          "path": "src/urllib3/contrib/socks.py",
+          "line": 166,
+          "column": 21,
+          "code": "assignment",
+          "message": "Incompatible types in assignment (expression has type \"type[SOCKSConnection]\", base class \"HTTPConnectionPool\" defined the type as \"type[BaseHTTPConnection]\")"
+        },
+        {
+          "path": "src/urllib3/contrib/socks.py",
+          "line": 170,
+          "column": 21,
+          "code": "assignment",
+          "message": "Incompatible types in assignment (expression has type \"type[SOCKSHTTPSConnection]\", base class \"HTTPSConnectionPool\" defined the type as \"type[BaseHTTPSConnection]\")"
+        },
+        {
+          "path": "src/urllib3/response.py",
+          "line": 523,
+          "column": 30,
+          "code": "arg-type",
+          "message": "Argument 1 to \"_put_conn\" of \"HTTPConnectionPool\" has incompatible type \"HTTPConnection\"; expected \"BaseHTTPConnection | None\""
+        }
+      ],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "src/urllib3/connectionpool.py",
+          "definition_qualname": "HTTPSConnectionPool._prepare_conn",
+          "line": 262,
+          "end_line": 262,
+          "call_line": 262,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": false,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [],
+          "enclosing_function_span": [
+            259,
+            263
+          ]
+        }
+      ]
+    },
+    {
+      "id": "urllib3:e0243ada1afb:src/urllib3/connectionpool.py",
+      "commit": "e0243ada1afb46f46ac9c5c25b8d638327a6e883",
+      "parent": "c2d37391b96ef398df662086422ac960beced071",
+      "stale_path": "src/urllib3/connectionpool.py",
+      "stale_blob": "35c5c23b748a555815a2ab161714706985979aed",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "src/urllib3",
+      "seconds": 0.74,
+      "errors_commit": 15,
+      "errors_mutated": 20,
+      "new_errors_in_stale_file": [
+        {
+          "path": "src/urllib3/connectionpool.py",
+          "line": 481,
+          "column": 29,
+          "code": "attr-defined",
+          "message": "\"HTTPConnection\" has no attribute \"_connecting_to_proxy\"; maybe \"has_connected_to_proxy\" or \"_has_connected_to_proxy\"?"
+        },
+        {
+          "path": "src/urllib3/connectionpool.py",
+          "line": 766,
+          "column": 17,
+          "code": "attr-defined",
+          "message": "\"HTTPConnection\" has no attribute \"_connecting_to_proxy\"; maybe \"has_connected_to_proxy\" or \"_has_connected_to_proxy\"?"
+        },
+        {
+          "path": "src/urllib3/connectionpool.py",
+          "line": 830,
+          "column": 29,
+          "code": "attr-defined",
+          "message": "\"HTTPConnection\" has no attribute \"_connecting_to_proxy\"; maybe \"has_connected_to_proxy\" or \"_has_connected_to_proxy\"?"
+        },
+        {
+          "path": "src/urllib3/connectionpool.py",
+          "line": 1047,
+          "column": 13,
+          "code": "attr-defined",
+          "message": "\"HTTPSConnection\" has no attribute \"tls_in_tls_required\""
+        }
+      ],
+      "new_errors_elsewhere": [
+        {
+          "path": "src/urllib3/contrib/socks.py",
+          "line": 170,
+          "column": 21,
+          "code": "assignment",
+          "message": "Incompatible types in assignment (expression has type \"type[SOCKSHTTPSConnection]\", base class \"HTTPSConnectionPool\" defined the type as \"type[HTTPSConnection]\")"
+        }
+      ],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "ambiguous",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "src/urllib3/connection.py",
+          "definition_qualname": "HTTPConnection._prepare_conn",
+          "line": 1084,
+          "end_line": 1084,
+          "call_line": 1084,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": false,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            1051,
+            1084
+          ]
+        }
+      ]
+    },
+    {
+      "id": "urllib3:e5eac0cbfb69:src/urllib3/contrib/pyopenssl.py",
+      "commit": "e5eac0cbfb6920fcc0b6dd584f23eeb14277ab3f",
+      "parent": "ab64be1fa572360eb6c813f131dd0d98d51820c6",
+      "stale_path": "src/urllib3/contrib/pyopenssl.py",
+      "stale_blob": "91ef63bd0a2821d46b042a1da6c9c5d20e3361df",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "src/urllib3",
+      "seconds": 0.51,
+      "errors_commit": 20,
+      "errors_mutated": 29,
+      "new_errors_in_stale_file": [
+        {
+          "path": "src/urllib3/contrib/pyopenssl.py",
+          "line": 82,
+          "column": 34,
+          "code": "attr-defined",
+          "message": "Module has no attribute \"_is_ge_openssl_v1_1_1\""
+        },
+        {
+          "path": "src/urllib3/contrib/pyopenssl.py",
+          "line": 150,
+          "column": 21,
+          "code": "attr-defined",
+          "message": "Module has no attribute \"HAS_SNI\""
+        },
+        {
+          "path": "src/urllib3/contrib/pyopenssl.py",
+          "line": 152,
+          "column": 36,
+          "code": "attr-defined",
+          "message": "Module has no attribute \"USE_DEFAULT_SSLCONTEXT_CIPHERS\""
+        },
+        {
+          "path": "src/urllib3/contrib/pyopenssl.py",
+          "line": 165,
+          "column": 5,
+          "code": "attr-defined",
+          "message": "Module has no attribute \"HAS_SNI\""
+        },
+        {
+          "path": "src/urllib3/contrib/pyopenssl.py",
+          "line": 166,
+          "column": 5,
+          "code": "attr-defined",
+          "message": "Module has no attribute \"HAS_SNI\""
+        },
+        {
+          "path": "src/urllib3/contrib/pyopenssl.py",
+          "line": 169,
+          "column": 5,
+          "code": "attr-defined",
+          "message": "Module has no attribute \"USE_DEFAULT_SSLCONTEXT_CIPHERS\""
+        },
+        {
+          "path": "src/urllib3/contrib/pyopenssl.py",
+          "line": 177,
+          "column": 5,
+          "code": "attr-defined",
+          "message": "Module has no attribute \"HAS_SNI\""
+        },
+        {
+          "path": "src/urllib3/contrib/pyopenssl.py",
+          "line": 178,
+          "column": 5,
+          "code": "attr-defined",
+          "message": "Module has no attribute \"HAS_SNI\""
+        },
+        {
+          "path": "src/urllib3/contrib/pyopenssl.py",
+          "line": 181,
+          "column": 5,
+          "code": "attr-defined",
+          "message": "Module has no attribute \"USE_DEFAULT_SSLCONTEXT_CIPHERS\""
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "src/urllib3/util/ssl_.py",
+          "definition_qualname": "_is_ge_openssl_v1_1_1",
+          "line": 82,
+          "end_line": 84,
+          "call_line": 82,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 82,
+              "code": "attr-defined",
+              "message": "Module has no attribute \"_is_ge_openssl_v1_1_1\""
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "attr-defined"
+          ],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": null
+        }
+      ]
+    },
+    {
+      "id": "urllib3:ea96fde9450b:src/urllib3/connection.py",
+      "commit": "ea96fde9450b2d0d233f0414c7be0a75148fae8b",
+      "parent": "2459900b10f54326745a597cc1cf2bf8a18f0d56",
+      "stale_path": "src/urllib3/connection.py",
+      "stale_blob": "8e87bd4144646d7b919e3b6ab4e0d83877015568",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "src/urllib3",
+      "seconds": 0.76,
+      "errors_commit": 21,
+      "errors_mutated": 22,
+      "new_errors_in_stale_file": [
+        {
+          "path": "src/urllib3/connection.py",
+          "line": 30,
+          "column": 1,
+          "code": "attr-defined",
+          "message": "Module \"urllib3.util.proxy\" has no attribute \"create_proxy_ssl_context\""
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "breaking_removed",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "removed",
+          "definition_path": "src/urllib3/util/proxy.py",
+          "definition_qualname": "create_proxy_ssl_context",
+          "line": 582,
+          "end_line": 588,
+          "call_line": 582,
+          "site_hit": true,
+          "file_hit": true,
+          "tc_status": "ok",
+          "tc_site_hit": false,
+          "tc_site_hit_names_definition": false,
+          "tc_import_hit": true,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": false,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [],
+          "tc_import_hit_errors": [
+            {
+              "line": 30,
+              "code": "attr-defined",
+              "message": "Module \"urllib3.util.proxy\" has no attribute \"create_proxy_ssl_context\""
+            }
+          ],
+          "tc_site_hit_codes": [],
+          "tc_file_hit_codes": [
+            "attr-defined"
+          ],
+          "enclosing_function_span": [
+            563,
+            599
+          ]
+        }
+      ]
+    },
+    {
+      "id": "urllib3:f070ec2e6f6c:src/urllib3/connection.py",
+      "commit": "f070ec2e6f6c545f40d9196e5246df10c72e48e1",
+      "parent": "33afb5c96c435ab7118b5f41e26f96c290fef55b",
+      "stale_path": "src/urllib3/connection.py",
+      "stale_blob": "7f37a860159eea97f515efc742e9f24884d8b9bd",
+      "mipdelta_analysis_error": null,
+      "tc_status": "ok",
+      "target": "src/urllib3",
+      "seconds": 0.84,
+      "errors_commit": 21,
+      "errors_mutated": 23,
+      "new_errors_in_stale_file": [
+        {
+          "path": "src/urllib3/connection.py",
+          "line": 541,
+          "column": 29,
+          "code": "arg-type",
+          "message": "Argument 1 to \"_match_hostname\" has incompatible type \"dict[str, str | tuple[tuple[tuple[str, str], ...], ...] | tuple[tuple[str, str], ...]] | _TYPE_PEER_CERT_RET_DICT | None\"; expected \"_TYPE_PEER_CERT_RET_DICT | bytes | None\""
+        },
+        {
+          "path": "src/urllib3/connection.py",
+          "line": 588,
+          "column": 24,
+          "code": "arg-type",
+          "message": "Argument 1 to \"match_hostname\" has incompatible type \"_TYPE_PEER_CERT_RET_DICT | bytes | None\"; expected \"_TYPE_PEER_CERT_RET_DICT | None\""
+        }
+      ],
+      "new_errors_elsewhere": [],
+      "sites": [
+        {
+          "index": 0,
+          "binding": "compatible",
+          "name_uniqueness": "unique",
+          "call_rewritten_in_commit": true,
+          "definition_change": "signature",
+          "definition_path": "src/urllib3/util/ssl_match_hostname.py",
+          "definition_qualname": "match_hostname",
+          "line": 588,
+          "end_line": 588,
+          "call_line": 588,
+          "site_hit": false,
+          "file_hit": false,
+          "tc_status": "ok",
+          "tc_site_hit": true,
+          "tc_site_hit_names_definition": true,
+          "tc_import_hit": false,
+          "tc_site_or_import_hit": true,
+          "tc_enclosing_hit": true,
+          "tc_file_hit": true,
+          "tc_site_hit_errors": [
+            {
+              "line": 588,
+              "code": "arg-type",
+              "message": "Argument 1 to \"match_hostname\" has incompatible type \"_TYPE_PEER_CERT_RET_DICT | bytes | None\"; expected \"_TYPE_PEER_CERT_RET_DICT | None\""
+            }
+          ],
+          "tc_import_hit_errors": [],
+          "tc_site_hit_codes": [
+            "arg-type"
+          ],
+          "tc_file_hit_codes": [
+            "arg-type"
+          ],
+          "enclosing_function_span": [
+            586,
+            598
+          ]
+        }
+      ]
+    }
+  ],
+  "environment": {
+    "mypy_version": "mypy 2.4.1 (compiled: yes)",
+    "python_version": "3.12.6",
+    "command": [
+      "python.exe",
+      "-I",
+      "-X",
+      "utf8",
+      "-m",
+      "mypy",
+      "--config-file",
+      "{config}",
+      "--cache-dir",
+      "{cache}",
+      "--no-site-packages",
+      "--ignore-missing-imports",
+      "--check-untyped-defs",
+      "--no-error-summary",
+      "--hide-error-context",
+      "--no-color-output",
+      "--show-column-numbers",
+      "--show-error-codes",
+      "--no-pretty",
+      "{target}"
+    ],
+    "config_file_contents": "[mypy]\n",
+    "incremental": true,
+    "timeout_seconds": 600.0,
+    "corpora": [
+      {
+        "repository": "requests",
+        "sha256": "7b2ae35e40a6357ba864ab211b9e7da61f11427fa50be53720aac05b0b3e2159"
+      },
+      {
+        "repository": "urllib3",
+        "sha256": "21c212587f05ece5a6badbba134bead6b584a5b0cc5c9a146dc5f681af739971"
+      },
+      {
+        "repository": "pytest",
+        "sha256": "d2f611e60583d8e18b4fa7e8ddfc80ee22218cb865e531cdcf070fb023325ec5"
+      },
+      {
+        "repository": "scrapy",
+        "sha256": "62f31fe1ed0755fab6c765cf87a0966d07f773f18ed6ec957b986fc2c9f45ce5"
+      },
+      {
+        "repository": "paramiko",
+        "sha256": "b2c286a40c23ad02a7b57cd889e6b6f5c3286e3c2080efe49f7f626f33a272c6"
+      }
+    ]
+  }
+}

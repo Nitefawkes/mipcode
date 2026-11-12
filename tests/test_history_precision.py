@@ -3,9 +3,13 @@ import pytest
 
 from mipdelta.delta import analyze_delta
 
+# These cases were reduced while both detectors ran by default. They are opt-in now,
+# so the tests enable them to keep checking what each case was written for.
+ENABLED = ["removed_callable_review", "callback_binding_review"]
+
 
 def _detectors(before, after):
-    return sorted({f.detector for f in analyze_delta(before, after)})
+    return sorted({f.detector for f in analyze_delta(before, after, enable=ENABLED)})
 
 
 @pytest.mark.parametrize(
@@ -213,7 +217,7 @@ def test_nested_helper_is_not_confused_with_a_same_named_helper_elsewhere():
     )
     before = {"response.py": template.format(extra="")}
     after = {"response.py": template.format(extra=", source=None")}
-    found = [(f.detector, f.start_line) for f in analyze_delta(before, after) if f.detector == "callback_binding_review"]
+    found = [(f.detector, f.start_line) for f in analyze_delta(before, after, enable=ENABLED) if f.detector == "callback_binding_review"]
     assert found == [("callback_binding_review", 5)]
 
 
