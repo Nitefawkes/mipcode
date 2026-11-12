@@ -1,0 +1,201 @@
+{
+  "repository": "scrapy",
+  "head": "f9d89010f691",
+  "commits_replayed": 800,
+  "horizon_commits": 25,
+  "opt_in_detectors": [],
+  "wall_seconds": 697.4,
+  "commits_changing_production_python": 508,
+  "contract_changing_commits": 218,
+  "contract_changing_commits_silent": 212,
+  "contract_changing_commits_flagged": 6,
+  "local_commits_flagged": 0,
+  "analysis_errors": 0,
+  "flagged_commits": [
+    {
+      "commit": "9bfa58e36cca",
+      "subject": "Deprecate send_catch_log_deferred(). (#7161)",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "call_signature_review",
+          "symbol": "FeedExporter._close_slot",
+          "path": "scrapy/extensions/feedexport.py",
+          "line": 509,
+          "anchor": "FeedExporter.close_spider",
+          "provenance": "static_ast",
+          "evidence": "target became async; review how the call result is consumed",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        },
+        {
+          "detector": "call_signature_review",
+          "symbol": "FeedExporter._close_slot",
+          "path": "scrapy/extensions/feedexport.py",
+          "line": 619,
+          "anchor": "FeedExporter.item_scraped",
+          "provenance": "static_ast",
+          "evidence": "target became async; review how the call result is consumed",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        }
+      ]
+    },
+    {
+      "commit": "5a7e132486f3",
+      "subject": "Restore and deprecate the spider arg of Downloader._get_slot(). (#7178)",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "parameter_sink_review",
+          "symbol": "Downloader._get_slot",
+          "path": "scrapy/core/downloader/__init__.py",
+          "line": 155,
+          "anchor": "Downloader._get_slot",
+          "provenance": "static_ast",
+          "evidence": "new parameter spider is not read in the function body; verify its intended behavioral sink",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        }
+      ]
+    },
+    {
+      "commit": "180ca39b2305",
+      "subject": "Deprecate returning Deferreds from pipeline methods (#7179)",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "call_signature_review",
+          "symbol": "ItemPipelineManager._process_parallel",
+          "path": "scrapy/pipelines/__init__.py",
+          "line": 121,
+          "anchor": "ItemPipelineManager.open_spider",
+          "provenance": "static_ast",
+          "evidence": "target became async; review how the call result is consumed",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        },
+        {
+          "detector": "call_signature_review",
+          "symbol": "ItemPipelineManager._process_parallel",
+          "path": "scrapy/pipelines/__init__.py",
+          "line": 133,
+          "anchor": "ItemPipelineManager.close_spider",
+          "provenance": "static_ast",
+          "evidence": "target became async; review how the call result is consumed",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        }
+      ]
+    },
+    {
+      "commit": "f875af4a86b2",
+      "subject": "Add BaseStreamingDownloadHandler and migrate HttpxDownloadHandler to it. (#7524)",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "parameter_sink_review",
+          "symbol": "HttpxDownloadHandler._log_tls_info",
+          "path": "scrapy/core/downloader/handlers/_httpx.py",
+          "line": 184,
+          "anchor": "HttpxDownloadHandler._log_tls_info",
+          "provenance": "static_ast",
+          "evidence": "new parameter request is not read in the function body; verify its intended behavioral sink",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        }
+      ]
+    },
+    {
+      "commit": "db5bad1dddb3",
+      "subject": "Add JOBDIR_SYNC_EVERY to keep active.json current, written atomically (#8152)",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "state_field_review",
+          "symbol": "Scheduler.close",
+          "path": "scrapy/core/scheduler.py",
+          "line": 362,
+          "anchor": "Scheduler.close",
+          "provenance": "static_ast",
+          "evidence": "writer Scheduler.open adds self._dqs_changes; Scheduler.close reads self.dqs",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        },
+        {
+          "detector": "state_field_review",
+          "symbol": "Scheduler.__len__",
+          "path": "scrapy/core/scheduler.py",
+          "line": 417,
+          "anchor": "Scheduler.__len__",
+          "provenance": "static_ast",
+          "evidence": "writer Scheduler.open adds self._dqs_changes; Scheduler.__len__ reads self.dqs",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        },
+        {
+          "detector": "state_field_review",
+          "symbol": "Scheduler._dqpush",
+          "path": "scrapy/core/scheduler.py",
+          "line": 423,
+          "anchor": "Scheduler._dqpush",
+          "provenance": "static_ast",
+          "evidence": "writer Scheduler.open adds self._dqs_changes; Scheduler._dqpush reads self.dqs",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        },
+        {
+          "detector": "state_field_review",
+          "symbol": "Scheduler._dqpop",
+          "path": "scrapy/core/scheduler.py",
+          "line": 452,
+          "anchor": "Scheduler._dqpop",
+          "provenance": "static_ast",
+          "evidence": "writer Scheduler.open adds self._dqs_changes; Scheduler._dqpop reads self.dqs",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        }
+      ]
+    },
+    {
+      "commit": "4d372f0275c3",
+      "subject": "Support async parse_node(), parse_row() and Rule errbacks. (#8392)",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "call_signature_review",
+          "symbol": "CrawlSpider._handle_failure",
+          "path": "scrapy/spiders/crawl.py",
+          "line": 293,
+          "anchor": "CrawlSpider._errback",
+          "provenance": "static_ast",
+          "evidence": "target became an async generator; review how the call result is iterated",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        },
+        {
+          "detector": "call_signature_review",
+          "symbol": "XMLFeedSpider.parse_nodes",
+          "path": "scrapy/spiders/feed.py",
+          "line": 167,
+          "anchor": "XMLFeedSpider._parse",
+          "provenance": "static_ast",
+          "evidence": "target became an async generator; review how the call result is iterated",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        },
+        {
+          "detector": "call_signature_review",
+          "symbol": "CSVFeedSpider.parse_rows",
+          "path": "scrapy/spiders/feed.py",
+          "line": 243,
+          "anchor": "CSVFeedSpider._parse",
+          "provenance": "static_ast",
+          "evidence": "target became an async generator; review how the call result is iterated",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        }
+      ]
+    }
+  ]
+}

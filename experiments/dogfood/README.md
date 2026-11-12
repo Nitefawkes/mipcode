@@ -6,6 +6,31 @@ This experiment measures what the Claude Code hooks do during real coding sessio
 
 Register both hooks in the repository's `.claude/settings.json` as shown in [Run as Claude Code hooks](../../docs/usage.md#run-as-claude-code-hooks). Logging is always on wherever a ledger exists.
 
+For a study, pin the engine so that every session in the study runs the same detectors:
+
+1. Copy `src/mipdelta` at one commit to `<dir>/engine/src/mipdelta`, and [the hook wrapper](../pilot/hooks/mipdelta_hook.py) to `<dir>/bin/`. Record the commit beside them. Keep `<dir>` where only your account can write, because every session executes these files.
+2. Register the wrapper in the repository's `.claude/settings.local.json`, which Git should ignore:
+
+```json
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [{"type": "command", "command": "python \"<dir>/bin/mipdelta_hook.py\" claude-post-edit", "timeout": 30}]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [{"type": "command", "command": "python \"<dir>/bin/mipdelta_hook.py\" claude-stop", "timeout": 30}]
+      }
+    ]
+  }
+}
+```
+
+The wrapper sets `MIPDELTA_LOG_ALL_RUNS`, so quiet runs are counted too. These hooks are live: they add newly opened sites to the model's context and block once before it finishes. Delete the settings file to turn them off. A session reads the file from the directory it starts in, so add a copy to each Git worktree you work in.
+
 ## Where the logs are
 
 Each ledger has an append-only event log beside it. A hook session keeps `.mipdelta/ledger-<session>.json` at the top of the repository, so its events go to `.mipdelta/ledger-<session>.events.jsonl`. A `--check-git --ledger PATH.json` run writes `PATH.events.jsonl`. The `.mipdelta` directory carries a `.gitignore`, so the logs stay out of Git status.

@@ -12,27 +12,26 @@ Use `--root` to limit the analysis to a subdirectory. Git mode reads tracked and
 
 The [bundled example](../README.md#quick-start) uses candidate mode. It compares a proposed replacement with an existing file and reports locations to review.
 
-At resolved calls, the check can flag new required arguments, removed parameters, renamed keywords, changes to positional binding, and changes between synchronous and async definitions. With an [opt-in check](#turn-on-an-opt-in-check), it also reports surviving calls whose previous resolved definition was removed. Signature binding uses explicit positional and keyword arguments. Decorators, argument unpacking, dynamic dispatch, and indirect imports can limit coverage.
+At resolved calls, the check can flag new required arguments, removed parameters, renamed keywords, changes to positional binding, and changes between synchronous and async definitions. It also reports surviving calls whose previous resolved definition was removed, unless the name is still bound where it was declared. Signature binding uses explicit positional and keyword arguments. Decorators, argument unpacking, dynamic dispatch, and indirect imports can limit coverage. Calls through an attribute, such as `self.client.send()` or `module.helper()`, are resolved less often than calls by bare name.
 
 A newly raised exception is compared with narrow `try`/`except` handlers at the call and at one unguarded caller above it. A handler for a base class counts as catching the exception. Builtin classes and classes defined in the workspace are followed through their bases. The check stays quiet when both the raised class and a handler class come from outside the workspace, because their relationship is unknown.
 
 ## Turn on an opt-in check
 
-Three checks are off by default because most of their reports on complete upstream commits were false.
+Two checks are off by default because most of their reports on complete upstream commits were false.
 
 | Check | Reports | Why it is off by default |
 | --- | --- | --- |
-| `removed_callable_review` | A surviving call whose resolved definition was removed | Its results are mixed. In the [first held-out round](../results/held_out/README.md), 23 of its 24 reports were false: the name was still bound after a move, rename, or rebinding. In the [second](../results/held_out/round2/README.md), 78 of 79 sampled reports were real, nearly all from one commit that deleted a module and left its importers unchanged. A test run or a type checker reports that kind of break first. |
-| `callback_binding_review` | A changed function that is passed as a value | 22 of its 23 held-out reports across both rounds were false, mostly a function passed where the signature change cannot matter. |
+| `callback_binding_review` | A changed function that is passed as a value | 22 of its 23 held-out reports across [both](../results/held_out/README.md) [rounds](../results/held_out/round2/README.md) were false, mostly a function passed where the signature change cannot matter. |
 | `parameter_truthiness_review` | A new or changed `None`-default parameter tested as a bare truth value, as in `if base:` | Upstream code often intends this. It produced the most reports in the [first history replay](../results/history_replay/README.md). |
 
 Turn a check on with `--enable`, which can be repeated:
 
 ```sh
-mip-delta --check-git --enable removed_callable_review --enable callback_binding_review
+mip-delta --check-git --enable callback_binding_review
 ```
 
-Consider the first two for code that no type checker covers. `--enable` works with every mode, including `--hook`. A ledger keeps a site from an opt-in check only while that check is enabled, so add the flag to both hook commands and to every check that shares a ledger. From Python, pass `enable=[...]` to `analyze_delta` or `DeltaSession.from_workspace`.
+`--enable` works with every mode, including `--hook`. A ledger keeps a site from an opt-in check only while that check is enabled, so add the flag to both hook commands and to every check that shares a ledger. From Python, pass `enable=[...]` to `analyze_delta` or `DeltaSession.from_workspace`.
 
 ## Track what is still open
 
@@ -48,7 +47,60 @@ With a ledger, text output names only sites that this check newly opened. A site
 
 A ledger stored in a `.mipdelta` directory adds a `.gitignore` there so the state stays out of Git status.
 
+## Run before a commit
+
+With [pre-commit](https://pre-commit.com), a local hook fails the commit while unwaived sites are open:
+
+```yaml
+repos:
+  - repo: local
+    hooks:
+      - id: mip-delta
+        name: mip-delta contract check
+        entry: mip-delta --check-git --fail-on-findings --ledger .mipdelta/ledger.json
+        language: system
+        pass_filenames: false
+        types: [python]
+```
+
+The check compares the working tree with `HEAD`, so it also sees changes that are not staged.
+
+## Run on a pull request
+
+In CI, compare the pull request with the point where it left its base branch. This GitHub Actions job prints the report in its log and does not fail the build:
+
+```yaml
+jobs:
+  contract-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install "git+https://github.com/Nitefawkes/mipcode@main"
+      - run: mip-delta --check-git --base-ref "$(git merge-base "origin/$BASE" HEAD)"
+        env:
+          BASE: ${{ github.base_ref }}
+```
+
+`fetch-depth: 0` fetches the history that `git merge-base` needs. Add `--fail-on-findings` to make the job fail when the check reports a site. Start without it: on upstream history most reports were not defects, and a CI job has no ledger in which to waive one.
+
+## Check a merge
+
+Two branches can merge without a textual conflict and still disagree. One changes a function's contract and updates its callers. The other adds a caller that uses the old contract. After merging, compare the merged tree with the merge base:
+
+```sh
+mip-delta --check-git --base-ref "$(git merge-base HEAD~1 HEAD^2)"
+```
+
+A branch that completed its own migration contributes no findings, so what remains comes from the combination. Use the two branch names in place of `HEAD~1` and `HEAD^2` when checking before the merge commit exists.
+
 ## Run as Claude Code hooks
+
+The hooks are experimental. In a [small pilot](../results/pilot/README.md), a current model given three tasks made none of the omissions the hooks would report, so their benefit during an agent's session is unproven.
 
 `--hook` reads a Claude Code hook event on standard input and answers in that hook's JSON format. Register both hooks in `.claude/settings.json`:
 
@@ -77,34 +129,6 @@ The hooks use `CLAUDE_PROJECT_DIR` as the workspace and keep one ledger per sess
 Each ledger also has an append-only event log beside it: `ledger-<session>.json` writes `ledger-<session>.events.jsonl`. The hooks, `--check-git --ledger`, and `--waive` append one JSON line per opened, discharged, or waived site, per stop block, and per run, with its duration. The log holds names, paths, and line numbers, not source text. A failure to write it is ignored. A session that opens no site leaves no log. To summarize the logs across sessions, see the [dogfood experiment](../experiments/dogfood/README.md).
 
 Other agent harnesses can call `mip-delta --check-git --ledger PATH` after edits and add `--open` before finishing.
-
-## Run before a commit
-
-With [pre-commit](https://pre-commit.com), a local hook fails the commit while unwaived sites are open:
-
-```yaml
-repos:
-  - repo: local
-    hooks:
-      - id: mip-delta
-        name: mip-delta contract check
-        entry: mip-delta --check-git --fail-on-findings --ledger .mipdelta/ledger.json
-        language: system
-        pass_filenames: false
-        types: [python]
-```
-
-The check compares the working tree with `HEAD`, so it also sees changes that are not staged.
-
-## Check a merge
-
-Two branches can merge without a textual conflict and still disagree. One changes a function's contract and updates its callers. The other adds a caller that uses the old contract. After merging, compare the merged tree with the merge base:
-
-```sh
-mip-delta --check-git --base-ref "$(git merge-base HEAD~1 HEAD^2)"
-```
-
-A branch that completed its own migration contributes no findings, so what remains comes from the combination. Use the two branch names in place of `HEAD~1` and `HEAD^2` when checking before the merge commit exists.
 
 ## Observe calls during tests
 

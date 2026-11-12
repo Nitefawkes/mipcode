@@ -1,0 +1,129 @@
+{
+  "repositories": {
+    "paramiko": {
+      "contract_changing_commits": 93,
+      "silent_before": 89,
+      "silent_after": 89,
+      "sites_before": 136,
+      "sites_after": 136,
+      "analysis_errors": 0
+    },
+    "pytest": {
+      "contract_changing_commits": 116,
+      "silent_before": 114,
+      "silent_after": 115,
+      "sites_before": 4,
+      "sites_after": 2,
+      "analysis_errors": 0
+    },
+    "requests": {
+      "contract_changing_commits": 29,
+      "silent_before": 29,
+      "silent_after": 29,
+      "sites_before": 0,
+      "sites_after": 0,
+      "analysis_errors": 0
+    },
+    "scrapy": {
+      "contract_changing_commits": 218,
+      "silent_before": 211,
+      "silent_after": 212,
+      "sites_before": 15,
+      "sites_after": 13,
+      "analysis_errors": 0
+    },
+    "urllib3": {
+      "contract_changing_commits": 111,
+      "silent_before": 106,
+      "silent_after": 107,
+      "sites_before": 6,
+      "sites_after": 5,
+      "analysis_errors": 0
+    }
+  },
+  "pooled": {
+    "contract_changing_commits": 567,
+    "silent_before": 549,
+    "silent_after": 552,
+    "sites_before": 161,
+    "sites_after": 156,
+    "analysis_errors": 0
+  },
+  "removed_sites": {
+    "call_signature_review|false_report": 3,
+    "call_signature_review|review_worthy": 2,
+    "override_signature_review|false_report": 1,
+    "removed_callable_review|false_report": 1,
+    "removed_callable_review|not_read": 1
+  },
+  "kept_sites": {
+    "call_signature_review|false_report": 3,
+    "call_signature_review|real_omission": 1,
+    "delegating_wrapper_review|false_report": 2,
+    "exception_contract_review|review_worthy": 1,
+    "override_signature_review|false_report": 2,
+    "parameter_sink_review|false_report": 8,
+    "parameter_sink_review|real_omission": 3,
+    "removed_callable_review|not_read": 51,
+    "removed_callable_review|real_omission": 78,
+    "state_field_review|false_report": 4
+  },
+  "added_sites": [
+    {
+      "key": [
+        "scrapy",
+        "4d372f0275c3",
+        "call_signature_review",
+        "scrapy/spiders/crawl.py",
+        293,
+        "CrawlSpider._handle_failure",
+        "target became an async generator; review how the call result is iterated"
+      ],
+      "evidence": "target became an async generator; review how the call result is iterated"
+    },
+    {
+      "key": [
+        "scrapy",
+        "4d372f0275c3",
+        "call_signature_review",
+        "scrapy/spiders/feed.py",
+        167,
+        "XMLFeedSpider.parse_nodes",
+        "target became an async generator; review how the call result is iterated"
+      ],
+      "evidence": "target became an async generator; review how the call result is iterated"
+    },
+    {
+      "key": [
+        "scrapy",
+        "4d372f0275c3",
+        "call_signature_review",
+        "scrapy/spiders/feed.py",
+        243,
+        "CSVFeedSpider.parse_rows",
+        "target became an async generator; review how the call result is iterated"
+      ],
+      "evidence": "target became an async generator; review how the call result is iterated"
+    }
+  ],
+  "removed_real_or_review_worthy": [
+    [
+      "scrapy",
+      "4d372f0275c3",
+      "call_signature_review",
+      "scrapy/spiders/feed.py",
+      167,
+      "XMLFeedSpider.parse_nodes",
+      "target became async; review how the call result is consumed"
+    ],
+    [
+      "scrapy",
+      "4d372f0275c3",
+      "call_signature_review",
+      "scrapy/spiders/feed.py",
+      243,
+      "CSVFeedSpider.parse_rows",
+      "target became async; review how the call result is consumed"
+    ]
+  ]
+}

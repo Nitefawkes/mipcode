@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import ast
+import operator
 from dataclasses import replace
 from pathlib import PurePosixPath
 
@@ -109,10 +110,157 @@ def _extract_narrow_caught_exceptions(handlers: list[ast.ExceptHandler]) -> tupl
     return tuple(sorted(caught))
 
 
+_FOLDABLE = {
+    ast.Add: operator.add,
+    ast.Sub: operator.sub,
+    ast.Mult: operator.mul,
+    ast.FloorDiv: operator.floordiv,
+    ast.LShift: operator.lshift,
+    ast.Pow: operator.pow,
+}
+
+
+def _fold_number(node: ast.expr) -> int | float | None:
+    """Value of a small arithmetic expression over number literals, such as `2**16`."""
+    if isinstance(node, ast.Constant):
+        return node.value if type(node.value) in (int, float) else None
+    if isinstance(node, ast.UnaryOp) and isinstance(node.op, (ast.USub, ast.UAdd)):
+        value = _fold_number(node.operand)
+        if value is None:
+            return None
+        return -value if isinstance(node.op, ast.USub) else value
+    if isinstance(node, ast.BinOp) and type(node.op) in _FOLDABLE:
+        left, right = _fold_number(node.left), _fold_number(node.right)
+        if left is None or right is None:
+            return None
+        if isinstance(node.op, (ast.Pow, ast.LShift)) and not (abs(left) <= 2**32 and abs(right) <= 64):
+            # Keep the result small enough to compute while parsing.
+            return None
+        try:
+            value = _FOLDABLE[type(node.op)](left, right)
+        except (ArithmeticError, TypeError, ValueError):
+            return None
+        if isinstance(value, int) and value.bit_length() > 256:
+            # A product of bounded powers can still grow past what int-to-text conversion allows.
+            return None
+        return value if type(value) in (int, float) else None
+    return None
+
+
 def _default_text(node: ast.expr | None) -> str | None:
+    """Text that is equal for defaults of equal value, where that is cheap to know."""
     if node is None:
         return None
+    if not isinstance(node, ast.Constant):
+        value = _fold_number(node)
+        if value is not None:
+            node = ast.Constant(value=value, kind=None)
     return ast.dump(node, include_attributes=False)
+
+
+_OWN_SCOPE = (
+    ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef, ast.Lambda,
+    ast.ListComp, ast.SetComp, ast.DictComp, ast.GeneratorExp,
+)
+
+
+# Expressions whose value could be a function, class, or bound method. Literals are not.
+_CALLABLE_VALUES = (
+    ast.Name, ast.Attribute, ast.Call, ast.Lambda, ast.IfExp, ast.BoolOp, ast.Subscript, ast.NamedExpr, ast.Await,
+)
+
+
+def callable_stores(body: list[ast.stmt], *, attribute_of: str | None = None) -> frozenset[str]:
+    """Names one scope assigns from an expression that could be a callable.
+
+    A loop target, a `del`, an annotation without a value, and an assignment of a literal
+    do not count. With `attribute_of`, collect attributes assigned on that name instead,
+    as in `self.finish = self._safe`.
+    """
+    names: set[str] = set()
+    pending: list[ast.AST] = list(body)
+    while pending:
+        node = pending.pop()
+        if isinstance(node, _OWN_SCOPE):
+            continue
+        pending.extend(ast.iter_child_nodes(node))
+        if isinstance(node, ast.Assign):
+            targets, value = list(node.targets), node.value
+        elif isinstance(node, (ast.AnnAssign, ast.NamedExpr)) and node.value is not None:
+            targets, value = [node.target], node.value
+        else:
+            continue
+        if not isinstance(value, _CALLABLE_VALUES):
+            continue
+        while targets:
+            target = targets.pop()
+            if isinstance(target, (ast.Tuple, ast.List)):
+                targets.extend(target.elts)
+            elif attribute_of is None and isinstance(target, ast.Name):
+                names.add(target.id)
+            elif (
+                attribute_of is not None
+                and isinstance(target, ast.Attribute)
+                and isinstance(target.value, ast.Name)
+                and target.value.id == attribute_of
+            ):
+                names.add(target.attr)
+    return frozenset(names)
+
+
+def _scope_stores(body: list[ast.stmt], counts: dict[str, int]) -> None:
+    """Count every way one scope binds or unbinds a name, without entering nested scopes."""
+    pending: list[ast.AST] = list(body)
+    while pending:
+        node = pending.pop()
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+            counts[node.name] = counts.get(node.name, 0) + 1
+        if isinstance(node, _OWN_SCOPE):
+            continue
+        if isinstance(node, ast.Name) and not isinstance(node.ctx, ast.Load):
+            counts[node.id] = counts.get(node.id, 0) + 1
+        elif isinstance(node, (ast.Import, ast.ImportFrom)):
+            for alias in node.names:
+                bound = alias.asname or alias.name.split(".")[0]
+                counts[bound] = counts.get(bound, 0) + 1
+        pending.extend(ast.iter_child_nodes(node))
+
+
+def _module_constants(tree: ast.Module) -> dict[str, str]:
+    """Small literal values of module names that are bound exactly once.
+
+    Keys are the default text of a reference to the name, so a parameter default can be
+    looked up directly. A name is left out when anything else could give it another
+    value: a second binding, an import, a `global` statement, or a class attribute of the
+    same name, which is what a method's default would read.
+    """
+    stores: dict[str, int] = {}
+    _scope_stores(tree.body, stores)
+    excluded: dict[str, int] = {}
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Global):
+            for name in node.names:
+                excluded[name] = 1
+        elif isinstance(node, ast.ClassDef):
+            _scope_stores(node.body, excluded)
+
+    constants: dict[str, str] = {}
+    for statement in tree.body:
+        if isinstance(statement, ast.Assign) and len(statement.targets) == 1:
+            target, value = statement.targets[0], statement.value
+        elif isinstance(statement, ast.AnnAssign) and statement.value is not None:
+            target, value = statement.target, statement.value
+        else:
+            continue
+        if not isinstance(target, ast.Name) or stores.get(target.id) != 1 or target.id in excluded:
+            continue
+        small_literal = isinstance(value, ast.Constant) and not (
+            isinstance(value.value, (str, bytes)) and len(value.value) > 200
+        )
+        if small_literal or _fold_number(value) is not None:
+            reference = _default_text(ast.Name(id=target.id, ctx=ast.Load()))
+            constants[reference] = _default_text(value)
+    return constants
 
 
 def _parameters(args: ast.arguments) -> tuple[tuple[ParameterFact, ...], tuple[tuple[str, str], ...]]:
@@ -286,8 +434,14 @@ class _CallContextScanner(ast.NodeVisitor):
             self._result_consumers[id(node.iter)] = node
         self.generic_visit(node)
 
+    def visit_For(self, node: ast.For) -> None:
+        if isinstance(node.iter, ast.Call):
+            self._result_consumers[id(node.iter)] = node
+        self.generic_visit(node)
+
     def visit_comprehension(self, node: ast.comprehension) -> None:
-        if node.is_async and isinstance(node.iter, ast.Call):
+        # Recorded for both kinds. Readers check `is_async` to tell them apart.
+        if isinstance(node.iter, ast.Call):
             self._result_consumers[id(node.iter)] = node
         self.generic_visit(node)
 
@@ -540,7 +694,13 @@ class _ModuleScanner(_CallContextScanner):
                 ann = _annotation_head(stmt.annotation)
                 if ann:
                     attr_annotations[stmt.target.id] = ann
-        row = ClassFact(self.path, self.module, qual, node.name, bases, node.lineno, {}, attr_annotations)
+        assigned_names = callable_stores(node.body)
+        for stmt in node.body:
+            if isinstance(stmt, (ast.FunctionDef, ast.AsyncFunctionDef)) and stmt.args.args:
+                assigned_names |= callable_stores(stmt.body, attribute_of=stmt.args.args[0].arg)
+        row = ClassFact(
+            self.path, self.module, qual, node.name, bases, node.lineno, {}, attr_annotations, assigned_names
+        )
         self.classes[qual] = row
         self.class_stack.append(node.name)
         for child in node.body:
@@ -698,6 +858,7 @@ def parse_file(path: str, text: str, *, prior_facts: FileFacts | None = None) ->
         return FileFacts(normalized, module_name(normalized), {}, {}, [], {}, f"{exc.msg} at line {exc.lineno}")
     scanner = _ModuleScanner(normalized, text.splitlines(), prior_facts=prior_facts)
     scanner.visit(tree)
+    module_name_stores, constant_defaults = callable_stores(tree.body), _module_constants(tree)
     return FileFacts(
         normalized,
         scanner.module,
@@ -705,4 +866,6 @@ def parse_file(path: str, text: str, *, prior_facts: FileFacts | None = None) ->
         scanner.classes,
         scanner.calls,
         scanner.imports,
+        module_name_stores=module_name_stores,
+        constant_defaults=constant_defaults,
     )

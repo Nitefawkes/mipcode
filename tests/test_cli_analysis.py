@@ -125,7 +125,7 @@ def test_git_check_reports_call_to_removed_file(repo, rename):
         provider.rename(provider.with_name("replacement.py"))
     else:
         provider.unlink()
-    result = _check(repo, "--check-git", "--json", "--fail-on-findings", "--enable", "removed_callable_review")
+    result = _check(repo, "--check-git", "--json", "--fail-on-findings")
     assert result.returncode == 1, result.stderr
     data = json.loads(result.stdout)
     expected_paths = ["pkg/provider.py", "pkg/replacement.py"] if rename else ["pkg/provider.py"]

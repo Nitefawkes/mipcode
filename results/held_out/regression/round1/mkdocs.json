@@ -1,0 +1,141 @@
+{
+  "repository": "mkdocs",
+  "head": "2862536793b3",
+  "commits_replayed": 800,
+  "horizon_commits": 25,
+  "opt_in_detectors": [],
+  "wall_seconds": 300.4,
+  "commits_changing_production_python": 435,
+  "contract_changing_commits": 153,
+  "contract_changing_commits_silent": 147,
+  "contract_changing_commits_flagged": 6,
+  "local_commits_flagged": 0,
+  "analysis_errors": 0,
+  "flagged_commits": [
+    {
+      "commit": "a3e60f138508",
+      "subject": "Paths in config file are relative to the config file. (#1376)",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "override_signature_review",
+          "symbol": "SubConfig.__init__",
+          "path": "mkdocs/config/config_options.py",
+          "line": 51,
+          "anchor": "SubConfig.__init__",
+          "provenance": "static_ast",
+          "evidence": "override may omit changed base parameter config_file_path",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        },
+        {
+          "detector": "delegating_wrapper_review",
+          "symbol": "SubConfig.__init__",
+          "path": "mkdocs/config/config_options.py",
+          "line": 53,
+          "anchor": "SubConfig.__init__",
+          "provenance": "static_ast",
+          "evidence": "delegating wrapper SubConfig.__init__ calls Config.__init__ without forwarding optional parameter config_file_path",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        }
+      ]
+    },
+    {
+      "commit": "5c2b4f135360",
+      "subject": "Update ghp_import dependency to 1.0",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "removed_callable_review",
+          "symbol": "ghp_import",
+          "path": "mkdocs/commands/gh_deploy.py",
+          "line": 107,
+          "anchor": "gh_deploy",
+          "provenance": "static_ast",
+          "evidence": "previous declaration at mkdocs/utils/ghp_import.py:160 was removed; review this call",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        }
+      ]
+    },
+    {
+      "commit": "57b5ccd7d63e",
+      "subject": "Add support for Configuration Inheritance",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "delegating_wrapper_review",
+          "symbol": "yaml_load",
+          "path": "mkdocs/utils/__init__.py",
+          "line": 55,
+          "anchor": "yaml_load",
+          "provenance": "static_ast",
+          "evidence": "delegating wrapper yaml_load calls get_yaml_loader without forwarding optional parameter loader",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        }
+      ]
+    },
+    {
+      "commit": "cf9d23757e4d",
+      "subject": "Change ListOfItems' \"default default\" from [] to None",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "override_signature_review",
+          "symbol": "Hooks.__init__",
+          "path": "mkdocs/config/config_options.py",
+          "line": 969,
+          "anchor": "Hooks.__init__",
+          "provenance": "static_ast",
+          "evidence": "override may omit changed base parameter default",
+          "resolved_after_commits": 20,
+          "resolved_by": "site_function_edit",
+          "resolving_commit": "ca8a3c8d671b",
+          "resolving_subject": "Tighten warnings and type annotations in config_options"
+        }
+      ]
+    },
+    {
+      "commit": "7d8483904a5f",
+      "subject": "Add YAML placeholder tags that resolve to current paths",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "delegating_wrapper_review",
+          "symbol": "yaml_load",
+          "path": "mkdocs/utils/yaml.py",
+          "line": 102,
+          "anchor": "yaml_load",
+          "provenance": "static_ast",
+          "evidence": "delegating wrapper yaml_load calls get_yaml_loader without forwarding optional parameter loader",
+          "resolved_after_commits": 2,
+          "resolved_by": "site_function_edit",
+          "resolving_commit": "25f4ea153322",
+          "resolving_subject": "Docs: small fixes"
+        }
+      ]
+    },
+    {
+      "commit": "a42ab62311b0",
+      "subject": "Validation of absolute links relative to docs root",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "parameter_sink_review",
+          "symbol": "_RelativePathTreeprocessor._possible_target_uris",
+          "path": "mkdocs/structure/pages.py",
+          "line": 361,
+          "anchor": "_RelativePathTreeprocessor._possible_target_uris",
+          "provenance": "static_ast",
+          "evidence": "new parameter suggest_absolute is not read in the function body; verify its intended behavioral sink",
+          "resolved_after_commits": 2,
+          "resolved_by": "site_function_edit",
+          "resolving_commit": "224676fbae24",
+          "resolving_subject": "Fix broken links"
+        }
+      ]
+    }
+  ]
+}

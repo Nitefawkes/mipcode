@@ -1,0 +1,134 @@
+{
+  "repository": "rich",
+  "head": "364ce24a3be6",
+  "commits_replayed": 800,
+  "horizon_commits": 25,
+  "opt_in_detectors": [],
+  "wall_seconds": 424.7,
+  "commits_changing_production_python": 395,
+  "contract_changing_commits": 63,
+  "contract_changing_commits_silent": 58,
+  "contract_changing_commits_flagged": 5,
+  "local_commits_flagged": 0,
+  "analysis_errors": 0,
+  "flagged_commits": [
+    {
+      "commit": "c856e6b46901",
+      "subject": "version bump",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "delegating_wrapper_review",
+          "symbol": "Traceback.__init__",
+          "path": "rich/traceback.py",
+          "line": 263,
+          "anchor": "Traceback.__init__",
+          "provenance": "static_ast",
+          "evidence": "delegating wrapper Traceback.__init__ calls Traceback.extract without forwarding optional parameter locals_hide_dunder",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        },
+        {
+          "detector": "delegating_wrapper_review",
+          "symbol": "Traceback.__init__",
+          "path": "rich/traceback.py",
+          "line": 263,
+          "anchor": "Traceback.__init__",
+          "provenance": "static_ast",
+          "evidence": "delegating wrapper Traceback.__init__ calls Traceback.extract without forwarding optional parameter locals_hide_sunder",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        }
+      ]
+    },
+    {
+      "commit": "a9669b8859d5",
+      "subject": "Enable per-column enabling or disabling of highlighting",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "delegating_wrapper_review",
+          "symbol": "Table.__init__",
+          "path": "rich/table.py",
+          "line": 246,
+          "anchor": "Table.__init__",
+          "provenance": "static_ast",
+          "evidence": "delegating wrapper Table.__init__ calls Table.add_column without forwarding optional parameter highlight",
+          "resolved_after_commits": 1,
+          "resolved_by": "same_file_other_edit",
+          "resolving_commit": "01d01ed5ee32",
+          "resolving_subject": "Update progress.py: doc: Progress.default_columns -> Progress.get_def\u2026 (#3170)"
+        }
+      ]
+    },
+    {
+      "commit": "e8e797d19d84",
+      "subject": "feat: Traceback - Expose more locals rendering options",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "delegating_wrapper_review",
+          "symbol": "Traceback.__init__",
+          "path": "rich/traceback.py",
+          "line": 321,
+          "anchor": "Traceback.__init__",
+          "provenance": "static_ast",
+          "evidence": "delegating wrapper Traceback.__init__ calls Traceback.extract without forwarding optional parameter locals_max_depth",
+          "resolved_after_commits": 1,
+          "resolved_by": "site_function_edit",
+          "resolving_commit": "f412ce7923fd",
+          "resolving_subject": "Respect custom console instance in IPython output"
+        }
+      ]
+    },
+    {
+      "commit": "5ffec68c91d4",
+      "subject": "split text",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "delegating_wrapper_review",
+          "symbol": "set_cell_size",
+          "path": "rich/cell_string.py",
+          "line": 257,
+          "anchor": "set_cell_size",
+          "provenance": "static_ast",
+          "evidence": "delegating wrapper set_cell_size calls cell_len without forwarding optional parameter unicode_version",
+          "resolved_after_commits": 1,
+          "resolved_by": "site_function_edit",
+          "resolving_commit": "7001a52a356f",
+          "resolving_subject": "move to cells.py"
+        }
+      ]
+    },
+    {
+      "commit": "7001a52a356f",
+      "subject": "move to cells.py",
+      "contract_changing": true,
+      "sites": [
+        {
+          "detector": "delegating_wrapper_review",
+          "symbol": "set_cell_size",
+          "path": "rich/cells.py",
+          "line": 275,
+          "anchor": "set_cell_size",
+          "provenance": "static_ast",
+          "evidence": "delegating wrapper set_cell_size calls cell_len without forwarding optional parameter unicode_version",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        },
+        {
+          "detector": "delegating_wrapper_review",
+          "symbol": "Text.cell_len",
+          "path": "rich/text.py",
+          "line": 227,
+          "anchor": "Text.cell_len",
+          "provenance": "static_ast",
+          "evidence": "delegating wrapper Text.cell_len calls cell_len without forwarding optional parameter unicode_version",
+          "resolved_after_commits": null,
+          "resolved_by": "open_at_horizon"
+        }
+      ]
+    }
+  ]
+}

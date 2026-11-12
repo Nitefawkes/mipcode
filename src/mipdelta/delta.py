@@ -1,11 +1,12 @@
 from __future__ import annotations
 
+import ast
 import builtins
 from typing import Iterable, Mapping
 
 from .cache import FactCache
-from .facts import parse_file
-from .model import ClassFact, FileFacts, Finding, FunctionFact, ObservedCallEdge
+from .facts import callable_stores, parse_file
+from .model import CallFact, ClassFact, FileFacts, Finding, FunctionFact, ObservedCallEdge
 from .resolve import (
     MutableResolutionIndex,
     build_index,
@@ -33,11 +34,11 @@ _DETECTOR_PRIORITY = {
 # Detectors that report only when a caller names them.
 # - parameter_truthiness_review: upstream code routinely tests a None-default parameter
 #   by truth value on purpose.
-# - removed_callable_review, callback_binding_review: on held-out repositories 34 of
-#   their 36 reports were false, and a type checker reports most of what they find.
-OPT_IN_DETECTORS = frozenset(
-    {"parameter_truthiness_review", "removed_callable_review", "callback_binding_review"}
-)
+# - callback_binding_review: across two held-out rounds 22 of its 23 reports were false.
+#   A callable passed as a value is unaffected when its target gains an optional parameter.
+# removed_callable_review was opt-in for one round and is on again: its false reports were
+# names still bound in the same scope, which it now recognizes.
+OPT_IN_DETECTORS = frozenset({"parameter_truthiness_review", "callback_binding_review"})
 
 
 def enabled_detectors(enable: Iterable[str]) -> frozenset[str]:
@@ -145,6 +146,42 @@ def _unread_parameter_is_expected(
     # A hook, or a method that an unresolved base may declare, is expected to ignore
     # arguments only when its body does no work of its own.
     return (overridden or not resolved) and not function.own_calls
+
+
+def _default_value(default: str | None, facts: FileFacts | None) -> str | None:
+    """A default's text, with a reference to a module constant replaced by its value."""
+    if default is None or facts is None:
+        return default
+    return facts.constant_defaults.get(default, default)
+
+
+def _still_bound(old: FunctionFact, new_file: FileFacts | None) -> bool:
+    """The scope that declared the removed name still assigns it something that could be called.
+
+    An alias, a value returned by a helper, or a bound method stored on the instance keeps
+    callers working. A literal, a loop variable, or a `del` does not.
+    """
+    if new_file is None:
+        return False
+    if old.qualname == old.name:
+        return old.name in new_file.module_name_stores
+    if old.class_qualname is not None and old.qualname == f"{old.class_qualname}.{old.name}":
+        cls = new_file.classes.get(old.class_qualname)
+        return cls is not None and old.name in cls.assigned_names
+    owner = new_file.functions.get(old.qualname.rsplit(".", 1)[0])
+    node = owner._ast_node if owner is not None else None
+    return isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and old.name in callable_stores(node.body)
+
+
+def _named_class_has_method(fn: FunctionFact, old: FunctionFact, call: CallFact, caller: FileFacts) -> bool:
+    """The call names a class in the removed method's module, and that class has the method."""
+    if fn.module != old.module or fn.name != old.name or fn.class_qualname is None:
+        return False
+    if len(call.callee_chain) < 2:
+        return False
+    receiver = call.callee_chain[-2]
+    alias = caller.imports.get(receiver)
+    return fn.class_qualname.rsplit(".", 1)[-1] == (alias[1] if alias and alias[1] else receiver)
 
 
 def _class_may_inherit(cls: ClassFact, method: str, index: MutableResolutionIndex) -> bool:
@@ -512,6 +549,9 @@ def analyze_changed_files_in_index(
         surviving_class = new_file.classes.get(old.class_qualname) if new_file and old.class_qualname else None
         if surviving_class is not None and _class_may_inherit(surviving_class, old.name, index):
             continue
+        if _still_bound(old, new_file):
+            # Rebound as an alias, an unpacked local, or an attribute: the name still resolves.
+            continue
         for caller_facts, call in index.calls_for_callee(old.name):
             candidate_calls_inspected += 1
             if call_head_is_parameter(call, caller_facts):
@@ -520,9 +560,11 @@ def analyze_changed_files_in_index(
             if any(
                 (fn.module == old.module and fn.qualname == old.qualname)
                 or (fn.path == caller_facts.path and fn.name == old.name)
+                or _named_class_has_method(fn, old, call, caller_facts)
                 for fn, _ in current
             ):
-                # Still defined, or defined under the same name in the caller's own file.
+                # Still defined, defined under the same name in the caller's own file, or
+                # defined on the class the call names after that class was renamed.
                 continue
             if before_index is None:
                 previous_files = {
@@ -687,10 +729,15 @@ def analyze_changed_files_in_index(
                         evidence.append(
                             f"override parameter {name} kind {override_parameter.kind} may not accept base calls ({base_parameter.kind})"
                         )
+                    # Equal text is equal, as when an override imports the base's constant.
+                    # Otherwise compare values where a module constant makes them known.
+                    base_default = _default_value(base_parameter.default, after_changed.get(new.path))
                     if (
                         name in old_params
                         and old_params[name].default != base_parameter.default
+                        and _default_value(old_params[name].default, before_changed.get(new.path)) != base_default
                         and override_parameter.default != base_parameter.default
+                        and _default_value(override_parameter.default, index.files.get(override.path)) != base_default
                     ):
                         evidence.append(
                             f"override default for changed base parameter {name} differs from the new base default"
