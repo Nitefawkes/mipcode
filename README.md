@@ -56,6 +56,8 @@ A reported site stays open until a later edit resolves it. With `--ledger`, repe
 
 ## With coding agents
 
+*(Looking for v0.5? MipCode started as an experimental MCP architectural-mipmap server in [`src/mipcode/`](src/mipcode/) and [`src/semantic_lod/`](src/semantic_lod/); benchmarks showed custom navigation tools lost to `ripgrep`, so v0.6+ pivoted to `mip-delta`—see [`docs/release-notes-v0.6.md`](docs/release-notes-v0.6.md) for v0.5 pointers.)*
+
 MipCode began as a check for coding agents. In our early transcripts, agents failed multi-file tasks because they stopped early: the edited file looked finished, the existing tests passed, and the agent never looked for the caller it had just broken. In paired Codex runs on 14 selected tasks, agents that received the report passed 14 and agents without it passed 8. Most of those tasks were constructed, and a generic reminder to look again later recovered five of six selected misses.
 
 The newer evidence is weaker for this use. In a [small pilot](results/pilot/README.md), a current frontier model was given three tasks built from omissions that human authors had made. It covered the missed place in six of six sessions with no help, so the pilot stopped before comparing the check with a reminder.

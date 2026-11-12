@@ -5,14 +5,14 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "mipcode"
 version = "0.6.0"
-description = "Experimental Python contract checks after edits and tests"
+description = "Deterministic AST and runtime-traced Python contract checks across call sites and subclasses (mip-delta)"
 readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "Apache-2.0"}
 authors = [
   {name = "Brian Gansz"}
 ]
-keywords = ["ai-agents", "mcp", "mipcode", "mipmap", "context-engineering", "repomap", "guardrail", "rust", "typescript", "python"]
+keywords = ["python", "static-analysis", "pre-commit", "code-review", "contract-testing", "ci", "ai-agents", "mipdelta", "mipcode"]
 dependencies = []
 
 [project.optional-dependencies]
