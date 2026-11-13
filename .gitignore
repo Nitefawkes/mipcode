@@ -17,6 +17,7 @@ dist/
 
 # Local runtime observations & scratch research workspaces
 .mipdelta/
+experiments/two_stage_sieve/data/dataset.json
 /Research/
 /.worktrees/
 

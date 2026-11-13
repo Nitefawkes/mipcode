@@ -1,0 +1,897 @@
+{
+  "arms": {
+    "arm_a_baseline": {
+      "counts": {
+        "flagged_kept": 37,
+        "kept_real_omission": 13,
+        "kept_review_worthy": 5,
+        "kept_false_only": 19,
+        "kept_silent_controls": 0,
+        "total_dataset": {
+          "real": 13,
+          "review_worthy": 5,
+          "false_only": 19,
+          "silent": 30
+        }
+      },
+      "metrics": {
+        "useful_precision_flagged_subset": 0.4865,
+        "useful_precision_all_67": 0.4865,
+        "strict_omission_precision_all_67": 0.3514,
+        "real_omission_recall": 1.0,
+        "useful_commit_recall": 1.0,
+        "false_alarm_suppression_rate": 0.0,
+        "silent_control_fp_rate": 0.0
+      },
+      "usage": {
+        "llm_calls": 0,
+        "total_cost_usd": 0,
+        "input_tokens": 0,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "output_tokens": 0,
+        "total_wall_s": 0
+      },
+      "fn_real_omissions": [],
+      "fp_flagged_commits": [
+        {
+          "id": "httpx:926a55a84f0a",
+          "detectors": [
+            "delegating_wrapper_review"
+          ],
+          "verdict": "flagged",
+          "reason": ""
+        },
+        {
+          "id": "httpx:e0b4528b170b",
+          "detectors": [
+            "exception_contract_review"
+          ],
+          "verdict": "flagged",
+          "reason": ""
+        },
+        {
+          "id": "httpx:feb404f86b46",
+          "detectors": [
+            "override_signature_review"
+          ],
+          "verdict": "flagged",
+          "reason": ""
+        },
+        {
+          "id": "httpx:27df5e49c7a9",
+          "detectors": [
+            "delegating_wrapper_review"
+          ],
+          "verdict": "flagged",
+          "reason": ""
+        },
+        {
+          "id": "httpx:ff9813e84dab",
+          "detectors": [
+            "override_signature_review"
+          ],
+          "verdict": "flagged",
+          "reason": ""
+        },
+        {
+          "id": "marshmallow:013abfd669f6",
+          "detectors": [
+            "override_signature_review"
+          ],
+          "verdict": "flagged",
+          "reason": ""
+        },
+        {
+          "id": "marshmallow:1db1a8a87041",
+          "detectors": [
+            "override_signature_review"
+          ],
+          "verdict": "flagged",
+          "reason": ""
+        },
+        {
+          "id": "mkdocs:57b5ccd7d63e",
+          "detectors": [
+            "delegating_wrapper_review"
+          ],
+          "verdict": "flagged",
+          "reason": ""
+        },
+        {
+          "id": "mkdocs:cf9d23757e4d",
+          "detectors": [
+            "override_signature_review"
+          ],
+          "verdict": "flagged",
+          "reason": ""
+        },
+        {
+          "id": "mkdocs:7d8483904a5f",
+          "detectors": [
+            "delegating_wrapper_review"
+          ],
+          "verdict": "flagged",
+          "reason": ""
+        },
+        {
+          "id": "rich:a9669b8859d5",
+          "detectors": [
+            "delegating_wrapper_review"
+          ],
+          "verdict": "flagged",
+          "reason": ""
+        },
+        {
+          "id": "pytest:58d8b55beb7b",
+          "detectors": [
+            "delegating_wrapper_review"
+          ],
+          "verdict": "flagged",
+          "reason": ""
+        },
+        {
+          "id": "scrapy:5a7e132486f3",
+          "detectors": [
+            "parameter_sink_review"
+          ],
+          "verdict": "flagged",
+          "reason": ""
+        },
+        {
+          "id": "scrapy:180ca39b2305",
+          "detectors": [
+            "call_signature_review"
+          ],
+          "verdict": "flagged",
+          "reason": ""
+        },
+        {
+          "id": "scrapy:f875af4a86b2",
+          "detectors": [
+            "parameter_sink_review"
+          ],
+          "verdict": "flagged",
+          "reason": ""
+        },
+        {
+          "id": "scrapy:db5bad1dddb3",
+          "detectors": [
+            "state_field_review"
+          ],
+          "verdict": "flagged",
+          "reason": ""
+        },
+        {
+          "id": "urllib3:8b4e56854344",
+          "detectors": [
+            "parameter_sink_review"
+          ],
+          "verdict": "flagged",
+          "reason": ""
+        },
+        {
+          "id": "urllib3:52392654b301",
+          "detectors": [
+            "override_signature_review"
+          ],
+          "verdict": "flagged",
+          "reason": ""
+        },
+        {
+          "id": "urllib3:f7bcf6986fa9",
+          "detectors": [
+            "parameter_sink_review"
+          ],
+          "verdict": "flagged",
+          "reason": ""
+        }
+      ],
+      "fp_silent_controls": []
+    },
+    "arm_a1_drop_state_field": {
+      "counts": {
+        "flagged_kept": 36,
+        "kept_real_omission": 13,
+        "kept_review_worthy": 5,
+        "kept_false_only": 18,
+        "kept_silent_controls": 0,
+        "total_dataset": {
+          "real": 13,
+          "review_worthy": 5,
+          "false_only": 19,
+          "silent": 30
+        }
+      },
+      "metrics": {
+        "useful_precision_flagged_subset": 0.5,
+        "useful_precision_all_67": 0.5,
+        "strict_omission_precision_all_67": 0.3611,
+        "real_omission_recall": 1.0,
+        "useful_commit_recall": 1.0,
+        "false_alarm_suppression_rate": 0.0526,
+        "silent_control_fp_rate": 0.0
+      },
+      "usage": {
+        "llm_calls": 0,
+        "total_cost_usd": 0,
+        "input_tokens": 0,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "output_tokens": 0,
+        "total_wall_s": 0
+      },
+      "fn_real_omissions": [],
+      "fp_flagged_commits": [
+        {
+          "id": "httpx:926a55a84f0a",
+          "detectors": [
+            "delegating_wrapper_review"
+          ],
+          "verdict": "flagged",
+          "reason": ""
+        },
+        {
+          "id": "httpx:e0b4528b170b",
+          "detectors": [
+            "exception_contract_review"
+          ],
+          "verdict": "flagged",
+          "reason": ""
+        },
+        {
+          "id": "httpx:feb404f86b46",
+          "detectors": [
+            "override_signature_review"
+          ],
+          "verdict": "flagged",
+          "reason": ""
+        },
+        {
+          "id": "httpx:27df5e49c7a9",
+          "detectors": [
+            "delegating_wrapper_review"
+          ],
+          "verdict": "flagged",
+          "reason": ""
+        },
+        {
+          "id": "httpx:ff9813e84dab",
+          "detectors": [
+            "override_signature_review"
+          ],
+          "verdict": "flagged",
+          "reason": ""
+        },
+        {
+          "id": "marshmallow:013abfd669f6",
+          "detectors": [
+            "override_signature_review"
+          ],
+          "verdict": "flagged",
+          "reason": ""
+        },
+        {
+          "id": "marshmallow:1db1a8a87041",
+          "detectors": [
+            "override_signature_review"
+          ],
+          "verdict": "flagged",
+          "reason": ""
+        },
+        {
+          "id": "mkdocs:57b5ccd7d63e",
+          "detectors": [
+            "delegating_wrapper_review"
+          ],
+          "verdict": "flagged",
+          "reason": ""
+        },
+        {
+          "id": "mkdocs:cf9d23757e4d",
+          "detectors": [
+            "override_signature_review"
+          ],
+          "verdict": "flagged",
+          "reason": ""
+        },
+        {
+          "id": "mkdocs:7d8483904a5f",
+          "detectors": [
+            "delegating_wrapper_review"
+          ],
+          "verdict": "flagged",
+          "reason": ""
+        },
+        {
+          "id": "rich:a9669b8859d5",
+          "detectors": [
+            "delegating_wrapper_review"
+          ],
+          "verdict": "flagged",
+          "reason": ""
+        },
+        {
+          "id": "pytest:58d8b55beb7b",
+          "detectors": [
+            "delegating_wrapper_review"
+          ],
+          "verdict": "flagged",
+          "reason": ""
+        },
+        {
+          "id": "scrapy:5a7e132486f3",
+          "detectors": [
+            "parameter_sink_review"
+          ],
+          "verdict": "flagged",
+          "reason": ""
+        },
+        {
+          "id": "scrapy:180ca39b2305",
+          "detectors": [
+            "call_signature_review"
+          ],
+          "verdict": "flagged",
+          "reason": ""
+        },
+        {
+          "id": "scrapy:f875af4a86b2",
+          "detectors": [
+            "parameter_sink_review"
+          ],
+          "verdict": "flagged",
+          "reason": ""
+        },
+        {
+          "id": "urllib3:8b4e56854344",
+          "detectors": [
+            "parameter_sink_review"
+          ],
+          "verdict": "flagged",
+          "reason": ""
+        },
+        {
+          "id": "urllib3:52392654b301",
+          "detectors": [
+            "override_signature_review"
+          ],
+          "verdict": "flagged",
+          "reason": ""
+        },
+        {
+          "id": "urllib3:f7bcf6986fa9",
+          "detectors": [
+            "parameter_sink_review"
+          ],
+          "verdict": "flagged",
+          "reason": ""
+        }
+      ],
+      "fp_silent_controls": []
+    },
+    "arm_b_keep_confirm_or_review": {
+      "counts": {
+        "flagged_kept": 13,
+        "kept_real_omission": 10,
+        "kept_review_worthy": 2,
+        "kept_false_only": 1,
+        "kept_silent_controls": 0,
+        "total_dataset": {
+          "real": 13,
+          "review_worthy": 5,
+          "false_only": 19,
+          "silent": 30
+        }
+      },
+      "metrics": {
+        "useful_precision_flagged_subset": 0.9231,
+        "useful_precision_all_67": 0.9231,
+        "strict_omission_precision_all_67": 0.7692,
+        "real_omission_recall": 0.7692,
+        "useful_commit_recall": 0.6667,
+        "false_alarm_suppression_rate": 0.9474,
+        "silent_control_fp_rate": 0.0
+      },
+      "usage": {
+        "llm_calls": 37,
+        "total_cost_usd": 0.08821,
+        "input_tokens": 74,
+        "cache_creation_input_tokens": 314324,
+        "cache_read_input_tokens": 791534,
+        "output_tokens": 34845,
+        "total_wall_s": 309.99
+      },
+      "fn_real_omissions": [
+        {
+          "id": "mkdocs:a3e60f138508",
+          "detectors": [
+            "delegating_wrapper_review",
+            "override_signature_review"
+          ],
+          "verdict": "suppress_false_alarm",
+          "reason": "Both Stage-1 alerts concern SubConfig.__init__(self, *config_options), which calls Config.__init__(self, config_options) without config_file_path. This is benign. The commit adds config_file_path=None as a defaulted parameter to Config.__init__ and sets self.config_file_path = config_file_path, so SubConfig instances still get the attribute with value None. The new Dir.post_validation and FilesystemObject.pre_validation guards that read config.config_file_path therefore do not raise AttributeError on sub-configs. SubConfig is an option-container schema for ListOfItems/DictOfItems, not the top-level config, so it has no file path to forward. The base-signature change is compatible because the new parameter is defaulted, and SubConfig's own signature already differed from Config's before this commit. No caller breaks and no unforwarded option is a real bug."
+        },
+        {
+          "id": "mkdocs:5c2b4f135360",
+          "detectors": [
+            "removed_callable_review"
+          ],
+          "verdict": "suppress_false_alarm",
+          "reason": "The Stage-1 flag is a removed-callable false positive. The deleted symbol was the vendored mkdocs/utils/ghp_import.py. The call at gh_deploy.py:107 is intentionally migrated to the external `ghp-import>=1.0` package, which is declared in setup.py, and the import is updated to `import ghp_import`. No stale references to mkdocs.utils.ghp_import remain in the production diff. The call's keyword arguments (mesg, remote, branch, push, use_shell, nojekyll) match the new package API, and the `GhpError` handler is consistent with it. The new `shell` parameter is threaded from __main__ through gh_deploy, so it is not an unused or unforwarded parameter. Nothing in the diff or snippets shows a missed caller or a runtime break. The only residual check would be the external package's exact signature, which the commit appears to target deliberately."
+        },
+        {
+          "id": "scrapy:9bfa58e36cca",
+          "detectors": [
+            "call_signature_review"
+          ],
+          "verdict": "suppress_false_alarm",
+          "reason": "Both flagged sites consume the coroutine correctly. At feedexport.py:509, the generator expression builds coroutines from `_close_slot` and they are wrapped in `asyncio.create_task` or `deferred_from_coro` and awaited in `close_spider`. At feedexport.py:619, the coroutine is appended to `_pending_close_coros`, which `close_spider` later awaits. Nothing drops a coroutine unawaited, so the Stage-1 \"target became async, review result consumption\" advisory is a false alarm. Separate from the flagged sites, the diff changes batch-rollover closes from eager to deferred until spider close. This is a behavior change worth a developer's glance, but it is not the cross-file contract break Stage 1 flagged. Also note `_pending_close_coros` is never cleared after being awaited, so a second `close_spider` call would reuse already-awaited coroutines. That is unlikely in practice."
+        }
+      ],
+      "fp_flagged_commits": [
+        {
+          "id": "httpx:926a55a84f0a",
+          "detectors": [
+            "delegating_wrapper_review"
+          ],
+          "verdict": "review_worthy",
+          "reason": "All four flagged wrappers (Client/AsyncClient._init_transport and _init_proxy_transport) accept an `http2` parameter but call create_ssl_context without forwarding it, so the new public helper's http2 option (which controls ALPN in SSLConfig.load_ssl_context) is never set on the client's SSL context. This is a real seam, but it is not a regression from this commit: the pre-commit code built SSLConfig(verify, cert, trust_env) with no http2 either, so the behavior is unchanged. The commit does newly expose http2 on the public create_ssl_context API, which makes the gap more visible. Whether httpcore needs ALPN from this context for HTTP/2 to negotiate is not established by the diff, so this warrants a developer's look rather than a confirmed bug. The Stage-1 alert is accurate on the code shape, but the commit did not introduce the omission."
+        }
+      ],
+      "fp_silent_controls": []
+    },
+    "arm_b_strict_confirm_only": {
+      "counts": {
+        "flagged_kept": 11,
+        "kept_real_omission": 9,
+        "kept_review_worthy": 2,
+        "kept_false_only": 0,
+        "kept_silent_controls": 0,
+        "total_dataset": {
+          "real": 13,
+          "review_worthy": 5,
+          "false_only": 19,
+          "silent": 30
+        }
+      },
+      "metrics": {
+        "useful_precision_flagged_subset": 1.0,
+        "useful_precision_all_67": 1.0,
+        "strict_omission_precision_all_67": 0.8182,
+        "real_omission_recall": 0.6923,
+        "useful_commit_recall": 0.6111,
+        "false_alarm_suppression_rate": 1.0,
+        "silent_control_fp_rate": 0.0
+      },
+      "usage": {
+        "llm_calls": 37,
+        "total_cost_usd": 0.08821,
+        "input_tokens": 74,
+        "cache_creation_input_tokens": 314324,
+        "cache_read_input_tokens": 791534,
+        "output_tokens": 34845,
+        "total_wall_s": 309.99
+      },
+      "fn_real_omissions": [
+        {
+          "id": "mkdocs:a3e60f138508",
+          "detectors": [
+            "delegating_wrapper_review",
+            "override_signature_review"
+          ],
+          "verdict": "suppress_false_alarm",
+          "reason": "Both Stage-1 alerts concern SubConfig.__init__(self, *config_options), which calls Config.__init__(self, config_options) without config_file_path. This is benign. The commit adds config_file_path=None as a defaulted parameter to Config.__init__ and sets self.config_file_path = config_file_path, so SubConfig instances still get the attribute with value None. The new Dir.post_validation and FilesystemObject.pre_validation guards that read config.config_file_path therefore do not raise AttributeError on sub-configs. SubConfig is an option-container schema for ListOfItems/DictOfItems, not the top-level config, so it has no file path to forward. The base-signature change is compatible because the new parameter is defaulted, and SubConfig's own signature already differed from Config's before this commit. No caller breaks and no unforwarded option is a real bug."
+        },
+        {
+          "id": "mkdocs:5c2b4f135360",
+          "detectors": [
+            "removed_callable_review"
+          ],
+          "verdict": "suppress_false_alarm",
+          "reason": "The Stage-1 flag is a removed-callable false positive. The deleted symbol was the vendored mkdocs/utils/ghp_import.py. The call at gh_deploy.py:107 is intentionally migrated to the external `ghp-import>=1.0` package, which is declared in setup.py, and the import is updated to `import ghp_import`. No stale references to mkdocs.utils.ghp_import remain in the production diff. The call's keyword arguments (mesg, remote, branch, push, use_shell, nojekyll) match the new package API, and the `GhpError` handler is consistent with it. The new `shell` parameter is threaded from __main__ through gh_deploy, so it is not an unused or unforwarded parameter. Nothing in the diff or snippets shows a missed caller or a runtime break. The only residual check would be the external package's exact signature, which the commit appears to target deliberately."
+        },
+        {
+          "id": "paramiko:363a28d94cad",
+          "detectors": [
+            "parameter_sink_review"
+          ],
+          "verdict": "review_worthy",
+          "reason": "Four of the five flagged sites are benign. DSSKey, ECDSAKey, Ed25519Key, and the PKey base method accept `algorithm=None` only to match the widened base signature that auth_handler and the kex modules now call. Those key types have one signature algorithm, so ignoring the argument is intentional, and the base method is a documented stub. The AgentKey.sign_ssh_data site is different. It accepts `algorithm` but drops it. It still sends a fixed SIGN_REQUEST with flags `add_int(0)`, so it cannot request rsa-sha2-256 or rsa-sha2-512 (flag 2 or 4). When auth_handler advertises an RSA-SHA2 algorithm for an agent-held RSA key, the agent will still produce an ssh-rsa (SHA-1) signature. That mismatch between the advertised and actual algorithm can break authentication against strict peers such as OpenSSH. This is a real contract seam that a developer should check, not a confirmed bug in the tests the commit touched."
+        },
+        {
+          "id": "scrapy:9bfa58e36cca",
+          "detectors": [
+            "call_signature_review"
+          ],
+          "verdict": "suppress_false_alarm",
+          "reason": "Both flagged sites consume the coroutine correctly. At feedexport.py:509, the generator expression builds coroutines from `_close_slot` and they are wrapped in `asyncio.create_task` or `deferred_from_coro` and awaited in `close_spider`. At feedexport.py:619, the coroutine is appended to `_pending_close_coros`, which `close_spider` later awaits. Nothing drops a coroutine unawaited, so the Stage-1 \"target became async, review result consumption\" advisory is a false alarm. Separate from the flagged sites, the diff changes batch-rollover closes from eager to deferred until spider close. This is a behavior change worth a developer's glance, but it is not the cross-file contract break Stage 1 flagged. Also note `_pending_close_coros` is never cleared after being awaited, so a second `close_spider` call would reuse already-awaited coroutines. That is unlikely in practice."
+        }
+      ],
+      "fp_flagged_commits": [],
+      "fp_silent_controls": []
+    },
+    "arm_c_keep_confirm_or_review": {
+      "counts": {
+        "flagged_kept": 26,
+        "kept_real_omission": 11,
+        "kept_review_worthy": 3,
+        "kept_false_only": 12,
+        "kept_silent_controls": 14,
+        "total_dataset": {
+          "real": 13,
+          "review_worthy": 5,
+          "false_only": 19,
+          "silent": 30
+        }
+      },
+      "metrics": {
+        "useful_precision_flagged_subset": 0.5385,
+        "useful_precision_all_67": 0.35,
+        "strict_omission_precision_all_67": 0.275,
+        "real_omission_recall": 0.8462,
+        "useful_commit_recall": 0.7778,
+        "false_alarm_suppression_rate": 0.3684,
+        "silent_control_fp_rate": 0.4667
+      },
+      "usage": {
+        "llm_calls": 67,
+        "total_cost_usd": 0.13668,
+        "input_tokens": 134,
+        "cache_creation_input_tokens": 346591,
+        "cache_read_input_tokens": 1036995,
+        "output_tokens": 113954,
+        "total_wall_s": 761.57
+      },
+      "fn_real_omissions": [
+        {
+          "id": "httpx:9b17671f155a",
+          "detectors": [
+            "parameter_sink_review"
+          ],
+          "verdict": "suppress_false_alarm",
+          "reason": "The new `http1: bool = True` parameter is threaded consistently through every layer: Client and AsyncClient __init__, both _init_transport and _init_proxy_transport (sync and async), and into HTTPTransport and AsyncHTTPTransport, where it is forwarded to httpcore's ConnectionPool/AsyncConnectionPool alongside http2. No new parameter is left unused, and the sync/async pairs are symmetric. The setup.py bump to httpcore>=0.13.3 covers the dependency that supplies the http1 keyword. The only residual risk is that inserting `http1` before `http2` in the signatures shifts positional arguments for any caller passing `http2` positionally, but that is an ordinary keyword-style API and not an incomplete contract change in this diff."
+        },
+        {
+          "id": "mkdocs:5c2b4f135360",
+          "detectors": [
+            "removed_callable_review"
+          ],
+          "verdict": "suppress_false_alarm",
+          "reason": "The contract changes are wired through consistently in the production diff. The new `shell` parameter is added to gh_deploy(), passed from the new `--shell` CLI option, and forwarded to ghp_import as `use_shell`. The call site switches to keyword arguments matching the ghp-import 1.0 API, and the error path now catches the new `ghp_import.GhpError`. The vendored mkdocs/utils/ghp_import.py is deleted, and the dependency is declared in setup.py. The changed test files (gh_deploy_tests.py, ghp_import_tests.py) are in the commit, which suggests the tests were updated to match. No caller in the diff still references the removed module or the old tuple-return signature. The only residual risk is external code importing mkdocs.utils.ghp_import, which is not visible in this diff."
+        }
+      ],
+      "fp_flagged_commits": [
+        {
+          "id": "httpx:926a55a84f0a",
+          "detectors": [
+            "delegating_wrapper_review"
+          ],
+          "verdict": "review_worthy",
+          "reason": "The commit adds a public create_ssl_context wrapper and migrates callers, which looks internally consistent. However, it also deletes SSLConfig.__eq__ and SSLConfig.__repr__, which the subject does not mention. Instances now compare by identity and repr falls back to the default object form. Any code, test, or debug output that relied on value equality or the readable repr could break, and the diff does not show whether anything depended on them. Only tests/test_config.py changed, so it is unclear whether those behaviors were covered or intentionally dropped. Separately, create_ssl_context defaults trust_env to None, which differs from the True default the client passes, and the diff does not show SSLConfig's own default for comparison. Neither issue is a concrete unfinished caller, so this is a warning to verify rather than a confirmed omission."
+        },
+        {
+          "id": "httpx:e0b4528b170b",
+          "detectors": [
+            "exception_contract_review"
+          ],
+          "verdict": "review_worthy",
+          "reason": "The commit looks mostly internally consistent: decoders no longer take a request, the constructor and call sites are updated, the `request` property and `raise_for_status` guard against a missing request, and `aclose` only touches `.request` when it is set. Two concrete points still warrant verification. First, `_wrap_decoder_errors` catches every `ValueError` raised inside the wrapped block. That block also contains `iter_raw()` / `aiter_raw()`, so a ValueError from the transport stream would be rewritten as `httpx.DecodingError` whenever a request is attached, which changes error semantics beyond decoding. Second, the signature `request: Request = None` is an implicit Optional that will fail strict mypy, and the diff does not show whether other production callers (for example transports or helpers) still pass `request=` to the decoder classes, since only the two listed files changed."
+        },
+        {
+          "id": "httpx:27df5e49c7a9",
+          "detectors": [
+            "delegating_wrapper_review"
+          ],
+          "verdict": "confirm_omission",
+          "reason": "In the already-read path, the diff computes `chunk_size = len(self._content) if chunk_size is None else chunk_size` and then calls `range(0, len(self._content), chunk_size)`. When the body is empty (`_content == b\"\"`, for example a 204 or empty 200 after `.read()`), chunk_size becomes 0 and `range(0, 0, 0)` raises `ValueError: range() arg 3 must not be zero`. The original code yielded `self._content` directly, so this is a regression on a common path. The same zero-step failure occurs if a caller passes `chunk_size=0`, and the streaming path's `ByteChunker`/`TextChunker` would hit the same `range(..., 0)` error in that case. The fast path needs a guard for empty content and for non-positive chunk sizes, or it should yield `self._content` when it is empty. The same defect is duplicated in `aiter_bytes`. Nothing in the diff validates `chunk_size`, and the test changes shown do not evidently cover the empty-body case."
+        },
+        {
+          "id": "httpx:ff9813e84dab",
+          "detectors": [
+            "override_signature_review"
+          ],
+          "verdict": "review_worthy",
+          "reason": "The commit moves timeout from Client.send() into Request.extensions, set only in BaseClient.build_request. Two cross-file risks need verification. (1) send() no longer accepts a timeout kwarg, so any caller or test that still passes timeout= to send() will raise TypeError; the only changed tests are test_auth, test_redirects and test_asgi, so other callers are unverified. (2) A Request constructed directly (Request(...)) and passed to client.send() gets extensions={} and no timeout, so _send_single_request no longer applies the client's timeout. That is a silent behavior change for that path. Also, ASGITransport now sets \"raw_path\" from url.raw_path, which includes the query string, whereas the old code used the path only. The ASGI spec expects path-only raw_path, so this is a possible regression. The remaining transport and stream refactoring looks internally consistent, and I found no import still referencing SyncByteStream/AsyncByteStream from _transports.base in the diff."
+        },
+        {
+          "id": "mkdocs:57b5ccd7d63e",
+          "detectors": [
+            "delegating_wrapper_review"
+          ],
+          "verdict": "review_worthy",
+          "reason": "The diff itself is internally consistent: load_config uses the new context manager, the new parameters and branches are used, the None/empty plugin and extension configs are handled, and ConfigurationError is raised for a missing parent. Two contract changes still need verification against code outside this diff. (1) yaml_load no longer closes its source. The removed TODO said that closing was there so that Windows could delete config files that tests had left open. This platform is win32, and the diff does not show whether any other caller, such as tests or internal commands that pass a file object, now leaks handles. (2) _open_config_file was changed from returning a file to yielding one. Any direct caller that still expects a file object, or that passes a closed descriptor, would break. Neither caller is visible in the diff, and the changed test files do not cover base config tests. Minor issues: yaml_load reads source.name when INHERIT is present, which fails for unnamed streams such as StringIO, and several docstrings contain typos (\"existed\", \"automaticaly\", \"overriden\"). These do not block the commit."
+        },
+        {
+          "id": "mkdocs:cf9d23757e4d",
+          "detectors": [
+            "override_signature_review"
+          ],
+          "verdict": "review_worthy",
+          "reason": "The commit changes the ListOfItems default from [] to None and makes run_validation raise ValidationError when the value is None and the option is required or has no default. Only ConfigItems was updated to pass default=[]. Any other direct ListOfItems instantiation that relied on the old implicit [] default, and omits an explicit default or required flag, will now raise on a missing value instead of returning []. The diff does not show those call sites, so I cannot confirm an omission, but the cross-file callers need verification. Separately, the new required/None path now raises a generic \"Required configuration not provided.\" message rather than the previous type error, which is also worth checking against tests that match on the old message."
+        },
+        {
+          "id": "mkdocs:7d8483904a5f",
+          "detectors": [
+            "delegating_wrapper_review"
+          ],
+          "verdict": "review_worthy",
+          "reason": "The diff moves YAMLError-to-ConfigurationError wrapping from Config.load_file into the shared yaml_load helper. Any caller of yaml_load (or of the re-exported mkdocs.utils.yaml_load) that catches yaml.YAMLError will no longer see it, which is a contract change needing cross-file verification. The new '!relative' placeholder also depends on config._current_page, which is only set during _populate_page and _build_page, so a !relative tag loaded from any other path (e.g. config-time hooks) raises ConfigurationError. The diff shows no concrete unfinished caller update, so this is a warning, not a confirmed omission. Note that base.py now calls warnings.warn but the diff does not add a warnings import, so verify it already exists there."
+        },
+        {
+          "id": "rich:a9669b8859d5",
+          "detectors": [
+            "delegating_wrapper_review"
+          ],
+          "verdict": "review_worthy",
+          "reason": "The diff adds a `highlight` keyword to Table.add_column and forwards it to the `Column(...)` constructor. The diff does not show a `highlight` field being added to the `Column` dataclass, so if that field does not already exist, every add_column call would raise TypeError. The diff also does not show any rendering path that reads column.highlight. The commit subject describes per-column highlighting, so the rendering side (for example, cell rendering passing highlight to render_str) may be missing from this diff. I could not verify the Column definition or the render path because I had no repository access, so this needs a check of the Column dataclass and the cell-rendering code before the commit is treated as complete."
+        },
+        {
+          "id": "scrapy:180ca39b2305",
+          "detectors": [
+            "call_signature_review"
+          ],
+          "verdict": "review_worthy",
+          "reason": "The commit adds a ScrapyDeprecationWarning inside the shared utility maybeDeferred_coro, which fires whenever any callable returns a Deferred. That warning is not scoped to pipelines, so other maybeDeferred_coro callers in the repo that legitimately return Deferreds would now emit deprecation warnings. Those callers are not in the diff and should be checked. Separately, the diff passes a `_warn=` keyword to ensure_awaitable in middleware.py and pipelines/__init__.py, but ensure_awaitable is not modified here, so its signature has to be confirmed to already accept `_warn`. The pipeline changes themselves look internally consistent: imports are updated, the removed maybe_deferred_to_future has no remaining uses in the diff, and open_spider/close_spider wrap the coroutine correctly."
+        },
+        {
+          "id": "scrapy:f875af4a86b2",
+          "detectors": [
+            "parameter_sink_review"
+          ],
+          "verdict": "review_worthy",
+          "reason": "No concrete unfinished update is visible in the diff. The moved symbols (BaseHttpDownloadHandler, NullCookieJar) are updated at the visible importers, and the new httpx code uses its helpers consistently. The risk is a contract inconsistency: Response.certificate was widened from twisted.internet.ssl.Certificate to Any so httpx can store DER bytes from getpeercert(binary_form=True), while the http11 handler still passes a Twisted Certificate object. Consumers that rely on the Certificate API will break for one handler or the other. Other importers of the removed BaseHttpDownloadHandler from scrapy.utils._download_handlers (for example http10.py or tests outside the changed files) cannot be checked from this diff and should be verified."
+        },
+        {
+          "id": "urllib3:52392654b301",
+          "detectors": [
+            "override_signature_review"
+          ],
+          "verdict": "confirm_omission",
+          "reason": "The commit adds a new `version_string` attribute to BaseHTTPResponse, HTTPResponse, HTTP2Response, and the emscripten wrapper, but the debug log in connectionpool.py does not use it. Instead it formats `response.version` with the template \"HTTP/%s\". `response.version` is an integer (e.g. 11 for HTTP/1.1, 20 for HTTP/2, 0 for emscripten), so the log will print \"HTTP/11\", \"HTTP/20\", or \"HTTP/0\" rather than the real version string. The previous code logged `_http_vsn_str` correctly, so this is a regression in the exact line the commit title says it fixes. The new `version_string` field is stored but never read in the log path, so it is effectively unused. Also, BaseHTTPResponse.__init__ now requires `version_string` with no default, so any other subclass or direct constructor call that was not updated will raise TypeError. The log should use `response.version_string`."
+        },
+        {
+          "id": "urllib3:f7bcf6986fa9",
+          "detectors": [
+            "parameter_sink_review"
+          ],
+          "verdict": "review_worthy",
+          "reason": "The signature changes to shutdown(self, how: int), but `how` is never used. The body calls self.connection.shutdown(), which performs a full SSL shutdown and ignores socket.SHUT_RD. HTTPResponse.shutdown() passes socket.SHUT_RD expecting read-side-only semantics, so with pyOpenSSL the behavior differs from plain sockets and TLS. The parameter likely exists only to match the socket.shutdown interface, so this is not a broken caller. Still, the unused parameter and the divergent semantics are a cross-file contract risk worth verifying. The TODO in connection.py (\"should we implement it everywhere?\") also suggests the sock_shutdown propagation is not yet uniform across socket types. Nothing in the diff shows an actual crash or missed caller, so this is not a confirmed omission."
+        }
+      ],
+      "fp_silent_controls": [
+        {
+          "id": "httpx:2e60e145d772",
+          "subject": "Drop extraneous `proxy` argument on `URLLib3Transport`. (#1090)",
+          "verdict": "review_worthy",
+          "reason": "The diff removes the `proxy` keyword parameter from URLLib3Transport.__init__ and removes the `Proxy` import. The visible hunk shows no leftover reference, so this isn't a confirmed omission. Two things need checking outside the diff: (1) any caller that still passes `proxy=` to URLLib3Transport will now raise TypeError, since this is a keyword-only signature change; (2) the __init__ body and the rest of urllib3.py must not still reference `proxy` or `Proxy`, or the change would raise NameError at runtime or import time. The diff only shows the signature and import hunks, so the body and call sites are unverified."
+        },
+        {
+          "id": "httpx:d25f2bfeff35",
+          "subject": "Fix stream unsetting auth (#1312)",
+          "verdict": "review_worthy",
+          "reason": "The diff changes the `auth` default in `BaseClient.stream` and `StreamContextManager.__init__` from `None` to `UNSET`, so an omitted `auth` now arrives downstream as a non-None sentinel. The diff does not show the code that consumes it. `StreamContextManager` presumably forwards `auth` to `client.send(...)`, and `send` / `_build_request_auth` must treat `UNSET` as \"fall back to client.auth\" and must not treat it as a real auth callable. If those functions still check `auth is None`, `UNSET` would be passed as an auth object and fail when called. The commit's changed test file suggests the behavior was exercised, but the production hunks alone do not show the downstream handling, so the callers and auth-resolution path should be verified. No concrete omission is visible in the diff itself."
+        },
+        {
+          "id": "marshmallow:3273a5beb9db",
+          "subject": "Remove FieldABC and the base module (#2722)",
+          "verdict": "review_worthy",
+          "reason": "The production diff is internally consistent: every in-diff use of base.FieldABC, utils.resolve_field_instance, and FieldInstanceResolutionError in fields.py and schema.py is migrated, and the isinstance/issubclass checks now use Field, which is equivalent because Field is the only subclass. However, the commit deletes the marshmallow.base module, removes the public utils.resolve_field_instance function, and renames the public FieldInstanceResolutionError to a private _FieldInstanceResolutionError. Any remaining references in other modules, docs, or tests that import these names would now fail with ImportError or AttributeError. Only tests/test_serialization.py was changed, so other test files (for example test_fields.py or test_utils.py) that reference these names may not have been updated. This cannot be confirmed from the provided diff, so it warrants verification by grepping the repo for these symbols rather than a confirmed omission."
+        },
+        {
+          "id": "marshmallow:2fc8207da9cf",
+          "subject": "@validates accepts multiple field names (#1965)",
+          "verdict": "review_worthy",
+          "reason": "The commit changes the validator call contract. Before, decorated validators were invoked as validator(value). Now they are invoked through functools.partial(validator, data_key=data_key), so every @validates method must accept a data_key keyword. Existing user-defined validators with the signature (self, value) will raise TypeError at runtime. The docstring notes this as a versionchanged entry, so the change looks intentional, but nothing in the diff updates in-repo callers, examples, or documentation that define validates methods. The diff also relies on functools being imported in schema.py, which the diff does not show. The changed test files are listed but their contents are not in the diff, so I cannot confirm they cover the new signature. Because this is a breaking change to a public hook signature, the callers and subclasses should be verified. I found no concrete unfinished edit, so this is not confirm_omission."
+        },
+        {
+          "id": "mkdocs:a444c43474f9",
+          "subject": "Reimplement livereload",
+          "verdict": "review_worthy",
+          "reason": "The production diff looks internally consistent: serve() constructs LiveReloadServer with the arguments its __init__ accepts, error_handler is wired, the removed tornado logger tweak in __main__.py has no remaining dependents, and the new watch() keeps backward compatibility for a plugin-supplied func via the deprecation path. No newly added parameter goes unused and no new exception goes unhandled. Still, the change is risky across files and the diff does not show these dependents being updated: (1) the private helpers removed from mkdocs/commands/serve.py may be referenced by existing tests (only livereload_tests.py is in the changed-test list); (2) setup.py drops livereload and tornado, so any remaining imports of tornado or livereload elsewhere (tests, plugins, docs) would break; (3) the 'serve' plugin event now receives a different server type with a changed serve() signature (no root/host/port arguments), so third-party plugins calling server.serve(root=...) or relying on the old Server API would break; (4) builder exceptions raised inside _build_loop are not caught and would terminate the server. These warrant verification, but the diff does not confirm an omission."
+        },
+        {
+          "id": "mkdocs:fafdcc240e05",
+          "subject": "Move livereload endpoint under the mount path (#2740)",
+          "verdict": "review_worthy",
+          "reason": "The diff changes _inject_js_into_html from a @classmethod to an instance method (it now reads self.mount_path). Any caller that invokes it on the class, or any subclass or wrapper that relies on the classmethod signature, would break. The diff does not show those call sites, so this needs verification. The commit also removes the /js/livereload.js route and the script tag that referenced it, which leaves livereload.js possibly orphaned. The mount-path routing and template substitution look internally consistent, and livereload_tests.py was updated, so this is a warning rather than a confirmed omission."
+        },
+        {
+          "id": "mkdocs:6a694fd87ba5",
+          "subject": "Refactor Logging and Error handling",
+          "verdict": "review_worthy",
+          "reason": "The strict-mode check in build.py now depends on utils.log_counter receiving records. That handler is attached to the 'mkdocs' logger only inside State.__init__, which runs for the CLI but not for direct library use of mkdocs.commands.build.build(). Previously the warning filters were attached at module level and counted warnings regardless of entry point. So strict=True through the API may silently stop aborting on warnings. The counter is also a process-global that is never reset, so repeated builds (serve live reload, or several builds in one process) accumulate counts across runs. Other concrete points: config/base.py now raises Abort where it used to raise ConfigurationError, so any remaining `except ConfigurationError` callers in other modules would no longer match. ColorFormatter.format indexes lines[0] after textwrap.wrap, which raises IndexError on empty or whitespace-only messages. The changed test files do not include build, nav, pages, or theme tests, even though the warning_filter attachments were removed from those modules. Verify those callers and tests; I could not confirm a definite break from the diff alone."
+        },
+        {
+          "id": "rich:bbd3914f98f5",
+          "subject": "fix typing",
+          "verdict": "review_worthy",
+          "reason": "The commit is titled \"fix typing\" but changes the public signatures of Traceback.__init__, from_exception and extract. A bare `*` is inserted after the positional `trace`/`exc_type, exc_value, traceback` parameters, which makes width, extra_lines, theme, show_locals, and the rest keyword-only. `indent_guides` is also moved to a different position. Any caller that passes these arguments positionally will now raise TypeError, and the diff does not show whether such callers exist elsewhere in the repo or in dependent code. The internal call in install() was updated to use keywords, which is consistent with the intent, but the changes to the public API are not mentioned in the commit subject. Nothing in the diff is an unused parameter or an unhandled exception, so this is not confirmed as an omission. The contract change still needs verification of positional callers and subclasses across the repo."
+        },
+        {
+          "id": "paramiko:6f02c1e3a4a4",
+          "subject": "Streamline RSA pubkey algorithm handling now that SHA1 is gone",
+          "verdict": "review_worthy",
+          "reason": "The diff deletes the private method _choose_fallback_pubkey_algorithm and inlines its logic into _finalize_pubkey_algorithm. The in-diff caller is updated, but the commit changes no test files, and existing tests or other modules may still reference the removed method. I can't search the repo from here to confirm. Two related risks: the OpenSSH<7.8 RSA-cert special case was removed, which changes behavior for old servers and may be covered by tests, and the removed code used `re.search`, so the `re` import in auth_handler.py may now be unused (a lint failure) unless it is used elsewhere in the file. Recommend grepping for `_choose_fallback_pubkey_algorithm`, `re.`, and the old cert-forcing behavior across the test suite."
+        },
+        {
+          "id": "paramiko:8e5198394252",
+          "subject": "Add hmac-sha2-256-etm@openssh.com and hmac-sha2-512-etm@openssh.com support",
+          "verdict": "review_worthy",
+          "reason": "The EtM wiring looks internally consistent: the MAC is verified over the cleartext length plus ciphertext before decryption, outbound MAC covers the encrypted output, and the padding adjustment excludes the length field. No new parameter is left unused, and the new `etm` keyword defaults to False, so existing callers still work. Still, the change warrants verification. The inbound EtM branch skips the original \"Invalid packet blocking\" check, which validated that packet_size aligns to the cipher block size. It also has no lower bound on packet_size, so a packet_size below block_size - 4 yields a negative read_all length. The commit touches no test files, so the new wire-protocol path has no test coverage in this diff."
+        },
+        {
+          "id": "pytest:344c23787cdb",
+          "subject": "Accept type expressions in Parser.addini(type=...) (#14751)",
+          "verdict": "review_worthy",
+          "reason": "The stored ini type in Parser._inidict changes from a plain string tag to IniType (a string tag, an _IniLiteral, or a tuple of members). The diff updates the consumers it shows: helpconfig.showhelp now calls _ini_type_repr, and Config._getini dispatches on tuple/_IniLiteral before reaching the old string-tag logic. Any other reader of _inidict that still assumes a str (for example string comparisons like type == \"paths\", or plugin code that reads parser._inidict directly) is not in the diff and was not checked. The rest of the old _getini body, which now lives in _getini_value, is also not fully visible, so its handling of \"paths\"/\"pathlist\" relative-to-inipath logic should be verified. The code shown is otherwise internally consistent: imports are used, the union path raises on no match, unhashable and non-string Literal inputs are rejected, and get_ini_default_for_type is only called with plain tags."
+        },
+        {
+          "id": "scrapy:2d007bc45084",
+          "subject": "Make more of the internal handler helpers private. (#7510)",
+          "verdict": "review_worthy",
+          "reason": "The diff is internally consistent: every in-diff reference to the renamed names is updated, and the removed class attributes `_Agent`/`_TunnelingAgent` have no remaining uses in the shown code. However, the commit makes public names private and deletes the class-level hooks that `ScrapyAgent` and `ScrapyH2Agent` exposed, yet no test or support .py file changed. Any test or subclass that monkeypatches `ScrapyAgent._Agent`, `ScrapyAgent._TunnelingAgent`, or `ScrapyH2Agent._Agent`, or imports `tunnel_request_data` / `TunnelingAgent` / `ScrapyAgent` / `ScrapyH2Agent` from these modules, would now fail with AttributeError or ImportError. I cannot confirm that from the diff alone, since I have no repository search here, so this needs verification across the repo rather than an outright omission finding."
+        },
+        {
+          "id": "urllib3:06b97c50d728",
+          "subject": "Add support for decoding Zstandard",
+          "verdict": "review_worthy",
+          "reason": "The response.py and request.py changes look internally consistent: ZstdDecoder is gated on zstd, registered in CONTENT_DECODERS and DECODER_ERROR_CLASSES, dispatched in _get_decoder, and ACCEPT_ENCODING is extended under the same import guard. However, noxfile.py now installs `.[zstd]` and adds `zstd` to the test extras, and no `zstd` extra is defined in any of the shown .py changes. If packaging metadata (setup.cfg/pyproject.toml, which are not in the diff) does not declare a `zstd` extra, these sessions silently install no zstandard package and the Zstandard tests would be skipped or fail. Verify that the extra is declared. Minor nit: `_zstd_version = _zstd_version =` is a duplicated assignment and the `_unused_module_zstd` import is a side-effect-only check; neither is a contract break."
+        },
+        {
+          "id": "urllib3:24d7b67eac89",
+          "subject": "Merge commit from fork",
+          "verdict": "review_worthy",
+          "reason": "The change is internally complete: max_decode_links is a class attribute that is actually used in the check, the new DecodeError is a documented-style error type already used by the module, and the test file was touched. However, the raise now happens in MultiDecoder.__init__, which is reached from HTTPResponse construction (_init_decoder), not from the read/decode path. Previously an over-long Content-Encoding chain would be accepted, and any failure would surface during reads. Now a DecodeError can be raised while constructing the response. The diff does not show whether callers (e.g. connectionpool/urlopen paths that build HTTPResponse, or code that catches DecodeError only around read) handle an exception at construction time. This is a behavior/contract change worth verifying, but the diff alone shows no concrete unfinished update, so it is not a confirmed omission."
+        }
+      ]
+    },
+    "arm_c_strict_confirm_only": {
+      "counts": {
+        "flagged_kept": 9,
+        "kept_real_omission": 6,
+        "kept_review_worthy": 1,
+        "kept_false_only": 2,
+        "kept_silent_controls": 0,
+        "total_dataset": {
+          "real": 13,
+          "review_worthy": 5,
+          "false_only": 19,
+          "silent": 30
+        }
+      },
+      "metrics": {
+        "useful_precision_flagged_subset": 0.7778,
+        "useful_precision_all_67": 0.7778,
+        "strict_omission_precision_all_67": 0.6667,
+        "real_omission_recall": 0.4615,
+        "useful_commit_recall": 0.3889,
+        "false_alarm_suppression_rate": 0.8947,
+        "silent_control_fp_rate": 0.0
+      },
+      "usage": {
+        "llm_calls": 67,
+        "total_cost_usd": 0.13668,
+        "input_tokens": 134,
+        "cache_creation_input_tokens": 346591,
+        "cache_read_input_tokens": 1036995,
+        "output_tokens": 113954,
+        "total_wall_s": 761.57
+      },
+      "fn_real_omissions": [
+        {
+          "id": "httpx:9b17671f155a",
+          "detectors": [
+            "parameter_sink_review"
+          ],
+          "verdict": "suppress_false_alarm",
+          "reason": "The new `http1: bool = True` parameter is threaded consistently through every layer: Client and AsyncClient __init__, both _init_transport and _init_proxy_transport (sync and async), and into HTTPTransport and AsyncHTTPTransport, where it is forwarded to httpcore's ConnectionPool/AsyncConnectionPool alongside http2. No new parameter is left unused, and the sync/async pairs are symmetric. The setup.py bump to httpcore>=0.13.3 covers the dependency that supplies the http1 keyword. The only residual risk is that inserting `http1` before `http2` in the signatures shifts positional arguments for any caller passing `http2` positionally, but that is an ordinary keyword-style API and not an incomplete contract change in this diff."
+        },
+        {
+          "id": "mkdocs:a3e60f138508",
+          "detectors": [
+            "delegating_wrapper_review",
+            "override_signature_review"
+          ],
+          "verdict": "review_worthy",
+          "reason": "The commit adds `config_file_path=None` as the default on Config, and guards against None in FilesystemObject.pre_validation and Dir.post_validation. Theme.run_validation does not guard: when `custom_dir` is relative it runs `os.path.dirname(config.config_file_path)` unconditionally, so a Config built without a config file path (for example directly in tests, or by a caller that skips load_config) raises TypeError/AttributeError instead of falling back as the other options do. The same hunk also adds a new `os.path.isdir` check that raises ValidationError for a missing custom_dir, a behavior change that is not mentioned in the subject line. Related: load_config reads `options['config_file_path']` without a visible guarantee that the key is always present, which could raise KeyError. Nothing in the diff is clearly unfinished, so this is a risk to verify rather than a confirmed omission."
+        },
+        {
+          "id": "mkdocs:5c2b4f135360",
+          "detectors": [
+            "removed_callable_review"
+          ],
+          "verdict": "suppress_false_alarm",
+          "reason": "The contract changes are wired through consistently in the production diff. The new `shell` parameter is added to gh_deploy(), passed from the new `--shell` CLI option, and forwarded to ghp_import as `use_shell`. The call site switches to keyword arguments matching the ghp-import 1.0 API, and the error path now catches the new `ghp_import.GhpError`. The vendored mkdocs/utils/ghp_import.py is deleted, and the dependency is declared in setup.py. The changed test files (gh_deploy_tests.py, ghp_import_tests.py) are in the commit, which suggests the tests were updated to match. No caller in the diff still references the removed module or the old tuple-return signature. The only residual risk is external code importing mkdocs.utils.ghp_import, which is not visible in this diff."
+        },
+        {
+          "id": "rich:c856e6b46901",
+          "detectors": [
+            "delegating_wrapper_review"
+          ],
+          "verdict": "review_worthy",
+          "reason": "The commit subject is \"version bump\", but the diff adds new public parameters (locals_max_length, locals_max_string, locals_hide_dunder, locals_hide_sunder) to install(), Traceback.__init__, Traceback.from_exception and Traceback.extract. The wiring looks complete within this file: install() forwards the new kwargs to from_exception, which forwards them to extract and to cls(...), and extract's get_locals closure uses both hide flags. The main concern is that install() annotates locals_hide_sunder as `bool | None`. That PEP 604 syntax is evaluated at function definition time without `from __future__ import annotations`, so importing rich raises TypeError on Python versions before 3.10. This file already imports dataclasses (3.7+), so older supported interpreters are plausible. This should be verified against the project's minimum Python version. Secondary inconsistencies: install()'s docstring says locals_hide_sunder defaults to False while the signature default is None; the defaults for locals_hide_dunder differ between __init__ (False), from_exception (True) and extract (True); and the diff does not show whether Path or Dict are still used elsewhere in the file after their imports were removed or altered. The commit message does not describe a feature change of this size."
+        },
+        {
+          "id": "rich:7001a52a356f",
+          "detectors": [
+            "delegating_wrapper_review"
+          ],
+          "verdict": "review_worthy",
+          "reason": "The commit deletes rich/cell_string.py and moves its contents into rich/cells.py, but the diff only updates the CellTable imports in the _unicode_data modules and tools/make_width_tables.py. Any remaining `import rich.cell_string` (or `from rich.cell_string import Span/CellString/split_text`) elsewhere in the package or in tests would now raise ImportError, and the diff does not show a search for them. Only tests/test_cells.py is listed as changed, so a separate test module for cell_string, if one existed, is not covered. Public behavior also shifts without accompanying changes in the diff: cell_len lost its `_cell_len` parameter and its <512-char cached fast path, and chop_cells was rewritten on grapheme spans, so an empty string now yields [] instead of [\"\"] and wide-character folding differs. Dropping the now-unused `from ._cell_widths import CELL_WIDTHS` may also orphan rich/_cell_widths.py. None of these is confirmed from the diff alone, so the commit needs verification of remaining importers and callers rather than a confirmed omission."
+        },
+        {
+          "id": "paramiko:5c4b311b6951",
+          "detectors": [
+            "removed_callable_review"
+          ],
+          "verdict": "review_worthy",
+          "reason": "The commit deletes the entire public module paramiko/py3compat.py (185 lines, including b, u, b2s, StringIO, BytesIO, MAXSIZE, PY2, and others listed in __all__). The production diff shows no edits to any other file, so any remaining `import paramiko.py3compat` or `from paramiko.py3compat import ...` would now raise ImportError. The diff alone cannot confirm whether callers were updated, and no test files were changed, so this needs verification by searching the repo for references to py3compat and its symbols. It is not a confirmed omission because the diff does not show a concrete remaining caller."
+        },
+        {
+          "id": "scrapy:9bfa58e36cca",
+          "detectors": [
+            "call_signature_review"
+          ],
+          "verdict": "review_worthy",
+          "reason": "The diff sets `self._stopping = True` in `stop_async()` but never resets it in `start_async()`. Once an engine has been stopped, any later `start_async()` call returns early after `engine_started` and skips request processing, with no error. Restart behavior should be verified or the flag reset on start. Related, lower-severity items: `FeedExporter._pending_close_coros` is never cleared after `close_spider()` awaits it, so a second `close_spider()` would try to await already-awaited coroutines. Also, removed symbols (`FeedExporter._pending_deferreds`, `_handle_store_success`/`_handle_store_error`, and the `_close_slot` return type) may still be referenced by callers or tests outside this diff, which I can't verify from the diff alone. No unused parameters or unhandled new exceptions are visible."
+        }
+      ],
+      "fp_flagged_commits": [
+        {
+          "id": "httpx:27df5e49c7a9",
+          "detectors": [
+            "delegating_wrapper_review"
+          ],
+          "verdict": "confirm_omission",
+          "reason": "In the already-read path, the diff computes `chunk_size = len(self._content) if chunk_size is None else chunk_size` and then calls `range(0, len(self._content), chunk_size)`. When the body is empty (`_content == b\"\"`, for example a 204 or empty 200 after `.read()`), chunk_size becomes 0 and `range(0, 0, 0)` raises `ValueError: range() arg 3 must not be zero`. The original code yielded `self._content` directly, so this is a regression on a common path. The same zero-step failure occurs if a caller passes `chunk_size=0`, and the streaming path's `ByteChunker`/`TextChunker` would hit the same `range(..., 0)` error in that case. The fast path needs a guard for empty content and for non-positive chunk sizes, or it should yield `self._content` when it is empty. The same defect is duplicated in `aiter_bytes`. Nothing in the diff validates `chunk_size`, and the test changes shown do not evidently cover the empty-body case."
+        },
+        {
+          "id": "urllib3:52392654b301",
+          "detectors": [
+            "override_signature_review"
+          ],
+          "verdict": "confirm_omission",
+          "reason": "The commit adds a new `version_string` attribute to BaseHTTPResponse, HTTPResponse, HTTP2Response, and the emscripten wrapper, but the debug log in connectionpool.py does not use it. Instead it formats `response.version` with the template \"HTTP/%s\". `response.version` is an integer (e.g. 11 for HTTP/1.1, 20 for HTTP/2, 0 for emscripten), so the log will print \"HTTP/11\", \"HTTP/20\", or \"HTTP/0\" rather than the real version string. The previous code logged `_http_vsn_str` correctly, so this is a regression in the exact line the commit title says it fixes. The new `version_string` field is stored but never read in the log path, so it is effectively unused. Also, BaseHTTPResponse.__init__ now requires `version_string` with no default, so any other subclass or direct constructor call that was not updated will raise TypeError. The log should use `response.version_string`."
+        }
+      ],
+      "fp_silent_controls": []
+    }
+  },
+  "arm_b_by_detector": {
+    "call_signature_review": {
+      "false_only|suppress_false_alarm": 1,
+      "real_omission|suppress_false_alarm": 1,
+      "review_worthy|suppress_false_alarm": 1
+    },
+    "delegating_wrapper_review": {
+      "false_only|review_worthy": 1,
+      "false_only|suppress_false_alarm": 5,
+      "real_omission|confirm_omission": 4,
+      "real_omission|suppress_false_alarm": 1
+    },
+    "exception_contract_review": {
+      "false_only|suppress_false_alarm": 1,
+      "review_worthy|confirm_omission": 1
+    },
+    "override_signature_review": {
+      "false_only|suppress_false_alarm": 6,
+      "real_omission|confirm_omission": 1,
+      "real_omission|suppress_false_alarm": 1,
+      "review_worthy|suppress_false_alarm": 2
+    },
+    "parameter_sink_review": {
+      "false_only|suppress_false_alarm": 4,
+      "real_omission|confirm_omission": 2,
+      "real_omission|review_worthy": 1,
+      "review_worthy|confirm_omission": 1
+    },
+    "removed_callable_review": {
+      "real_omission|confirm_omission": 2,
+      "real_omission|suppress_false_alarm": 1
+    },
+    "state_field_review": {
+      "false_only|suppress_false_alarm": 1
+    }
+  }
+}

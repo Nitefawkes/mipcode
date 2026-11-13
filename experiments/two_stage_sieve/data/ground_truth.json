@@ -1,0 +1,479 @@
+{
+  "attrs:deb97638a7d0": {
+    "commit_label": "silent_control",
+    "after_drop_state_field": "silent_control",
+    "detectors": [],
+    "total_sites": 0
+  },
+  "attrs:c860e9dd2548": {
+    "commit_label": "silent_control",
+    "after_drop_state_field": "silent_control",
+    "detectors": [],
+    "total_sites": 0
+  },
+  "attrs:d0c73d8faa18": {
+    "commit_label": "silent_control",
+    "after_drop_state_field": "silent_control",
+    "detectors": [],
+    "total_sites": 0
+  },
+  "httpx:926a55a84f0a": {
+    "commit_label": "false_only",
+    "after_drop_state_field": "false_only",
+    "detectors": [
+      "delegating_wrapper_review"
+    ],
+    "total_sites": 4
+  },
+  "httpx:e0b4528b170b": {
+    "commit_label": "false_only",
+    "after_drop_state_field": "false_only",
+    "detectors": [
+      "exception_contract_review"
+    ],
+    "total_sites": 2
+  },
+  "httpx:feb404f86b46": {
+    "commit_label": "false_only",
+    "after_drop_state_field": "false_only",
+    "detectors": [
+      "override_signature_review"
+    ],
+    "total_sites": 1
+  },
+  "httpx:27df5e49c7a9": {
+    "commit_label": "false_only",
+    "after_drop_state_field": "false_only",
+    "detectors": [
+      "delegating_wrapper_review"
+    ],
+    "total_sites": 4
+  },
+  "httpx:9b17671f155a": {
+    "commit_label": "real_omission",
+    "after_drop_state_field": "real_omission",
+    "detectors": [
+      "parameter_sink_review"
+    ],
+    "total_sites": 1
+  },
+  "httpx:541a0afe5636": {
+    "commit_label": "real_omission",
+    "after_drop_state_field": "real_omission",
+    "detectors": [
+      "override_signature_review"
+    ],
+    "total_sites": 2
+  },
+  "httpx:ff9813e84dab": {
+    "commit_label": "false_only",
+    "after_drop_state_field": "false_only",
+    "detectors": [
+      "override_signature_review"
+    ],
+    "total_sites": 1
+  },
+  "httpx:2e60e145d772": {
+    "commit_label": "silent_control",
+    "after_drop_state_field": "silent_control",
+    "detectors": [],
+    "total_sites": 0
+  },
+  "httpx:33d339a2622c": {
+    "commit_label": "silent_control",
+    "after_drop_state_field": "silent_control",
+    "detectors": [],
+    "total_sites": 0
+  },
+  "httpx:d25f2bfeff35": {
+    "commit_label": "silent_control",
+    "after_drop_state_field": "silent_control",
+    "detectors": [],
+    "total_sites": 0
+  },
+  "marshmallow:013abfd669f6": {
+    "commit_label": "false_only",
+    "after_drop_state_field": "false_only",
+    "detectors": [
+      "override_signature_review"
+    ],
+    "total_sites": 1
+  },
+  "marshmallow:1db1a8a87041": {
+    "commit_label": "false_only",
+    "after_drop_state_field": "false_only",
+    "detectors": [
+      "override_signature_review"
+    ],
+    "total_sites": 1
+  },
+  "marshmallow:447eb86c9c70": {
+    "commit_label": "review_worthy",
+    "after_drop_state_field": "review_worthy",
+    "detectors": [
+      "override_signature_review"
+    ],
+    "total_sites": 1
+  },
+  "marshmallow:2bf3ae6ac656": {
+    "commit_label": "review_worthy",
+    "after_drop_state_field": "review_worthy",
+    "detectors": [
+      "override_signature_review"
+    ],
+    "total_sites": 1
+  },
+  "marshmallow:dbfc7476e06a": {
+    "commit_label": "silent_control",
+    "after_drop_state_field": "silent_control",
+    "detectors": [],
+    "total_sites": 0
+  },
+  "marshmallow:3273a5beb9db": {
+    "commit_label": "silent_control",
+    "after_drop_state_field": "silent_control",
+    "detectors": [],
+    "total_sites": 0
+  },
+  "marshmallow:2fc8207da9cf": {
+    "commit_label": "silent_control",
+    "after_drop_state_field": "silent_control",
+    "detectors": [],
+    "total_sites": 0
+  },
+  "mkdocs:a3e60f138508": {
+    "commit_label": "real_omission",
+    "after_drop_state_field": "real_omission",
+    "detectors": [
+      "delegating_wrapper_review",
+      "override_signature_review"
+    ],
+    "total_sites": 2
+  },
+  "mkdocs:5c2b4f135360": {
+    "commit_label": "real_omission",
+    "after_drop_state_field": "real_omission",
+    "detectors": [
+      "removed_callable_review"
+    ],
+    "total_sites": 1
+  },
+  "mkdocs:57b5ccd7d63e": {
+    "commit_label": "false_only",
+    "after_drop_state_field": "false_only",
+    "detectors": [
+      "delegating_wrapper_review"
+    ],
+    "total_sites": 1
+  },
+  "mkdocs:cf9d23757e4d": {
+    "commit_label": "false_only",
+    "after_drop_state_field": "false_only",
+    "detectors": [
+      "override_signature_review"
+    ],
+    "total_sites": 1
+  },
+  "mkdocs:7d8483904a5f": {
+    "commit_label": "false_only",
+    "after_drop_state_field": "false_only",
+    "detectors": [
+      "delegating_wrapper_review"
+    ],
+    "total_sites": 1
+  },
+  "mkdocs:a42ab62311b0": {
+    "commit_label": "review_worthy",
+    "after_drop_state_field": "review_worthy",
+    "detectors": [
+      "parameter_sink_review"
+    ],
+    "total_sites": 1
+  },
+  "mkdocs:a444c43474f9": {
+    "commit_label": "silent_control",
+    "after_drop_state_field": "silent_control",
+    "detectors": [],
+    "total_sites": 0
+  },
+  "mkdocs:fafdcc240e05": {
+    "commit_label": "silent_control",
+    "after_drop_state_field": "silent_control",
+    "detectors": [],
+    "total_sites": 0
+  },
+  "mkdocs:6a694fd87ba5": {
+    "commit_label": "silent_control",
+    "after_drop_state_field": "silent_control",
+    "detectors": [],
+    "total_sites": 0
+  },
+  "rich:c856e6b46901": {
+    "commit_label": "real_omission",
+    "after_drop_state_field": "real_omission",
+    "detectors": [
+      "delegating_wrapper_review"
+    ],
+    "total_sites": 2
+  },
+  "rich:a9669b8859d5": {
+    "commit_label": "false_only",
+    "after_drop_state_field": "false_only",
+    "detectors": [
+      "delegating_wrapper_review"
+    ],
+    "total_sites": 1
+  },
+  "rich:e8e797d19d84": {
+    "commit_label": "real_omission",
+    "after_drop_state_field": "real_omission",
+    "detectors": [
+      "delegating_wrapper_review"
+    ],
+    "total_sites": 1
+  },
+  "rich:5ffec68c91d4": {
+    "commit_label": "real_omission",
+    "after_drop_state_field": "real_omission",
+    "detectors": [
+      "delegating_wrapper_review"
+    ],
+    "total_sites": 1
+  },
+  "rich:7001a52a356f": {
+    "commit_label": "real_omission",
+    "after_drop_state_field": "real_omission",
+    "detectors": [
+      "delegating_wrapper_review"
+    ],
+    "total_sites": 2
+  },
+  "rich:b17c6169a418": {
+    "commit_label": "silent_control",
+    "after_drop_state_field": "silent_control",
+    "detectors": [],
+    "total_sites": 0
+  },
+  "rich:bbd3914f98f5": {
+    "commit_label": "silent_control",
+    "after_drop_state_field": "silent_control",
+    "detectors": [],
+    "total_sites": 0
+  },
+  "rich:b7ce2dc48d29": {
+    "commit_label": "silent_control",
+    "after_drop_state_field": "silent_control",
+    "detectors": [],
+    "total_sites": 0
+  },
+  "paramiko:b5a7c1c327ff": {
+    "commit_label": "real_omission",
+    "after_drop_state_field": "real_omission",
+    "detectors": [
+      "parameter_sink_review"
+    ],
+    "total_sites": 2
+  },
+  "paramiko:363a28d94cad": {
+    "commit_label": "real_omission",
+    "after_drop_state_field": "real_omission",
+    "detectors": [
+      "parameter_sink_review"
+    ],
+    "total_sites": 5
+  },
+  "paramiko:5c4b311b6951": {
+    "commit_label": "real_omission",
+    "after_drop_state_field": "real_omission",
+    "detectors": [
+      "removed_callable_review"
+    ],
+    "total_sites": 128
+  },
+  "paramiko:c2ba378ef2ea": {
+    "commit_label": "real_omission",
+    "after_drop_state_field": "real_omission",
+    "detectors": [
+      "removed_callable_review"
+    ],
+    "total_sites": 1
+  },
+  "paramiko:2bc68629f386": {
+    "commit_label": "silent_control",
+    "after_drop_state_field": "silent_control",
+    "detectors": [],
+    "total_sites": 0
+  },
+  "paramiko:6f02c1e3a4a4": {
+    "commit_label": "silent_control",
+    "after_drop_state_field": "silent_control",
+    "detectors": [],
+    "total_sites": 0
+  },
+  "paramiko:8e5198394252": {
+    "commit_label": "silent_control",
+    "after_drop_state_field": "silent_control",
+    "detectors": [],
+    "total_sites": 0
+  },
+  "pytest:58d8b55beb7b": {
+    "commit_label": "false_only",
+    "after_drop_state_field": "false_only",
+    "detectors": [
+      "delegating_wrapper_review"
+    ],
+    "total_sites": 2
+  },
+  "pytest:f3a92199fe96": {
+    "commit_label": "silent_control",
+    "after_drop_state_field": "silent_control",
+    "detectors": [],
+    "total_sites": 0
+  },
+  "pytest:efa9eff58316": {
+    "commit_label": "silent_control",
+    "after_drop_state_field": "silent_control",
+    "detectors": [],
+    "total_sites": 0
+  },
+  "pytest:344c23787cdb": {
+    "commit_label": "silent_control",
+    "after_drop_state_field": "silent_control",
+    "detectors": [],
+    "total_sites": 0
+  },
+  "requests:7fd9267b3bab": {
+    "commit_label": "silent_control",
+    "after_drop_state_field": "silent_control",
+    "detectors": [],
+    "total_sites": 0
+  },
+  "requests:bbdbcc8f0553": {
+    "commit_label": "silent_control",
+    "after_drop_state_field": "silent_control",
+    "detectors": [],
+    "total_sites": 0
+  },
+  "requests:10968357a19a": {
+    "commit_label": "silent_control",
+    "after_drop_state_field": "silent_control",
+    "detectors": [],
+    "total_sites": 0
+  },
+  "scrapy:9bfa58e36cca": {
+    "commit_label": "real_omission",
+    "after_drop_state_field": "real_omission",
+    "detectors": [
+      "call_signature_review"
+    ],
+    "total_sites": 2
+  },
+  "scrapy:5a7e132486f3": {
+    "commit_label": "false_only",
+    "after_drop_state_field": "false_only",
+    "detectors": [
+      "parameter_sink_review"
+    ],
+    "total_sites": 1
+  },
+  "scrapy:180ca39b2305": {
+    "commit_label": "false_only",
+    "after_drop_state_field": "false_only",
+    "detectors": [
+      "call_signature_review"
+    ],
+    "total_sites": 2
+  },
+  "scrapy:f875af4a86b2": {
+    "commit_label": "false_only",
+    "after_drop_state_field": "false_only",
+    "detectors": [
+      "parameter_sink_review"
+    ],
+    "total_sites": 1
+  },
+  "scrapy:db5bad1dddb3": {
+    "commit_label": "false_only",
+    "after_drop_state_field": "suppressed_by_ablation",
+    "detectors": [
+      "state_field_review"
+    ],
+    "total_sites": 4
+  },
+  "scrapy:4d372f0275c3": {
+    "commit_label": "review_worthy",
+    "after_drop_state_field": "review_worthy",
+    "detectors": [
+      "call_signature_review"
+    ],
+    "total_sites": 3
+  },
+  "scrapy:5b3761361809": {
+    "commit_label": "silent_control",
+    "after_drop_state_field": "silent_control",
+    "detectors": [],
+    "total_sites": 0
+  },
+  "scrapy:2d007bc45084": {
+    "commit_label": "silent_control",
+    "after_drop_state_field": "silent_control",
+    "detectors": [],
+    "total_sites": 0
+  },
+  "scrapy:1157b3e235c9": {
+    "commit_label": "silent_control",
+    "after_drop_state_field": "silent_control",
+    "detectors": [],
+    "total_sites": 0
+  },
+  "urllib3:cefd1dbba6a2": {
+    "commit_label": "review_worthy",
+    "after_drop_state_field": "review_worthy",
+    "detectors": [
+      "exception_contract_review"
+    ],
+    "total_sites": 1
+  },
+  "urllib3:8b4e56854344": {
+    "commit_label": "false_only",
+    "after_drop_state_field": "false_only",
+    "detectors": [
+      "parameter_sink_review"
+    ],
+    "total_sites": 1
+  },
+  "urllib3:52392654b301": {
+    "commit_label": "false_only",
+    "after_drop_state_field": "false_only",
+    "detectors": [
+      "override_signature_review"
+    ],
+    "total_sites": 2
+  },
+  "urllib3:f7bcf6986fa9": {
+    "commit_label": "false_only",
+    "after_drop_state_field": "false_only",
+    "detectors": [
+      "parameter_sink_review"
+    ],
+    "total_sites": 1
+  },
+  "urllib3:37c9496befb4": {
+    "commit_label": "silent_control",
+    "after_drop_state_field": "silent_control",
+    "detectors": [],
+    "total_sites": 0
+  },
+  "urllib3:06b97c50d728": {
+    "commit_label": "silent_control",
+    "after_drop_state_field": "silent_control",
+    "detectors": [],
+    "total_sites": 0
+  },
+  "urllib3:24d7b67eac89": {
+    "commit_label": "silent_control",
+    "after_drop_state_field": "silent_control",
+    "detectors": [],
+    "total_sites": 0
+  }
+}

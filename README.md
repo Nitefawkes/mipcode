@@ -47,7 +47,22 @@ We replayed the check over recent history in ten open-source repositories that i
 - **Most reports are not omissions.** About one report in three was a real omission or worth a reviewer's look. The rest were false.
 - **A type checker covers stale calls as well or better.** For calls that no longer match a changed or removed function, mypy reported as much as the check or more.
 
-The causes of three kinds of false report were fixed after those runs. A [regression check](results/held_out/regression/README.md) on the same repositories shows the current default set silent on 96.5% of the contract-changing commits, with a real omission or a site worth review in 18 of the 37 commits it flags. Those figures are fitted to these repositories and are not a new validation.
+The causes of three kinds of false report were fixed after those runs. A [regression check](results/held_out/regression/README.md) on the same repositories shows the baseline default set (`f4361fd`) silent on 96.5% of the contract-changing commits, with a real omission or a site worth review in 18 of the 37 commits it flags. Those figures are fitted to these repositories and are not a new validation.
+
+### Two-Stage Precision Sieve (Optional LLM Micro-Triage)
+
+Why not simply ask a fast LLM (`claude-haiku-5-5`) to inspect every git diff instead of running AST checks first? In [Experiment 1](results/two_stage_sieve/README.md), we benchmarked unguided Haiku diff review against AST-gated two-stage triage across all `37` flagged commits plus `30` silent contract-changing controls (`N = 67` blinded commits, no workspace tools) from the `f4361fd` replay:
+
+| Arm | Flagged Kept (`R+RW+F+S`) | Useful Prec | Strict Prec | Real Recall (`/13`) | Silent FP (`/30`) | LLM Calls | Nominal Cost |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| **Arm A:** `mip-delta` deterministic (`f4361fd`) | `13+5+19+0 = 37` | 48.6% | 35.1% | 13/13 (100.0%) | 0/30 (0.0%) | 0 | `$0.0000` |
+| **Arm B:** Two-stage (`mip-delta` + `--review` Haiku, keep) | `10+2+1+0 = 13` | **92.3%** | **76.9%** | 10/13 (76.9%) | **0/30 (0.0%)** | 37 | `$0.0882` |
+| **Arm C:** Unguided Haiku on diff (`confirm` + `review_worthy`) | `11+3+12+14 = 40` | 35.0% | 27.5% | 11/13 (84.6%) | **14/30 (46.7%)** | 67 | `$0.1367` |
+| **Arm C (strict):** Unguided Haiku (`confirm_omission` only) | `6+1+2+0 = 9` | 77.8% | 66.7% | **6/13 (46.2%)** | 0/30 (0.0%) | 67 | `$0.1367` |
+
+- **Two stages beat diff-only LLM review on precision and noise:** Unguided Haiku either floods clean commits with `46.7%` false warnings (`35.0%` precision) or, when restricted to high-confidence alerts, misses over half of real omissions (`46.2%` strict recall — including `httpx#3023`). With Stage 1 suppressing `96.5%` of commits at `$0`, Haiku triage on the remaining `3.5%` cuts false alarms by `94.7%` (`18/19`) for ~`$0.0024` per flagged commit (`9/13` real recall and `100.0%` useful precision on `confirm_omission` alone).
+- **Available as `--review`:** `mip-delta --check-git --review` runs Stage-2 triage only when Stage 1 emits findings, using `ANTHROPIC_API_KEY` (stdlib `urllib`) or an authenticated `claude` CLI with zero extra dependencies.
+- **Post-Experiment-1 Stage-1 & rubric refinements:** Demoting `state_field_review` to opt-in lifted deterministic precision (`48.6% -> 50.0%`, `37 -> 36` flagged commits, `0` recall loss), adding dead `self.<param>` attribute-store detection in `parameter_sink_review` added `0` false alarms across the 8,000-commit replay while directly flagging `rich:c856e6b46901` (`locals_hide_dunder`, `locals_hide_sunder`) and `urllib3:52392654b301` (`version_string`), and broadening the `--review` async rubric (`eager-to-deferred` execution) recovered `scrapy:9bfa58e36cca` (`confirm_omission`) while keeping `httpx:e0b4528b170b` suppressed.
 
 ## Quick start
 
@@ -89,6 +104,7 @@ The check can still run as [Claude Code hooks](docs/usage.md#run-as-claude-code-
 
 ## Research and development
 
+- [Two-stage precision sieve](results/two_stage_sieve/README.md) compares AST-only `mip-delta`, AST-gated `--review` Haiku triage, and unguided Haiku diff review across 67 blinded commits from the ten-repository replay.
 - [Held-out validation, round one](results/held_out/README.md) and [round two](results/held_out/round2/README.md) report the ten-repository replays, the reading of reported sites, recall on constructed omissions, and the mypy comparison. The [regression check](results/held_out/regression/README.md) reruns them after the detector fixes.
 - [Live pilot](results/pilot/README.md) reports the six agent sessions and why the pilot stopped.
 - [History replay](results/history_replay/README.md) runs the check over 2,944 upstream commits in the five repositories the checks were tuned on.

@@ -158,6 +158,27 @@ The failure mode occurs when humans or agents work across **long, multi-file ses
 
 ---
 
+## Two-Stage Precision Sieve (Optional LLM Micro-Triage)
+
+Once deterministic AST checks stay silent on 96.5% of contract-changing commits and surface half the flagged ones as useful (~48.6% precision), the obvious next question is: *why not skip the AST detector and just ask a cheap, fast LLM to inspect every git diff?*
+
+We tested that head-to-head in [Experiment 1](../results/two_stage_sieve/README.md) across `N = 67` blinded commits from the `f4361fd` replay (`37` flagged commits — `13` real omissions, `5` review-worthy, `19` false-only — plus `30` silent contract-changing controls, three per repository, with `--tools ""` isolation):
+
+| Arm | Flagged Kept (`R+RW+F+S`) | Useful Prec | Strict Prec | Real Recall (`/13`) | Silent FP (`/30`) | LLM Calls | Nominal Cost |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| **Arm A:** `mip-delta` deterministic (`f4361fd`) | `13+5+19+0 = 37` | 48.6% | 35.1% | 13/13 (100.0%) | 0/30 (0.0%) | 0 | `$0.0000` |
+| **Arm B:** Two-stage (`mip-delta` + `--review` Haiku, keep) | `10+2+1+0 = 13` | **92.3%** | **76.9%** | 10/13 (76.9%) | **0/30 (0.0%)** | 37 | `$0.0882` |
+| **Arm C:** Unguided Haiku on diff (`confirm` + `review_worthy`) | `11+3+12+14 = 40` | 35.0% | 27.5% | 11/13 (84.6%) | **14/30 (46.7%)** | 67 | `$0.1367` |
+| **Arm C (strict):** Unguided Haiku (`confirm_omission` only) | `6+1+2+0 = 9` | 77.8% | 66.7% | **6/13 (46.2%)** | 0/30 (0.0%) | 67 | `$0.1367` |
+
+The failure modes are complementary, and running Stage 1 before Stage 2 fixes both:
+- **Unguided diff review cannot navigate the noise/recall cliff alone.** When Haiku is allowed to warn on `review_worthy` contract changes (Arm C), it flags **46.7% (`14/30`) of clean silent commits** (`35.0%` precision). When restricted to `confirm_omission` only (`Arm C strict`), silent false positives drop to zero, but **real-omission recall collapses to 46.2% (`6/13`)** — missing `httpx#3023` (`AsyncClient._init_proxy_transport`) and similar silent drops.
+- **Stage 1 gives Stage 2 pinned cross-file targets and `$0` silence everywhere else.** Because `mip-delta` names the exact unedited caller/override/wrapper and supplies only bounded post-change site snippets (`~$0.0024` per flagged commit), Haiku triage suppresses **94.7% (`18/19`)** of Stage-1 false alarms and raises flagged precision to **92.3%** (`100.0%` useful precision / `9/13` real recall on `confirm_omission` alone).
+
+Following Experiment 1, we shipped that flow behind `mip-delta --review` (zero external dependencies: uses `ANTHROPIC_API_KEY` over stdlib `urllib` or local `claude -p`, costing `$0` whenever Stage 1 is silent) and landed three follow-on refinements verified offline: demoting `state_field_review` to opt-in (`37 -> 36` flagged commits across the 8,000-commit replay, `50.0%` precision, zero recall loss), detecting dead `self.<param>` attribute stores (`0` new false positives across 8,000 commits while pinning `rich:c856e6b46901` and `urllib3:52392654b301`), and broadening the `--review` async rubric to catch eager-to-deferred timing shifts (`scrapy:9bfa58e36cca`).
+
+---
+
 ## Where This Leaves MipCode
 
 We started this project trying to invent an interactive graph search tool to beat `ripgrep`. We failed, because search was not the bottleneck.
@@ -166,6 +187,7 @@ We pivoted to building a post-edit contract check for agents. In doing so, we fo
 
 Today, `mip-delta` is focused on that exact gap:
 - **As a pre-commit, pull request, and merge check (`mip-delta --check-git`):** A fast (~5 ms, zero-dependency) AST analysis that flags parameter sinks, delegating wrapper drops, subclass override mismatches, and async/exception leaks on diffs.
+- **With optional Stage-2 micro-triage (`mip-delta --check-git --review`):** Adds bounded Haiku confirmation (`~$0.002` per flagged diff, `$0` when silent) to push flagged precision above 92% in CI without noisy diff-wide alarms.
 - **As an agent completion guardrail (`ObligationLedger`):** An AST-anchored, line-independent state machine that hooks into `PostToolUse` and `Stop` events, ensuring an agent cannot declare victory while open contract obligations remain unaddressed or unwaived.
 
 The code, reproducible replay harnesses, and adjudication data are open source at [github.com/Nitefawkes/mipcode](https://github.com/Nitefawkes/mipcode).
