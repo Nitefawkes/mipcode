@@ -192,7 +192,9 @@ class DeltaEngineTests(unittest.TestCase):
             "            observer(message)\n"
         )
 
-        found = analyze_delta({"reporter.py": source_before}, {"reporter.py": source_after})
+        found = analyze_delta(
+            {"reporter.py": source_before}, {"reporter.py": source_after}, enable=["state_field_review"]
+        )
         matches = [row for row in found if row.detector == "state_field_review"]
 
         self.assertEqual(len(matches), 1)

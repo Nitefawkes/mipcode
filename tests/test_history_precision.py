@@ -281,3 +281,72 @@ def test_parameter_unread_across_a_working_method_family_is_reported_for_each_me
     found = sorted(f.symbol for f in analyze_delta({"graph.py": before}, {"graph.py": after}) if f.detector == "parameter_sink_review")
     assert found == ["Conjunctive.parse", "Graph.parse"]
 
+
+def test_dead_self_attribute_store_reports_parameter_sink_review():
+    before = {
+        "response.py": "class BaseResponse:\n    def __init__(self, version):\n        self.version = version\n",
+        "pool.py": "def log_resp(resp):\n    return resp.version\n",
+    }
+    after = {
+        "response.py": (
+            "class BaseResponse:\n"
+            "    def __init__(self, version, version_string='HTTP/1.1'):\n"
+            "        self.version = version\n"
+            "        self.version_string: str = version_string\n"
+        ),
+        "pool.py": before["pool.py"],
+    }
+    findings = analyze_delta(before, after)
+    assert [(f.detector, f.symbol) for f in findings] == [("parameter_sink_review", "BaseResponse.__init__")]
+    assert "self.version_string" in findings[0].evidence[0]
+
+
+def test_self_attribute_store_read_cross_file_or_subclass_abstains():
+    before = {
+        "response.py": "class BaseResponse:\n    def __init__(self, version):\n        self.version = version\n",
+        "tests/test_resp.py": "def test_v(resp):\n    return resp.version\n",
+    }
+    after_with_test_read = {
+        "response.py": (
+            "class BaseResponse:\n"
+            "    def __init__(self, version, version_string='HTTP/1.1'):\n"
+            "        self.version = version\n"
+            "        self.version_string = version_string\n"
+        ),
+        "tests/test_resp.py": "def test_v(resp):\n    return (resp.version, resp.version_string)\n",
+    }
+    assert _detectors(before, after_with_test_read) == []
+
+    after_with_subclass_read = {
+        "response.py": after_with_test_read["response.py"],
+        "tests/test_resp.py": (
+            "from response import BaseResponse\n"
+            "class SubResponse(BaseResponse):\n"
+            "    def fmt(self):\n"
+            "        return self.version_string\n"
+        ),
+    }
+    assert _detectors(before, after_with_subclass_read) == []
+
+
+def test_self_attribute_store_also_consumed_locally_abstains():
+    before = {
+        "storage.py": (
+            "class S3FeedStorage:\n"
+            "    def __init__(self, uri):\n"
+            "        self.uri = uri\n"
+        )
+    }
+    after = {
+        "storage.py": (
+            "class S3FeedStorage:\n"
+            "    def __init__(self, uri, upload_timeout=None):\n"
+            "        self.uri = uri\n"
+            "        self.upload_timeout = upload_timeout\n"
+            "        if upload_timeout is not None:\n"
+            "            self.uri = f'{uri}?t={upload_timeout}'\n"
+        )
+    }
+    assert _detectors(before, after) == []
+
+

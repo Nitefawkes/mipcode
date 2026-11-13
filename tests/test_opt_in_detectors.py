@@ -55,6 +55,32 @@ def test_callback_binding_review_is_off_unless_enabled():
     assert detector in _detectors(analyze_delta(BOUND_BEFORE, BOUND_AFTER, enable=[detector]))
 
 
+def test_state_field_review_is_off_unless_enabled():
+    detector = "state_field_review"
+    state_before = {
+        "reporter.py": (
+            "class Reporter:\n"
+            "    def attach(self, obs):\n"
+            "        self.observers.append(obs)\n"
+            "    def notify(self):\n"
+            "        return self.observers\n"
+        )
+    }
+    state_after = {
+        "reporter.py": (
+            "class Reporter:\n"
+            "    def attach(self, obs, minimum_level=None):\n"
+            "        self.observers.append(obs)\n"
+            "        self._observer_minimum_levels.append(minimum_level)\n"
+            "    def notify(self):\n"
+            "        return self.observers\n"
+        )
+    }
+    assert detector in OPT_IN_DETECTORS
+    assert detector not in _detectors(analyze_delta(state_before, state_after))
+    assert detector in _detectors(analyze_delta(state_before, state_after, enable=[detector]))
+
+
 def test_removed_callable_review_reports_by_default():
     assert "removed_callable_review" not in OPT_IN_DETECTORS
     assert _detectors(analyze_delta(REMOVED_BEFORE, REMOVED_AFTER)) == ["removed_callable_review"]

@@ -108,6 +108,8 @@ class FunctionFact:
     _ast_node: ast.AST | None = field(default=None, repr=False, compare=False)
     guarded_raises: tuple[tuple[str, tuple[str, ...]], ...] = ()
     local_name_stores: frozenset[str] = frozenset()
+    non_self_store_reads: frozenset[str] = frozenset()
+    attr_loads: frozenset[str] = frozenset()
 
     @property
     def is_stub(self) -> bool:
@@ -196,6 +198,7 @@ class FileFacts:
     # For a module name bound exactly once to a small literal: the default text of a
     # reference to it, mapped to the default text of its value.
     constant_defaults: dict[str, str] = field(default_factory=dict)
+    attr_loads: frozenset[str] = frozenset()
 
 
 @dataclass(frozen=True)

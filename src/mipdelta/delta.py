@@ -36,9 +36,11 @@ _DETECTOR_PRIORITY = {
 #   by truth value on purpose.
 # - callback_binding_review: across two held-out rounds 22 of its 23 reports were false.
 #   A callable passed as a value is unaffected when its target gains an optional parameter.
+# - state_field_review: 0 of 4 kept reports in the 10-repo regression check were useful;
+#   demoted to opt-in (raising default commit precision from 48.6% to 50.0% at zero recall cost).
 # removed_callable_review was opt-in for one round and is on again: its false reports were
 # names still bound in the same scope, which it now recognizes.
-OPT_IN_DETECTORS = frozenset({"parameter_truthiness_review", "callback_binding_review"})
+OPT_IN_DETECTORS = frozenset({"parameter_truthiness_review", "callback_binding_review", "state_field_review"})
 
 
 def enabled_detectors(enable: Iterable[str]) -> frozenset[str]:
@@ -756,8 +758,8 @@ def analyze_changed_files_in_index(
                         )
                     )
 
-        # 4. Intra-class parallel state-field symmetry (strictly local to new.path)
-        if old and new.class_qualname:
+        # 4. Opt-in: intra-class parallel state-field symmetry (strictly local to new.path)
+        if "state_field_review" in enabled and old and new.class_qualname:
             added_fields = new.field_writes - old.field_writes
             cls = after_changed[new.path].classes.get(new.class_qualname)
             if added_fields and cls:
@@ -942,7 +944,7 @@ def analyze_changed_files_in_index(
                     )
                 )
 
-    # 6. Intra-function unused added parameter check (O(1) via pre-collected local_name_reads)
+    # 6. Intra-function unused added parameter & dead self.<param> store checks
     for target, parameter in added_parameters:
         if parameter not in target.local_name_reads:
             findings.append(
@@ -954,6 +956,27 @@ def analyze_changed_files_in_index(
                     target.end_line,
                     "candidate",
                     (f"new parameter {parameter} is not read in the function body; verify its intended behavioral sink",),
+                    "static_ast",
+                )
+            )
+        elif (
+            target.class_qualname is not None
+            and parameter in target.field_writes
+            and parameter not in target.non_self_store_reads
+            and not any(parameter in file_facts.attr_loads for file_facts in index.files.values())
+        ):
+            cross_file_triggered = True
+            findings.append(
+                Finding(
+                    "parameter_sink_review",
+                    target.qualname,
+                    target.path,
+                    target.line,
+                    target.end_line,
+                    "candidate",
+                    (
+                        f"new parameter {parameter} is only stored on self.{parameter}, which is never read; verify its intended behavioral sink",
+                    ),
                     "static_ast",
                 )
             )

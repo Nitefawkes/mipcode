@@ -103,7 +103,7 @@ class DeltaContractTests(unittest.TestCase):
                 "            observer()\n"
             )
         }
-        found = analyze_delta(before, after)
+        found = analyze_delta(before, after, enable=["state_field_review"])
         state_findings = [row for row in found if row.detector == "state_field_review"]
 
         self.assertEqual(len(state_findings), 1)
@@ -115,7 +115,7 @@ class DeltaContractTests(unittest.TestCase):
         }
         same_field_findings = [
             row
-            for row in analyze_delta(same_field_before, same_field_after)
+            for row in analyze_delta(same_field_before, same_field_after, enable=["state_field_review"])
             if row.detector == "state_field_review"
         ]
         self.assertEqual(same_field_findings, [])

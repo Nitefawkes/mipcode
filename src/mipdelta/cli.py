@@ -25,15 +25,23 @@ import subprocess
 import sys
 import time
 import uuid
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Callable, Iterable
+from typing import Any, Callable, Iterable, Mapping
 
 from .cache import FactCache
 from .delta import OPT_IN_DETECTORS, analyze_changed_only, analyze_delta, format_advisory, rank_findings
 from .ledger import LedgerUpdate, Obligation, ObligationLedger, enclosing_function, format_open_obligations
 from .model import FileFacts, Finding, ObservedCallEdge, SourceFile
+from .review import (
+    ReviewError,
+    ReviewResult,
+    _is_test_or_support,
+    format_review_advisory,
+    review_findings,
+    unified_diff_for_pair,
+)
 from .session import DeltaSession
 
 _SKIP_DIRS = {"__pycache__", "venv", ".venv", "build", "dist", "node_modules"}
@@ -217,6 +225,8 @@ class _GitCheck:
     anchor_for: Callable[[Finding], str]
     # True when the whole workspace was read; False when the changed files were enough.
     workspace_parsed: bool = False
+    after_files: Mapping[str, str] = field(default_factory=dict)
+    cache: FactCache | None = None
 
 
 def _collect_git_findings(
@@ -267,7 +277,16 @@ def _collect_git_findings(
             enable=enable,
         )
         if not needs_workspace:
-            return _GitCheck(changed_paths, findings, [], runtime_edges, anchors(cache, after_changed))
+            return _GitCheck(
+                changed_paths,
+                findings,
+                [],
+                runtime_edges,
+                anchors(cache, after_changed),
+                False,
+                after_changed,
+                cache,
+            )
 
     tracked = _git_python_paths(root, top, "ls-files", "--cached", "-z")
     after_files = _read_sources(top, tracked | untracked)
@@ -285,7 +304,14 @@ def _collect_git_findings(
         enable=enable,
     )
     return _GitCheck(
-        changed_paths, findings, sorted(cache.skipped), runtime_edges, anchors(cache, after_files), True
+        changed_paths,
+        findings,
+        sorted(cache.skipped),
+        runtime_edges,
+        anchors(cache, after_files),
+        True,
+        after_files,
+        cache,
     )
 
 
@@ -417,6 +443,42 @@ def _ledger_session(ledger_path: Path) -> str | None:
     return match.group(1) if match and ledger_path.parent.name == ".mipdelta" else None
 
 
+def _git_prod_diff(
+    top: Path, commit: str, prod_paths: list[str], after_files: Mapping[str, str]
+) -> str:
+    if not prod_paths:
+        return ""
+    tracked_set = _git_paths(_git(top, "ls-tree", "-r", "--name-only", "-z", commit))
+    tracked_prod = [p for p in prod_paths if p in tracked_set]
+    untracked_prod = [p for p in prod_paths if p not in tracked_set]
+    chunks: list[str] = []
+    if tracked_prod:
+        raw = _git(top, "diff", "--no-ext-diff", "-U3", commit, "--", *tracked_prod).decode(
+            "utf-8", errors="replace"
+        )
+        if raw.strip():
+            chunks.append(raw.strip())
+    for path in untracked_prod:
+        diff = unified_diff_for_pair(path, None, after_files.get(path))
+        if diff.strip():
+            chunks.append(diff.strip())
+    return "\n\n".join(chunks)
+
+
+def _apply_review_outcome(
+    advisory: str,
+    failing: bool,
+    review_result: ReviewResult | None,
+    *,
+    show_open: bool = False,
+) -> tuple[str, bool]:
+    if review_result is None:
+        return advisory, failing
+    if review_result.suppressed:
+        return (advisory if show_open else ""), False
+    return format_review_advisory(advisory, review_result), failing
+
+
 def _run_git_check(
     root: Path,
     base_ref: str,
@@ -429,6 +491,8 @@ def _run_git_check(
     show_open: bool = False,
     enable: Iterable[str] = (),
     source: str = "check-git",
+    review: bool = False,
+    review_model: str | None = None,
 ) -> int:
     t0 = time.perf_counter()
     check = _collect_git_findings(root, baseline, runtime_dir, enable=enable)
@@ -457,6 +521,26 @@ def _run_git_check(
     advisory = format_advisory(reported, max_bytes=advisory_budget) if reported else ""
     if show_open:
         advisory = open_text
+    review_result: ReviewResult | None = None
+    if review and reported:
+        prod_paths = [p for p in check.changed_paths if not _is_test_or_support(p)]
+        test_paths = [p for p in check.changed_paths if _is_test_or_support(p)]
+        after_sources = dict(check.after_files)
+        for item in reported:
+            if item.path not in after_sources and (baseline[0] / item.path).is_file():
+                after_sources[item.path] = _decode_source(item.path, (baseline[0] / item.path).read_bytes())
+        diff_text = _git_prod_diff(baseline[0], baseline[1], prod_paths, after_sources)
+        review_result = review_findings(
+            findings=reported,
+            anchor_for=check.anchor_for,
+            after_sources=after_sources,
+            diff_text=diff_text,
+            changed_test_files=test_paths,
+            subject=f"working tree vs {base_ref}",
+            model=review_model,
+            cache=check.cache,
+        )
+        advisory, failing = _apply_review_outcome(advisory, failing, review_result, show_open=show_open)
     wall_ms = round((time.perf_counter() - t0) * 1000.0, 3)
 
     if as_json:
@@ -471,6 +555,8 @@ def _run_git_check(
             "findings": [_finding_json(f) for f in ranked],
             **ledger_rows,
         }
+        if review_result is not None:
+            payload["review"] = review_result.to_dict()
         print(json.dumps(payload, indent=2))
     elif advisory:
         print(advisory)
@@ -594,6 +680,8 @@ def _run_monitored_pytest(
     ledger_path: Path | None = None,
     show_open: bool = False,
     enable: Iterable[str] = (),
+    review: bool = False,
+    review_model: str | None = None,
 ) -> int:
     shard_dir = runtime_dir.resolve()
     shard_dir.mkdir(parents=True, exist_ok=True)
@@ -638,8 +726,10 @@ def _run_monitored_pytest(
             show_open=show_open,
             enable=enable,
             source="run-pytest",
+            review=review,
+            review_model=review_model,
         )
-    except (AnalysisError, OSError) as exc:
+    except (AnalysisError, ReviewError, OSError) as exc:
         check_rc = _report_error(exc, as_json)
     return proc.returncode if proc.returncode != 0 else check_rc
 
@@ -704,6 +794,17 @@ def main_cli(argv: list[str] | None = None) -> int:
         metavar="DETECTOR",
         help="Also run an opt-in detector (repeatable): " + ", ".join(sorted(OPT_IN_DETECTORS)),
     )
+    parser.add_argument(
+        "--review",
+        action="store_true",
+        help="Run Stage-2 LLM micro-triage (ANTHROPIC_API_KEY or claude CLI) only when Stage 1 emits findings",
+    )
+    parser.add_argument(
+        "--review-model",
+        type=str,
+        default=None,
+        help="Model override for --review (default: claude-haiku-4-5 for API, haiku for claude CLI)",
+    )
     parser.add_argument("--json", action="store_true", help="Emit full JSON readout")
     args = parser.parse_args(argv)
 
@@ -752,6 +853,8 @@ def main_cli(argv: list[str] | None = None) -> int:
                 "ledger_path": args.ledger.resolve() if args.ledger else None,
                 "show_open": args.open,
                 "enable": args.enable,
+                "review": args.review,
+                "review_model": args.review_model,
             }
             if args.run_pytest:
                 return _run_monitored_pytest(pytest_args=args.pytest_args, **kwargs)
@@ -771,7 +874,28 @@ def main_cli(argv: list[str] | None = None) -> int:
         )
         session.add_runtime_edges(_load_runtime_edges(runtime_dir))
         res = session.apply_write(args.write_path, new_text)
-    except (AnalysisError, OSError) as exc:
+        review_result: ReviewResult | None = None
+        advisory_text = res.advisory_text
+        failing = bool(res.ranked_findings)
+        if args.review and res.ranked_findings:
+            after_sources = {**files, args.write_path: new_text}
+
+            def _candidate_anchor(finding: Finding) -> str:
+                text = after_sources.get(finding.path)
+                facts = cache.load(finding.path, text) if text is not None else None
+                return enclosing_function(facts, finding.start_line)
+
+            review_result = review_findings(
+                findings=res.ranked_findings,
+                anchor_for=_candidate_anchor,
+                after_sources=after_sources,
+                diff_text=unified_diff_for_pair(args.write_path, files.get(args.write_path), new_text),
+                subject=f"candidate edit {args.write_path}",
+                model=args.review_model,
+                cache=cache,
+            )
+            advisory_text, failing = _apply_review_outcome(advisory_text, failing, review_result)
+    except (AnalysisError, ReviewError, OSError) as exc:
         return _report_error(exc, args.json)
 
     if args.json:
@@ -784,8 +908,8 @@ def main_cli(argv: list[str] | None = None) -> int:
             "cross_file_triggered": res.cross_file_triggered,
             "parses_executed": res.parses_executed,
             "candidate_calls_inspected": res.candidate_calls_inspected,
-            "advisory_text": res.advisory_text,
-            "advisory_utf8_bytes": res.advisory_utf8_bytes,
+            "advisory_text": advisory_text,
+            "advisory_utf8_bytes": len(advisory_text.encode("utf-8")),
             "wall_ms": round(res.wall_seconds * 1000.0, 3),
             "findings": [
                 {
@@ -800,11 +924,13 @@ def main_cli(argv: list[str] | None = None) -> int:
                 for f in res.ranked_findings
             ],
         }
+        if review_result is not None:
+            payload["review"] = review_result.to_dict()
         print(json.dumps(payload, indent=2))
-    elif res.advisory_text:
-        print(res.advisory_text)
+    elif advisory_text:
+        print(advisory_text)
     _note_skipped(sorted(cache.skipped), args.json)
-    return 1 if (args.fail_on_findings and res.ranked_findings) else 0
+    return 1 if (args.fail_on_findings and failing) else 0
 
 
 if __name__ == "__main__":

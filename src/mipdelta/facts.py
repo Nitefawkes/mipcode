@@ -4,6 +4,7 @@ import ast
 import operator
 from dataclasses import replace
 from pathlib import PurePosixPath
+from typing import Iterable
 
 from .model import CallFact, ClassFact, FileFacts, FunctionFact, ParameterFact
 
@@ -420,6 +421,31 @@ def _call_fact(
     )
 
 
+def _getattr_literal_name(node: ast.Call) -> str | None:
+    if (
+        isinstance(node.func, ast.Name)
+        and node.func.id in {"getattr", "hasattr"}
+        and len(node.args) >= 2
+        and isinstance(node.args[1], ast.Constant)
+        and isinstance(node.args[1].value, str)
+    ):
+        return node.args[1].value
+    return None
+
+
+def _collect_attr_loads(nodes: Iterable[ast.AST]) -> set[str]:
+    names: set[str] = set()
+    for root in nodes:
+        for child in ast.walk(root):
+            if isinstance(child, ast.Attribute) and isinstance(child.ctx, ast.Load):
+                names.add(child.attr)
+            elif isinstance(child, ast.Call):
+                attr_name = _getattr_literal_name(child)
+                if attr_name:
+                    names.add(attr_name)
+    return names
+
+
 class _CallContextScanner(ast.NodeVisitor):
     def __init__(self) -> None:
         self._result_consumers: dict[int, ast.AST] = {}
@@ -465,6 +491,9 @@ class _FunctionScanner(_CallContextScanner):
         self.calls: list[ast.Call] = []
         self.local_name_reads: set[str] = set()
         self.local_name_stores: set[str] = set()
+        self.non_self_store_reads: set[str] = set()
+        self.attr_loads: set[str] = set()
+        self._self_store_rhs_nodes: set[int] = set()
         self.bare_truthy_checks: list[tuple[str, int]] = []
         self.self_attr_annotations: list[tuple[str, str]] = []
         self.nested_declarations: list[ast.AST] = []
@@ -489,6 +518,13 @@ class _FunctionScanner(_CallContextScanner):
         for child in ast.walk(node):
             if isinstance(child, ast.Name) and isinstance(child.ctx, ast.Load):
                 self.local_name_reads.add(child.id)
+                self.non_self_store_reads.add(child.id)
+            elif isinstance(child, ast.Attribute) and isinstance(child.ctx, ast.Load):
+                self.attr_loads.add(child.attr)
+            elif isinstance(child, ast.Call):
+                attr_name = _getattr_literal_name(child)
+                if attr_name:
+                    self.attr_loads.add(attr_name)
 
     visit_AsyncFunctionDef = visit_FunctionDef
 
@@ -498,6 +534,8 @@ class _FunctionScanner(_CallContextScanner):
     def visit_Name(self, node: ast.Name) -> None:
         if isinstance(node.ctx, ast.Load):
             self.local_name_reads.add(node.id)
+            if id(node) not in self._self_store_rhs_nodes:
+                self.non_self_store_reads.add(node.id)
         else:
             self.local_name_stores.add(node.id)
 
@@ -517,12 +555,21 @@ class _FunctionScanner(_CallContextScanner):
         self.generic_visit(node)
 
     def visit_Assign(self, node: ast.Assign) -> None:
-        if isinstance(node.value, ast.Call) and len(node.targets) == 1:
+        if len(node.targets) == 1:
             target = node.targets[0]
-            if isinstance(target, (ast.Tuple, ast.List)) and not any(isinstance(e, ast.Starred) for e in target.elts):
-                self.call_unpack_arity[id(node.value)] = len(target.elts)
-            elif isinstance(target, ast.Name):
-                self.assigned_call_vars[target.id] = id(node.value)
+            if (
+                isinstance(target, ast.Attribute)
+                and isinstance(target.value, ast.Name)
+                and target.value.id == "self"
+                and isinstance(node.value, ast.Name)
+                and node.value.id == target.attr
+            ):
+                self._self_store_rhs_nodes.add(id(node.value))
+            elif isinstance(node.value, ast.Call):
+                if isinstance(target, (ast.Tuple, ast.List)) and not any(isinstance(e, ast.Starred) for e in target.elts):
+                    self.call_unpack_arity[id(node.value)] = len(target.elts)
+                elif isinstance(target, ast.Name):
+                    self.assigned_call_vars[target.id] = id(node.value)
         self.generic_visit(node)
 
     def visit_AnnAssign(self, node: ast.AnnAssign) -> None:
@@ -534,11 +581,15 @@ class _FunctionScanner(_CallContextScanner):
             ann = _annotation_head(node.annotation)
             if ann:
                 self.self_attr_annotations.append((node.target.attr, ann))
+            if isinstance(node.value, ast.Name) and node.value.id == node.target.attr:
+                self._self_store_rhs_nodes.add(id(node.value))
         elif isinstance(node.target, ast.Name) and isinstance(node.value, ast.Call):
             self.assigned_call_vars[node.target.id] = id(node.value)
         self.generic_visit(node)
 
     def visit_Attribute(self, node: ast.Attribute) -> None:
+        if isinstance(node.ctx, ast.Load):
+            self.attr_loads.add(node.attr)
         if isinstance(node.value, ast.Name) and node.value.id == "self":
             if isinstance(node.ctx, (ast.Store, ast.Del)):
                 self.writes.add(node.attr)
@@ -631,6 +682,8 @@ class _FunctionScanner(_CallContextScanner):
                     merged.update(c)
             if merged:
                 self.call_caught_exceptions[id(node)] = tuple(sorted(merged))
+        if merged := _getattr_literal_name(node):
+            self.attr_loads.add(merged)
         self.calls.append(node)
         super().visit_Call(node)
 
@@ -659,6 +712,7 @@ class _ModuleScanner(_CallContextScanner):
         self.classes: dict[str, ClassFact] = {}
         self.calls: list[CallFact] = []
         self.imports: dict[str, tuple[str, str | None]] = {}
+        self.attr_loads: set[str] = set()
         self.class_stack: list[str] = []
         self.function_stack: list[str] = []
 
@@ -674,7 +728,14 @@ class _ModuleScanner(_CallContextScanner):
         for item in node.names:
             self.imports[item.asname or item.name] = (base, item.name)
 
+    def visit_Attribute(self, node: ast.Attribute) -> None:
+        if isinstance(node.ctx, ast.Load):
+            self.attr_loads.add(node.attr)
+        self.generic_visit(node)
+
     def visit_Call(self, node: ast.Call) -> None:
+        if gname := _getattr_literal_name(node):
+            self.attr_loads.add(gname)
         row = _call_fact(
             node,
             self.path,
@@ -686,6 +747,7 @@ class _ModuleScanner(_CallContextScanner):
         super().visit_Call(node)
 
     def visit_ClassDef(self, node: ast.ClassDef) -> None:
+        self.attr_loads.update(_collect_attr_loads([*node.decorator_list, *node.bases, *node.keywords]))
         qual = ".".join([*self.class_stack, node.name])
         bases = tuple(".".join(dotted(base)) for base in node.bases if dotted(base))
         attr_annotations: dict[str, str] = {}
@@ -758,7 +820,10 @@ class _ModuleScanner(_CallContextScanner):
                 node,
                 guarded_raises=prior_fn.guarded_raises,
                 local_name_stores=prior_fn.local_name_stores,
+                non_self_store_reads=prior_fn.non_self_store_reads,
+                attr_loads=prior_fn.attr_loads,
             )
+            self.attr_loads.update(prior_fn.attr_loads)
             self.functions[qual] = fact
             if class_qual and class_qual in self.classes:
                 cls = self.classes[class_qual]
@@ -798,6 +863,10 @@ class _ModuleScanner(_CallContextScanner):
         own_calls = tuple(own_calls_list)
         has_nested = bool(local.nested_declarations)
         tuple_arities = frozenset() if local.has_non_tuple_return else frozenset(local.return_tuple_arities)
+        header_nodes: list[ast.AST] = [*node.decorator_list, *node.args.defaults]
+        header_nodes.extend(d for d in node.args.kw_defaults if d is not None)
+        fn_attr_loads = frozenset(local.attr_loads | (_collect_attr_loads(header_nodes) if header_nodes else set()))
+        self.attr_loads.update(fn_attr_loads)
         fact = FunctionFact(
             self.path,
             self.module,
@@ -827,6 +896,8 @@ class _ModuleScanner(_CallContextScanner):
             node,
             guarded_raises=tuple(local.guarded_raises),
             local_name_stores=frozenset(local.local_name_stores),
+            non_self_store_reads=frozenset(local.non_self_store_reads),
+            attr_loads=fn_attr_loads,
         )
         self.functions[qual] = fact
         if class_qual and class_qual in self.classes:
@@ -868,4 +939,5 @@ def parse_file(path: str, text: str, *, prior_facts: FileFacts | None = None) ->
         scanner.imports,
         module_name_stores=module_name_stores,
         constant_defaults=constant_defaults,
+        attr_loads=frozenset(scanner.attr_loads),
     )

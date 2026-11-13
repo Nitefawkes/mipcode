@@ -18,12 +18,13 @@ A newly raised exception is compared with narrow `try`/`except` handlers at the 
 
 ## Turn on an opt-in check
 
-Two checks are off by default because most of their reports on complete upstream commits were false.
+Three checks are off by default because most of their reports on complete upstream commits were false.
 
 | Check | Reports | Why it is off by default |
 | --- | --- | --- |
 | `callback_binding_review` | A changed function that is passed as a value | 22 of its 23 held-out reports across [both](../results/held_out/README.md) [rounds](../results/held_out/round2/README.md) were false, mostly a function passed where the signature change cannot matter. |
 | `parameter_truthiness_review` | A new or changed `None`-default parameter tested as a bare truth value, as in `if base:` | Upstream code often intends this. It produced the most reports in the [first history replay](../results/history_replay/README.md). |
+| `state_field_review` | A new sibling `self.<field>` write parallel to a field read in the same class | 0 of 4 kept reports in the [10-repo regression check](../results/held_out/regression/README.md) were omissions or review-worthy. |
 
 Turn a check on with `--enable`, which can be repeated:
 
@@ -85,6 +86,20 @@ jobs:
 ```
 
 `fetch-depth: 0` fetches the history that `git merge-base` needs. Add `--fail-on-findings` to make the job fail when the check reports a site. Start without it: on upstream history most reports were not defects, and a CI job has no ledger in which to waive one.
+
+## Filter flagged diffs with Stage-2 micro-triage (`--review`)
+
+To suppress static false alarms on pull requests without giving up cross-file recall, pass `--review`:
+
+```sh
+mip-delta --check-git --base-ref "$(git merge-base "origin/$BASE" HEAD)" --review
+```
+
+`mip-delta` stays zero-dependency: `--review` invokes an LLM **only** when deterministic Stage 1 emits findings, costing nothing when Stage 1 is silent. It checks `ANTHROPIC_API_KEY` first (calling the Anthropic Messages API over stdlib `urllib`) and falls back to an authenticated `claude` CLI on `PATH` (`--review-model` or `MIPDELTA_REVIEW_MODEL` overrides the default model).
+
+- In text mode, a `suppress_false_alarm` verdict stays silent; `confirm_omission` and `review_worthy` append a `[mip-delta:review <verdict>]` summary line.
+- With `--fail-on-findings`, `suppress_false_alarm` exits cleanly with status 0 instead of blocking.
+- With `--json`, the payload preserves Stage-1 `findings` and adds a `review` object (`verdict`, `suppressed`, `reason`, `backend`, `model`, `wall_ms`, and optional `cost_usd`).
 
 ## Check a merge
 
