@@ -236,6 +236,7 @@ class SessionStubsAndMonitoringTests(unittest.TestCase):
             self.assertEqual(f_reused, f_fresh)
             self.assertEqual(f_reused.body_dump, f_fresh.body_dump)
 
+    @unittest.skipUnless(sys.version_info >= (3, 12), "sys.monitoring requires Python 3.12 or later")
     def test_collector_handles_mocks_and_proxies_safely_and_roundtrips_caller_line(self):
         with tempfile.TemporaryDirectory() as td:
             tmp = Path(td)

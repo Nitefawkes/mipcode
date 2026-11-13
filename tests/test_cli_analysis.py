@@ -236,6 +236,7 @@ def test_git_check_excludes_vendored_paths_but_keeps_top_level_packages(tmp_path
     ]
 
 
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="sys.monitoring requires Python 3.12 or later")
 def test_run_pytest_uses_cap1_and_prioritizes_target_src_over_tool_src(tmp_path):
     root = tmp_path / "src_repo"
     (root / "src/targetpkg").mkdir(parents=True)
