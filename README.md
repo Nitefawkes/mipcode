@@ -8,13 +8,36 @@ Run it before a commit, on a pull request, or after a merge. It reads source onl
 
 ## What it finds
 
-The httpx commit that added `Client(http1=False)` gave the async client's proxy transport an `http1` parameter and never used it. The change is type-correct and passed review. Run on that commit, the check prints one line:
+In `httpx` (#1624, later fixed in #3023), adding `Client(http1=False)` forwarded `http1=http1` everywhere except `AsyncClient._init_proxy_transport`:
+
+```diff
+     def _init_proxy_transport(
+         self,
+         proxy: Proxy,
+         verify: VerifyTypes = True,
+         cert: CertTypes = None,
++        http1: bool = True,
+         http2: bool = False,
+         limits: Limits = DEFAULT_LIMITS,
+         trust_env: bool = True,
+     ) -> AsyncBaseTransport:
+         return AsyncHTTPTransport(
+             verify=verify,
+             cert=cert,
+             http2=http2,
+             limits=limits,
+             trust_env=trust_env,
+             proxy=proxy,
+         )
+```
+
+Accepting an unused optional parameter with a default is valid Python typing, so a type checker flags zero errors on those changed lines. Run on that commit, `mip-delta` prints one line:
 
 ```text
 [mip-delta] httpx/_client.py:1402 parameter_sink_review[static] AsyncClient._init_proxy_transport (new parameter http1 is not read in the function body; verify its intended behavioral sink)
 ```
 
-Upstream fixed the omission later, in httpx #3023.
+Across held-out replays of mature repos, this same class of checks caught silent parameter drops and unawaited async calls in `httpx` (#3023), `paramiko` (`AgentKey.sign_ssh_data`, `disable_algorithms`), `scrapy` (#7730), and `rich` (`Traceback.__init__` wrapper drops related to [Textualize/rich#3301](https://github.com/Textualize/rich/issues/3301)).
 
 We replayed the check over recent history in ten open-source repositories that it had not been run on. Each plan, with its thresholds, was committed before its run.
 
@@ -48,8 +71,8 @@ The report points to `consumer.py:5` and names `required_keyword_missing`.
 
 ## Where to run it
 
-- **Before a commit.** A [pre-commit hook](docs/usage.md#run-before-a-commit) stops the commit while reported sites are open. A site you judge intentional can be waived.
-- **On a pull request.** A [CI job](docs/usage.md#run-on-a-pull-request) compares the pull request with its base branch and prints the report in the job log.
+- **Before a commit.** Add the [pre-commit hook](.pre-commit-hooks.yaml) to `.pre-commit-config.yaml` (`rev: main`, `id: mip-delta`) to stop the commit while reported sites are open. A site you judge intentional can be `--waive`d (see [usage guide](docs/usage.md#run-before-a-commit)).
+- **On a pull request.** Copy the [GitHub Actions job](docs/usage.md#run-on-a-pull-request) to compare a pull request against its base branch and print advisories in the CI log.
 - **After a merge.** Two branches can merge without a textual conflict and still disagree about a contract. A [merge check](docs/usage.md#check-a-merge) compares the merged tree with the merge base.
 
 A reported site stays open until a later edit resolves it. With `--ledger`, repeated checks name each site once, `--open` lists what remains, and `--waive` records an intentional one. The [usage guide](docs/usage.md) covers these, the checks that are off by default, and observing calls during tests.

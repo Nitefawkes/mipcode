@@ -1,0 +1,7 @@
+- id: mip-delta
+  name: mip-delta contract check
+  description: Check Python changes for cross-file contract omissions across callers, wrappers, overrides, and exceptions.
+  entry: mip-delta --check-git --fail-on-findings --ledger .mipdelta/ledger.json
+  language: python
+  pass_filenames: false
+  types: [python]

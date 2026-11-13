@@ -49,19 +49,17 @@ A ledger stored in a `.mipdelta` directory adds a `.gitignore` there so the stat
 
 ## Run before a commit
 
-With [pre-commit](https://pre-commit.com), a local hook fails the commit while unwaived sites are open:
+With [pre-commit](https://pre-commit.com), add the root [`.pre-commit-hooks.yaml`](../.pre-commit-hooks.yaml) hook so commits stop while unwaived sites remain open (replace `main` with a commit SHA once pinned):
 
 ```yaml
 repos:
-  - repo: local
+  - repo: https://github.com/Nitefawkes/mipcode
+    rev: main
     hooks:
       - id: mip-delta
-        name: mip-delta contract check
-        entry: mip-delta --check-git --fail-on-findings --ledger .mipdelta/ledger.json
-        language: system
-        pass_filenames: false
-        types: [python]
 ```
+
+Or run `mip-delta` from your local environment using `repo: local` (`language: system`) with `entry: mip-delta --check-git --fail-on-findings --ledger .mipdelta/ledger.json`.
 
 The check compares the working tree with `HEAD`, so it also sees changes that are not staged.
 
