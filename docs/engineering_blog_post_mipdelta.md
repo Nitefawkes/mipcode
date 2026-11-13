@@ -179,6 +179,15 @@ Following Experiment 1, we shipped that flow behind `mip-delta --review` (zero e
 
 ---
 
+## Auditing the Runtime Observer & Ledger (Experiment 2)
+
+A lean tool should either justify every subsystem on real repositories or delete it. In [Experiment 2](../results/audit_rt_ledger/README.md), we audited our two stateful/runtime subsystems at `$0` API cost against real test suites (`marshmallow`, `rich`, `httpx`, `mipcode`) and `20` multi-commit upstream PRs (`74` commits across 8 repositories):
+
+1. **Part A — Opt-in `--run-pytest` (`monitoring.py`, PEP 669):** Auditing the original `as-shipped` observer uncovered 5 real bugs (`unittest.mock._Call` unhashability crashing `rich`, `PYTHONPATH` `src_root` shadowing hiding `mipcode`'s own production edges, missing `callee_qualname`/MRO fallback, fused instruction offsets, and `<locals>` qualname mismatch). Fixing those 5 bugs and defaulting `max_events_per_site=1` brought runtime overhead to **`+5.26%` cold / `+14.17%` median warm** with **`0` tool-ID collisions or `Mock` crashes**, **`1209` `mipcode` production edges recovered**, and **`27/30 (90.0%)` mutation recall** — including **`14/15 (93.3%)`** on optional delegating wrappers where installed `mypy` is `0.0%` (`+56.7%` net recall lift over static AST + `mypy`). It earns its place strictly as an **opt-in dynamic supplement** while default checks stay ~5 ms pure AST.
+2. **Part B — `ObligationLedger` (`ledger.py`) & Noise Filters:** Across 20 real multi-commit PRs, WIP refactoring only naturally discharged `9.1%–13.2%` of opened flags before merge — so `ObligationLedger` does **not** raise merge-head PR precision over a stateless `mip-delta --check-git --base-ref <merge-base>` check. Where it earns its keep is **multi-push and hook session deduplication** (`52.7%–66.2%` repeat notification reduction and **`0` anchor churn across `19` line shifts**). Meanwhile, adding vendored-path (`vendor/`, `<pkg>/packages/`) and `@task` context-arg exclusions directly removed **`24/24` targeted persistent PR false positives** (`70 -> 46` merge-head open sites) with **`0/33` TP loss** and full preservation of Experiment 1's `13/13` real omissions and `5/5` review-worthy commits.
+
+---
+
 ## Where This Leaves MipCode
 
 We started this project trying to invent an interactive graph search tool to beat `ripgrep`. We failed, because search was not the bottleneck.
@@ -186,8 +195,9 @@ We started this project trying to invent an interactive graph search tool to bea
 We pivoted to building a post-edit contract check for agents. In doing so, we found that frontier models on small tasks often check their own callers—but human maintainers and agents across real codebases routinely ship silent, type-correct contract omissions that neither type checkers nor existing test suites catch.
 
 Today, `mip-delta` is focused on that exact gap:
-- **As a pre-commit, pull request, and merge check (`mip-delta --check-git`):** A fast (~5 ms, zero-dependency) AST analysis that flags parameter sinks, delegating wrapper drops, subclass override mismatches, and async/exception leaks on diffs.
+- **As a pre-commit, pull request, and merge check (`mip-delta --check-git`):** A fast (~5 ms, zero-dependency) static AST analysis with vendored/`@task` exclusions that catches parameter sinks, delegating wrapper drops, subclass override mismatches, and async/exception leaks on diffs (using stateless `--base-ref` for single-shot CI PR checks).
 - **With optional Stage-2 micro-triage (`mip-delta --check-git --review`):** Adds bounded Haiku confirmation (`~$0.002` per flagged diff, `$0` when silent) to push flagged precision above 92% in CI without noisy diff-wide alarms.
-- **As an agent completion guardrail (`ObligationLedger`):** An AST-anchored, line-independent state machine that hooks into `PostToolUse` and `Stop` events, ensuring an agent cannot declare victory while open contract obligations remain unaddressed or unwaived.
+- **With opt-in dynamic test observation (`mip-delta --run-pytest`):** Collects `cap=1` PEP 669 runtime call edges on CPython 3.12+ (`+14.17%` median warm overhead) to lift dynamic attribute/wrapper recall to `90.0%` when static resolution cannot see the receiver type.
+- **For hook & session deduplication (`ObligationLedger`, `--ledger`):** An AST-anchored state machine that deduplicates repeated `PostToolUse`/`Stop` and multi-push warnings across line-shifting edits without spurious reopen noise.
 
 The code, reproducible replay harnesses, and adjudication data are open source at [github.com/Nitefawkes/mipcode](https://github.com/Nitefawkes/mipcode).

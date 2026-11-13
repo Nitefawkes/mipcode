@@ -62,7 +62,14 @@ Why not simply ask a fast LLM (`claude-haiku-5-5`) to inspect every git diff ins
 
 - **Two stages beat diff-only LLM review on precision and noise:** Unguided Haiku either floods clean commits with `46.7%` false warnings (`35.0%` precision) or, when restricted to high-confidence alerts, misses over half of real omissions (`46.2%` strict recall — including `httpx#3023`). With Stage 1 suppressing `96.5%` of commits at `$0`, Haiku triage on the remaining `3.5%` cuts false alarms by `94.7%` (`18/19`) for ~`$0.0024` per flagged commit (`9/13` real recall and `100.0%` useful precision on `confirm_omission` alone).
 - **Available as `--review`:** `mip-delta --check-git --review` runs Stage-2 triage only when Stage 1 emits findings, using `ANTHROPIC_API_KEY` (stdlib `urllib`) or an authenticated `claude` CLI with zero extra dependencies.
-- **Post-Experiment-1 Stage-1 & rubric refinements:** Demoting `state_field_review` to opt-in lifted deterministic precision (`48.6% -> 50.0%`, `37 -> 36` flagged commits, `0` recall loss), adding dead `self.<param>` attribute-store detection in `parameter_sink_review` added `0` false alarms across the 8,000-commit replay while directly flagging `rich:c856e6b46901` (`locals_hide_dunder`, `locals_hide_sunder`) and `urllib3:52392654b301` (`version_string`), and broadening the `--review` async rubric (`eager-to-deferred` execution) recovered `scrapy:9bfa58e36cca` (`confirm_omission`) while keeping `httpx:e0b4528b170b` suppressed.
+- **Post-Experiment-1 Stage-1 & rubric refinements:** Demoting `state_field_review` to opt-in lifted deterministic precision (`48.6% -> 50.0%`, `37 -> 36` flagged commits, `0` recall loss), adding dead `self.<param>` attribute-store detection in `parameter_sink_review` added `0` false alarms across the 8,000-commit replay while directly flagging `rich:c856e6b46901` (`locals_hide_dunder`, `locals_hide_sunder`) and `urllib3:52392654b301` (`version_string`), broadening the `--review` async rubric (`eager-to-deferred` execution) recovered `scrapy:9bfa58e36cca` (`confirm_omission`) while keeping `httpx:e0b4528b170b` suppressed, and excluding vendored subtrees (`vendor/`, `_vendor/`, `third_party/`, `<pkg>/packages/`) plus Invoke `@task` context args eliminated `24/24` targeted persistent FPs (`70 -> 46` merge-head open sites, `0` TPs lost) across the Experiment 2 PR set.
+
+### Runtime Observation & Ledger Audit (Experiment 2)
+
+To make sure every subsystem in `src/mipdelta/` earned its keep against real test suites and multi-commit PRs at `$0` API cost, [Experiment 2](results/audit_rt_ledger/README.md) audited both optional subsystems across four Python repositories (`marshmallow`, `rich`, `httpx`, `mipcode`) and 20 multi-commit upstream PRs (`74` commits across 8 repositories):
+
+- **Opt-in PEP 669 runtime observation (`--run-pytest`, `max_events_per_site=1` default):** Default `mip-delta --check-git` stays zero-dependency static AST (~5 ms). As an explicit **opt-in dynamic supplement**, fixing 5 runtime/MRO lookup defects exposed by the audit turned `--run-pytest` into `0` tool-ID/Mock crashes (`pytest-cov` and `pytest-xdist` clean), **`+5.26%` cold / `+14.17%` median warm `pytest` overhead**, and **`27/30 (90.0%)` mutation recall** (`14/15 = 93.3%` on optional delegating wrappers where installed `mypy` is `0.0%`; `+56.7%` net recall lift over static AST + `mypy`).
+- **Session & multi-push deduplication (`--ledger`, `ObligationLedger`):** Single-shot CI PR checks get identical results from stateless `--base-ref`, because WIP commits only naturally resolved `9.1%–13.2%` of opened sites before merge. We keep `ledger.py` scoped strictly to **agent-hook / multi-push deduplication**, where it cut repeat push alerts by **`52.7%–66.2%`** with **`0` anchor churn across `19` line shifts**.
 
 ## Quick start
 
@@ -90,7 +97,7 @@ The report points to `consumer.py:5` and names `required_keyword_missing`.
 - **On a pull request.** Copy the [GitHub Actions job](docs/usage.md#run-on-a-pull-request) to compare a pull request against its base branch and print advisories in the CI log.
 - **After a merge.** Two branches can merge without a textual conflict and still disagree about a contract. A [merge check](docs/usage.md#check-a-merge) compares the merged tree with the merge base.
 
-A reported site stays open until a later edit resolves it. With `--ledger`, repeated checks name each site once, `--open` lists what remains, and `--waive` records an intentional one. The [usage guide](docs/usage.md) covers these, the checks that are off by default, and observing calls during tests.
+A reported site stays open until a later edit resolves it. Stateless `--base-ref` covers single-shot CI PR gates; when running repeated local checks or agent hooks, `--ledger` deduplicates open sites (`0` churn across line edits), `--open` lists what remains, and `--waive` records an intentional one. The [usage guide](docs/usage.md) covers these, opt-in checks, and observing dynamic calls during tests (`--run-pytest`).
 
 ## With coding agents
 
@@ -105,6 +112,7 @@ The check can still run as [Claude Code hooks](docs/usage.md#run-as-claude-code-
 ## Research and development
 
 - [Two-stage precision sieve](results/two_stage_sieve/README.md) compares AST-only `mip-delta`, AST-gated `--review` Haiku triage, and unguided Haiku diff review across 67 blinded commits from the ten-repository replay.
+- [Experiment 2 audit](results/audit_rt_ledger/README.md) stress-tests opt-in `--run-pytest` PEP 669 dynamic call observation across four real test suites (`90.0%` mutation recall, `+14.17%` median warm overhead) and audits `ObligationLedger` across 20 multi-commit upstream PRs (`0` anchor churn across line shifts, scoped strictly to hook/session deduplication).
 - [Held-out validation, round one](results/held_out/README.md) and [round two](results/held_out/round2/README.md) report the ten-repository replays, the reading of reported sites, recall on constructed omissions, and the mypy comparison. The [regression check](results/held_out/regression/README.md) reruns them after the detector fixes.
 - [Live pilot](results/pilot/README.md) reports the six agent sessions and why the pilot stopped.
 - [History replay](results/history_replay/README.md) runs the check over 2,944 upstream commits in the five repositories the checks were tuned on.

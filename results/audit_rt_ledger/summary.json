@@ -1,0 +1,1490 @@
+{
+  "experiment": "experiment_2_keep_or_kill_audit",
+  "protocol_note": "Includes unmodified bf0e3c8 discovery audit AND verified post-fix (491bdda) Part A/B re-verification at $0 LLM API cost.",
+  "part_a_monitoring": {
+    "commit": "491bdda",
+    "cli_default_max_events_per_site": 1,
+    "stress_matrix": {
+      "summary": {
+        "repos_tested": [
+          "marshmallow",
+          "rich",
+          "httpx",
+          "mipcode"
+        ],
+        "median_cold_overhead_pct": 5.26,
+        "median_warm_overhead_pct": 14.17,
+        "all_warm_rt_obs_passed": false,
+        "all_pytest_cov_passed": false,
+        "all_xdist_passed": false,
+        "any_tool_or_hook_warnings": false,
+        "wall_seconds": 1843.48
+      },
+      "repos": {
+        "marshmallow": {
+          "baseline_cold_ms": 4859.66,
+          "baseline_warm_ms": 3858.06,
+          "rt_obs_cold_ms": 5405.54,
+          "rt_obs_cold_overhead_pct": 11.23,
+          "rt_obs_cold_rc": 0,
+          "rt_obs_warm_ms": 5876.8,
+          "rt_obs_warm_overhead_pct": 52.33,
+          "rt_obs_warm_rc": 0,
+          "rt_obs_warm_job_mb": 81.5,
+          "baseline_warm_job_mb": 53.92,
+          "rt_obs_warm_shards": {
+            "shard_files": 1,
+            "unique_pids": 1,
+            "total_bytes": 2254013,
+            "total_kb": 2201.18,
+            "raw_edge_records": 6035,
+            "unique_prod_edges": 624,
+            "unique_test_edges": 3017,
+            "unique_other_edges": 0
+          },
+          "rt_obs_cap8_warm_ms": 5293.26,
+          "rt_obs_cap8_warm_overhead_pct": 37.2,
+          "rt_obs_cap8_warm_shards": {
+            "shard_files": 1,
+            "unique_pids": 1,
+            "total_bytes": 2383246,
+            "total_kb": 2327.39,
+            "raw_edge_records": 6356,
+            "unique_prod_edges": 854,
+            "unique_test_edges": 3088,
+            "unique_other_edges": 0
+          },
+          "compat_pytest_cov": {
+            "baseline_rc": 0,
+            "monitored_rc": 0,
+            "overhead_pct": 34.53,
+            "warning": false,
+            "prod_edges": 624
+          },
+          "compat_pytest_xdist_n2": {
+            "baseline_rc": 0,
+            "monitored_rc": 0,
+            "overhead_pct": 21.3,
+            "shards": {
+              "shard_files": 3,
+              "unique_pids": 3,
+              "total_bytes": 2809722,
+              "total_kb": 2743.87,
+              "raw_edge_records": 7659,
+              "unique_prod_edges": 667,
+              "unique_test_edges": 3020,
+              "unique_other_edges": 0
+            }
+          },
+          "check_git_post_ms": 1324.24
+        },
+        "rich": {
+          "baseline_cold_ms": 9366.19,
+          "baseline_warm_ms": 7977.74,
+          "rt_obs_cold_ms": 10123.01,
+          "rt_obs_cold_overhead_pct": 8.08,
+          "rt_obs_cold_rc": 0,
+          "rt_obs_warm_ms": 9429.9,
+          "rt_obs_warm_overhead_pct": 18.2,
+          "rt_obs_warm_rc": 0,
+          "rt_obs_warm_job_mb": 110.46,
+          "baseline_warm_job_mb": 68.01,
+          "rt_obs_warm_shards": {
+            "shard_files": 1,
+            "unique_pids": 1,
+            "total_bytes": 2940608,
+            "total_kb": 2871.69,
+            "raw_edge_records": 8770,
+            "unique_prod_edges": 2619,
+            "unique_test_edges": 2966,
+            "unique_other_edges": 0
+          },
+          "rt_obs_cap8_warm_ms": 9941.77,
+          "rt_obs_cap8_warm_overhead_pct": 24.62,
+          "rt_obs_cap8_warm_shards": {
+            "shard_files": 1,
+            "unique_pids": 1,
+            "total_bytes": 2979106,
+            "total_kb": 2909.28,
+            "raw_edge_records": 8877,
+            "unique_prod_edges": 2702,
+            "unique_test_edges": 2966,
+            "unique_other_edges": 0
+          },
+          "compat_pytest_cov": {
+            "baseline_rc": 0,
+            "monitored_rc": 0,
+            "overhead_pct": 8.77,
+            "warning": false,
+            "prod_edges": 2619
+          },
+          "compat_pytest_xdist_n2": {
+            "baseline_rc": 0,
+            "monitored_rc": 0,
+            "overhead_pct": -17.15,
+            "shards": {
+              "shard_files": 3,
+              "unique_pids": 3,
+              "total_bytes": 3918025,
+              "total_kb": 3826.2,
+              "raw_edge_records": 11730,
+              "unique_prod_edges": 2637,
+              "unique_test_edges": 2967,
+              "unique_other_edges": 0
+            }
+          },
+          "check_git_post_ms": 780.88
+        },
+        "httpx": {
+          "baseline_cold_ms": 121151.78,
+          "baseline_warm_ms": 121796.55,
+          "rt_obs_cold_ms": 124112.71,
+          "rt_obs_cold_overhead_pct": 2.44,
+          "rt_obs_cold_rc": 1,
+          "rt_obs_warm_ms": 124353.19,
+          "rt_obs_warm_overhead_pct": 2.1,
+          "rt_obs_warm_rc": 1,
+          "rt_obs_warm_job_mb": 193.61,
+          "baseline_warm_job_mb": 270.2,
+          "rt_obs_warm_shards": {
+            "shard_files": 1,
+            "unique_pids": 1,
+            "total_bytes": 1598281,
+            "total_kb": 1560.82,
+            "raw_edge_records": 4622,
+            "unique_prod_edges": 1241,
+            "unique_test_edges": 2223,
+            "unique_other_edges": 0
+          },
+          "rt_obs_cap8_warm_ms": 121461.07,
+          "rt_obs_cap8_warm_overhead_pct": -0.28,
+          "rt_obs_cap8_warm_shards": {
+            "shard_files": 1,
+            "unique_pids": 1,
+            "total_bytes": 1621796,
+            "total_kb": 1583.79,
+            "raw_edge_records": 4686,
+            "unique_prod_edges": 1302,
+            "unique_test_edges": 2224,
+            "unique_other_edges": 0
+          },
+          "compat_pytest_cov": {
+            "baseline_rc": 1,
+            "monitored_rc": 1,
+            "overhead_pct": 8.17,
+            "warning": false,
+            "prod_edges": 0
+          },
+          "compat_pytest_xdist_n2": {
+            "baseline_rc": 1,
+            "monitored_rc": 1,
+            "overhead_pct": -9.62,
+            "shards": {
+              "shard_files": 3,
+              "unique_pids": 3,
+              "total_bytes": 2095718,
+              "total_kb": 2046.6,
+              "raw_edge_records": 6107,
+              "unique_prod_edges": 1263,
+              "unique_test_edges": 2223,
+              "unique_other_edges": 0
+            }
+          },
+          "check_git_post_ms": 611.91
+        },
+        "mipcode": {
+          "baseline_cold_ms": 107932.64,
+          "baseline_warm_ms": 102382.05,
+          "rt_obs_cold_ms": 105547.75,
+          "rt_obs_cold_overhead_pct": -2.21,
+          "rt_obs_cold_rc": 0,
+          "rt_obs_warm_ms": 112761.96,
+          "rt_obs_warm_overhead_pct": 10.14,
+          "rt_obs_warm_rc": 0,
+          "rt_obs_warm_job_mb": 130.22,
+          "baseline_warm_job_mb": 110.32,
+          "rt_obs_warm_shards": {
+            "shard_files": 7,
+            "unique_pids": 7,
+            "total_bytes": 1615653,
+            "total_kb": 1577.79,
+            "raw_edge_records": 4452,
+            "unique_prod_edges": 1209,
+            "unique_test_edges": 861,
+            "unique_other_edges": 570
+          },
+          "rt_obs_cap8_warm_ms": 113792.19,
+          "rt_obs_cap8_warm_overhead_pct": 11.14,
+          "rt_obs_cap8_warm_shards": {
+            "shard_files": 7,
+            "unique_pids": 7,
+            "total_bytes": 1625236,
+            "total_kb": 1587.14,
+            "raw_edge_records": 4478,
+            "unique_prod_edges": 1221,
+            "unique_test_edges": 862,
+            "unique_other_edges": 576
+          },
+          "compat_pytest_cov": {
+            "baseline_rc": 0,
+            "monitored_rc": 0,
+            "overhead_pct": -0.74,
+            "warning": false,
+            "prod_edges": 1209
+          },
+          "compat_pytest_xdist_n2": {
+            "baseline_rc": 0,
+            "monitored_rc": 0,
+            "overhead_pct": 15.12,
+            "shards": {
+              "shard_files": 9,
+              "unique_pids": 9,
+              "total_bytes": 2016776,
+              "total_kb": 1969.51,
+              "raw_edge_records": 5602,
+              "unique_prod_edges": 1210,
+              "unique_test_edges": 861,
+              "unique_other_edges": 570
+            }
+          },
+          "check_git_post_ms": 600.69
+        }
+      }
+    },
+    "recall_and_coverage": {
+      "summary": {
+        "overall": {
+          "count": 30,
+          "arm1_static": "0/30 (0.0%)",
+          "arm2a_as_shipped": "27/30 (90.0%)",
+          "arm2b_diag_fixed": "27/30 (90.0%)",
+          "arm3_mypy": "11/30 (36.7%)",
+          "arm2a_net_lift_over_static_and_mypy": "17/30 (56.7%)",
+          "arm2b_net_lift_over_static_and_mypy": "17/30 (56.7%)"
+        },
+        "breaking": {
+          "count": 15,
+          "arm1_static": "0/15 (0.0%)",
+          "arm2a_as_shipped": "13/15 (86.7%)",
+          "arm2b_diag_fixed": "13/15 (86.7%)",
+          "arm3_mypy": "11/15 (73.3%)",
+          "arm2a_net_lift_over_static_and_mypy": "3/15 (20.0%)",
+          "arm2b_net_lift_over_static_and_mypy": "3/15 (20.0%)"
+        },
+        "optional_wrapper": {
+          "count": 15,
+          "arm1_static": "0/15 (0.0%)",
+          "arm2a_as_shipped": "14/15 (93.3%)",
+          "arm2b_diag_fixed": "14/15 (93.3%)",
+          "arm3_mypy": "0/15 (0.0%)",
+          "arm2a_net_lift_over_static_and_mypy": "14/15 (93.3%)",
+          "arm2b_net_lift_over_static_and_mypy": "14/15 (93.3%)"
+        },
+        "wall_seconds": 348.61
+      },
+      "repo_wide_unresolved_attr_coverage": {
+        "httpx": {
+          "prod_files": 23,
+          "static_attr_resolved": 124,
+          "static_attr_unresolved": 266,
+          "runs": {
+            "as_shipped:default_warm": {
+              "edge_count_loaded": 4622,
+              "arm2a_rescued": 118,
+              "arm2a_rescue_pct": 44.4,
+              "arm2b_rescued": 126,
+              "arm2b_rescue_pct": 47.4,
+              "raw_edge_present": 258,
+              "raw_edge_present_pct": 97.0
+            },
+            "diag_safe:cap8_warm": {
+              "edge_count_loaded": 4686,
+              "arm2a_rescued": 120,
+              "arm2a_rescue_pct": 45.1,
+              "arm2b_rescued": 126,
+              "arm2b_rescue_pct": 47.4,
+              "raw_edge_present": 258,
+              "raw_edge_present_pct": 97.0
+            }
+          }
+        },
+        "rich": {
+          "prod_files": 100,
+          "static_attr_resolved": 491,
+          "static_attr_unresolved": 817,
+          "runs": {
+            "as_shipped:default_warm": {
+              "edge_count_loaded": 8770,
+              "arm2a_rescued": 317,
+              "arm2a_rescue_pct": 38.8,
+              "arm2b_rescued": 331,
+              "arm2b_rescue_pct": 40.5,
+              "raw_edge_present": 518,
+              "raw_edge_present_pct": 63.4
+            },
+            "diag_safe:cap8_warm": {
+              "edge_count_loaded": 8877,
+              "arm2a_rescued": 319,
+              "arm2a_rescue_pct": 39.0,
+              "arm2b_rescued": 333,
+              "arm2b_rescue_pct": 40.8,
+              "raw_edge_present": 519,
+              "raw_edge_present_pct": 63.5
+            }
+          }
+        },
+        "marshmallow": {
+          "prod_files": 14,
+          "static_attr_resolved": 90,
+          "static_attr_unresolved": 100,
+          "runs": {
+            "as_shipped:default_warm": {
+              "edge_count_loaded": 6035,
+              "arm2a_rescued": 24,
+              "arm2a_rescue_pct": 24.0,
+              "arm2b_rescued": 29,
+              "arm2b_rescue_pct": 29.0,
+              "raw_edge_present": 99,
+              "raw_edge_present_pct": 99.0
+            },
+            "diag_safe:cap8_warm": {
+              "edge_count_loaded": 6356,
+              "arm2a_rescued": 26,
+              "arm2a_rescue_pct": 26.0,
+              "arm2b_rescued": 32,
+              "arm2b_rescue_pct": 32.0,
+              "raw_edge_present": 99,
+              "raw_edge_present_pct": 99.0
+            }
+          }
+        },
+        "mipcode": {
+          "prod_files": 15,
+          "static_attr_resolved": 64,
+          "static_attr_unresolved": 136,
+          "runs": {
+            "as_shipped:default_warm": {
+              "edge_count_loaded": 3950,
+              "arm2a_rescued": 34,
+              "arm2a_rescue_pct": 25.0,
+              "arm2b_rescued": 34,
+              "arm2b_rescue_pct": 25.0,
+              "raw_edge_present": 92,
+              "raw_edge_present_pct": 67.6
+            },
+            "diag_safe:cap8_warm": {
+              "edge_count_loaded": 3976,
+              "arm2a_rescued": 34,
+              "arm2a_rescue_pct": 25.0,
+              "arm2b_rescued": 34,
+              "arm2b_rescue_pct": 25.0,
+              "raw_edge_present": 92,
+              "raw_edge_present_pct": 67.6
+            }
+          }
+        }
+      },
+      "targeted_pytest_breaking_15": {
+        "failed_as_expected": 14,
+        "passed_unexpectedly": [
+          "B15"
+        ]
+      },
+      "remaining_misses": {
+        "B03": "httpx: Add required kw-only trace_id: str to HTTPTransport.handle_request (arm2a={'hit': False, 'other_findings_count': 1, 'other_findings_sample': ['parameter_sink_review:httpx/_transports/default.py:230:HTTPTransport.handle_request:static_ast']}, arm3_mypy=False)",
+        "B14": "mipcode: Add required kw-only strict: bool to ObligationLedger.unreported_at_stop (arm2a={'hit': False, 'other_findings_count': 1, 'other_findings_sample': ['parameter_sink_review:src/mipdelta/ledger.py:142:ObligationLedger.unreported_at_stop:static_ast']}, arm3_mypy=True)",
+        "O13": "mipcode: Add optional kind to ObligationLedger.mark_reported_at_stop (_run_hook omits forwarding) (arm2a={'hit': False, 'other_findings_count': 1, 'other_findings_sample': ['parameter_sink_review:src/mipdelta/ledger.py:146:ObligationLedger.mark_reported_at_stop:static_ast']}, arm3_mypy=False)"
+      }
+    },
+    "decision_matrix_verdict": {
+      "post_fix_verdict": "PROMOTE TO OPT-IN DYNAMIC SUPPLEMENT (--run-pytest, cap=1 default)",
+      "rationale": "After landing the 5 Part A runtime/lookup fixes and max_events_per_site=1 default, as-shipped --run-pytest records 0 tool-ID/Mock crashes, 0 additional test failures across marshmallow/rich/httpx/mipcode (including pytest-cov and pytest-xdist), +5.26% median cold / +14.17% median warm overhead (<20% threshold), 1209 unique prod edges on mipcode, and 27/30 (90.0%) overall mutation recall (+56.7% net lift over static AST + installed mypy; 14/15 = 93.3% optional wrappers where mypy is 0.0%). Keep explicitly framed as an opt-in dynamic supplement while core AST stays ~5 ms zero-dep."
+    }
+  },
+  "pre_fix_baseline_bf0e3c8": {
+    "protocol_invariant": "src/mipdelta held completely unmodified; all metrics computed at $0 LLM API cost",
+    "part_a_monitoring": {
+      "stress_matrix": {
+        "summary": {
+          "repos_tested": [
+            "marshmallow",
+            "rich",
+            "httpx",
+            "mipcode"
+          ],
+          "median_cold_overhead_pct": -1.82,
+          "median_warm_overhead_pct": 16.84,
+          "all_warm_rt_obs_passed": false,
+          "all_pytest_cov_passed": false,
+          "all_xdist_passed": false,
+          "any_tool_or_hook_warnings": true,
+          "wall_seconds": 1992.36
+        },
+        "repos": {
+          "marshmallow": {
+            "baseline_cold_ms": 6798.28,
+            "baseline_warm_ms": 4403.93,
+            "rt_obs_cold_ms": 5813.81,
+            "rt_obs_cold_overhead_pct": -14.48,
+            "rt_obs_cold_rc": 0,
+            "rt_obs_warm_ms": 5718.11,
+            "rt_obs_warm_overhead_pct": 29.84,
+            "rt_obs_warm_rc": 0,
+            "rt_obs_warm_job_mb": 81.48,
+            "baseline_warm_job_mb": 54.88,
+            "rt_obs_warm_shards": {
+              "shard_files": 1,
+              "unique_pids": 1,
+              "total_bytes": 2210299,
+              "total_kb": 2158.5,
+              "raw_edge_records": 6356,
+              "unique_prod_edges": 854,
+              "unique_test_edges": 3088,
+              "unique_other_edges": 0
+            },
+            "rt_obs_cap1_warm_ms": 4820.04,
+            "rt_obs_cap1_warm_overhead_pct": 9.45,
+            "rt_obs_cap1_warm_shards": {
+              "shard_files": 1,
+              "unique_pids": 1,
+              "total_bytes": 2089781,
+              "total_kb": 2040.8,
+              "raw_edge_records": 6035,
+              "unique_prod_edges": 624,
+              "unique_test_edges": 3017,
+              "unique_other_edges": 0
+            },
+            "compat_pytest_cov": {
+              "baseline_rc": 0,
+              "monitored_rc": 0,
+              "overhead_pct": 7.89,
+              "warning": false
+            },
+            "compat_pytest_xdist_n2": {
+              "baseline_rc": 0,
+              "monitored_rc": 1,
+              "overhead_pct": 7.33,
+              "shards": {
+                "shard_files": 3,
+                "unique_pids": 3,
+                "total_bytes": 707423,
+                "total_kb": 690.84,
+                "raw_edge_records": 2256,
+                "unique_prod_edges": 217,
+                "unique_test_edges": 200,
+                "unique_other_edges": 0
+              }
+            },
+            "check_git_post_ms": 664.19
+          },
+          "rich": {
+            "baseline_cold_ms": 11309.2,
+            "baseline_warm_ms": 9199.63,
+            "rt_obs_cold_ms": 10921.13,
+            "rt_obs_cold_overhead_pct": -3.43,
+            "rt_obs_cold_rc": 1,
+            "rt_obs_warm_ms": 11732.73,
+            "rt_obs_warm_overhead_pct": 27.53,
+            "rt_obs_warm_rc": 1,
+            "rt_obs_warm_job_mb": 116.61,
+            "baseline_warm_job_mb": 69.57,
+            "rt_obs_warm_shards": {
+              "shard_files": 0,
+              "unique_pids": 0,
+              "total_bytes": 0,
+              "total_kb": 0.0,
+              "raw_edge_records": 0,
+              "unique_prod_edges": 0,
+              "unique_test_edges": 0,
+              "unique_other_edges": 0
+            },
+            "rt_obs_cap1_warm_ms": 10218.38,
+            "rt_obs_cap1_warm_overhead_pct": 11.07,
+            "rt_obs_cap1_warm_shards": {
+              "shard_files": 0,
+              "unique_pids": 0,
+              "total_bytes": 0,
+              "total_kb": 0.0,
+              "raw_edge_records": 0,
+              "unique_prod_edges": 0,
+              "unique_test_edges": 0,
+              "unique_other_edges": 0
+            },
+            "compat_pytest_cov": {
+              "baseline_rc": 0,
+              "monitored_rc": 1,
+              "overhead_pct": 12.94,
+              "warning": true
+            },
+            "compat_pytest_xdist_n2": {
+              "baseline_rc": 0,
+              "monitored_rc": 1,
+              "overhead_pct": 21.02,
+              "shards": {
+                "shard_files": 2,
+                "unique_pids": 2,
+                "total_bytes": 1579646,
+                "total_kb": 1542.62,
+                "raw_edge_records": 5154,
+                "unique_prod_edges": 2039,
+                "unique_test_edges": 1129,
+                "unique_other_edges": 0
+              }
+            },
+            "check_git_post_ms": 921.4
+          },
+          "httpx": {
+            "baseline_cold_ms": 125807.07,
+            "baseline_warm_ms": 128969.87,
+            "rt_obs_cold_ms": 125549.63,
+            "rt_obs_cold_overhead_pct": -0.2,
+            "rt_obs_cold_rc": 1,
+            "rt_obs_warm_ms": 124939.34,
+            "rt_obs_warm_overhead_pct": -3.13,
+            "rt_obs_warm_rc": 1,
+            "rt_obs_warm_job_mb": 292.98,
+            "baseline_warm_job_mb": 269.97,
+            "rt_obs_warm_shards": {
+              "shard_files": 1,
+              "unique_pids": 1,
+              "total_bytes": 1496175,
+              "total_kb": 1461.11,
+              "raw_edge_records": 4686,
+              "unique_prod_edges": 1302,
+              "unique_test_edges": 2224,
+              "unique_other_edges": 0
+            },
+            "rt_obs_cap1_warm_ms": 131155.72,
+            "rt_obs_cap1_warm_overhead_pct": 1.69,
+            "rt_obs_cap1_warm_shards": {
+              "shard_files": 1,
+              "unique_pids": 1,
+              "total_bytes": 1474383,
+              "total_kb": 1439.83,
+              "raw_edge_records": 4622,
+              "unique_prod_edges": 1241,
+              "unique_test_edges": 2223,
+              "unique_other_edges": 0
+            },
+            "compat_pytest_cov": {
+              "baseline_rc": 1,
+              "monitored_rc": 1,
+              "overhead_pct": 33.45,
+              "warning": false
+            },
+            "compat_pytest_xdist_n2": {
+              "baseline_rc": 1,
+              "monitored_rc": 1,
+              "overhead_pct": 6.59,
+              "shards": {
+                "shard_files": 3,
+                "unique_pids": 3,
+                "total_bytes": 1958907,
+                "total_kb": 1913.0,
+                "raw_edge_records": 6186,
+                "unique_prod_edges": 1326,
+                "unique_test_edges": 2224,
+                "unique_other_edges": 0
+              }
+            },
+            "check_git_post_ms": 791.54
+          },
+          "mipcode": {
+            "baseline_cold_ms": 119590.81,
+            "baseline_warm_ms": 119324.55,
+            "rt_obs_cold_ms": 121903.7,
+            "rt_obs_cold_overhead_pct": 1.93,
+            "rt_obs_cold_rc": 0,
+            "rt_obs_warm_ms": 126657.6,
+            "rt_obs_warm_overhead_pct": 6.15,
+            "rt_obs_warm_rc": 0,
+            "rt_obs_warm_job_mb": 128.37,
+            "baseline_warm_job_mb": 110.36,
+            "rt_obs_warm_shards": {
+              "shard_files": 7,
+              "unique_pids": 7,
+              "total_bytes": 864836,
+              "total_kb": 844.57,
+              "raw_edge_records": 2509,
+              "unique_prod_edges": 0,
+              "unique_test_edges": 807,
+              "unique_other_edges": 576
+            },
+            "rt_obs_cap1_warm_ms": 121478.2,
+            "rt_obs_cap1_warm_overhead_pct": 1.8,
+            "rt_obs_cap1_warm_shards": {
+              "shard_files": 7,
+              "unique_pids": 7,
+              "total_bytes": 862903,
+              "total_kb": 842.68,
+              "raw_edge_records": 2498,
+              "unique_prod_edges": 0,
+              "unique_test_edges": 806,
+              "unique_other_edges": 570
+            },
+            "compat_pytest_cov": {
+              "baseline_rc": 0,
+              "monitored_rc": 0,
+              "overhead_pct": 6.22,
+              "warning": false
+            },
+            "compat_pytest_xdist_n2": {
+              "baseline_rc": 0,
+              "monitored_rc": 0,
+              "overhead_pct": 8.26,
+              "shards": {
+                "shard_files": 9,
+                "unique_pids": 8,
+                "total_bytes": 1138894,
+                "total_kb": 1112.2,
+                "raw_edge_records": 3328,
+                "unique_prod_edges": 0,
+                "unique_test_edges": 807,
+                "unique_other_edges": 576
+              }
+            },
+            "check_git_post_ms": 764.88
+          }
+        }
+      },
+      "recall_and_coverage": {
+        "summary": {
+          "overall": {
+            "count": 30,
+            "arm1_static": "0/30 (0.0%)",
+            "arm2a_as_shipped": "12/30 (40.0%)",
+            "arm2b_diag_fixed": "23/30 (76.7%)",
+            "arm3_mypy": "11/30 (36.7%)",
+            "arm2a_net_lift_over_static_and_mypy": "7/30 (23.3%)",
+            "arm2b_net_lift_over_static_and_mypy": "15/30 (50.0%)"
+          },
+          "breaking": {
+            "count": 15,
+            "arm1_static": "0/15 (0.0%)",
+            "arm2a_as_shipped": "6/15 (40.0%)",
+            "arm2b_diag_fixed": "10/15 (66.7%)",
+            "arm3_mypy": "11/15 (73.3%)",
+            "arm2a_net_lift_over_static_and_mypy": "1/15 (6.7%)",
+            "arm2b_net_lift_over_static_and_mypy": "2/15 (13.3%)"
+          },
+          "optional_wrapper": {
+            "count": 15,
+            "arm1_static": "0/15 (0.0%)",
+            "arm2a_as_shipped": "6/15 (40.0%)",
+            "arm2b_diag_fixed": "13/15 (86.7%)",
+            "arm3_mypy": "0/15 (0.0%)",
+            "arm2a_net_lift_over_static_and_mypy": "6/15 (40.0%)",
+            "arm2b_net_lift_over_static_and_mypy": "13/15 (86.7%)"
+          },
+          "wall_seconds": 333.6
+        },
+        "repo_wide_unresolved_attr_coverage": {
+          "httpx": {
+            "prod_files": 23,
+            "static_attr_resolved": 124,
+            "static_attr_unresolved": 266,
+            "runs": {
+              "as_shipped:cap8_warm": {
+                "edge_count_loaded": 4686,
+                "arm2a_rescued": 115,
+                "arm2a_rescue_pct": 43.2,
+                "arm2b_rescued": 125,
+                "arm2b_rescue_pct": 47.0,
+                "raw_edge_present": 254,
+                "raw_edge_present_pct": 95.5
+              }
+            }
+          },
+          "rich": {
+            "prod_files": 100,
+            "static_attr_resolved": 491,
+            "static_attr_unresolved": 817,
+            "runs": {
+              "as_shipped:compat_xdist": {
+                "edge_count_loaded": 5152,
+                "arm2a_rescued": 219,
+                "arm2a_rescue_pct": 26.8,
+                "arm2b_rescued": 220,
+                "arm2b_rescue_pct": 26.9,
+                "raw_edge_present": 364,
+                "raw_edge_present_pct": 44.6
+              },
+              "diag_safe:diag_safe": {
+                "edge_count_loaded": 8902,
+                "arm2a_rescued": 297,
+                "arm2a_rescue_pct": 36.4,
+                "arm2b_rescued": 304,
+                "arm2b_rescue_pct": 37.2,
+                "raw_edge_present": 488,
+                "raw_edge_present_pct": 59.7
+              }
+            }
+          },
+          "marshmallow": {
+            "prod_files": 14,
+            "static_attr_resolved": 90,
+            "static_attr_unresolved": 100,
+            "runs": {
+              "as_shipped:cap8_warm": {
+                "edge_count_loaded": 6356,
+                "arm2a_rescued": 38,
+                "arm2a_rescue_pct": 38.0,
+                "arm2b_rescued": 27,
+                "arm2b_rescue_pct": 27.0,
+                "raw_edge_present": 98,
+                "raw_edge_present_pct": 98.0
+              }
+            }
+          },
+          "mipcode": {
+            "prod_files": 15,
+            "static_attr_resolved": 64,
+            "static_attr_unresolved": 133,
+            "runs": {
+              "as_shipped:cap8_warm": {
+                "edge_count_loaded": 2031,
+                "arm2a_rescued": 0,
+                "arm2a_rescue_pct": 0.0,
+                "arm2b_rescued": 0,
+                "arm2b_rescue_pct": 0.0,
+                "raw_edge_present": 1,
+                "raw_edge_present_pct": 0.8
+              },
+              "diag_safe:diag_safe": {
+                "edge_count_loaded": 3842,
+                "arm2a_rescued": 28,
+                "arm2a_rescue_pct": 21.1,
+                "arm2b_rescued": 27,
+                "arm2b_rescue_pct": 20.3,
+                "raw_edge_present": 87,
+                "raw_edge_present_pct": 65.4
+              }
+            }
+          }
+        },
+        "targeted_pytest_breaking_15": {
+          "failed_as_expected": 14,
+          "passed_unexpectedly": [
+            "B15"
+          ]
+        },
+        "arm2b_misses_diagnosed": {
+          "B03": "MockTransport stub shadowed HTTPTransport in unit tests (MockTransport.handle_request at offset 220)",
+          "B07": "resolve.runtime_edges_for drops instruction_offset, conflating Live.update (228) and Spinner.update (350) inside Status.update so len(resolved)==2 suppresses call_signature_review at delta.py:625",
+          "B09": "Test-defined <locals>.InnerSchema subclass poisoned receiver MRO lookup even though callee_qualname Schema.dump was recorded",
+          "O11": "Same test-defined <locals>.InnerSchema receiver MRO mismatch as B09",
+          "B13": "monitoring.py records .<locals>. in caller co_qualname (_collect_git_findings.<locals>.anchors.<locals>.anchor_for) while model.py strips <locals>, returning 0 runtime edges",
+          "B14": "Subprocess CLI tests did not propagate diag_safe sitecustomize into child invocations touching ObligationLedger.unreported_at_stop from _run_hook",
+          "O13": "Same subprocess / unexercised caller gap as B14 for ObligationLedger.mark_reported_at_stop"
+        }
+      },
+      "root_defects_found": [
+        "src/mipdelta/monitoring.py:109 crashes with TypeError: unhashable type: _Call on unittest.mock.MagicMock/_Call arguments (broke all single-process Rich runs)",
+        "src/mipdelta/cli.py:697,707 prepends checkout src_root ahead of inspected repo root (0 production edges collected when running on mipcode)",
+        "src/mipdelta/resolve.py:309-314 ignores edge.callee_qualname and class MRO, matching only fn.class_qualname == receiver_type short name (-36.7 percentage points recall vs Arm 2b)",
+        "src/mipdelta/resolve.py:185-188 discards instruction_offset when retrieving runtime edges (suppresses call_signature_review on Status.update -> Live.update)",
+        "src/mipdelta/monitoring.py vs model.py mismatch on <locals> in caller co_qualname and dynamically defined test subclasses"
+      ],
+      "decision_matrix_verdict": {
+        "as_shipped_verdict": "FAIL / PRUNE-OR-QUARANTINE",
+        "rationale": "As-shipped monitoring.py + resolve.py fails stability/compatibility (crashes rich on Mock _Call, collects 0 prod edges on mipcode, hits +29.84% warm overhead on marshmallow) and drops nearly half of dynamic rescue (40.0% Arm 2a vs 76.7% Arm 2b). With Mock-safe shard collection and MRO/callee_qualname lookup (Arm 2b), PEP 669 uniquely rescues 13/15 (86.7%) optional delegating wrappers where mypy is 0/15 (0.0%), while showing 0 sys.monitoring tool-ID collisions with anyio/asyncio/trio or coverage.py 7.x. Do NOT keep as default or headline feature; either prune monitoring.py OR quarantine strictly behind opt-in --run-pytest only after fixing all 5 defects and evaluating cap=1 (+1.69%..+11.07% warm overhead)."
+      }
+    },
+    "part_b_open_at_head_total": 70
+  },
+  "part_b_ledger": {
+    "baseline_180_merges": {
+      "prs_selected": 7,
+      "repos_represented": 3,
+      "total_commits_across_prs": 19,
+      "total_per_commit_findings": 28,
+      "total_stateless_base_alerts": 55,
+      "total_ledger_opened": 35,
+      "total_ledger_discharged": 3,
+      "total_open_at_merge_head": 32,
+      "natural_discharge_rate_vs_opened": 0.0857,
+      "natural_discharge_rate_vs_per_commit": 0.0,
+      "realert_suppression_ratio": 0.3636,
+      "line_shifts_survived_count": 4,
+      "suspected_anchor_churn_count": 0,
+      "opened_by_detector": {
+        "override_signature_review": 3,
+        "parameter_sink_review": 16,
+        "delegating_wrapper_review": 15,
+        "call_signature_review": 1
+      },
+      "discharge_causes": {
+        "anchor_renamed_or_removed": 1,
+        "site_function_edit": 2
+      },
+      "prs_with_mypy_new_errors_at_head": 3,
+      "wall_seconds": 596.06,
+      "funnel": {
+        "httpx": {
+          "linear_prod_prs_scanned": 8,
+          "flagged_prs_collected": 3
+        },
+        "marshmallow": {
+          "linear_prod_prs_scanned": 65,
+          "flagged_prs_collected": 2
+        },
+        "mkdocs": {
+          "linear_prod_prs_scanned": 45,
+          "flagged_prs_collected": 2
+        },
+        "rich": {
+          "linear_prod_prs_scanned": 50,
+          "flagged_prs_collected": 0
+        },
+        "pytest": {
+          "linear_prod_prs_scanned": 51,
+          "flagged_prs_collected": 0
+        },
+        "requests": {
+          "linear_prod_prs_scanned": 12,
+          "flagged_prs_collected": 0
+        },
+        "scrapy": {
+          "linear_prod_prs_scanned": 58,
+          "flagged_prs_collected": 0
+        },
+        "urllib3": {
+          "linear_prod_prs_scanned": 32,
+          "flagged_prs_collected": 0
+        },
+        "paramiko": {
+          "linear_prod_prs_scanned": 9,
+          "flagged_prs_collected": 0
+        }
+      }
+    },
+    "widened_20_prs": {
+      "prs_selected": 20,
+      "repos_represented": 8,
+      "total_commits_across_prs": 74,
+      "total_per_commit_findings": 69,
+      "total_stateless_base_alerts": 228,
+      "total_ledger_opened": 77,
+      "total_ledger_discharged": 7,
+      "total_open_at_merge_head": 70,
+      "natural_discharge_rate_vs_opened": 0.0909,
+      "natural_discharge_rate_vs_per_commit": 0.0,
+      "realert_suppression_ratio": 0.6623,
+      "line_shifts_survived_count": 19,
+      "suspected_anchor_churn_count": 0,
+      "opened_by_detector": {
+        "override_signature_review": 15,
+        "parameter_sink_review": 29,
+        "delegating_wrapper_review": 25,
+        "call_signature_review": 3,
+        "removed_callable_review": 4,
+        "exception_contract_review": 1
+      },
+      "discharge_causes": {
+        "anchor_renamed_or_removed": 1,
+        "site_function_edit": 5,
+        "same_file_other_edit": 1
+      },
+      "prs_with_mypy_new_errors_at_head": 6,
+      "wall_seconds": 1743.92,
+      "funnel": {
+        "httpx": {
+          "linear_prod_prs_scanned": 8,
+          "flagged_prs_collected": 3,
+          "scan_merges_frontier": 36,
+          "total_first_parent_merges": 36
+        },
+        "marshmallow": {
+          "linear_prod_prs_scanned": 116,
+          "flagged_prs_collected": 3,
+          "scan_merges_frontier": 593,
+          "total_first_parent_merges": 593
+        },
+        "mkdocs": {
+          "linear_prod_prs_scanned": 71,
+          "flagged_prs_collected": 3,
+          "scan_merges_frontier": 389,
+          "total_first_parent_merges": 389
+        },
+        "rich": {
+          "linear_prod_prs_scanned": 175,
+          "flagged_prs_collected": 1,
+          "scan_merges_frontier": 700,
+          "total_first_parent_merges": 846
+        },
+        "pytest": {
+          "linear_prod_prs_scanned": 157,
+          "flagged_prs_collected": 3,
+          "scan_merges_frontier": 700,
+          "total_first_parent_merges": 3289
+        },
+        "requests": {
+          "linear_prod_prs_scanned": 91,
+          "flagged_prs_collected": 3,
+          "scan_merges_frontier": 700,
+          "total_first_parent_merges": 1104
+        },
+        "scrapy": {
+          "linear_prod_prs_scanned": 89,
+          "flagged_prs_collected": 3,
+          "scan_merges_frontier": 400,
+          "total_first_parent_merges": 1647
+        },
+        "urllib3": {
+          "linear_prod_prs_scanned": 82,
+          "flagged_prs_collected": 1,
+          "scan_merges_frontier": 350,
+          "total_first_parent_merges": 350
+        },
+        "paramiko": {
+          "linear_prod_prs_scanned": 15,
+          "flagged_prs_collected": 0,
+          "scan_merges_frontier": 204,
+          "total_first_parent_merges": 204
+        }
+      },
+      "widen_wall_seconds": 1147.86
+    },
+    "adjudication": {
+      "per_commit_findings": {
+        "tp": 33,
+        "fp": 36,
+        "total": 69,
+        "precision_pct": 47.8
+      },
+      "ledger_opened": {
+        "tp": 38,
+        "fp": 39,
+        "total": 77,
+        "precision_pct": 49.4
+      },
+      "ledger_discharged": {
+        "tp": 5,
+        "fp": 2,
+        "total": 7,
+        "note": "5 TP genuine WIP steps fixed before merge + 2 FP accidental discharges (CookieCompatRequest rename, Expression.input Scanner read)"
+      },
+      "open_at_merge_head": {
+        "tp": 33,
+        "fp": 37,
+        "total": 70,
+        "precision_pct": 47.1
+      },
+      "persistent_merge_head_fps_breakdown": {
+        "total_fp_at_head": 37,
+        "vendored_requests_packages": 19,
+        "invoke_task_ctx": 5,
+        "pytest_moved_helper_or_io_stub": 5,
+        "scrapy_asyncgen_or_hook_param": 3,
+        "cross_class_or_intentional_propagation_or_fallback": 5
+      },
+      "per_pr": [
+        {
+          "pr_index": 1,
+          "merge_sha": "bb703771b3",
+          "repo": "httpx",
+          "per_commit": {
+            "tp": 7,
+            "total": 9
+          },
+          "opened": {
+            "tp": 14,
+            "total": 16
+          },
+          "discharged": {
+            "tp": 0,
+            "total": 1
+          },
+          "open_at_head": {
+            "tp": 14,
+            "total": 15
+          },
+          "tp_notes": "7x sync Client.{get,options,head,post,put,patch,delete} accept params but drop params=params calling self.request (s5 wrapper + cumulative sink+wrapper = 14 TP; AsyncClient forwarded params)",
+          "fp_notes": "CookieCompatRequest.__init__ (discharged at s2) & Cookies._CookieCompatRequest.__init__ falsely matched against Request.__init__ despite inheriting urllib.request.Request"
+        },
+        {
+          "pr_index": 2,
+          "merge_sha": "2b3a14c748",
+          "repo": "marshmallow",
+          "per_commit": {
+            "tp": 0,
+            "total": 1
+          },
+          "opened": {
+            "tp": 0,
+            "total": 1
+          },
+          "discharged": {
+            "tp": 0,
+            "total": 0
+          },
+          "open_at_head": {
+            "tp": 0,
+            "total": 1
+          },
+          "tp_notes": "none",
+          "fp_notes": "Inferred.__init__(self) intentionally takes 0 args while inheriting Field.__init__(load_default=...)"
+        },
+        {
+          "pr_index": 3,
+          "merge_sha": "e48d6e6c53",
+          "repo": "mkdocs",
+          "per_commit": {
+            "tp": 1,
+            "total": 1
+          },
+          "opened": {
+            "tp": 1,
+            "total": 1
+          },
+          "discharged": {
+            "tp": 0,
+            "total": 0
+          },
+          "open_at_head": {
+            "tp": 1,
+            "total": 1
+          },
+          "tp_notes": "suggest_absolute: bool = False added to _possible_target_uris is never referenced anywhere in function or repo at merge_head",
+          "fp_notes": "none"
+        },
+        {
+          "pr_index": 4,
+          "merge_sha": "39a5c53a67",
+          "repo": "httpx",
+          "per_commit": {
+            "tp": 14,
+            "total": 14
+          },
+          "opened": {
+            "tp": 14,
+            "total": 14
+          },
+          "discharged": {
+            "tp": 0,
+            "total": 0
+          },
+          "open_at_head": {
+            "tp": 14,
+            "total": 14
+          },
+          "tp_notes": "7x SyncClient.{get,options,head,post,put,patch,delete} accept query_params but drop query_params=query_params in self.request (7 sink + 7 wrapper)",
+          "fp_notes": "none"
+        },
+        {
+          "pr_index": 5,
+          "merge_sha": "ee3b16fb3c",
+          "repo": "marshmallow",
+          "per_commit": {
+            "tp": 1,
+            "total": 1
+          },
+          "opened": {
+            "tp": 1,
+            "total": 1
+          },
+          "discharged": {
+            "tp": 1,
+            "total": 1
+          },
+          "open_at_head": {
+            "tp": 0,
+            "total": 0
+          },
+          "tp_notes": "s1 passed removed kwarg many=many to Nested._test_collection; resolved in s3 (WIP discharged)",
+          "fp_notes": "none"
+        },
+        {
+          "pr_index": 6,
+          "merge_sha": "efe5bfbc47",
+          "repo": "mkdocs",
+          "per_commit": {
+            "tp": 0,
+            "total": 1
+          },
+          "opened": {
+            "tp": 0,
+            "total": 1
+          },
+          "discharged": {
+            "tp": 0,
+            "total": 0
+          },
+          "open_at_head": {
+            "tp": 0,
+            "total": 1
+          },
+          "tp_notes": "none",
+          "fp_notes": "yaml_load uses loader = loader or get_yaml_loader() intentionally omitting optional config on fallback"
+        },
+        {
+          "pr_index": 7,
+          "merge_sha": "3de0425ef2",
+          "repo": "httpx",
+          "per_commit": {
+            "tp": 1,
+            "total": 1
+          },
+          "opened": {
+            "tp": 1,
+            "total": 1
+          },
+          "discharged": {
+            "tp": 1,
+            "total": 1
+          },
+          "open_at_head": {
+            "tp": 0,
+            "total": 0
+          },
+          "tp_notes": "s1 added unused params to URL.__init__; renamed/resolved in s2 (WIP discharged)",
+          "fp_notes": "none"
+        },
+        {
+          "pr_index": 8,
+          "merge_sha": "dc97ac70f5",
+          "repo": "mkdocs",
+          "per_commit": {
+            "tp": 1,
+            "total": 1
+          },
+          "opened": {
+            "tp": 0,
+            "total": 0
+          },
+          "discharged": {
+            "tp": 0,
+            "total": 0
+          },
+          "open_at_head": {
+            "tp": 0,
+            "total": 0
+          },
+          "tp_notes": "s2 added force_posix=False to normalise_path without reading it (mkdocs/nav.py callers pass force_posix=True; omitted at head only because normalise_path was newly added in s1 vs P_0)",
+          "fp_notes": "none"
+        },
+        {
+          "pr_index": 9,
+          "merge_sha": "b7ac6bb73d",
+          "repo": "rich",
+          "per_commit": {
+            "tp": 4,
+            "total": 4
+          },
+          "opened": {
+            "tp": 4,
+            "total": 4
+          },
+          "discharged": {
+            "tp": 0,
+            "total": 0
+          },
+          "open_at_head": {
+            "tp": 4,
+            "total": 4
+          },
+          "tp_notes": "Traceback.__init__ stores self.locals_hide_{dunder,sunder} (never read anywhere in rich/ or tests/) and calls self.extract(..., show_locals=show_locals) omitting locals_hide_{dunder,sunder}",
+          "fp_notes": "none"
+        },
+        {
+          "pr_index": 10,
+          "merge_sha": "f1e3fee981",
+          "repo": "pytest",
+          "per_commit": {
+            "tp": 0,
+            "total": 1
+          },
+          "opened": {
+            "tp": 0,
+            "total": 1
+          },
+          "discharged": {
+            "tp": 0,
+            "total": 1
+          },
+          "open_at_head": {
+            "tp": 0,
+            "total": 0
+          },
+          "tp_notes": "none",
+          "fp_notes": "Expression.__init__ intentionally exposes documented Final attribute self.input (#: The original input line); discharged accidentally in s3 when Scanner added self.input/s.input"
+        },
+        {
+          "pr_index": 11,
+          "merge_sha": "bf1a2a4e39",
+          "repo": "requests",
+          "per_commit": {
+            "tp": 0,
+            "total": 12
+          },
+          "opened": {
+            "tp": 0,
+            "total": 12
+          },
+          "discharged": {
+            "tp": 0,
+            "total": 0
+          },
+          "open_at_head": {
+            "tp": 0,
+            "total": 12
+          },
+          "tp_notes": "none",
+          "fp_notes": "Vendored requests/packages/chardet/* 12 Prober subclasses intentionally omit base optional lang_filter"
+        },
+        {
+          "pr_index": 12,
+          "merge_sha": "50486cf2be",
+          "repo": "requests",
+          "per_commit": {
+            "tp": 0,
+            "total": 7
+          },
+          "opened": {
+            "tp": 0,
+            "total": 7
+          },
+          "discharged": {
+            "tp": 0,
+            "total": 0
+          },
+          "open_at_head": {
+            "tp": 0,
+            "total": 7
+          },
+          "tp_notes": "none",
+          "fp_notes": "Vendored requests/packages/idna/codec.py Codec.{encode,decode} intentionally expose stdlib Codec signature without forwarding idna options"
+        },
+        {
+          "pr_index": 13,
+          "merge_sha": "a193d14af2",
+          "repo": "scrapy",
+          "per_commit": {
+            "tp": 0,
+            "total": 2
+          },
+          "opened": {
+            "tp": 0,
+            "total": 2
+          },
+          "discharged": {
+            "tp": 0,
+            "total": 0
+          },
+          "open_at_head": {
+            "tp": 0,
+            "total": 2
+          },
+          "tp_notes": "none",
+          "fp_notes": "CrawlSpider.{_parse,_callback} return asyncgen self._parse_response(...) directly to Scrapy iterate_spider_output engine"
+        },
+        {
+          "pr_index": 14,
+          "merge_sha": "517cbc8d71",
+          "repo": "scrapy",
+          "per_commit": {
+            "tp": 0,
+            "total": 1
+          },
+          "opened": {
+            "tp": 0,
+            "total": 1
+          },
+          "discharged": {
+            "tp": 0,
+            "total": 0
+          },
+          "open_at_head": {
+            "tp": 0,
+            "total": 1
+          },
+          "tp_notes": "none",
+          "fp_notes": "ImagesPipeline.thumb_path accepts keyword-only hook parameter *, item=None for subclass override API compatibility"
+        },
+        {
+          "pr_index": 15,
+          "merge_sha": "440e45d172",
+          "repo": "scrapy",
+          "per_commit": {
+            "tp": 1,
+            "total": 1
+          },
+          "opened": {
+            "tp": 0,
+            "total": 0
+          },
+          "discharged": {
+            "tp": 0,
+            "total": 0
+          },
+          "open_at_head": {
+            "tp": 0,
+            "total": 0
+          },
+          "tp_notes": "s2 moved collect_asyncgen from utils.python before s3 updated utils/spider.py import (genuine WIP ImportError between s2 and s3)",
+          "fp_notes": "none"
+        },
+        {
+          "pr_index": 16,
+          "merge_sha": "601cad272c",
+          "repo": "urllib3",
+          "per_commit": {
+            "tp": 3,
+            "total": 3
+          },
+          "opened": {
+            "tp": 3,
+            "total": 3
+          },
+          "discharged": {
+            "tp": 3,
+            "total": 3
+          },
+          "open_at_head": {
+            "tp": 0,
+            "total": 0
+          },
+          "tp_notes": "s1 added 3 unused dummy params to AppEngineManager.urlopen; s2 cleaned them out cleanly (3 WIP discharged)",
+          "fp_notes": "none"
+        },
+        {
+          "pr_index": 17,
+          "merge_sha": "7fc9497d26",
+          "repo": "marshmallow",
+          "per_commit": {
+            "tp": 0,
+            "total": 5
+          },
+          "opened": {
+            "tp": 0,
+            "total": 5
+          },
+          "discharged": {
+            "tp": 0,
+            "total": 0
+          },
+          "open_at_head": {
+            "tp": 0,
+            "total": 5
+          },
+          "tp_notes": "none",
+          "fp_notes": "Invoke @task functions in tasks.py require unused ctx parameter"
+        },
+        {
+          "pr_index": 18,
+          "merge_sha": "acd445a3f3",
+          "repo": "pytest",
+          "per_commit": {
+            "tp": 0,
+            "total": 1
+          },
+          "opened": {
+            "tp": 0,
+            "total": 1
+          },
+          "discharged": {
+            "tp": 0,
+            "total": 0
+          },
+          "open_at_head": {
+            "tp": 0,
+            "total": 1
+          },
+          "tp_notes": "none",
+          "fp_notes": "Deprecated FSCollector.isinitpath compatibility shim intentionally keeps 1-arg signature calling Session.isinitpath"
+        },
+        {
+          "pr_index": 19,
+          "merge_sha": "02893139f9",
+          "repo": "pytest",
+          "per_commit": {
+            "tp": 0,
+            "total": 1
+          },
+          "opened": {
+            "tp": 0,
+            "total": 5
+          },
+          "discharged": {
+            "tp": 0,
+            "total": 0
+          },
+          "open_at_head": {
+            "tp": 0,
+            "total": 5
+          },
+          "tp_notes": "none",
+          "fp_notes": "1x DontReadFromInput.seek dummy whence stub matching TextIO protocol; 4x moved CaptureBase._assert_state flagged as removed_callable_review"
+        },
+        {
+          "pr_index": 20,
+          "merge_sha": "65cdccb70f",
+          "repo": "requests",
+          "per_commit": {
+            "tp": 0,
+            "total": 2
+          },
+          "opened": {
+            "tp": 0,
+            "total": 1
+          },
+          "discharged": {
+            "tp": 0,
+            "total": 0
+          },
+          "open_at_head": {
+            "tp": 0,
+            "total": 1
+          },
+          "tp_notes": "none",
+          "fp_notes": "Response.iter_content raising RuntimeError / StreamConsumedError is intended to propagate past Response.content except AttributeError guard"
+        }
+      ]
+    },
+    "decision_matrix_verdict": {
+      "verdict": "MIXED / SCOPE-RESTRICT (PRUNE-WIP-CLAIM, KEEP-FOR-HOOK-DEDUP)",
+      "rationale": "ObligationLedger misses the >=25% Promote threshold on natural WIP discharge (9.09%, 7/77 opened; 0.0% discharge on delegating_wrapper_review; 47.8% per-commit -> 47.1% merge-head precision with no PR-boundary precision lift), though it clears the <5% Prune floor cleanly on parameter_sink_review (17.2%, 5/29) and resolves intermediate noise in 7/20 PRs (4 completely to 0). Crucially, it passes anchor stability with 0 spurious ID churn across 19 line shifts (-1..+80 lines) and suppresses 66.23% (151/228) of repeat multi-push notifications vs stateless --base-ref P_0. Verdict: remove any claim of WIP precision lift; stateless --base-ref suffices for single-shot CI PR gates; keep ledger.py strictly scoped to multi-push/Claude Code hook deduplication and prioritize path/pattern FP filters (vendored subtrees, Invoke @task(ctx), class-moved helpers)."
+    },
+    "post_fix_vendored_and_task_recheck": {
+      "commit": "491bdda",
+      "prs_checked": 20,
+      "prs_with_remaining_findings": 17,
+      "prs_dropped_to_zero_findings": [
+        "requests#bf1a2a4e39 (PR#11)",
+        "requests#50486cf2be (PR#12)",
+        "marshmallow#7fc9497d26 (PR#17)"
+      ],
+      "per_commit_findings": {
+        "tp": 33,
+        "fp": 12,
+        "total": 45,
+        "precision_pct": 73.3
+      },
+      "ledger_opened": {
+        "tp": 38,
+        "fp": 15,
+        "total": 53,
+        "precision_pct": 71.7
+      },
+      "stateless_base_alerts": 112,
+      "ledger_discharged": {
+        "tp": 5,
+        "fp": 2,
+        "total": 7,
+        "discharge_rate_vs_opened": 0.1321
+      },
+      "open_at_merge_head": {
+        "tp": 33,
+        "fp": 13,
+        "total": 46,
+        "precision_pct": 71.7
+      },
+      "realert_suppression_ratio": 0.5268,
+      "line_shifts_survived_count": 19,
+      "suspected_anchor_churn_count": 0,
+      "fp_removed_count": 24,
+      "tp_lost_count": 0,
+      "note": "Vendored path exclusions (is_vendored_path) and Invoke @task(ctx) exemptions remove 24/24 targeted persistent FPs (19 requests/packages/* + 5 marshmallow/tasks.py) with 0/33 TP loss on the 20-PR corpus, while preserving 13/13 real_omission and 5/5 review_worthy recall on Experiment 1 (N=67). Natural WIP discharge remains 13.21% (7/53 < 25% Promote target), so ledger.py remains strictly scoped to hook/session/multi-push deduplication."
+    }
+  }
+}

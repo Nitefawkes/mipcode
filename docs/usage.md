@@ -36,7 +36,7 @@ mip-delta --check-git --enable callback_binding_review
 
 ## Track what is still open
 
-A contract change can leave work at other sites. Pass `--ledger` to keep those sites in a JSON file between checks.
+A contract change can leave work at other sites. `--ledger` is designed for repeated local, multi-push, and agent-hook deduplication (surviving line edits via enclosing-function anchors without re-alerting); single-shot CI PR gates get identical merge-head output from stateless `--base-ref`. Pass `--ledger` to keep those sites in a JSON file between repeated checks.
 
 ```sh
 mip-delta --check-git --ledger .mipdelta/ledger.json
@@ -143,7 +143,9 @@ Each ledger also has an append-only event log beside it: `ledger-<session>.json`
 
 Other agent harnesses can call `mip-delta --check-git --ledger PATH` after edits and add `--open` before finishing.
 
-## Observe calls during tests
+## Observe calls during tests (opt-in `--run-pytest`)
+
+By default, `mip-delta` runs pure zero-dependency static AST (~5 ms) and ignores vendored directories (`vendor/`, `_vendor/`, `third_party/`, `<pkg>/packages/`) and `@task` context parameters automatically. When your code dispatches heavily through dynamic attributes (`self.client.request(...)`, plugins, or renderables), `--run-pytest` acts as an **opt-in dynamic supplement** that collects runtime receiver types under Python's PEP 669 `sys.monitoring`.
 
 Use CPython 3.12 or later and install pytest into the same environment. From the MipCode repository root:
 
@@ -152,6 +154,6 @@ python -m pip install -e ".[test]"
 mip-delta --run-pytest --root . --pytest-args="tests -q"
 ```
 
-The command records observations in `.mipdelta/runtime/`, then checks the Git delta after pytest returns. It preserves pytest's failure status. Use `--runtime-dir PATH` with a fresh directory when collecting evidence for a new source state, since the check can load earlier observations from that directory.
+The command records up to `max_events_per_site=1` runtime call edge per instruction site in `.mipdelta/runtime/` (`+5.26%` cold / `+14.17%` warm median overhead and `90.0%` mutation recall in [Experiment 2](../results/audit_rt_ledger/README.md)), then checks the Git delta after pytest returns. It preserves pytest's failure status. Use `--runtime-dir PATH` with a fresh directory when collecting evidence for a new source state, since the check can load earlier observations from that directory.
 
 `[static]` marks a relationship resolved from source. `[type-cand]` marks a candidate inferred from types. `[rt-obs]` uses a call observed during tests. Sampling and test coverage limit runtime observations. A quiet check means the configured analysis emitted no advisory.
