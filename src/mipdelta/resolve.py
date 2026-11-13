@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from collections import defaultdict
+from collections import defaultdict, deque
 from dataclasses import dataclass
 from typing import Iterable, Mapping
 
@@ -52,6 +52,10 @@ class MutableResolutionIndex:
             if edge not in self._runtime_by_site[key]:
                 self._runtime_by_site[key].append(edge)
             if ".<locals>." in edge.caller_qualname:
+                stripped = edge.caller_qualname.replace(".<locals>.", ".")
+                stripped_key = (stripped, edge.callee_name)
+                if edge not in self._runtime_by_site[stripped_key]:
+                    self._runtime_by_site[stripped_key].append(edge)
                 outer = edge.caller_qualname.split(".<locals>.")[0]
                 outer_key = (outer, edge.callee_name)
                 if edge not in self._runtime_by_site[outer_key]:
@@ -182,10 +186,35 @@ class MutableResolutionIndex:
         bucket = self.subclasses_by_base.get(base_short_name, {})
         return [bucket[k] for k in sorted(bucket)]
 
-    def runtime_edges_for(self, caller_qualname: str | None, callee_name: str) -> list[ObservedCallEdge]:
+    def runtime_edges_for(
+        self,
+        caller_qualname: str | None,
+        callee_name: str,
+        *,
+        call_line: int | None = None,
+        call_end_line: int | None = None,
+        single_site_fallback: bool = False,
+    ) -> list[ObservedCallEdge]:
         if not caller_qualname:
             return []
-        return list(self._runtime_by_site.get((caller_qualname, callee_name), ()))
+        edges = list(self._runtime_by_site.get((caller_qualname, callee_name), ()))
+        if call_line is None or not edges:
+            return edges
+        end_line = call_line if call_end_line is None or call_end_line < call_line else call_end_line
+        exact = [e for e in edges if e.caller_line == call_line]
+        if exact:
+            return exact
+        in_span = [e for e in edges if e.caller_line is not None and call_line <= e.caller_line <= end_line]
+        if in_span:
+            return in_span
+        legacy = [e for e in edges if e.caller_line is None]
+        if legacy:
+            return legacy
+        # Allow line-shifted / relocated shards ONLY when both AST and bytecode agree
+        # there is a single call site to `callee_name` in `caller_qualname`.
+        if single_site_fallback and len({e.instruction_offset for e in edges}) <= 1:
+            return edges
+        return []
 
 
 @dataclass(frozen=True)
@@ -226,6 +255,85 @@ def _suffix(module: str, symbol: str, index: MutableResolutionIndex | Resolution
         if name == symbol and (mod == module or mod.endswith("." + module))
         for row in rows.values()
     )
+
+
+def _ancestor_class_names(mut: MutableResolutionIndex, class_short_name: str) -> tuple[list[str], bool]:
+    """Walk base classes in BFS order, returning (ancestors_in_order, is_seed_indexed)."""
+    if not class_short_name:
+        return [], False
+    indexed = class_short_name in mut.classes_by_short
+    visited: list[str] = []
+    seen: set[str] = set()
+    queue: deque[str] = deque([class_short_name])
+    while queue:
+        cur = queue.popleft()
+        if not cur or cur in seen:
+            continue
+        seen.add(cur)
+        visited.append(cur)
+        for cls_fact in mut.classes_by_short.get(cur, {}).values():
+            for base in cls_fact.bases:
+                bshort = base.split(".")[-1]
+                if bshort and bshort not in seen:
+                    queue.append(bshort)
+    return visited, indexed
+
+
+def _resolve_runtime_edges(
+    call: CallFact,
+    mut: MutableResolutionIndex,
+    rt_edges: list[ObservedCallEdge],
+) -> tuple[tuple[FunctionFact, str], ...]:
+    candidates = tuple(mut.by_short_name.get(call.callee_name, {}).values())
+    if not candidates:
+        return ()
+    is_super = call.constructed_receiver == "super" or (bool(call.callee_chain) and call.callee_chain[0] == "super")
+    caller_qualname = call.owner_function or ""
+
+    rt_matches: list[tuple[FunctionFact, str]] = []
+    seen_ids: set[str] = set()
+    for edge in rt_edges:
+        rshort = edge.receiver_type.split(".")[-1] if edge.receiver_type else ""
+        ancestors, rtype_indexed = _ancestor_class_names(mut, rshort)
+        ancestor_set = set(ancestors)
+        norm_cq = (edge.callee_qualname or "").replace(".<locals>.", ".")
+
+        # 1. Exact callee_qualname match verified against MRO when receiver class is indexed.
+        exact_hits: list[FunctionFact] = []
+        if norm_cq:
+            for fn in candidates:
+                if is_super and fn.qualname == caller_qualname:
+                    continue
+                if fn.qualname != norm_cq:
+                    continue
+                fn_cshort = fn.class_qualname.split(".")[-1] if fn.class_qualname else ""
+                if not fn_cshort or not rtype_indexed or fn_cshort in ancestor_set:
+                    exact_hits.append(fn)
+        if exact_hits:
+            for fn in exact_hits:
+                ident = f"{fn.path}::{fn.qualname}"
+                if ident not in seen_ids:
+                    seen_ids.add(ident)
+                    rt_matches.append((fn, "observed_runtime"))
+            continue
+
+        # 2. MRO fallback walking concrete runtime class toward ancestors.
+        for anc in ancestors:
+            anc_hits = [
+                fn
+                for fn in candidates
+                if fn.class_qualname
+                and fn.class_qualname.split(".")[-1] == anc
+                and not (is_super and fn.qualname == caller_qualname)
+            ]
+            if anc_hits:
+                for fn in anc_hits:
+                    ident = f"{fn.path}::{fn.qualname}"
+                    if ident not in seen_ids:
+                        seen_ids.add(ident)
+                        rt_matches.append((fn, "observed_runtime"))
+                break
+    return tuple(rt_matches)
 
 
 def resolve_call_with_provenance(
@@ -300,20 +408,28 @@ def resolve_call_with_provenance(
             return ((candidates[0], "static_ast"),)
 
     # 5. Observed runtime edges from Python 3.12 sys.monitoring (positive execution evidence)
-    rt_edges = mut.runtime_edges_for(call.owner_function, call.callee_name)
+    node_span = (
+        call._ast_node.end_lineno - call._ast_node.lineno
+        if call._ast_node is not None and getattr(call._ast_node, "end_lineno", None) is not None
+        else 0
+    )
+    owner_fn = facts.functions.get(call.owner_function) if call.owner_function else None
+    same_name_calls = (
+        sum(1 for c in owner_fn.own_calls if c.callee_name == call.callee_name)
+        if owner_fn is not None
+        else sum(1 for c in facts.calls if c.owner_function == call.owner_function and c.callee_name == call.callee_name)
+    )
+    rt_edges = mut.runtime_edges_for(
+        call.owner_function,
+        call.callee_name,
+        call_line=call.line,
+        call_end_line=call.line + max(0, node_span),
+        single_site_fallback=(same_name_calls <= 1),
+    )
     if rt_edges:
-        rt_matches: list[tuple[FunctionFact, str]] = []
-        seen_ids: set[str] = set()
-        for edge in rt_edges:
-            if edge.receiver_type:
-                rshort = edge.receiver_type.split(".")[-1]
-                for fn in mut.by_short_name.get(call.callee_name, {}).values():
-                    ident = f"{fn.path}::{fn.qualname}"
-                    if ident not in seen_ids and fn.class_qualname and fn.class_qualname.split(".")[-1] == rshort:
-                        seen_ids.add(ident)
-                        rt_matches.append((fn, "observed_runtime"))
+        rt_matches = _resolve_runtime_edges(call, mut, rt_edges)
         if rt_matches:
-            return tuple(rt_matches)
+            return rt_matches
 
     # 6. Static .pyi / inline type-annotation receiver-chain candidate resolution
     if call.receiver_chain and (mut._stub_files or mut.files):

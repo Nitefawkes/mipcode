@@ -104,7 +104,7 @@ def _is_test_or_support(path: str) -> bool:
         any(part in {"tests", "test", "testing"} for part in parts[:-1])
         or leaf.startswith("test_")
         or leaf.endswith("_test.py")
-        or leaf == "conftest.py"
+        or leaf in {"conftest.py", "tasks.py"}
     )
 
 

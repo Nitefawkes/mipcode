@@ -1,11 +1,15 @@
 from pathlib import Path
+import json
 import sys
 import tempfile
 import unittest
+from unittest.mock import MagicMock, call
 
 from mipdelta.delta import analyze_delta, format_advisory, rank_findings
 from mipdelta.facts import parse_file
-from mipdelta.monitoring import ScopedCallCollector
+from mipdelta.model import ObservedCallEdge
+from mipdelta.monitoring import ScopedCallCollector, load_runtime_edges
+from mipdelta.resolve import build_index, resolve_call_with_provenance
 from mipdelta.session import DeltaSession
 
 
@@ -231,6 +235,139 @@ class SessionStubsAndMonitoringTests(unittest.TestCase):
             f_fresh = fresh_after.functions[qual]
             self.assertEqual(f_reused, f_fresh)
             self.assertEqual(f_reused.body_dump, f_fresh.body_dump)
+
+    def test_collector_handles_mocks_and_proxies_safely_and_roundtrips_caller_line(self):
+        with tempfile.TemporaryDirectory() as td:
+            tmp = Path(td)
+            mod_path = tmp / "mock_target.py"
+            mod_path.write_text(
+                "class Worker:\n"
+                "    def ping(self, x):\n"
+                "        return x + 1\n\n"
+                "class UnhashableProxy:\n"
+                "    __hash__ = None\n"
+                "    @property\n"
+                "    def __name__(self):\n"
+                "        return [1, 2]\n"
+                "    def __call__(self, v):\n"
+                "        return v\n\n"
+                "def exercise(mock_obj, w):\n"
+                "    c = mock_obj.bar(1)\n"
+                "    _ = call_helper(mock_obj)\n"
+                "    p = UnhashableProxy()\n"
+                "    p(42)\n"
+                "    return (c, w.ping(3))\n\n"
+                "def call_helper(m):\n"
+                "    return m\n",
+                encoding="utf-8",
+            )
+            sys.path.insert(0, str(tmp))
+            try:
+                import importlib
+                mt = importlib.import_module("mock_target")
+                col = ScopedCallCollector([tmp], max_events_per_site=1)
+                self.assertEqual(col.max_events_per_site, 1)
+                col.start()
+                try:
+                    m = MagicMock()
+                    _ = call.bar(1)
+                    mt.exercise(m, mt.Worker())
+                finally:
+                    col.stop()
+
+                shard_dir = tmp / "shards"
+                shard_dir.mkdir()
+                (shard_dir / "edges-1.json").write_text(
+                    json.dumps(col.to_shard_dict()), encoding="utf-8"
+                )
+                loaded = load_runtime_edges(shard_dir)
+                ping_edges = [e for e in loaded if e.callee_name == "ping"]
+                self.assertTrue(ping_edges)
+                self.assertIsInstance(ping_edges[0].caller_line, int)
+                self.assertGreater(ping_edges[0].caller_line, 0)
+                # Ensure MagicMock did not emit bogus Mock edge entries
+                self.assertFalse(any("MagicMock" in (e.callee_qualname or "") for e in loaded))
+            finally:
+                sys.path.pop(0)
+                sys.modules.pop("mock_target", None)
+
+    def test_runtime_resolution_handles_mro_super_nested_locals_and_call_line_disambiguation(self):
+        before = {
+            "base.py": (
+                "class BaseA:\n"
+                "    def update(self, item, *, strict=False):\n"
+                "        return (item, strict)\n\n"
+                "class BaseB:\n"
+                "    def update(self, label):\n"
+                "        return label\n\n"
+                "class ChildA(BaseA):\n"
+                "    def extra(self):\n"
+                "        return 1\n"
+            ),
+            "caller.py": (
+                "from base import ChildA\n\n"
+                "class Overrider(ChildA):\n"
+                "    def update(self, item, *, strict=False):\n"
+                "        return super().update(item)\n\n"
+                "def dual_update(first, second, mode):\n"
+                "    if mode:\n"
+                "        return first.update('a')\n"
+                "    return second.update('b')\n\n"
+                "def outer(obj):\n"
+                "    def helper():\n"
+                "        def inner():\n"
+                "            return obj.update('z')\n"
+                "        return inner()\n"
+                "    return helper()\n"
+            ),
+        }
+        after = {
+            **before,
+            "base.py": before["base.py"].replace(
+                "def update(self, item, *, strict=False):",
+                "def update(self, item, *, mode=False):",
+            ),
+        }
+        edges = [
+            # Line 9 calls BaseA.update via subclass ChildA (MRO walk)
+            ObservedCallEdge("caller.py", "dual_update", 10, "BaseA.update", "update", "ChildA", 1, caller_line=9),
+            # Line 10 calls BaseB.update in same function (should NOT collide with line 9!)
+            ObservedCallEdge("caller.py", "dual_update", 20, "BaseB.update", "update", "BaseB", 1, caller_line=10),
+            # Unindexed <locals> subclass calling BaseA.update via super().update
+            ObservedCallEdge(
+                "caller.py", "Overrider.update", 12, "BaseA.update", "update", "test_case.<locals>.DynamicSub", 1, caller_line=5
+            ),
+            # Multi-level <locals> caller normalization
+            ObservedCallEdge(
+                "caller.py", "outer.<locals>.helper.<locals>.inner", 8, "BaseA.update", "update", "BaseA", 1, caller_line=15
+            ),
+        ]
+        # Verify super().update resolves cleanly to BaseA.update, never self-recursing on Overrider.update
+        facts_map = {p: parse_file(p, s) for p, s in after.items()}
+        idx = build_index(facts_map, runtime_edges=edges)
+        super_call = [
+            c for c in facts_map["caller.py"].calls
+            if c.owner_function == "Overrider.update" and c.callee_name == "update"
+        ][0]
+        self.assertEqual(
+            [(fn.qualname, src) for fn, src in resolve_call_with_provenance(super_call, facts_map["caller.py"], idx)],
+            [("BaseA.update", "observed_runtime")],
+        )
+
+        # Removing `strict=` when caller passed no `strict` won't fail unless `strict` was passed; mutate to required `need`!
+        after_req = {
+            **before,
+            "base.py": before["base.py"].replace(
+                "def update(self, item, *, strict=False):",
+                "def update(self, item, *, need: str, strict=False):",
+            ),
+        }
+        findings = analyze_delta(before, after_req, runtime_edges=edges)
+        req_sites = {(f.path, f.start_line, f.resolution_source) for f in findings if f.detector == "required_keyword_missing"}
+        self.assertIn(("caller.py", 5, "observed_runtime"), req_sites)
+        self.assertIn(("caller.py", 9, "observed_runtime"), req_sites)
+        self.assertNotIn(("caller.py", 10, "observed_runtime"), req_sites)
+        self.assertIn(("caller.py", 15, "observed_runtime"), req_sites)
 
 
 if __name__ == "__main__":

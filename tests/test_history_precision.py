@@ -350,3 +350,50 @@ def test_self_attribute_store_also_consumed_locally_abstains():
     assert _detectors(before, after) == []
 
 
+def test_invoke_task_context_parameter_is_exempt_but_extra_parameters_are_checked():
+    before = {
+        "tasks.py": (
+            "from invoke import task, run\n\n"
+            "@task\n"
+            "def lint():\n"
+            "    run('flake8 .')\n"
+        )
+    }
+    after_ctx_only = {
+        "tasks.py": (
+            "from invoke import task, run\n\n"
+            "@task\n"
+            "def lint(ctx):\n"
+            "    run('flake8 .')\n"
+        )
+    }
+    assert _detectors(before, after_ctx_only) == []
+
+    after_extra_param = {
+        "tasks.py": (
+            "from invoke import task, run\n\n"
+            "@task\n"
+            "def lint(ctx, fix=False):\n"
+            "    run('flake8 .')\n"
+        )
+    }
+    assert _detectors(after_ctx_only, after_extra_param) == ["parameter_sink_review"]
+
+
+def test_vendored_paths_do_not_emit_findings_while_monorepo_packages_still_do():
+    before = {
+        "requests/packages/idna/codec.py": "def decode(data):\n    return data\n",
+        "vendor/helper.py": "def parse(raw):\n    return raw\n",
+        "packages/core/api.py": "def parse(raw):\n    return raw\n",
+    }
+    after = {
+        "requests/packages/idna/codec.py": "def decode(data, strict=False):\n    return data\n",
+        "vendor/helper.py": "def parse(raw, strict=False):\n    return raw\n",
+        "packages/core/api.py": "def parse(raw, strict=False):\n    return raw\n",
+    }
+    findings = analyze_delta(before, after)
+    assert [(f.detector, f.path) for f in findings] == [
+        ("parameter_sink_review", "packages/core/api.py"),
+    ]
+
+

@@ -201,3 +201,86 @@ def test_git_check_still_rejects_an_edit_to_an_unparsable_file(repo_with_unparsa
 def test_clean_repository_with_unparsable_files_is_silent(repo_with_unparsable_files):
     result = _check(repo_with_unparsable_files, "--check-git", "--fail-on-findings")
     assert (result.returncode, result.stdout, result.stderr) == (0, "", "")
+
+
+def test_git_check_excludes_vendored_paths_but_keeps_top_level_packages(tmp_path):
+    root = tmp_path / "repo"
+    for rel, body in {
+        "mylib/__init__.py": "",
+        "mylib/packages/chardet/prober.py": "class Base:\n    def reset(self, x):\n        return x\n\nclass Sub(Base):\n    def reset(self, x):\n        return x\n",
+        "vendor/lib.py": "def fn(a):\n    return a\n",
+        "packages/app/service.py": "def handle(req):\n    return req\n",
+    }.items():
+        p = root / rel
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(body, encoding="utf-8")
+    _git(root, "init", "-q")
+    _git(root, "add", ".")
+    _git(root, "-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid", "commit", "-qm", "base")
+
+    # Mutate vendored code AND top-level monorepo `packages/app/service.py`
+    (root / "mylib/packages/chardet/prober.py").write_text(
+        "class Base:\n    def reset(self, x, filter_mode=None):\n        return (x, filter_mode)\n\n"
+        "class Sub(Base):\n    def reset(self, x):\n        return x\n",
+        encoding="utf-8",
+    )
+    (root / "vendor/lib.py").write_text("def fn(a, unused_flag=1):\n    return a\n", encoding="utf-8")
+    (root / "packages/app/service.py").write_text("def handle(req, dry_run=False):\n    return req\n", encoding="utf-8")
+
+    result = _check(root, "--check-git", "--json")
+    assert result.returncode == 0, result.stderr
+    data = json.loads(result.stdout)
+    assert data["changed_paths"] == ["packages/app/service.py"]
+    assert [(f["detector"], f["path"]) for f in data["findings"]] == [
+        ("parameter_sink_review", "packages/app/service.py"),
+    ]
+
+
+def test_run_pytest_uses_cap1_and_prioritizes_target_src_over_tool_src(tmp_path):
+    root = tmp_path / "src_repo"
+    (root / "src/targetpkg").mkdir(parents=True)
+    (root / "tests").mkdir(parents=True)
+    (root / "src/targetpkg/__init__.py").write_text("", encoding="utf-8")
+    (root / "src/targetpkg/engine.py").write_text(
+        "class Backend:\n    def execute(self, cmd):\n        return cmd\n\n"
+        "def dispatch(backend):\n    return backend.execute('ping')\n",
+        encoding="utf-8",
+    )
+    (root / "tests/test_engine.py").write_text(
+        "from targetpkg.engine import Backend, dispatch\n\n"
+        "def test_dispatch():\n    assert dispatch(Backend()) == 'ping'\n",
+        encoding="utf-8",
+    )
+    _git(root, "init", "-q")
+    _git(root, "add", ".")
+    _git(root, "-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid", "commit", "-qm", "base")
+
+    # Add optional parameter with default so pytest passes while Shard inspects cap1
+    (root / "src/targetpkg/engine.py").write_text(
+        "class Backend:\n    def execute(self, cmd):\n        return cmd\n\n"
+        "def make_wrapper(backend, *, retry=False):\n    return backend.execute('ping')\n",
+        encoding="utf-8",
+    )
+    _git(root, "add", ".")
+    _git(root, "-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid", "commit", "-qm", "wrapper")
+    (root / "src/targetpkg/engine.py").write_text(
+        "class Backend:\n    def execute(self, cmd, *, retry=False):\n        return (cmd, retry)\n\n"
+        "def make_wrapper(backend, *, retry=False):\n    return backend.execute('ping')\n",
+        encoding="utf-8",
+    )
+    (root / "tests/test_engine.py").write_text(
+        "from targetpkg.engine import Backend, make_wrapper\n\n"
+        "def test_wrapper():\n    assert make_wrapper(Backend()) == ('ping', False)\n",
+        encoding="utf-8",
+    )
+    result = _check(root, "--run-pytest", "--pytest-args=-q", "--json")
+    assert result.returncode == 0, result.stderr
+    data = json.loads(result.stdout[result.stdout.index("{"):])
+    assert any(
+        f["detector"] == "delegating_wrapper_review" and f["resolution_source"] == "observed_runtime"
+        for f in data["findings"]
+    )
+    shards = list((root / ".mipdelta" / "runtime").glob("edges-*.json"))
+    assert shards
+    shard_payload = json.loads(shards[0].read_text(encoding="utf-8"))
+    assert shard_payload["max_events_per_site"] == 1

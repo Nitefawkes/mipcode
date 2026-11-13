@@ -52,6 +52,7 @@ class ObservedCallEdge:
     receiver_type: str | None
     pid: int
     edge_label: str = "observed_runtime"
+    caller_line: int | None = None
 
 
 @dataclass(frozen=True)
@@ -112,16 +113,27 @@ class FunctionFact:
     attr_loads: frozenset[str] = frozenset()
 
     @property
+    def decorator_names(self) -> tuple[str, ...]:
+        """Leaf names of decorators applied to this function."""
+        node = self._ast_node
+        if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            return ()
+        names: list[str] = []
+        for decorator in node.decorator_list:
+            target = decorator.func if isinstance(decorator, ast.Call) else decorator
+            name = target.attr if isinstance(target, ast.Attribute) else getattr(target, "id", "")
+            if name:
+                names.append(name)
+        return tuple(names)
+
+    @property
     def is_stub(self) -> bool:
         """An abstract method, overload, or declaration whose body does no work."""
         node = self._ast_node
         if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
             return False
-        for decorator in node.decorator_list:
-            target = decorator.func if isinstance(decorator, ast.Call) else decorator
-            name = target.attr if isinstance(target, ast.Attribute) else getattr(target, "id", "")
-            if name in {"abstractmethod", "overload"}:
-                return True
+        if any(name in {"abstractmethod", "overload"} for name in self.decorator_names):
+            return True
         for statement in node.body:
             if isinstance(statement, ast.Pass):
                 continue

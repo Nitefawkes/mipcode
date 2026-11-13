@@ -31,9 +31,10 @@ from pathlib import Path
 from typing import Any, Callable, Iterable, Mapping
 
 from .cache import FactCache
-from .delta import OPT_IN_DETECTORS, analyze_changed_only, analyze_delta, format_advisory, rank_findings
+from .delta import OPT_IN_DETECTORS, analyze_changed_only, analyze_delta, format_advisory, is_vendored_path, rank_findings
 from .ledger import LedgerUpdate, Obligation, ObligationLedger, enclosing_function, format_open_obligations
 from .model import FileFacts, Finding, ObservedCallEdge, SourceFile
+from .monitoring import load_runtime_edges as _load_runtime_edges
 from .review import (
     ReviewError,
     ReviewResult,
@@ -74,8 +75,10 @@ class _CheckingCache(FactCache):
 
 
 def _is_python_source(relative: str) -> bool:
-    return relative.endswith((".py", ".pyi")) and not any(
-        part.startswith(".") or part in _SKIP_DIRS for part in relative.split("/")
+    return (
+        relative.endswith((".py", ".pyi"))
+        and not any(part.startswith(".") or part in _SKIP_DIRS for part in relative.split("/"))
+        and not is_vendored_path(relative)
     )
 
 
@@ -114,43 +117,6 @@ def _check_stubs(files: dict[str, str], cache: FactCache) -> dict[str, str]:
     for path, text in stubs.items():
         cache.load(path, text)
     return stubs
-
-
-def _load_runtime_edges(runtime_dir: Path) -> list[ObservedCallEdge]:
-    if not runtime_dir.exists():
-        return []
-    seen: set[tuple[str, str, int, str, str, str | None]] = set()
-    edges: list[ObservedCallEdge] = []
-    for sf in sorted(runtime_dir.glob("edges-*.json")):
-        try:
-            data = json.loads(sf.read_text(encoding="utf-8"))
-        except (OSError, json.JSONDecodeError):
-            continue
-        for e in data.get("edges", []):
-            key = (
-                e["caller_path"],
-                e["caller_qualname"],
-                int(e["instruction_offset"]),
-                e["callee_qualname"],
-                e["callee_name"],
-                e.get("receiver_type"),
-            )
-            if key in seen:
-                continue
-            seen.add(key)
-            edges.append(
-                ObservedCallEdge(
-                    caller_path=e["caller_path"],
-                    caller_qualname=e["caller_qualname"],
-                    instruction_offset=int(e["instruction_offset"]),
-                    callee_qualname=e["callee_qualname"],
-                    callee_name=e["callee_name"],
-                    receiver_type=e.get("receiver_type"),
-                    pid=int(e.get("pid", 0)),
-                    edge_label=e.get("edge_label", "observed_runtime"),
-                )
-            )
-    return edges
 
 
 def _git(root: Path, *args: str) -> bytes:
@@ -700,14 +666,28 @@ def _run_monitored_pytest(
     env["MIPDELTA_MONITOR_CONFIG"] = json.dumps(
         {
             "include_roots": [str(baseline[0])],
-            "max_events_per_site": 8,
+            "max_events_per_site": 1,
             "shard_dir": str(shard_dir),
         }
     )
-    py_paths = [str(bootstrap_dir), str(src_root), str(root)]
+    candidates: list[str] = [str(bootstrap_dir)]
+    for candidate_root in (baseline[0], root):
+        src_dir = candidate_root / "src"
+        if src_dir.is_dir():
+            candidates.append(str(src_dir))
+        candidates.append(str(candidate_root))
     if env.get("PYTHONPATH"):
-        py_paths.append(env["PYTHONPATH"])
-    env["PYTHONPATH"] = os.pathsep.join(py_paths)
+        candidates.extend(p for p in env["PYTHONPATH"].split(os.pathsep) if p)
+    candidates.append(str(src_root))
+
+    deduped: list[str] = []
+    seen_paths: set[str] = set()
+    for p in candidates:
+        norm = os.path.normcase(os.path.abspath(p))
+        if norm not in seen_paths:
+            seen_paths.add(norm)
+            deduped.append(p)
+    env["PYTHONPATH"] = os.pathsep.join(deduped)
 
     extra_args = shlex.split(pytest_args) if pytest_args else []
     cmd = [sys.executable, "-m", "pytest", *extra_args]
@@ -750,7 +730,7 @@ def main_cli(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--run-pytest",
         action="store_true",
-        help="Run pytest under Python 3.12 sys.monitoring and evaluate post-test contract deltas against --base-ref",
+        help="Opt-in dynamic supplement: run pytest under Python 3.12 sys.monitoring and evaluate post-test deltas against --base-ref",
     )
     parser.add_argument("--pytest-args", type=str, default="", help="Arguments forwarded to pytest when --run-pytest is used")
     parser.add_argument("--base-ref", type=str, default="HEAD", help="Git ref to compare working tree against (default: HEAD)")

@@ -33,6 +33,7 @@ from typing import Any, Callable, Iterable, Mapping
 
 from .facts import parse_file
 from .model import ObservedCallEdge, WriteDeltaResult
+from .monitoring import load_runtime_edges
 from .session import DeltaSession
 
 MAX_IMPACT_WIRE_DELTA_BYTES = 350
@@ -647,22 +648,7 @@ class ContainedGatewaySession:
                 "generation": self.generation,
             }
             if shard_dir is not None and shard_dir.exists() and self.impact is not None:
-                edges: list[ObservedCallEdge] = []
-                for sf in sorted(shard_dir.glob("edges-*.json")):
-                    data = json.loads(sf.read_text(encoding="utf-8"))
-                    for e in data.get("edges", []):
-                        edges.append(
-                            ObservedCallEdge(
-                                caller_path=e["caller_path"],
-                                caller_qualname=e["caller_qualname"],
-                                instruction_offset=e["instruction_offset"],
-                                callee_qualname=e["callee_qualname"],
-                                callee_name=e["callee_name"],
-                                receiver_type=e["receiver_type"],
-                                pid=e["pid"],
-                                edge_label=e.get("edge_label", "observed_runtime"),
-                            )
-                        )
+                edges = load_runtime_edges(shard_dir)
                 self.impact.ingest_runtime_edges(edges)
                 payload = self.impact.after_test(payload, self.max_response_bytes)
                 if "impact" in payload:

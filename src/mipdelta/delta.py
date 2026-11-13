@@ -63,6 +63,22 @@ _PROVENANCE_TAG = {
 }
 
 
+_VENDORED_DIRS = frozenset(
+    {"vendor", "_vendor", "vendored", "third_party", "3rd_party", "third-party", "3rdparty", "extern", "external"}
+)
+
+
+def is_vendored_path(path: str) -> bool:
+    """True for standard third-party vendored trees (vendor/, _vendor/, third_party/, <pkg>/packages/)."""
+    parts = [p for p in path.replace("\\", "/").lower().split("/") if p]
+    dirs = parts[:-1]
+    if any(p in _VENDORED_DIRS for p in dirs):
+        return True
+    # Nested `<pkg>/packages/<dep>/...` (requests/packages, urllib3/packages),
+    # without excluding top-level monorepo `packages/<subpkg>/...` roots.
+    return "packages" in dirs[1:]
+
+
 def _is_test_path(path: str) -> bool:
     parts = path.replace("\\", "/").lower().split("/")
     if any(p in {"tests", "testing", "test_suite"} for p in parts[:-1]):
@@ -133,6 +149,11 @@ def _unread_parameter_is_expected(
     parameter, or ignores it in a body that does real work.
     """
     if function.name.startswith("__") and function.name.endswith("__") and function.name != "__init__":
+        return True
+    if any(name in {"task", "ctask"} for name in function.decorator_names) and (
+        parameter in {"ctx", "c", "context"}
+        or bool(function.parameters and function.parameters[0].name == parameter)
+    ):
         return True
     expected = f"{function.class_qualname}.{function.name}" if function.class_qualname else function.name
     if function.qualname != expected:
@@ -479,6 +500,8 @@ def analyze_changed_files_in_index(
 
     removed_paths = before_changed.keys() - index.files.keys()
     for path in sorted(after_changed.keys() | removed_paths):
+        if is_vendored_path(path):
+            continue
         old_file = before_changed.get(path)
         new_file = after_changed.get(path)
         if new_file is not None and new_file.parse_error is not None:
@@ -1002,7 +1025,11 @@ def analyze_changed_files_in_index(
                     )
                 )
 
-    findings = [f for f in findings if f.detector not in OPT_IN_DETECTORS or f.detector in enabled]
+    findings = [
+        f
+        for f in findings
+        if (f.detector not in OPT_IN_DETECTORS or f.detector in enabled) and not is_vendored_path(f.path)
+    ]
     return deduplicate_findings(findings), cross_file_triggered, candidate_calls_inspected
 
 
