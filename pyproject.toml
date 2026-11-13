@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mipcode"
-version = "0.6.0"
+version = "0.6.2"
 description = "Deterministic AST and runtime-traced Python contract checks across call sites and subclasses (mip-delta)"
 readme = "README.md"
 requires-python = ">=3.10"

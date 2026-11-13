@@ -50,12 +50,12 @@ A ledger stored in a `.mipdelta` directory adds a `.gitignore` there so the stat
 
 ## Run before a commit
 
-With [pre-commit](https://pre-commit.com), add the root [`.pre-commit-hooks.yaml`](../.pre-commit-hooks.yaml) hook so commits stop while unwaived sites remain open (replace `main` with a commit SHA once pinned):
+With [pre-commit](https://pre-commit.com), add the root [`.pre-commit-hooks.yaml`](../.pre-commit-hooks.yaml) hook so commits stop while unwaived sites remain open (use `rev: main` to track the latest commit on `main`, or pin a release tag / commit SHA):
 
 ```yaml
 repos:
   - repo: https://github.com/Nitefawkes/mipcode
-    rev: main
+    rev: v0.6.2
     hooks:
       - id: mip-delta
 ```
@@ -79,7 +79,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: python -m pip install "git+https://github.com/Nitefawkes/mipcode@main"
+      - run: python -m pip install "git+https://github.com/Nitefawkes/mipcode@v0.6.2"  # or @main
       - run: mip-delta --check-git --base-ref "$(git merge-base "origin/$BASE" HEAD)"
         env:
           BASE: ${{ github.base_ref }}

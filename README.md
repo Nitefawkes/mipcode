@@ -93,7 +93,7 @@ The report points to `consumer.py:5` and names `required_keyword_missing`.
 
 ## Where to run it
 
-- **Before a commit.** Add the [pre-commit hook](.pre-commit-hooks.yaml) to `.pre-commit-config.yaml` (`rev: main`, `id: mip-delta`) to stop the commit while reported sites are open. A site you judge intentional can be `--waive`d (see [usage guide](docs/usage.md#run-before-a-commit)).
+- **Before a commit.** Add the [pre-commit hook](.pre-commit-hooks.yaml) to `.pre-commit-config.yaml` (`rev: v0.6.2` or `rev: main`, `id: mip-delta`) to stop the commit while reported sites are open. A site you judge intentional can be `--waive`d (see [usage guide](docs/usage.md#run-before-a-commit)).
 - **On a pull request.** Copy the [GitHub Actions job](docs/usage.md#run-on-a-pull-request) to compare a pull request against its base branch and print advisories in the CI log.
 - **After a merge.** Two branches can merge without a textual conflict and still disagree about a contract. A [merge check](docs/usage.md#check-a-merge) compares the merged tree with the merge base.
 
