@@ -30,6 +30,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable, Iterable, Mapping
 
+from . import __version__
 from .cache import FactCache
 from .delta import OPT_IN_DETECTORS, analyze_changed_only, analyze_delta, format_advisory, is_vendored_path, rank_findings
 from .ledger import LedgerUpdate, Obligation, ObligationLedger, enclosing_function, format_open_obligations
@@ -719,6 +720,7 @@ def main_cli(argv: list[str] | None = None) -> int:
         prog="mip-delta",
         description="MipCode v0.6 research preview for Python contract changes.",
     )
+    parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     parser.add_argument("--root", type=Path, default=Path("."), help="Workspace root directory")
     parser.add_argument("--write-path", type=str, default=None, help="Relative path of the modified Python file")
     parser.add_argument("--candidate-file", type=Path, default=None, help="Path to file containing proposed new UTF-8 source")

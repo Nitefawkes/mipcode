@@ -1,6 +1,6 @@
 # Experiment 2: Keep-or-Kill Empirical Audit of `monitoring.py` (`[rt-obs]`) & `ledger.py` (`ObligationLedger`)
 
-> **Two-phase audit at `$0` LLM API cost:** Phase 1 audited `src/mipdelta/` completely unmodified at [`bf0e3c8`](../../) to get an honest baseline keep-or-kill verdict on existing code. Phase 2 landed the targeted fixes revealed by Phase 1 in [`491bdda`](../../) and re-verified the entire Part A stress matrix, 30-mutation Part A recall benchmark, Part B 20-PR corpus, and Experiment 1 regression checks. Full machine-readable data is stored in [`summary.json`](summary.json), [`part_a_stress.json`](part_a_stress.json), [`part_a_recall.json`](part_a_recall.json), [`part_b_raw_180.json`](part_b_raw_180.json), and [`part_b_raw.json`](part_b_raw.json).
+> **Two-phase audit at `$0` LLM API cost:** Phase 1 audited `src/mipdelta/` completely unmodified at [`bf0e3c8`](https://github.com/Nitefawkes/mipcode/commit/bf0e3c8) to get an honest baseline keep-or-kill verdict on existing code. Phase 2 landed the targeted fixes revealed by Phase 1 in [`491bdda`](https://github.com/Nitefawkes/mipcode/commit/491bdda) and re-verified the entire Part A stress matrix, 30-mutation Part A recall benchmark, Part B 20-PR corpus, and Experiment 1 regression checks. Full machine-readable data is consolidated in [`summary.json`](summary.json) (synthesized from the untracked local `part_a_stress.json`, `part_a_recall.json`, `part_b_raw_180.json`, and `part_b_raw.json` outputs produced by the [audit protocol scripts](../../experiments/audit_rt_ledger/README.md)).
 
 ---
 

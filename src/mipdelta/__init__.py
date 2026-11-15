@@ -1,3 +1,7 @@
+import importlib.metadata
+import re
+from pathlib import Path
+
 from .cache import CacheStats, FactCache
 from .delta import (
     OPT_IN_DETECTORS,
@@ -29,7 +33,31 @@ from .resolve import MutableResolutionIndex
 from .session import DeltaSession
 from .stubs import TypeCandidateIndex, parse_stub_tree
 
+
+def _resolve_package_version() -> str:
+    """Return the package version, preferring pyproject.toml in a source checkout."""
+    repo_root = Path(__file__).resolve().parents[2]
+    pyproject = repo_root / "pyproject.toml"
+    if pyproject.is_file() and (repo_root / "src" / "mipdelta").is_dir():
+        in_project = False
+        for raw_line in pyproject.read_text(encoding="utf-8").splitlines():
+            line = raw_line.strip()
+            if line.startswith("["):
+                in_project = line == "[project]"
+            elif in_project:
+                match = re.match(r'^version\s*=\s*"([^"]+)"', line)
+                if match:
+                    return match.group(1)
+    try:
+        return importlib.metadata.version("mipcode")
+    except importlib.metadata.PackageNotFoundError:
+        return "0.6.2"
+
+
+__version__ = _resolve_package_version()
+
 __all__ = [
+    "__version__",
     "CacheStats",
     "CallFact",
     "ClassFact",
