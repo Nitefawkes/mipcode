@@ -1,0 +1,525 @@
+{
+  "experiment": "cold_audit",
+  "mipdelta_sha": "238c50947035",
+  "noise_gate_threshold": 50,
+  "noise_gate_exceeded": [],
+  "totals": {
+    "repositories": 24,
+    "files_scanned": 5719,
+    "candidate_calls_inspected": 77324,
+    "repositories_silent": 20,
+    "repositories_flagged": 4,
+    "stage1_findings": 12,
+    "median_wall_ms": 1274.19
+  },
+  "repositories": [
+    {
+      "repo": "httpx",
+      "url": "https://github.com/encode/httpx.git",
+      "head_sha": "b5addb64f0161ff6bfe94c124ef76f6a1fba5254",
+      "head_sha_short": "b5addb64f016",
+      "files_scanned": 60,
+      "skipped_unparsed_count": 0,
+      "candidate_calls_inspected": 1391,
+      "wall_ms": 663.472,
+      "process_wall_ms": 1043.87,
+      "stage1_findings_count": 0,
+      "advisory_text": "",
+      "findings": []
+    },
+    {
+      "repo": "marshmallow",
+      "url": "https://github.com/marshmallow-code/marshmallow.git",
+      "head_sha": "777ff66039fd939fc509226a33586bc3209df301",
+      "head_sha_short": "777ff66039fd",
+      "files_scanned": 38,
+      "skipped_unparsed_count": 0,
+      "candidate_calls_inspected": 731,
+      "wall_ms": 764.977,
+      "process_wall_ms": 1187.21,
+      "stage1_findings_count": 0,
+      "advisory_text": "",
+      "findings": []
+    },
+    {
+      "repo": "rich",
+      "url": "https://github.com/Textualize/rich.git",
+      "head_sha": "3a109ccdffe5b2d0e30684a304fbd388e99ce57b",
+      "head_sha_short": "3a109ccdffe5",
+      "files_scanned": 212,
+      "skipped_unparsed_count": 0,
+      "candidate_calls_inspected": 3325,
+      "wall_ms": 1910.505,
+      "process_wall_ms": 2375.56,
+      "stage1_findings_count": 9,
+      "advisory_text": "[mip-delta] rich/traceback.py:309 delegating_wrapper_review[static] Traceback.__init__; rich/traceback.py:309 delegating_wrapper_review[static] Traceback.__init__; rich/traceback.py:309 delegating_wrapper_review[static] Traceback.__init__ (+6)",
+      "findings": [
+        {
+          "detector": "delegating_wrapper_review",
+          "symbol": "Traceback.__init__",
+          "path": "rich/traceback.py",
+          "start_line": 309,
+          "end_line": 309,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "delegating wrapper Traceback.__init__ calls Traceback.extract without forwarding optional parameter locals_hide_dunder"
+          ]
+        },
+        {
+          "detector": "delegating_wrapper_review",
+          "symbol": "Traceback.__init__",
+          "path": "rich/traceback.py",
+          "start_line": 309,
+          "end_line": 309,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "delegating wrapper Traceback.__init__ calls Traceback.extract without forwarding optional parameter locals_hide_sunder"
+          ]
+        },
+        {
+          "detector": "delegating_wrapper_review",
+          "symbol": "Traceback.__init__",
+          "path": "rich/traceback.py",
+          "start_line": 309,
+          "end_line": 309,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "delegating wrapper Traceback.__init__ calls Traceback.extract without forwarding optional parameter locals_max_depth"
+          ]
+        },
+        {
+          "detector": "delegating_wrapper_review",
+          "symbol": "Traceback.__init__",
+          "path": "rich/traceback.py",
+          "start_line": 309,
+          "end_line": 309,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "delegating wrapper Traceback.__init__ calls Traceback.extract without forwarding optional parameter locals_max_length"
+          ]
+        },
+        {
+          "detector": "delegating_wrapper_review",
+          "symbol": "Traceback.__init__",
+          "path": "rich/traceback.py",
+          "start_line": 309,
+          "end_line": 309,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "delegating wrapper Traceback.__init__ calls Traceback.extract without forwarding optional parameter locals_max_string"
+          ]
+        },
+        {
+          "detector": "delegating_wrapper_review",
+          "symbol": "Traceback.extract",
+          "path": "rich/traceback.py",
+          "start_line": 487,
+          "end_line": 487,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "delegating wrapper Traceback.extract calls Traceback.extract without forwarding optional parameter locals_max_depth"
+          ]
+        },
+        {
+          "detector": "delegating_wrapper_review",
+          "symbol": "Traceback.extract",
+          "path": "rich/traceback.py",
+          "start_line": 487,
+          "end_line": 487,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "delegating wrapper Traceback.extract calls Traceback.extract without forwarding optional parameter locals_max_string"
+          ]
+        },
+        {
+          "detector": "parameter_sink_review",
+          "symbol": "Traceback.__init__",
+          "path": "rich/traceback.py",
+          "start_line": 283,
+          "end_line": 338,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "parameter locals_hide_dunder is only stored on self.locals_hide_dunder, which is never read; verify its intended behavioral sink"
+          ]
+        },
+        {
+          "detector": "parameter_sink_review",
+          "symbol": "Traceback.__init__",
+          "path": "rich/traceback.py",
+          "start_line": 283,
+          "end_line": 338,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "parameter locals_hide_sunder is only stored on self.locals_hide_sunder, which is never read; verify its intended behavioral sink"
+          ]
+        }
+      ],
+      "review": {
+        "verdict": "confirm_omission",
+        "suppressed": false,
+        "reason": "The snippets show `Traceback.__init__` accepting `locals_max_length`, `locals_hide_dunder`, and related options but calling `self.extract(...)` with only `show_locals`, so those settings never reach extraction. The recursive exception-group call in `Traceback.extract` accepts `locals_max_depth` but drops it when recursing. The diff is empty, so these are pre-existing gaps, but the unforwarded options are concrete and visible in the code.",
+        "backend": "claude_cli",
+        "model": "claude-haiku-5-5",
+        "wall_ms": 12915.016,
+        "cost_usd": 0.008752
+      }
+    },
+    {
+      "repo": "attrs",
+      "url": "https://github.com/python-attrs/attrs.git",
+      "head_sha": "2a1fb86d44816afcc60e86d57956ce3604820326",
+      "head_sha_short": "2a1fb86d4481",
+      "files_scanned": 56,
+      "skipped_unparsed_count": 0,
+      "candidate_calls_inspected": 723,
+      "wall_ms": 748.457,
+      "process_wall_ms": 1216.6,
+      "stage1_findings_count": 0,
+      "advisory_text": "",
+      "findings": []
+    },
+    {
+      "repo": "mkdocs",
+      "url": "https://github.com/mkdocs/mkdocs.git",
+      "head_sha": "2862536793b3c67d9d83c33e0dd6d50a791928f8",
+      "head_sha_short": "2862536793b3",
+      "files_scanned": 65,
+      "skipped_unparsed_count": 0,
+      "candidate_calls_inspected": 1507,
+      "wall_ms": 954.929,
+      "process_wall_ms": 1328.61,
+      "stage1_findings_count": 0,
+      "advisory_text": "",
+      "findings": []
+    },
+    {
+      "repo": "paramiko",
+      "url": "https://github.com/paramiko/paramiko.git",
+      "head_sha": "0e9ccb91e0f9a68f2587233d523ad7fe46e730fe",
+      "head_sha_short": "0e9ccb91e0f9",
+      "files_scanned": 70,
+      "skipped_unparsed_count": 0,
+      "candidate_calls_inspected": 3734,
+      "wall_ms": 1010.745,
+      "process_wall_ms": 1395.19,
+      "stage1_findings_count": 0,
+      "advisory_text": "",
+      "findings": []
+    },
+    {
+      "repo": "pytest",
+      "url": "https://github.com/pytest-dev/pytest.git",
+      "head_sha": "fc9a7ef678f64d17f1c03b619f3842ea1d127e74",
+      "head_sha_short": "fc9a7ef678f6",
+      "files_scanned": 274,
+      "skipped_unparsed_count": 0,
+      "candidate_calls_inspected": 7770,
+      "wall_ms": 4805.772,
+      "process_wall_ms": 5320.26,
+      "stage1_findings_count": 0,
+      "advisory_text": "",
+      "findings": []
+    },
+    {
+      "repo": "requests",
+      "url": "https://github.com/psf/requests.git",
+      "head_sha": "3c7baaa05ab4aa49cc819ce3a819d260de19c157",
+      "head_sha_short": "3c7baaa05ab4",
+      "files_scanned": 37,
+      "skipped_unparsed_count": 0,
+      "candidate_calls_inspected": 907,
+      "wall_ms": 612.038,
+      "process_wall_ms": 1022.7,
+      "stage1_findings_count": 0,
+      "advisory_text": "",
+      "findings": []
+    },
+    {
+      "repo": "scrapy",
+      "url": "https://github.com/scrapy/scrapy.git",
+      "head_sha": "e63a574c767d7a9438c21db158f605f1c44c6e6a",
+      "head_sha_short": "e63a574c767d",
+      "files_scanned": 546,
+      "skipped_unparsed_count": 0,
+      "candidate_calls_inspected": 7909,
+      "wall_ms": 6229.746,
+      "process_wall_ms": 6750.71,
+      "stage1_findings_count": 0,
+      "advisory_text": "",
+      "findings": []
+    },
+    {
+      "repo": "urllib3",
+      "url": "https://github.com/urllib3/urllib3.git",
+      "head_sha": "d9f9b0ad5b99247e06aa9a50b7a5747aa5c2e35d",
+      "head_sha_short": "d9f9b0ad5b99",
+      "files_scanned": 83,
+      "skipped_unparsed_count": 0,
+      "candidate_calls_inspected": 2072,
+      "wall_ms": 1325.217,
+      "process_wall_ms": 1749.85,
+      "stage1_findings_count": 0,
+      "advisory_text": "",
+      "findings": []
+    },
+    {
+      "repo": "click",
+      "url": "https://github.com/pallets/click.git",
+      "head_sha": "e38188e9e205005d5af5f9e59df51904c984586a",
+      "head_sha_short": "e38188e9e205",
+      "files_scanned": 91,
+      "skipped_unparsed_count": 0,
+      "candidate_calls_inspected": 1861,
+      "wall_ms": 1274.192,
+      "process_wall_ms": 1672.62,
+      "stage1_findings_count": 1,
+      "advisory_text": "[mip-delta] src/click/utils.py:131 delegating_wrapper_review[static] _LazyFile.__init__ (delegating wrapper _LazyFile.__init__ calls open_stream without forwarding optional parameter atomic)",
+      "findings": [
+        {
+          "detector": "delegating_wrapper_review",
+          "symbol": "_LazyFile.__init__",
+          "path": "src/click/utils.py",
+          "start_line": 131,
+          "end_line": 131,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "delegating wrapper _LazyFile.__init__ calls open_stream without forwarding optional parameter atomic"
+          ]
+        }
+      ],
+      "review": {
+        "verdict": "suppress_false_alarm",
+        "suppressed": true,
+        "reason": "The `\"-\"` branch of `_LazyFile.__init__` omits `atomic`, but `open_stream` explicitly ignores `atomic` for standard streams (its comment says so and it returns early for `\"-\"`), so forwarding it would change nothing. The non-`\"-\"` path defers the real open to `_LazyFile.open()`, which I'd expect to pass `atomic` through, though that code isn't in the snippets. The production diff is empty, so this is pre-existing code, not a regression.",
+        "backend": "claude_cli",
+        "model": "claude-haiku-5-5",
+        "wall_ms": 5985.004,
+        "cost_usd": 0.001102
+      }
+    },
+    {
+      "repo": "flask",
+      "url": "https://github.com/pallets/flask.git",
+      "head_sha": "49943b5a94413a530761350f04e896f76e8d620e",
+      "head_sha_short": "49943b5a9441",
+      "files_scanned": 83,
+      "skipped_unparsed_count": 0,
+      "candidate_calls_inspected": 1061,
+      "wall_ms": 635.57,
+      "process_wall_ms": 1001.5,
+      "stage1_findings_count": 0,
+      "advisory_text": "",
+      "findings": []
+    },
+    {
+      "repo": "werkzeug",
+      "url": "https://github.com/pallets/werkzeug.git",
+      "head_sha": "0f43c6ebd426039e4b99ec22535c2c8a2ec2f69f",
+      "head_sha_short": "0f43c6ebd426",
+      "files_scanned": 142,
+      "skipped_unparsed_count": 0,
+      "candidate_calls_inspected": 3462,
+      "wall_ms": 1351.453,
+      "process_wall_ms": 1705.21,
+      "stage1_findings_count": 0,
+      "advisory_text": "",
+      "findings": []
+    },
+    {
+      "repo": "jinja2",
+      "url": "https://github.com/pallets/jinja.git",
+      "head_sha": "5ef70112a1ff19c05324ff889dd30405b1002044",
+      "head_sha_short": "5ef70112a1ff",
+      "files_scanned": 60,
+      "skipped_unparsed_count": 0,
+      "candidate_calls_inspected": 2822,
+      "wall_ms": 928.69,
+      "process_wall_ms": 1263.97,
+      "stage1_findings_count": 0,
+      "advisory_text": "",
+      "findings": []
+    },
+    {
+      "repo": "fastapi",
+      "url": "https://github.com/fastapi/fastapi.git",
+      "head_sha": "913c68062c8990ea2c00d856d81b7e2383485155",
+      "head_sha_short": "913c68062c89",
+      "files_scanned": 1223,
+      "skipped_unparsed_count": 0,
+      "candidate_calls_inspected": 2641,
+      "wall_ms": 4722.457,
+      "process_wall_ms": 5274.83,
+      "stage1_findings_count": 0,
+      "advisory_text": "",
+      "findings": []
+    },
+    {
+      "repo": "typer",
+      "url": "https://github.com/fastapi/typer.git",
+      "head_sha": "73500169e87b4e31717d687818c5ed955b584c18",
+      "head_sha_short": "73500169e87b",
+      "files_scanned": 643,
+      "skipped_unparsed_count": 0,
+      "candidate_calls_inspected": 2511,
+      "wall_ms": 1443.605,
+      "process_wall_ms": 1892.47,
+      "stage1_findings_count": 1,
+      "advisory_text": "[mip-delta] typer/_click/utils.py:135 delegating_wrapper_review[static] LazyFile.__init__ (delegating wrapper LazyFile.__init__ calls open_stream without forwarding optional parameter atomic)",
+      "findings": [
+        {
+          "detector": "delegating_wrapper_review",
+          "symbol": "LazyFile.__init__",
+          "path": "typer/_click/utils.py",
+          "start_line": 135,
+          "end_line": 135,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "delegating wrapper LazyFile.__init__ calls open_stream without forwarding optional parameter atomic"
+          ]
+        }
+      ],
+      "review": {
+        "verdict": "suppress_false_alarm",
+        "suppressed": true,
+        "reason": "The flagged branch only runs when `self.name == \"-\"`, and `open_stream` returns early for `\"-\"` before it reads `atomic`, with a comment saying standard streams ignore the atomic flag. Not forwarding `atomic` therefore has no behavioral effect, and the diff is empty, so nothing here is a new contract break.",
+        "backend": "claude_cli",
+        "model": "claude-haiku-5-5",
+        "wall_ms": 5682.668,
+        "cost_usd": 0.001233
+      }
+    },
+    {
+      "repo": "starlette",
+      "url": "https://github.com/encode/starlette.git",
+      "head_sha": "271c277da0ff64e2048a4d46ecc812b9d61db5f6",
+      "head_sha_short": "271c277da0ff",
+      "files_scanned": 84,
+      "skipped_unparsed_count": 0,
+      "candidate_calls_inspected": 1687,
+      "wall_ms": 963.077,
+      "process_wall_ms": 1397.9,
+      "stage1_findings_count": 0,
+      "advisory_text": "",
+      "findings": []
+    },
+    {
+      "repo": "uvicorn",
+      "url": "https://github.com/encode/uvicorn.git",
+      "head_sha": "a99c1b76ee9caea67ff98e2ccc457bd372db193f",
+      "head_sha_short": "a99c1b76ee9c",
+      "files_scanned": 84,
+      "skipped_unparsed_count": 0,
+      "candidate_calls_inspected": 1870,
+      "wall_ms": 807.846,
+      "process_wall_ms": 1203.87,
+      "stage1_findings_count": 0,
+      "advisory_text": "",
+      "findings": []
+    },
+    {
+      "repo": "anyio",
+      "url": "https://github.com/agronholm/anyio.git",
+      "head_sha": "4d53ea15daec445b2bf368285f6ef60297b8f4ab",
+      "head_sha_short": "4d53ea15daec",
+      "files_scanned": 194,
+      "skipped_unparsed_count": 0,
+      "candidate_calls_inspected": 2701,
+      "wall_ms": 1411.673,
+      "process_wall_ms": 1849.71,
+      "stage1_findings_count": 0,
+      "advisory_text": "",
+      "findings": []
+    },
+    {
+      "repo": "tenacity",
+      "url": "https://github.com/jd/tenacity.git",
+      "head_sha": "aac059c906170ee7b6ce1aa086a226f3aded5c99",
+      "head_sha_short": "aac059c90617",
+      "files_scanned": 20,
+      "skipped_unparsed_count": 0,
+      "candidate_calls_inspected": 379,
+      "wall_ms": 419.326,
+      "process_wall_ms": 786.63,
+      "stage1_findings_count": 0,
+      "advisory_text": "",
+      "findings": []
+    },
+    {
+      "repo": "aiohttp",
+      "url": "https://github.com/aio-libs/aiohttp.git",
+      "head_sha": "fe099491d275ef2c21bf683e024e34d51ac05d43",
+      "head_sha_short": "fe099491d275",
+      "files_scanned": 173,
+      "skipped_unparsed_count": 0,
+      "candidate_calls_inspected": 4499,
+      "wall_ms": 5053.879,
+      "process_wall_ms": 5536.3,
+      "stage1_findings_count": 0,
+      "advisory_text": "",
+      "findings": []
+    },
+    {
+      "repo": "black",
+      "url": "https://github.com/psf/black.git",
+      "head_sha": "b10cbe43b8169e688ab86989ddcc8ad2a53ff2cd",
+      "head_sha_short": "b10cbe43b816",
+      "files_scanned": 422,
+      "skipped_unparsed_count": 18,
+      "candidate_calls_inspected": 3532,
+      "wall_ms": 4399.302,
+      "process_wall_ms": 4905.98,
+      "stage1_findings_count": 0,
+      "advisory_text": "",
+      "findings": []
+    },
+    {
+      "repo": "textual",
+      "url": "https://github.com/Textualize/textual.git",
+      "head_sha": "5e5b7ef58b8c5572c13a3ff9027d756623661495",
+      "head_sha_short": "5e5b7ef58b8c",
+      "files_scanned": 987,
+      "skipped_unparsed_count": 0,
+      "candidate_calls_inspected": 11829,
+      "wall_ms": 7704.069,
+      "process_wall_ms": 8210.62,
+      "stage1_findings_count": 0,
+      "advisory_text": "",
+      "findings": []
+    },
+    {
+      "repo": "mipcode",
+      "url": "https://github.com/Nitefawkes/mipcode.git",
+      "head_sha": "238c509470351de684d83a8ec0fcd6c1c2e80ad6",
+      "head_sha_short": "238c50947035",
+      "files_scanned": 72,
+      "skipped_unparsed_count": 0,
+      "candidate_calls_inspected": 6400,
+      "wall_ms": 1127.289,
+      "process_wall_ms": 1507.84,
+      "stage1_findings_count": 1,
+      "advisory_text": "[mip-delta] src/mipdelta/gateway.py:354 parameter_sink_review[static] ContainedGatewaySession.__init__ (parameter max_visible_bytes is only stored on self.max_visible_bytes, which is never read; verify its intended behavioral sink)",
+      "findings": [
+        {
+          "detector": "parameter_sink_review",
+          "symbol": "ContainedGatewaySession.__init__",
+          "path": "src/mipdelta/gateway.py",
+          "start_line": 354,
+          "end_line": 409,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "parameter max_visible_bytes is only stored on self.max_visible_bytes, which is never read; verify its intended behavioral sink"
+          ]
+        }
+      ],
+      "review": {
+        "verdict": "review_worthy",
+        "suppressed": false,
+        "reason": "The production diff is empty, so this is not a newly added parameter, and the snippet shows only `__init__`, so the claim that `self.max_visible_bytes` is never read cannot be confirmed here. A cap that is stored but unenforced would be a real risk, since a `visible_bytes` metric exists and the sibling `max_response_bytes` may be enforced elsewhere, so a developer should check the visible-output path.",
+        "backend": "claude_cli",
+        "model": "claude-haiku-5-5",
+        "wall_ms": 6735.013,
+        "cost_usd": 0.001294
+      }
+    }
+  ]
+}

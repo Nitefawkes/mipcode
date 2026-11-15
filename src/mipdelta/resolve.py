@@ -369,8 +369,8 @@ def resolve_call_with_provenance(
                 if rows:
                     return tuple((r, "static_ast") for r in rows)
 
-    # 2. Direct self.method(...) resolution on enclosing class (or base class)
-    if call.receiver_chain == ("self",) and call.owner_function and "." in call.owner_function:
+    # 2. Direct self.method(...) / cls.method(...) resolution on enclosing class (or base class)
+    if call.receiver_chain in {("self",), ("cls",)} and call.owner_function and "." in call.owner_function:
         owner_class = call.owner_function.rsplit(".", 1)[0].split(".")[-1]
         candidates = [
             fn

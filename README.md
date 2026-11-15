@@ -71,6 +71,21 @@ To make sure every subsystem in `src/mipdelta/` earned its keep against real tes
 - **Opt-in PEP 669 runtime observation (`--run-pytest`, `max_events_per_site=1` default):** Default `mip-delta --check-git` stays zero-dependency static AST (~5 ms). As an explicit **opt-in dynamic supplement**, fixing 5 runtime/MRO lookup defects exposed by the audit turned `--run-pytest` into `0` tool-ID/Mock crashes (`pytest-cov` and `pytest-xdist` clean), **`+5.26%` cold / `+14.17%` median warm `pytest` overhead**, and **`27/30 (90.0%)` mutation recall** (`14/15 = 93.3%` on optional delegating wrappers where installed `mypy` is `0.0%`; `+56.7%` net recall lift over static AST + `mypy`).
 - **Session & multi-push deduplication (`--ledger`, `ObligationLedger`):** Single-shot CI PR checks get identical results from stateless `--base-ref`, because WIP commits only naturally resolved `9.1%–13.2%` of opened sites before merge. We keep `ledger.py` scoped strictly to **agent-hook / multi-push deduplication**, where it cut repeat push alerts by **`52.7%–66.2%`** with **`0` anchor churn across `19` line shifts**.
 
+### Cold Repo Bug-Hunter (Snapshot Audit at Rest, `--audit-repo`)
+
+You don't need a git diff to try `mip-delta` on a codebase. `mip-delta --audit-repo` scans a resting `HEAD` snapshot for standing wrapper option drops (`delegating_wrapper_review`), dead `self.<param>` configuration attributes never read anywhere in the workspace (`parameter_sink_review`), and hard subclass parameter-kind mismatches (`override_signature_review`).
+
+In a [24-repository cold sweep](results/cold_audit/README.md) ([protocol](experiments/cold_audit/README.md)) across popular Python libraries (`5,719` production files, `77,324` candidate calls, median scan `1.27 s`):
+
+- **20 of 24 repositories (`83.3%`) emitted zero alerts**, showing strict quietness on mature codebases even with no diff boundary.
+- **10 of 12 Stage-1 findings (`83.3%`) were real standing bugs:** `Textualize/rich` (`rich/traceback.py:309` `Traceback.__init__` dropping 5 `locals_*` options, `rich/traceback.py:487` recursive `Traceback.extract` dropping `locals_max_depth`/`locals_max_string` on `ExceptionGroup`s, and 2 dead `self.locals_hide_{dunder,sunder}` stores) plus MipCode's own `ContainedGatewaySession.__init__` storing an unread `self.max_visible_bytes` quota (`src/mipdelta/gateway.py:383`).
+- **`--review` reached `100%` kept precision for `$0.0124` total:** Stage-2 Haiku triage (reading injected `[callee contract]` signatures) suppressed both benign `LazyFile` stdin `"-"` findings in `click` and `typer` (`$0.0011`–`$0.0012` each) while keeping `rich` (`confirm_omission`) and `mipcode` (`review_worthy`).
+
+```sh
+mip-delta --audit-repo --root . --json
+mip-delta --audit-repo --root . --review
+```
+
 ## Quick start
 
 From the repository root, activate a fresh virtual environment with Python 3.10 or later.
@@ -111,6 +126,7 @@ The check can still run as [Claude Code hooks](docs/usage.md#run-as-claude-code-
 
 ## Research and development
 
+- [Cold repo bug-hunter](results/cold_audit/README.md) runs diff-free `mip-delta --audit-repo` across 24 resting `HEAD` snapshots (`5,719` files, `20/24` silent, `10/12` Stage-1 real standing bugs, `100%` Stage-2 kept precision for `$0.0124` total API cost).
 - [Two-stage precision sieve](results/two_stage_sieve/README.md) compares AST-only `mip-delta`, AST-gated `--review` Haiku triage, and unguided Haiku diff review across 67 blinded commits from the ten-repository replay.
 - [Experiment 2 audit](results/audit_rt_ledger/README.md) stress-tests opt-in `--run-pytest` PEP 669 dynamic call observation across four real test suites (`90.0%` mutation recall, `+14.17%` median warm overhead) and audits `ObligationLedger` across 20 multi-commit upstream PRs (`0` anchor churn across line shifts, scoped strictly to hook/session deduplication).
 - [Held-out validation, round one](results/held_out/README.md) and [round two](results/held_out/round2/README.md) report the ten-repository replays, the reading of reported sites, recall on constructed omissions, and the mypy comparison. The [regression check](results/held_out/regression/README.md) reruns them after the detector fixes.

@@ -111,6 +111,23 @@ mip-delta --check-git --base-ref "$(git merge-base HEAD~1 HEAD^2)"
 
 A branch that completed its own migration contributes no findings, so what remains comes from the combination. Use the two branch names in place of `HEAD~1` and `HEAD^2` when checking before the merge commit exists.
 
+## Audit a repository snapshot at rest (`--audit-repo`)
+
+Run a zero-diff baseline scan across an entire repository snapshot without needing any git history or prior commit:
+
+```sh
+mip-delta --audit-repo --root . --json
+mip-delta --audit-repo --root . --review
+```
+
+Snapshot mode inspects non-test, non-vendored production Python modules (`tests/`, `vendor/`, `_vendor/`, `third_party/`, and `.pyi` stubs are excluded from findings while stubs still resolve type contracts) for three high-signal standing defects:
+
+1. **Wrapper parameter drops (`delegating_wrapper_review`):** Prefixed functions/methods (same stem, constructor→helper, or recursive self-calls) calling a resolved peer without forwarding matching optional keyword parameters when at least one sibling parameter was forwarded and the callee does not use `**kwargs`.
+2. **Dead configuration stores (`parameter_sink_review`):** Parameters assigned only to `self.<param>` with no reader anywhere across the workspace index.
+3. **Hard override conflicts (`override_signature_review`):** Subclass overrides introducing parameter-kind conflicts (e.g., making a required positional-only/keyword parameter optional/incompatible) against a resolved base class method.
+
+When combined with `--review`, `mip-delta` injects `[callee contract]` snippets alongside each wrapper call so the Stage-2 model sees both the wrapper body and the target signature even without a git diff. See the [24-repository cold audit report](../results/cold_audit/README.md).
+
 ## Run as Claude Code hooks
 
 The hooks are experimental. In a [small pilot](../results/pilot/README.md), a current model given three tasks made none of the omissions the hooks would report, so their benefit during an agent's session is unproven.

@@ -9,6 +9,7 @@ from __future__ import annotations
 import difflib
 import json
 import os
+import re
 import shutil
 import subprocess
 import tempfile
@@ -21,7 +22,7 @@ from typing import Any, Callable, Iterable, Mapping
 
 from .cache import FactCache
 from .ledger import enclosing_function
-from .model import Finding
+from .model import Finding, FunctionFact
 
 DEFAULT_API_MODEL = "claude-haiku-4-5"
 DEFAULT_CLI_MODEL = "haiku"
@@ -126,16 +127,29 @@ def _extract_imports(text: str, limit: int = 25) -> str:
     return "\n".join(picked)
 
 
-def _extract_snippet(cache: FactCache, path: str, text: str, line: int, anchor: str) -> dict[str, Any]:
+def _extract_snippet(
+    cache: FactCache,
+    path: str,
+    text: str,
+    line: int,
+    anchor: str,
+    *,
+    max_lines: int = MAX_SNIPPET_LINES,
+    from_top: bool = False,
+) -> dict[str, Any]:
     facts = cache.load(path, text)
     fn_key = anchor or enclosing_function(facts, line)
     fn = facts.functions.get(fn_key) if fn_key else None
     if fn is not None:
         span_start, span_end = fn.line, fn.end_line
-        if span_end - span_start + 1 > MAX_SNIPPET_LINES:
-            half = MAX_SNIPPET_LINES // 2
-            span_start = max(fn.line, line - half)
-            span_end = min(fn.end_line, span_start + MAX_SNIPPET_LINES - 1)
+        if span_end - span_start + 1 > max_lines:
+            if from_top:
+                span_start = fn.line
+                span_end = min(fn.end_line, span_start + max_lines - 1)
+            else:
+                half = max_lines // 2
+                span_start = max(fn.line, line - half)
+                span_end = min(fn.end_line, span_start + max_lines - 1)
     else:
         span_start, span_end = max(1, line - 20), line + 20
     code = _numbered_slice(text, span_start, span_end)
@@ -149,6 +163,22 @@ def _extract_snippet(cache: FactCache, path: str, text: str, line: int, anchor: 
         "imports": _extract_imports(text),
         "code": code,
     }
+
+
+_CALLEE_CONTRACT_RE = re.compile(r"\bcalls ([A-Za-z_][A-Za-z0-9_.]*) without forwarding\b")
+
+
+def _find_function_in_sources(
+    cache: FactCache, after_sources: Mapping[str, str], qualname: str
+) -> tuple[str, FunctionFact] | None:
+    for path in sorted(after_sources):
+        facts = cache.load(path, after_sources[path])
+        if facts.parse_error is not None:
+            continue
+        fn = facts.functions.get(qualname)
+        if fn is not None:
+            return path, fn
+    return None
 
 
 def _group_findings(
@@ -236,6 +266,35 @@ def format_review_prompt(
         snippet_count += 1
         if snippet_count >= MAX_SNIPPETS:
             break
+    for row in grouped:
+        if snippet_count >= MAX_SNIPPETS:
+            break
+        match = _CALLEE_CONTRACT_RE.search(row["evidence"])
+        if match is None:
+            continue
+        target_qualname = match.group(1)
+        located = _find_function_in_sources(fact_cache, after_sources, target_qualname)
+        if located is None:
+            continue
+        target_path, target_fn = located
+        target_key = (target_path, target_qualname)
+        if target_key in seen_targets:
+            continue
+        seen_targets.add(target_key)
+        snip = _extract_snippet(
+            fact_cache,
+            target_path,
+            after_sources[target_path],
+            target_fn.line,
+            target_qualname,
+            max_lines=min(45, MAX_SNIPPET_LINES),
+            from_top=True,
+        )
+        parts.append(f"--- {snip['path']} :: {target_qualname} [callee contract] (focus line {target_fn.line}) ---")
+        if snip["imports"]:
+            parts.append("Top imports:\n" + snip["imports"])
+        parts.append(f"Lines {snip['span'][0]}-{snip['span'][1]}:\n" + snip["code"])
+        snippet_count += 1
     if snippet_count == 0:
         parts.append("(no post-change site snippets available)")
 

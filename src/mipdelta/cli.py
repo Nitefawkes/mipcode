@@ -32,10 +32,19 @@ from typing import Any, Callable, Iterable, Mapping
 
 from . import __version__
 from .cache import FactCache
-from .delta import OPT_IN_DETECTORS, analyze_changed_only, analyze_delta, format_advisory, is_vendored_path, rank_findings
+from .delta import (
+    OPT_IN_DETECTORS,
+    analyze_changed_only,
+    analyze_delta,
+    audit_index,
+    format_advisory,
+    is_vendored_path,
+    rank_findings,
+)
 from .ledger import LedgerUpdate, Obligation, ObligationLedger, enclosing_function, format_open_obligations
 from .model import FileFacts, Finding, ObservedCallEdge, SourceFile
 from .monitoring import load_runtime_edges as _load_runtime_edges
+from .resolve import build_index
 from .review import (
     ReviewError,
     ReviewResult,
@@ -45,6 +54,7 @@ from .review import (
     unified_diff_for_pair,
 )
 from .session import DeltaSession
+from .stubs import parse_stub_tree
 
 _SKIP_DIRS = {"__pycache__", "venv", ".venv", "build", "dist", "node_modules"}
 
@@ -543,6 +553,96 @@ def _run_git_check(
     return 0
 
 
+def _load_snapshot_sources(root: Path) -> dict[str, str]:
+    proc = subprocess.run(
+        ["git", "--literal-pathspecs", "rev-parse", "--show-toplevel"],
+        cwd=root,
+        capture_output=True,
+        check=False,
+    )
+    if proc.returncode == 0:
+        top = Path(os.fsdecode(proc.stdout.rstrip(b"\r\n"))).resolve()
+        if root.is_relative_to(top):
+            tracked = _git_python_paths(root, top, "ls-files", "--cached", "-z")
+            if top == root or tracked:
+                untracked = _git_python_paths(root, top, "ls-files", "--others", "--exclude-standard", "-z")
+                return _read_sources(top, tracked | untracked)
+    return _load_python_tree(root)
+
+
+def _run_audit_repo(
+    root: Path,
+    runtime_dir: Path,
+    max_bytes: int | None,
+    as_json: bool,
+    fail_on_findings: bool,
+    *,
+    review: bool = False,
+    review_model: str | None = None,
+) -> int:
+    t0 = time.perf_counter()
+    files = _load_snapshot_sources(root)
+    runtime_edges = _load_runtime_edges(runtime_dir)
+    cache = _CheckingCache(())
+    stubs = _check_stubs(files, cache)
+    parsed_files: dict[str, FileFacts] = {}
+    for path, text in files.items():
+        if path.endswith(".pyi"):
+            continue
+        facts = cache.load(path, text)
+        if facts.parse_error is None:
+            parsed_files[path] = facts
+    parsed_stubs = parse_stub_tree(stubs) if stubs else None
+    index = build_index(parsed_files, stub_files=parsed_stubs, runtime_edges=runtime_edges)
+    findings, candidate_calls_inspected = audit_index(index)
+    ranked = tuple(rank_findings(findings))
+    advisory_budget = 250 if max_bytes is None else max_bytes
+    advisory = format_advisory(ranked, max_bytes=advisory_budget) if ranked else ""
+    failing = bool(ranked)
+    review_result: ReviewResult | None = None
+    if review and ranked:
+        def _snapshot_anchor(finding: Finding) -> str:
+            text = files.get(finding.path)
+            facts = cache.load(finding.path, text) if text is not None else None
+            return enclosing_function(facts, finding.start_line)
+
+        review_result = review_findings(
+            findings=ranked,
+            anchor_for=_snapshot_anchor,
+            after_sources=files,
+            diff_text="",
+            changed_test_files=(),
+            subject=f"cold snapshot audit of {root.name}",
+            model=review_model,
+            cache=cache,
+        )
+        advisory, failing = _apply_review_outcome(advisory, failing, review_result)
+
+    wall_ms = round((time.perf_counter() - t0) * 1000.0, 3)
+    skipped = sorted(cache.skipped)
+    if as_json:
+        payload: dict[str, Any] = {
+            "mode": "audit-repo",
+            "files_scanned": len(parsed_files),
+            "skipped_unparsed_paths": skipped,
+            "runtime_edges_loaded": len(runtime_edges),
+            "candidate_calls_inspected": candidate_calls_inspected,
+            "advisory_text": advisory,
+            "advisory_utf8_bytes": len(advisory.encode("utf-8")),
+            "wall_ms": wall_ms,
+            "findings": [_finding_json(f) for f in ranked],
+        }
+        if review_result is not None:
+            payload["review"] = review_result.to_dict()
+        print(json.dumps(payload, indent=2))
+    elif advisory:
+        print(advisory)
+    _note_skipped(skipped, as_json)
+    if fail_on_findings and failing:
+        return 1
+    return 0
+
+
 def _commit_exists(top: Path, commit: str) -> bool:
     try:
         _git(top, "rev-parse", "--verify", "--quiet", "--end-of-options", f"{commit}^{{commit}}")
@@ -730,6 +830,11 @@ def main_cli(argv: list[str] | None = None) -> int:
         help="Compare git working tree against --base-ref (default HEAD) + any runtime edges in --runtime-dir",
     )
     parser.add_argument(
+        "--audit-repo",
+        action="store_true",
+        help="Scan current workspace snapshot for standing wrapper parameter drops, dead self.<param> stores, and override incompatibilities without a git diff",
+    )
+    parser.add_argument(
         "--run-pytest",
         action="store_true",
         help="Opt-in dynamic supplement: run pytest under Python 3.12 sys.monitoring and evaluate post-test deltas against --base-ref",
@@ -813,14 +918,25 @@ def main_cli(argv: list[str] | None = None) -> int:
         parser.error("--open needs --ledger.")
     if args.ledger is not None and not (args.check_git or args.run_pytest):
         parser.error("--ledger applies to --check-git and --run-pytest.")
-    if not (args.check_git or args.run_pytest or (args.write_path and args.candidate_file is not None)):
-        parser.error("Either pass --check-git, --run-pytest, or both --write-path and --candidate-file.")
+    if not (args.check_git or args.run_pytest or args.audit_repo or (args.write_path and args.candidate_file is not None)):
+        parser.error("Either pass --check-git, --run-pytest, --audit-repo, or both --write-path and --candidate-file.")
 
     try:
         root = args.root.resolve()
         if not root.is_dir():
             raise AnalysisError(f"Workspace root is not a directory: {root}")
         runtime_dir = args.runtime_dir.resolve() if args.runtime_dir else (root / ".mipdelta" / "runtime")
+
+        if args.audit_repo:
+            return _run_audit_repo(
+                root=root,
+                runtime_dir=runtime_dir,
+                max_bytes=args.max_bytes,
+                as_json=args.json,
+                fail_on_findings=args.fail_on_findings,
+                review=args.review,
+                review_model=args.review_model,
+            )
 
         if args.run_pytest or args.check_git:
             baseline = _git_baseline(root, args.base_ref)

@@ -1111,3 +1111,324 @@ def analyze_delta(
         enable=enable,
     )
     return findings
+
+
+_AUDIT_EXCLUDED_DIRS = frozenset(
+    {"docs", "doc", "examples", "example", "bench", "benchmarks", "scripts", "demo_engine", "test"}
+)
+_AUDIT_EXCLUDED_FILES = frozenset({"setup.py", "noxfile.py", "conftest.py", "tasks.py", "fabfile.py"})
+_IGNORED_DOCSTRING_MARKERS = ("no effect", "ignored", "unused", "deprecated", "compatibility")
+
+
+def _is_audit_excluded_path(path: str) -> bool:
+    """True for vendored, test, docs, example, benchmark, or build-script files."""
+    if is_vendored_path(path) or _is_test_path(path):
+        return True
+    parts = [p for p in path.replace("\\", "/").lower().split("/") if p]
+    if any(part in _AUDIT_EXCLUDED_DIRS for part in parts[:-1]):
+        return True
+    return bool(parts and parts[-1] in _AUDIT_EXCLUDED_FILES)
+
+
+def _prefix_stem(name: str) -> str:
+    parts = [p for p in name.strip("_").lower().split("_") if p]
+    return parts[0] if len(parts) >= 2 and len(parts[0]) >= 3 else ""
+
+
+def _docstring_marks_ignored(fn: FunctionFact, param: str) -> bool:
+    node = fn._ast_node
+    if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+        return False
+    doc = ast.get_docstring(node)
+    if not doc:
+        return False
+    lowered = doc.lower()
+    if param.lower() not in lowered:
+        return False
+    return any(marker in lowered for marker in _IGNORED_DOCSTRING_MARKERS)
+
+
+def _is_exception_class(cls: ClassFact, index: MutableResolutionIndex) -> bool:
+    seen: set[str] = set()
+    pending = [base.split(".")[-1] for base in cls.bases]
+    while pending:
+        name = pending.pop()
+        if not name or name in seen or name == "object":
+            continue
+        seen.add(name)
+        if name.endswith(("Error", "Exception", "Warning")):
+            return True
+        for base_cls in index.classes_by_short.get(name, {}).values():
+            pending.extend(item.split(".")[-1] for item in base_cls.bases)
+    return False
+
+
+def _split_stubs_and_sources(
+    files: Mapping[str, str], stub_files: Mapping[str, str] | None
+) -> tuple[dict[str, str], Mapping[str, str] | None]:
+    normalized = {p.replace("\\", "/"): text for p, text in files.items()}
+    if stub_files is None:
+        auto_stubs = {p: text for p, text in normalized.items() if p.endswith(".pyi")}
+        if auto_stubs:
+            stub_files = auto_stubs
+            normalized = {p: text for p, text in normalized.items() if not p.endswith(".pyi")}
+    return normalized, stub_files
+
+
+def _collect_forwarded_keywords(index: MutableResolutionIndex) -> dict[tuple[str, str], set[str]]:
+    forwarded: dict[tuple[str, str], set[str]] = {}
+    for ff in index.files.values():
+        if _is_audit_excluded_path(ff.path):
+            continue
+        for fn in ff.functions.values():
+            for call in fn.own_calls:
+                for target, _ in resolve_call_with_provenance(call, ff, index):
+                    forwarded.setdefault((target.path, target.qualname), set()).update(call.keyword_names)
+    return forwarded
+
+
+def _cold_wrapper_findings(
+    index: MutableResolutionIndex, forwarded_to_target: Mapping[tuple[str, str], set[str]]
+) -> tuple[list[Finding], int]:
+    findings: list[Finding] = []
+    inspected = 0
+    for path, ff in sorted(index.files.items()):
+        if _is_audit_excluded_path(path):
+            continue
+        for qn, fn in sorted(ff.functions.items()):
+            if fn.is_stub or not fn.own_calls:
+                continue
+            owner_params = {
+                p.name: p
+                for p in fn.parameters
+                if p.name not in {"self", "cls"} and p.kind in {"posonly", "positional", "kwonly"}
+            }
+            for call in fn.own_calls:
+                inspected += 1
+                if call.has_kwargs or call.has_varargs:
+                    continue
+                resolved = resolve_call_with_provenance(call, ff, index)
+                if len(resolved) != 1:
+                    continue
+                target, prov = resolved[0]
+                if _is_audit_excluded_path(target.path):
+                    continue
+                target_params = {
+                    p.name: p
+                    for p in target.parameters
+                    if p.name not in {"self", "cls"} and p.kind in {"posonly", "positional", "kwonly"}
+                }
+                shared = set(owner_params) & set(target_params)
+                if not shared:
+                    continue
+                target_pos = [
+                    p.name for p in target.parameters if p.name not in {"self", "cls"} and p.kind in {"posonly", "positional"}
+                ]
+                passed = (
+                    (set(call.keyword_names) & shared)
+                    | (set(target_pos[: call.positional_count]) & shared)
+                    | (set(call.value_names) & shared)
+                )
+                forwarded_opt = {p for p in passed if target_params[p].default is not None}
+                forwarded_stems = {_prefix_stem(p) for p in forwarded_opt if _prefix_stem(p)}
+                repo_forwarded = forwarded_to_target.get((target.path, target.qualname), set())
+                is_recursive = fn.path == target.path and fn.qualname == target.qualname
+
+                for p in sorted(shared - passed):
+                    if p.startswith("_") or target_params[p].default is None or owner_params[p].default is None:
+                        continue
+                    if any(
+                        sibling.callee_name == target.name
+                        and (p in sibling.keyword_names or sibling.has_kwargs or p in sibling.value_names)
+                        for sibling in fn.own_calls
+                    ):
+                        continue
+                    stem = _prefix_stem(p)
+                    unread_hit = (
+                        not is_recursive
+                        and p not in fn.local_name_reads
+                        and (len(passed) >= 1 or fn.name == target.name)
+                        and not _unread_parameter_is_expected(fn, p, ff, index)
+                        and not _constructor_pair_reads(fn, p, ff)
+                        and not _docstring_marks_ignored(fn, p)
+                    )
+                    stored_hit = (
+                        not is_recursive
+                        and p not in fn.non_self_store_reads
+                        and p in fn.field_writes
+                        and bool(forwarded_opt)
+                        and (stem in forwarded_stems or (p in repo_forwarded and len(shared) >= 3))
+                    )
+                    family_hit = (
+                        bool(stem)
+                        and stem in forwarded_stems
+                        and p in repo_forwarded
+                        and (len(forwarded_opt) >= 3 if is_recursive else len(forwarded_opt) >= 2)
+                    )
+                    if unread_hit or stored_hit or family_hit:
+                        findings.append(
+                            Finding(
+                                "delegating_wrapper_review",
+                                fn.qualname,
+                                ff.path,
+                                call.line,
+                                call.line,
+                                "candidate",
+                                (
+                                    f"delegating wrapper {fn.qualname} calls {target.qualname} without forwarding optional parameter {p}",
+                                ),
+                                prov,
+                            )
+                        )
+    return findings, inspected
+
+
+def _cold_dead_store_findings(index: MutableResolutionIndex, all_attr_loads: set[str]) -> list[Finding]:
+    findings: list[Finding] = []
+    callee_params_by_class: dict[tuple[str, str], set[str]] = {}
+    for path, ff in sorted(index.files.items()):
+        if _is_audit_excluded_path(path) or "__dict__" in ff.attr_loads:
+            continue
+        for qn, fn in sorted(ff.functions.items()):
+            if fn.class_qualname is None or fn.is_stub:
+                continue
+            candidate_names = [
+                param.name
+                for param in fn.parameters
+                if param.name not in {"self", "cls"}
+                and not param.name.startswith("_")
+                and param.kind in {"positional", "kwonly"}
+                and param.name in fn.field_writes
+                and param.name not in fn.non_self_store_reads
+                and param.name not in all_attr_loads
+            ]
+            if not candidate_names:
+                continue
+            cls = ff.classes.get(fn.class_qualname)
+            if cls is not None and _is_exception_class(cls, index):
+                continue
+            class_fields = set().union(*(m.field_writes for m in cls.methods.values())) if cls else set(fn.field_writes)
+            callee_param_names: set[str] | None = None
+            for name in candidate_names:
+                stem = _prefix_stem(name)
+                sibling_stem_read = bool(stem) and any(
+                    other_field != name and _prefix_stem(other_field) == stem and other_field in all_attr_loads
+                    for other_field in class_fields
+                )
+                if not sibling_stem_read:
+                    if callee_param_names is None:
+                        cache_key = (path, fn.class_qualname)
+                        callee_param_names = callee_params_by_class.get(cache_key)
+                        if callee_param_names is None:
+                            callee_param_names = set()
+                            methods_to_check = cls.methods.values() if cls else (fn,)
+                            for method in methods_to_check:
+                                for call in method.own_calls:
+                                    for target, _ in resolve_call_with_provenance(call, ff, index):
+                                        callee_param_names.update(
+                                            tp.name for tp in target.parameters if tp.name not in {"self", "cls"}
+                                        )
+                            callee_params_by_class[cache_key] = callee_param_names
+                    if name not in callee_param_names:
+                        continue
+                findings.append(
+                    Finding(
+                        "parameter_sink_review",
+                        fn.qualname,
+                        ff.path,
+                        fn.line,
+                        fn.end_line,
+                        "candidate",
+                        (
+                            f"parameter {name} is only stored on self.{name}, which is never read; verify its intended behavioral sink",
+                        ),
+                        "static_ast",
+                    )
+                )
+    return findings
+
+
+def _cold_override_findings(index: MutableResolutionIndex) -> list[Finding]:
+    findings: list[Finding] = []
+    for path, ff in sorted(index.files.items()):
+        if _is_audit_excluded_path(path):
+            continue
+        for cls in sorted(ff.classes.values(), key=lambda c: (c.line, c.qualname)):
+            for override in sorted(cls.methods.values(), key=lambda f: (f.line, f.qualname)):
+                if (
+                    override.name in {"__init__", "__new__"}
+                    or override.name.startswith("_")
+                    or _has_kwarg(override)
+                    or any(p.kind == "vararg" for p in override.parameters)
+                ):
+                    continue
+                base, _ = _nearest_base_method(cls, override.name, index)
+                if base is None or _is_audit_excluded_path(base.path):
+                    continue
+                base_params = _parameter_map(base)
+                override_params = _parameter_map(override)
+                evidence = []
+                for name, base_param in base_params.items():
+                    if name in {"self", "cls"}:
+                        continue
+                    override_param = override_params.get(name)
+                    if override_param is None:
+                        continue
+                    incompatible_kinds = (
+                        (base_param.kind == "posonly" and override_param.kind == "kwonly")
+                        or (base_param.kind == "positional" and override_param.kind in {"posonly", "kwonly"})
+                        or (base_param.kind == "kwonly" and override_param.kind == "posonly")
+                    )
+                    if incompatible_kinds:
+                        evidence.append(
+                            f"override parameter {name} kind {override_param.kind} may not accept base calls ({base_param.kind})"
+                        )
+                if evidence:
+                    findings.append(
+                        Finding(
+                            "override_signature_review",
+                            override.qualname,
+                            override.path,
+                            override.line,
+                            override.end_line,
+                            "candidate",
+                            tuple(evidence),
+                            "static_ast",
+                        )
+                    )
+    return findings
+
+
+def audit_index(index: MutableResolutionIndex) -> tuple[list[Finding], int]:
+    """Scan a workspace snapshot without a diff for standing wrapper, dead-store, and override contracts."""
+    forwarded_to_target = _collect_forwarded_keywords(index)
+    wrapper_findings, inspected = _cold_wrapper_findings(index, forwarded_to_target)
+    all_attr_loads: set[str] = set()
+    for ff in index.files.values():
+        all_attr_loads.update(ff.attr_loads)
+    dead_store_findings = _cold_dead_store_findings(index, all_attr_loads)
+    override_findings = _cold_override_findings(index)
+    combined = [*wrapper_findings, *dead_store_findings, *override_findings]
+    filtered = [f for f in combined if not is_vendored_path(f.path)]
+    return deduplicate_findings(filtered), inspected
+
+
+def audit_workspace(
+    files: Mapping[str, str],
+    *,
+    cache: FactCache | None = None,
+    stub_files: Mapping[str, str] | None = None,
+    runtime_edges: Iterable[ObservedCallEdge] | None = None,
+) -> list[Finding]:
+    """Audit a complete Python source mapping at rest for standing contract defects."""
+    parse = cache.load if cache is not None else parse_file
+    normalized, stub_files = _split_stubs_and_sources(files, stub_files)
+    parsed_files = {
+        path: facts
+        for path, text in normalized.items()
+        if (facts := parse(path, text)).parse_error is None
+    }
+    parsed_stubs = parse_stub_tree(stub_files) if stub_files else None
+    index = build_index(parsed_files, stub_files=parsed_stubs, runtime_edges=runtime_edges)
+    findings, _ = audit_index(index)
+    return findings
