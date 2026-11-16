@@ -68,6 +68,27 @@ _LOCAL_ARRAY_DECL_RE = re.compile(
 _ARRAY_INDEX_WRITE_RE = re.compile(r"\b([A-Za-z_$][A-Za-z0-9_$]*)\s*\[\s*([A-Za-z0-9_$]+)\s*\]\s*=")
 _SINK_CALL_RE = re.compile(r"\b(keccak256|sha256|abi\.encode(?:Packed|WithSelector|WithSignature|Call)?)\s*\(")
 _REQUIRE_RE = re.compile(r"\b(?:require|revert)\b")
+_PLACEHOLDER_STATE_RE = re.compile(
+    r"(?:^|_)(?:gap|igap|ugap|deprecated|deprecate|reserved|obsolete)(?:_|$|[0-9A-Z])",
+    re.IGNORECASE,
+)
+_BITMASK_CONST_RE = re.compile(r"_(?:FLAG|FLAGS|MASK|OFFSET|SHIFT|BIT|SELECTOR|TYPEHASH|PREFIX)$")
+_NATSPEC_UNUSED_RE = re.compile(r"@param\s+([A-Za-z_$][A-Za-z0-9_$]*)\b.*\b(?:not\s+used|unused|ignored|deprecated)\b", re.IGNORECASE)
+_PURE_REVERT_BODY_RE = re.compile(r"^\s*revert\b[^;{}]*;\s*$")
+
+
+def _sol_ident_re(name: str, *, allow_member: bool = True) -> re.Pattern[str]:
+    prefix = r"(?<![A-Za-z0-9_$])" if allow_member else r"(?<![A-Za-z0-9_$.])"
+    return re.compile(prefix + re.escape(name) + r"(?![A-Za-z0-9_$])")
+
+
+def _norm_sol_stem(name: str) -> str:
+    stem = name.lstrip("_").lower()
+    for prefix in ("router", "safe", "internal", "try"):
+        if stem.startswith(prefix) and len(stem) > len(prefix) + 2:
+            stem = stem[len(prefix) :]
+            break
+    return stem
 
 
 @dataclass(frozen=True)
@@ -706,7 +727,7 @@ def parse_solidity_file(path: str, source: str) -> SolFileFacts:
 def _ident_positions_excluding_writes(code: str, name: str) -> list[int]:
     """Return positions where `name` is read (excluding pure LHS assignment `name = expr`)."""
     positions: list[int] = []
-    pat = re.compile(rf"(?<![.])\b{re.escape(name)}\b")
+    pat = _sol_ident_re(name, allow_member=False)
     n = len(code)
     for m in pat.finditer(code):
         after = _skip_ws(code, m.end())
@@ -803,6 +824,39 @@ def _contract_read_texts(c: SolContractFact) -> list[str]:
     return texts
 
 
+def _collect_ancestor_functions(
+    contract: SolContractFact,
+    contracts_by_name: Mapping[str, list[SolContractFact]],
+) -> dict[str, list[SolFunctionFact]]:
+    ancestor_fns: dict[str, list[SolFunctionFact]] = {}
+    seen_anc: set[str] = set()
+    stack = list(contract.bases)
+    while stack:
+        b = stack.pop()
+        if b in seen_anc:
+            continue
+        seen_anc.add(b)
+        for bc in contracts_by_name.get(b, ()):
+            for bfn in bc.functions:
+                ancestor_fns.setdefault(bfn.name, []).append(bfn)
+            stack.extend(bc.bases)
+    return ancestor_fns
+
+
+def _strip_named_calls(code: str, callee_name: str) -> str:
+    """Blank out `callee_name(...)` argument expressions so remaining reads can be tested independently."""
+    chars = list(code)
+    pat = re.compile(rf"(?<![A-Za-z0-9_$]){re.escape(callee_name)}\s*\(")
+    for m in pat.finditer(code):
+        open_p = code.find("(", m.start())
+        close_p = _find_matching(code, open_p, "(", ")") if open_p >= 0 else -1
+        if close_p > open_p:
+            for idx in range(open_p + 1, close_p):
+                if chars[idx] != "\n":
+                    chars[idx] = " "
+    return "".join(chars)
+
+
 def _detect_dead_state_vars(
     file_facts: SolFileFacts,
     all_files: Mapping[str, SolFileFacts],
@@ -812,8 +866,14 @@ def _detect_dead_state_vars(
     findings: list[Finding] = []
     # Skip `interface` and `library` utility constants; inspect contracts for unread internal/private constants or state.
     all_texts = [f.masked_source for f in all_files.values()]
+    raw_lines = file_facts.source.splitlines()
     for contract in file_facts.contracts:
         if contract.kind in ("interface", "library"):
+            continue
+        gap_count = sum(1 for s in contract.state_vars if "gap" in s.name.lower())
+        has_init_or_ctor = any(fn.name in ("constructor", "initialize") for fn in contract.functions)
+        # Skip pure multi-gap storage-layout upgrade mirrors (e.g., OUSDResolutionUpgrade with igap + ugap and no init).
+        if gap_count >= 2 and not has_init_or_ctor:
             continue
         scope_names = (
             {contract.name} if contract.kind != "abstract contract" else descendants.get(contract.name, {contract.name})
@@ -824,17 +884,41 @@ def _detect_dead_state_vars(
         else:
             derived_names = scope_names
 
+        read_texts_cache: dict[str, list[str]] = {}
+        contract_consts = [sv for sv in contract.state_vars if sv.is_constant]
+
+        def _texts_for(target_set: set[str]) -> list[str]:
+            key = ",".join(sorted(target_set))
+            if key not in read_texts_cache:
+                texts: list[str] = []
+                for target_name in target_set:
+                    for c_fact in contracts_by_name.get(target_name, ()):
+                        texts.extend(_contract_read_texts(c_fact))
+                read_texts_cache[key] = texts
+            return read_texts_cache[key]
+
+        has_read_constant = any(
+            _ident_positions_excluding_writes(txt, csv.name)
+            for csv in contract_consts
+            for txt in _texts_for(derived_names)
+        )
+
         for sv in contract.state_vars:
             if sv.visibility == "public":
                 continue
-            if sv.name.startswith("__gap") or sv.name.startswith("_gap"):
+            if _PLACEHOLDER_STATE_RE.search(sv.name):
+                continue
+            raw_decl_line = raw_lines[sv.line - 1] if 0 < sv.line <= len(raw_lines) else ""
+            if "deprecated" in raw_decl_line.lower():
+                continue
+            if sv.is_constant and has_read_constant and _BITMASK_CONST_RE.search(sv.name):
+                continue
+            # Single-gap storage mirror contract without constructor/initialize skips uninitialized legacy non-constant slots.
+            if not sv.is_constant and gap_count >= 1 and not has_init_or_ctor:
                 continue
             if sv.is_constant or sv.is_immutable or sv.visibility == "private":
                 target_names = {contract.name} if sv.visibility == "private" else derived_names
-                candidate_texts: list[str] = []
-                for target_name in target_names:
-                    for c_fact in contracts_by_name.get(target_name, ()):
-                        candidate_texts.extend(_contract_read_texts(c_fact))
+                candidate_texts = _texts_for(target_names)
                 if not any(_ident_positions_excluding_writes(txt, sv.name) for txt in candidate_texts):
                     # Double check external qualified `ContractName.CONST` across all workspace files if non-private
                     if sv.visibility != "private" and any(
@@ -861,20 +945,28 @@ def _detect_dead_state_vars(
     return findings
 
 
-def _detect_unused_params(path: str, contract: SolContractFact, fn: SolFunctionFact) -> list[Finding]:
+def _detect_unused_params(
+    path: str,
+    contract: SolContractFact,
+    fn: SolFunctionFact,
+    ancestor_fns: Mapping[str, list[SolFunctionFact]],
+    raw_lines: list[str],
+) -> list[Finding]:
     if not fn.has_body or fn.is_virtual or fn.is_override or contract.kind in ("interface", "library"):
         return []
-    if fn.name in ("fallback", "receive"):
+    if fn.name in ("fallback", "receive") or fn.name in ancestor_fns:
         return []
     combined = fn.body_masked + " " + fn.modifier_clause
     # Require the function body to do real state/call/return work (ignore deliberate empty no-op stubs)
     if not combined.strip() or ("=" not in fn.body_masked and "return" not in fn.body_masked and not fn.calls):
         return []
+    natspec_window = "\n".join(raw_lines[max(0, fn.start_line - 36) : max(0, fn.start_line - 1)])
+    documented_unused = set(_NATSPEC_UNUSED_RE.findall(natspec_window))
     findings: list[Finding] = []
     for p in fn.params:
-        if not p.name or p.name == "_" or p.name.startswith("_unused"):
+        if not p.name or p.name == "_" or p.name.startswith("_unused") or p.name in documented_unused:
             continue
-        if not re.search(rf"\b{re.escape(p.name)}\b", combined):
+        if not _sol_ident_re(p.name).search(combined):
             findings.append(
                 Finding(
                     detector="parameter_sink_review",
@@ -895,31 +987,23 @@ def _detect_unused_params(path: str, contract: SolContractFact, fn: SolFunctionF
 def _detect_wrapper_and_override_drops(
     path: str,
     contract: SolContractFact,
-    contracts_by_name: Mapping[str, list[SolContractFact]],
+    ancestor_fns: Mapping[str, list[SolFunctionFact]],
 ) -> list[Finding]:
     findings: list[Finding] = []
     by_name: dict[str, list[SolFunctionFact]] = {}
     for fn in contract.functions:
         by_name.setdefault(fn.name, []).append(fn)
-    # Include ancestor functions for internal delegate / override modifier comparison
-    ancestor_fns: dict[str, list[SolFunctionFact]] = {}
-    seen_anc: set[str] = set()
-    stack = list(contract.bases)
-    while stack:
-        b = stack.pop()
-        if b in seen_anc:
-            continue
-        seen_anc.add(b)
-        for bc in contracts_by_name.get(b, ()):
-            for bfn in bc.functions:
-                ancestor_fns.setdefault(bfn.name, []).append(bfn)
-            stack.extend(bc.bases)
 
     for fn in contract.functions:
         if not fn.has_body:
             continue
-        # 1. Check override modifier drops when super.<fn> is not invoked
-        if fn.is_override and fn.name in ancestor_fns:
+        # 1. Check override modifier drops on state-mutating non-stub implementations when super.<fn> is not invoked
+        is_stub_or_readonly = (
+            fn.mutability in ("view", "pure")
+            or not fn.body_masked.strip()
+            or bool(_PURE_REVERT_BODY_RE.match(fn.body_masked))
+        )
+        if fn.is_override and fn.name in ancestor_fns and not is_stub_or_readonly:
             calls_super = any(c.target_expr == "super" and c.callee_name == fn.name for c in fn.calls)
             if not calls_super:
                 for base_fn in ancestor_fns[fn.name]:
@@ -950,6 +1034,7 @@ def _detect_wrapper_and_override_drops(
         # Aggregate forwarded params per resolved callee so branch-specific overrides
         # (e.g. `if (unwrap) pull(this) else pull(to)`) do not false-positive when another branch forwards `to`.
         per_callee_calls: dict[int, tuple[SolFunctionFact, list[SolCallFact]]] = {}
+        fn_stem = _norm_sol_stem(fn.name)
         for call in fn.calls:
             if call.target_expr not in (None, "this"):
                 continue
@@ -961,6 +1046,11 @@ def _detect_wrapper_and_override_drops(
             if len(candidates) != 1:
                 continue
             callee = candidates[0]
+            callee_stem = _norm_sol_stem(callee.name)
+            if min(len(fn_stem), len(callee_stem)) >= 4 and (
+                callee_stem not in fn_stem and fn_stem not in callee_stem
+            ):
+                continue
             per_callee_calls.setdefault(id(callee), (callee, []))[1].append(call)
 
         for callee, callee_calls in per_callee_calls.values():
@@ -972,12 +1062,17 @@ def _detect_wrapper_and_override_drops(
                 p
                 for p in shared
                 if any(
-                    re.search(rf"\b{re.escape(p)}\b", arg)
+                    _sol_ident_re(p).search(arg)
                     for c in callee_calls
                     for arg in c.arg_exprs
                 )
             }
-            dropped = [p for p in shared if p not in forwarded_ever]
+            outside_callee = _strip_named_calls(fn.body_masked, callee.name)
+            dropped = [
+                p
+                for p in shared
+                if p not in forwarded_ever and not _sol_ident_re(p).search(outside_callee)
+            ]
             if forwarded_ever and dropped:
                 first_call = callee_calls[0]
                 findings.append(
@@ -1011,12 +1106,14 @@ def audit_solidity_workspace(files: Mapping[str, str]) -> list[Finding]:
 
     findings: list[Finding] = []
     for path, f_facts in parsed.items():
+        raw_lines = f_facts.source.splitlines()
         findings.extend(_detect_dead_state_vars(f_facts, parsed, contracts_by_name, descendants))
         for contract in f_facts.contracts:
+            ancestor_fns = _collect_ancestor_functions(contract, contracts_by_name)
             for fn in contract.functions:
                 findings.extend(_detect_try_catch_sinks(path, contract, fn))
-                findings.extend(_detect_unused_params(path, contract, fn))
-            findings.extend(_detect_wrapper_and_override_drops(path, contract, contracts_by_name))
+                findings.extend(_detect_unused_params(path, contract, fn, ancestor_fns, raw_lines))
+            findings.extend(_detect_wrapper_and_override_drops(path, contract, ancestor_fns))
     return findings
 
 

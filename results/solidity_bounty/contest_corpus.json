@@ -1,0 +1,268 @@
+{
+  "experiment": "solidity_contest_corpus",
+  "totals": {
+    "targets_evaluated": 12,
+    "targets_silent": 7,
+    "targets_flagged": 5,
+    "files_scanned": 1622,
+    "contracts": 1821,
+    "functions": 11393,
+    "total_wall_ms": 4502.962,
+    "total_findings": 8
+  },
+  "targets": [
+    {
+      "target": "oz-community-contracts",
+      "kind": "contest_repo",
+      "description": "openzeppelin-community-contracts (crosschain / governance / access)",
+      "status": "evaluated",
+      "files_scanned": 44,
+      "contracts": 50,
+      "functions": 427,
+      "wall_ms": 152.163,
+      "findings_count": 2,
+      "by_detector": {
+        "try_catch_sink_review": 1,
+        "state_sink_review": 1
+      },
+      "findings": [
+        {
+          "detector": "try_catch_sink_review",
+          "symbol": "ERC7786OpenBridge.sendMessage",
+          "path": "crosschain/ERC7786OpenBridge.sol",
+          "start_line": 124,
+          "end_line": 144,
+          "evidence": [
+            "try populates outbox[i] while non-reverting catch leaves entry zero-initialized before outbox reaches hash/emit/return sink"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "WormholeGatewayAdapter._wormholeChainId",
+          "path": "crosschain/wormhole/WormholeGatewayAdapter.sol",
+          "start_line": 28,
+          "end_line": 28,
+          "evidence": [
+            "internal state variable _wormholeChainId is declared in WormholeGatewayAdapter and never read in any method or modifier"
+          ]
+        }
+      ]
+    },
+    {
+      "target": "dhedge-v2",
+      "kind": "contest_repo",
+      "description": "dHEDGE V2 asset/contract guards & routers",
+      "status": "evaluated",
+      "files_scanned": 586,
+      "contracts": 587,
+      "functions": 3039,
+      "wall_ms": 1342.296,
+      "findings_count": 1,
+      "by_detector": {
+        "state_sink_review": 1
+      },
+      "findings": [
+        {
+          "detector": "state_sink_review",
+          "symbol": "PrecompileHelper._TESTNET_HYPE_TOKEN_INDEX",
+          "path": "utils/hyperliquid/PrecompileHelper.sol",
+          "start_line": 137,
+          "end_line": 137,
+          "evidence": [
+            "internal constant _TESTNET_HYPE_TOKEN_INDEX is declared in PrecompileHelper and never read in any method or modifier"
+          ]
+        }
+      ]
+    },
+    {
+      "target": "twyne-v1",
+      "kind": "contest_repo",
+      "description": "Twyne V1 collateral vaults & operators",
+      "status": "evaluated",
+      "files_scanned": 23,
+      "contracts": 39,
+      "functions": 271,
+      "wall_ms": 115.386,
+      "findings_count": 0,
+      "by_detector": {},
+      "findings": []
+    },
+    {
+      "target": "veda-boring-vault",
+      "kind": "contest_repo",
+      "description": "Veda BoringVault roles, tellers & decoders",
+      "status": "evaluated",
+      "files_scanned": 354,
+      "contracts": 395,
+      "functions": 1888,
+      "wall_ms": 710.421,
+      "findings_count": 0,
+      "by_detector": {},
+      "findings": []
+    },
+    {
+      "target": "lombard-evm",
+      "kind": "contest_repo",
+      "description": "Lombard LBTC & BridgeV2",
+      "status": "evaluated",
+      "files_scanned": 104,
+      "contracts": 107,
+      "functions": 996,
+      "wall_ms": 413.543,
+      "findings_count": 0,
+      "by_detector": {},
+      "findings": []
+    },
+    {
+      "target": "strata-contracts",
+      "kind": "contest_repo",
+      "description": "Strata CDO tranches & strategies",
+      "status": "evaluated",
+      "files_scanned": 71,
+      "contracts": 89,
+      "functions": 566,
+      "wall_ms": 234.935,
+      "findings_count": 2,
+      "by_detector": {
+        "state_sink_review": 1,
+        "parameter_sink_review": 1
+      },
+      "findings": [
+        {
+          "detector": "state_sink_review",
+          "symbol": "IntegrationsLens.decimalsInternal",
+          "path": "lens/IntegrationsLens.sol",
+          "start_line": 29,
+          "end_line": 29,
+          "evidence": [
+            "private state variable decimalsInternal is declared in IntegrationsLens and never read in any method or modifier"
+          ]
+        },
+        {
+          "detector": "parameter_sink_review",
+          "symbol": "MidasStrategy.withdrawInner",
+          "path": "tranches/strategies/midas/MidasStrategy.sol",
+          "start_line": 246,
+          "end_line": 278,
+          "evidence": [
+            "parameter tokenAmount of MidasStrategy.withdrawInner is never read in body or modifiers"
+          ]
+        }
+      ]
+    },
+    {
+      "target": "origin-dollar",
+      "kind": "contest_repo",
+      "description": "Origin Dollar OUSD/OETH vault & strategies",
+      "status": "evaluated",
+      "files_scanned": 229,
+      "contracts": 287,
+      "functions": 2454,
+      "wall_ms": 721.491,
+      "findings_count": 1,
+      "by_detector": {
+        "state_sink_review": 1
+      },
+      "findings": [
+        {
+          "detector": "state_sink_review",
+          "symbol": "CompoundingValidatorStorage.VAULT_ADDRESS",
+          "path": "strategies/NativeStaking/CompoundingStakingStrategy.sol",
+          "start_line": 56,
+          "end_line": 56,
+          "evidence": [
+            "internal state variable VAULT_ADDRESS is declared in CompoundingValidatorStorage and never read in any method or modifier"
+          ]
+        }
+      ]
+    },
+    {
+      "target": "termmax-v2",
+      "kind": "contest_repo",
+      "description": "TermMax V2 fixed-rate markets & routers",
+      "status": "evaluated",
+      "files_scanned": 179,
+      "contracts": 227,
+      "functions": 1542,
+      "wall_ms": 704.487,
+      "findings_count": 2,
+      "by_detector": {
+        "state_sink_review": 2
+      },
+      "findings": [
+        {
+          "detector": "state_sink_review",
+          "symbol": "TermMaxOrderV2.gt",
+          "path": "v2/TermMaxOrderV2.sol",
+          "start_line": 57,
+          "end_line": 57,
+          "evidence": [
+            "private state variable gt is declared in TermMaxOrderV2 and never read in any method or modifier"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "OrderManagerV2.ORDER_MANAGER_SINGLETON",
+          "path": "v2/vault/OrderManagerV2.sol",
+          "start_line": 39,
+          "end_line": 39,
+          "evidence": [
+            "private state variable ORDER_MANAGER_SINGLETON is declared in OrderManagerV2 and never read in any method or modifier"
+          ]
+        }
+      ]
+    },
+    {
+      "target": "aqua:supporting/aqua",
+      "kind": "aqua_archive",
+      "description": "Pinned Aqua admission component (supporting/aqua)",
+      "status": "evaluated",
+      "files_scanned": 1,
+      "contracts": 1,
+      "functions": 6,
+      "wall_ms": 2.495,
+      "findings_count": 0,
+      "by_detector": {},
+      "findings": []
+    },
+    {
+      "target": "aqua:target/aqua",
+      "kind": "aqua_archive",
+      "description": "Pinned Aqua admission component (target/aqua)",
+      "status": "evaluated",
+      "files_scanned": 3,
+      "contracts": 3,
+      "functions": 9,
+      "wall_ms": 4.438,
+      "findings_count": 0,
+      "by_detector": {},
+      "findings": []
+    },
+    {
+      "target": "aqua:target/solidity-utils",
+      "kind": "aqua_archive",
+      "description": "Pinned Aqua admission component (target/solidity-utils)",
+      "status": "evaluated",
+      "files_scanned": 14,
+      "contracts": 14,
+      "functions": 73,
+      "wall_ms": 41.236,
+      "findings_count": 0,
+      "by_detector": {},
+      "findings": []
+    },
+    {
+      "target": "aqua:target/swap-vm",
+      "kind": "aqua_archive",
+      "description": "Pinned Aqua admission component (target/swap-vm)",
+      "status": "evaluated",
+      "files_scanned": 14,
+      "contracts": 22,
+      "functions": 122,
+      "wall_ms": 60.071,
+      "findings_count": 0,
+      "by_detector": {},
+      "findings": []
+    }
+  ]
+}

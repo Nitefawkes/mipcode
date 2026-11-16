@@ -6,7 +6,7 @@
     "files": 1,
     "contracts": 1,
     "functions": 19,
-    "wall_ms": 11.013,
+    "wall_ms": 9.676,
     "findings_count": 1,
     "findings": [
       {
@@ -25,7 +25,7 @@
     "status": "evaluated",
     "pairs": {
       "vault_4626": {
-        "wall_ms": 8.071,
+        "wall_ms": 7.829,
         "before_findings": [],
         "after_findings": [
           {
@@ -99,7 +99,7 @@
         }
       },
       "synthetic_lending": {
-        "wall_ms": 13.027,
+        "wall_ms": 13.03,
         "before_findings": [],
         "after_findings": [],
         "delta_findings": [],
@@ -150,7 +150,7 @@
         "files": 1,
         "contracts": 2,
         "functions": 7,
-        "wall_ms": 1.586,
+        "wall_ms": 1.56,
         "findings_count": 0,
         "findings": []
       },
@@ -158,7 +158,7 @@
         "files": 1,
         "contracts": 2,
         "functions": 10,
-        "wall_ms": 1.862,
+        "wall_ms": 2.136,
         "findings_count": 0,
         "findings": []
       }
@@ -171,14 +171,14 @@
     "total_contracts": 40,
     "total_functions": 210,
     "total_findings": 0,
-    "total_wall_ms": 103.264,
+    "total_wall_ms": 103.903,
     "components": [
       {
         "component": "supporting/aqua",
         "files_scanned": 1,
         "contracts": 1,
         "functions": 6,
-        "wall_ms": 2.39,
+        "wall_ms": 2.342,
         "findings_count": 0,
         "findings": []
       },
@@ -187,7 +187,7 @@
         "files_scanned": 3,
         "contracts": 3,
         "functions": 9,
-        "wall_ms": 4.13,
+        "wall_ms": 4.699,
         "findings_count": 0,
         "findings": []
       },
@@ -196,7 +196,7 @@
         "files_scanned": 14,
         "contracts": 14,
         "functions": 73,
-        "wall_ms": 39.207,
+        "wall_ms": 38.348,
         "findings_count": 0,
         "findings": []
       },
@@ -205,7 +205,7 @@
         "files_scanned": 14,
         "contracts": 22,
         "functions": 122,
-        "wall_ms": 57.537,
+        "wall_ms": 58.514,
         "findings_count": 0,
         "findings": []
       }

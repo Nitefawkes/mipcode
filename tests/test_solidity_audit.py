@@ -185,3 +185,64 @@ contract Vault {
     assert out["mode"] == "solidity-delta"
     assert len(out["findings"]) == 1
     assert out["findings"][0]["symbol"] == "Vault._VIRTUAL_SHARES"
+
+
+def test_real_world_solidity_patterns_and_exclusions():
+    erc7201_and_placeholders = """
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.27;
+
+contract Base {
+    modifier nonReentrant() { _; }
+    function redeemUnderlying(uint256 amount, address to) external virtual nonReentrant returns (uint256) {
+        return to == address(0) ? amount : amount + 1;
+    }
+    function setRequirements(address target, uint8[] calldata groups) external virtual {
+        _setRequirements(target, groups.length);
+    }
+    function _setRequirements(address target, uint256 mask) internal pure returns (address, uint256) {
+        return (target, mask);
+    }
+}
+
+contract StorageUpgradeLayout {
+    bool private initialized;
+    uint256[50] private ______igap;
+    uint256[100] private _____ugap;
+    uint256 private constant MAX_SUPPLY = 1000;
+    uint256 private constant RESOLUTION_INCREASE = 1e9;
+    function scale() external pure returns (uint256) {
+        return RESOLUTION_INCREASE;
+    }
+}
+
+contract Adapter is Base {
+    uint256 private _deprecated_fee;
+    uint256 private _exitFee; // Deprecated legacy slot
+    uint16 internal immutable _unusedChainId;
+
+    struct S { uint256 fee; }
+    constructor(uint16 chainId) {
+        _unusedChainId = chainId;
+    }
+    function _getStorage() private pure returns (S storage $) {
+        assembly { $.slot := 1 }
+    }
+    function readDollarParam(uint256 fee) external pure returns (uint256) {
+        S memory s = S(fee);
+        return s.fee;
+    }
+    function setRequirements(address target, uint8[] calldata groups) external override {
+        uint256 mask = groups.length * 2;
+        _setRequirements(target, mask);
+    }
+    function redeemUnderlying(uint256, address) external pure override returns (uint256) {
+        revert();
+    }
+}
+"""
+    findings = audit_solidity_workspace({"Adapter.sol": erc7201_and_placeholders})
+    assert [(f.detector, f.symbol) for f in findings] == [
+        ("state_sink_review", "Adapter._unusedChainId")
+    ]
+
