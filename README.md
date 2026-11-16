@@ -79,7 +79,7 @@ In a [24-repository cold sweep](results/cold_audit/README.md) ([protocol](experi
 
 - **22 of 24 repositories (`91.7%`) emitted zero alerts**, showing strict quietness on mature codebases even with no diff boundary.
 - **9 of 10 Stage-1 findings (`90.0%`) were real standing bugs:** `Textualize/rich` (`rich/traceback.py:309` `Traceback.__init__` dropping 5 `locals_*` options, `rich/traceback.py:487` recursive `Traceback.extract` dropping `locals_max_depth`/`locals_max_string` on `ExceptionGroup`s, and 2 dead `self.locals_hide_{dunder,sunder}` stores). In the initial sweep (`20/24` silent), it also caught MipCode's own `ContainedGatewaySession.__init__` storing an unread `self.max_visible_bytes` quota (`src/mipdelta/gateway.py`), which has since been enforced (`0` self-findings).
-- **`--review` reached `100%` kept precision for `$0.0099` total:** Stage-2 Haiku triage (reading injected `[callee contract]` signatures) suppressed the remaining benign `LazyFile` stdin `"-"` finding in `click` (`$0.001102`) while keeping `rich` (`confirm_omission`, `$0.008752`).
+- **`--review` reached `100%` kept precision for `$0.009854` total:** Stage-2 Haiku triage (reading injected `[callee contract]` signatures) suppressed the remaining benign `LazyFile` stdin `"-"` finding in `click` (`$0.001102`) while keeping `rich` (`confirm_omission`, `$0.008752`).
 
 ```sh
 mip-delta --audit-repo --root . --json
@@ -142,7 +142,7 @@ The check can still run as [Claude Code hooks](docs/usage.md#run-as-claude-code-
 
 ## Research and development
 
-- [Cold repo bug-hunter](results/cold_audit/README.md) runs diff-free `mip-delta --audit-repo` across 24 resting `HEAD` snapshots (`5,708` files, `22/24` silent, `9/10` Stage-1 real standing bugs in `rich`, `100%` Stage-2 kept precision for `$0.0099` total API cost).
+- [Cold repo bug-hunter](results/cold_audit/README.md) runs diff-free `mip-delta --audit-repo` across 24 resting `HEAD` snapshots (`5,708` files, `22/24` silent, `9/10` Stage-1 real standing bugs in `rich`, `100%` Stage-2 kept precision for `$0.009854` total API cost).
 - [Solidity & Web3 offline benchmark](results/solidity_bounty/README.md) tests zero-dependency `mip-delta --audit-solidity` and `--before/--after` deltas on cross-chain bridges (`openzeppelin-community-contracts` [`#276`](https://github.com/OpenZeppelin/openzeppelin-community-contracts/pull/276) corroborated; [`#321`](https://github.com/OpenZeppelin/openzeppelin-community-contracts/issues/321), [`#277 (comment)`](https://github.com/OpenZeppelin/openzeppelin-community-contracts/pull/277#issuecomment-6907989982), and [`Strata-Markets/contracts#20`](https://github.com/Strata-Markets/contracts/issues/20) reported by us), ERC-4626/lending patches, a 12-target contest/bounty corpus (`1,622` `.sol` files in `5.27 s`, `8` findings), and an untouched `v0.6.4` 8-repo holdout (`448` `.sol` files in `1.25 s`, `7/8` silent).
 - [Two-stage precision sieve](results/two_stage_sieve/README.md) compares AST-only `mip-delta`, AST-gated `--review` Haiku triage, and unguided Haiku diff review across 67 blinded commits from the ten-repository replay.
 - [Experiment 2 audit](results/audit_rt_ledger/README.md) stress-tests opt-in `--run-pytest` PEP 669 dynamic call observation across four real test suites (`90.0%` mutation recall, `+14.17%` median warm overhead) and audits `ObligationLedger` across 20 multi-commit upstream PRs (`0` anchor churn across line shifts, scoped strictly to hook/session deduplication).
