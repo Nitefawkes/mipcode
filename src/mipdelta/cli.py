@@ -54,6 +54,7 @@ from .review import (
     unified_diff_for_pair,
 )
 from .session import DeltaSession
+from .solidity import analyze_solidity_delta, audit_solidity_workspace
 from .stubs import parse_stub_tree
 
 _SKIP_DIRS = {"__pycache__", "venv", ".venv", "build", "dist", "node_modules"}
@@ -149,6 +150,25 @@ def _git_baseline(root: Path, base_ref: str) -> tuple[Path, str]:
     except AnalysisError as exc:
         raise AnalysisError(f"Invalid Git baseline {base_ref!r}: {exc}") from exc
     return top, commit.decode("ascii").strip()
+
+
+def _resolve_merge_base(root: Path, base_ref: str | None = None) -> tuple[Path, str]:
+    top = Path(os.fsdecode(_git(root, "rev-parse", "--show-toplevel").rstrip(b"\r\n"))).resolve()
+    if not root.is_relative_to(top):
+        raise AnalysisError(f"Git worktree {top} does not contain {root}")
+    if base_ref is not None:
+        raw = _git(top, "merge-base", "HEAD", base_ref)
+        return top, raw.decode("ascii").strip()
+    if _commit_exists(top, "MERGE_HEAD"):
+        raw = _git(top, "merge-base", "HEAD", "MERGE_HEAD")
+        return top, raw.decode("ascii").strip()
+    if _commit_exists(top, "HEAD^2"):
+        raw = _git(top, "merge-base", "HEAD^1", "HEAD^2")
+        return top, raw.decode("ascii").strip()
+    raise AnalysisError(
+        "Cannot resolve merge parents: not in an active merge (MERGE_HEAD) and HEAD is not a merge commit "
+        "(HEAD^2); pass --base-ref <branch> to specify the branch being merged."
+    )
 
 
 def _git_paths(output: bytes) -> set[str]:
@@ -442,6 +462,63 @@ def _git_prod_diff(
     return "\n\n".join(chunks)
 
 
+def _escape_github_property(value: str) -> str:
+    return value.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A").replace(":", "%3A").replace(",", "%2C")
+
+
+def _escape_github_data(value: str) -> str:
+    return value.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+
+
+def _format_github_annotations(payload: Mapping[str, Any]) -> str:
+    """Render findings as GitHub Actions ::warning workflow commands."""
+    review = payload.get("review")
+    if isinstance(review, Mapping) and review.get("verdict") == "suppress_false_alarm":
+        return ""
+    verdicts_by_key: dict[tuple[str, str, str], str] = {}
+    reviews = payload.get("reviews")
+    if isinstance(reviews, Iterable):
+        for item in reviews:
+            if isinstance(item, Mapping):
+                key = (str(item.get("path", "")), str(item.get("symbol", "")), str(item.get("detector", "")))
+                verdicts_by_key[key] = str(item.get("verdict", ""))
+    lines: list[str] = []
+    for item in payload.get("findings") or ():
+        if not isinstance(item, Mapping):
+            continue
+        key = (str(item.get("path", "")), str(item.get("symbol", "")), str(item.get("detector", "")))
+        if verdicts_by_key.get(key) == "PASS":
+            continue
+        path = _escape_github_property(key[0])
+        start_line = max(1, int(item.get("start_line") or 1))
+        end_line = max(start_line, int(item.get("end_line") or start_line))
+        detector = _escape_github_property(key[2])
+        symbol = key[1]
+        evidence = "; ".join(str(e) for e in item.get("evidence") or ())
+        message = _escape_github_data(f"{symbol}: {evidence}" if evidence else symbol)
+        lines.append(
+            f"::warning file={path},line={start_line},endLine={end_line},title=mip-delta ({detector})::{message}"
+        )
+    return "\n".join(lines)
+
+
+def _emit_cli_output(
+    output_format: str,
+    payload: dict[str, Any],
+    advisory_text: str,
+    skipped: list[str],
+) -> None:
+    if output_format == "json":
+        print(json.dumps(payload, indent=2))
+    elif output_format == "github":
+        annotations = _format_github_annotations(payload)
+        if annotations:
+            print(annotations)
+    elif advisory_text:
+        print(advisory_text)
+    _note_skipped(skipped, output_format == "json")
+
+
 def _apply_review_outcome(
     advisory: str,
     failing: bool,
@@ -462,7 +539,7 @@ def _run_git_check(
     baseline: tuple[Path, str],
     runtime_dir: Path,
     max_bytes: int | None,
-    as_json: bool,
+    output_format: str,
     fail_on_findings: bool,
     ledger_path: Path | None = None,
     show_open: bool = False,
@@ -520,24 +597,23 @@ def _run_git_check(
         advisory, failing = _apply_review_outcome(advisory, failing, review_result, show_open=show_open)
     wall_ms = round((time.perf_counter() - t0) * 1000.0, 3)
 
-    if as_json:
-        payload = {
-            "base_ref": base_ref,
-            "changed_paths": check.changed_paths,
-            "skipped_unparsed_paths": check.skipped,
-            "runtime_edges_loaded": len(check.runtime_edges),
-            "advisory_text": advisory,
-            "advisory_utf8_bytes": len(advisory.encode("utf-8")),
-            "wall_ms": wall_ms,
-            "findings": [_finding_json(f) for f in ranked],
-            **ledger_rows,
-        }
-        if review_result is not None:
-            payload["review"] = review_result.to_dict()
-        print(json.dumps(payload, indent=2))
-    elif advisory:
-        print(advisory)
-    _note_skipped(check.skipped, as_json)
+    payload: dict[str, Any] = {
+        "base_ref": base_ref,
+        "changed_paths": check.changed_paths,
+        "skipped_unparsed_paths": check.skipped,
+        "runtime_edges_loaded": len(check.runtime_edges),
+        "advisory_text": advisory,
+        "advisory_utf8_bytes": len(advisory.encode("utf-8")),
+        "wall_ms": wall_ms,
+        "findings": [_finding_json(f) for f in ranked],
+        **ledger_rows,
+    }
+    if source == "check-merge":
+        payload["mode"] = "check-merge"
+        payload["merge_base"] = baseline[1]
+    if review_result is not None:
+        payload["review"] = review_result.to_dict()
+    _emit_cli_output(output_format, payload, advisory, check.skipped)
     if ledger_path is not None and update is not None:
         try:
             log = _EventLog(ledger_path, session=_ledger_session(ledger_path), base_commit=baseline[1])
@@ -574,7 +650,7 @@ def _run_audit_repo(
     root: Path,
     runtime_dir: Path,
     max_bytes: int | None,
-    as_json: bool,
+    output_format: str,
     fail_on_findings: bool,
     *,
     review: bool = False,
@@ -620,25 +696,104 @@ def _run_audit_repo(
 
     wall_ms = round((time.perf_counter() - t0) * 1000.0, 3)
     skipped = sorted(cache.skipped)
-    if as_json:
-        payload: dict[str, Any] = {
-            "mode": "audit-repo",
-            "files_scanned": len(parsed_files),
-            "skipped_unparsed_paths": skipped,
-            "runtime_edges_loaded": len(runtime_edges),
-            "candidate_calls_inspected": candidate_calls_inspected,
-            "advisory_text": advisory,
-            "advisory_utf8_bytes": len(advisory.encode("utf-8")),
-            "wall_ms": wall_ms,
-            "findings": [_finding_json(f) for f in ranked],
-        }
-        if review_result is not None:
-            payload["review"] = review_result.to_dict()
-        print(json.dumps(payload, indent=2))
-    elif advisory:
-        print(advisory)
-    _note_skipped(skipped, as_json)
+    payload: dict[str, Any] = {
+        "mode": "audit-repo",
+        "files_scanned": len(parsed_files),
+        "skipped_unparsed_paths": skipped,
+        "runtime_edges_loaded": len(runtime_edges),
+        "candidate_calls_inspected": candidate_calls_inspected,
+        "advisory_text": advisory,
+        "advisory_utf8_bytes": len(advisory.encode("utf-8")),
+        "wall_ms": wall_ms,
+        "findings": [_finding_json(f) for f in ranked],
+    }
+    if review_result is not None:
+        payload["review"] = review_result.to_dict()
+    _emit_cli_output(output_format, payload, advisory, skipped)
     if fail_on_findings and failing:
+        return 1
+    return 0
+
+
+def _load_solidity_sources(root: Path) -> dict[str, str]:
+    if root.is_file():
+        return {root.name: _decode_source(root.name, root.read_bytes())}
+    skip_dirs = _SKIP_DIRS | {"lib", "out", "cache", "artifacts"}
+    files: dict[str, str] = {}
+    for p in sorted(root.rglob("*.sol")):
+        rel = p.relative_to(root).as_posix()
+        parts = rel.split("/")
+        if any(part.startswith(".") or part in skip_dirs for part in parts[:-1]):
+            continue
+        if p.is_file():
+            files[rel] = _decode_source(rel, p.read_bytes())
+    return files
+
+
+def _run_audit_solidity(
+    root: Path,
+    max_bytes: int | None,
+    output_format: str,
+    fail_on_findings: bool,
+) -> int:
+    t0 = time.perf_counter()
+    sol_files = _load_solidity_sources(root)
+    findings = audit_solidity_workspace(sol_files)
+    ranked = tuple(rank_findings(findings))
+    advisory_budget = 250 if max_bytes is None else max_bytes
+    advisory = format_advisory(ranked, max_bytes=advisory_budget) if ranked else ""
+    wall_ms = round((time.perf_counter() - t0) * 1000.0, 3)
+    payload: dict[str, Any] = {
+        "mode": "audit-solidity",
+        "files_scanned": len(sol_files),
+        "advisory_text": advisory,
+        "advisory_utf8_bytes": len(advisory.encode("utf-8")),
+        "wall_ms": wall_ms,
+        "findings": [_finding_json(f) for f in ranked],
+    }
+    _emit_cli_output(output_format, payload, advisory, [])
+    if fail_on_findings and ranked:
+        return 1
+    return 0
+
+
+def _run_pair_delta(
+    before_path: Path,
+    after_path: Path,
+    max_bytes: int | None,
+    output_format: str,
+    fail_on_findings: bool,
+    enable: Iterable[str] = (),
+) -> int:
+    t0 = time.perf_counter()
+    rel = after_path.name
+    before_text = _decode_source(before_path.name, before_path.read_bytes())
+    after_text = _decode_source(after_path.name, after_path.read_bytes())
+    advisory_budget = 250 if max_bytes is None else max_bytes
+    delta_meta: dict[str, Any] = {}
+    if before_path.suffix.lower() == ".sol" or after_path.suffix.lower() == ".sol":
+        mode = "solidity-delta"
+        findings, delta_meta = analyze_solidity_delta({rel: before_text}, {rel: after_text})
+    else:
+        mode = "python-delta"
+        _check_source_syntax(before_path.name, before_text)
+        _check_source_syntax(after_path.name, after_text)
+        findings = analyze_delta({rel: before_text}, {rel: after_text}, enable=enable)
+    ranked = tuple(rank_findings(findings))
+    advisory = format_advisory(ranked, max_bytes=advisory_budget) if ranked else ""
+    wall_ms = round((time.perf_counter() - t0) * 1000.0, 3)
+    payload: dict[str, Any] = {
+        "mode": mode,
+        "before_path": before_path.name,
+        "after_path": after_path.name,
+        "advisory_text": advisory,
+        "advisory_utf8_bytes": len(advisory.encode("utf-8")),
+        "wall_ms": wall_ms,
+        "findings": [_finding_json(f) for f in ranked],
+        **delta_meta,
+    }
+    _emit_cli_output(output_format, payload, advisory, [])
+    if fail_on_findings and ranked:
         return 1
     return 0
 
@@ -742,7 +897,7 @@ def _run_monitored_pytest(
     baseline: tuple[Path, str],
     runtime_dir: Path,
     max_bytes: int | None,
-    as_json: bool,
+    output_format: str,
     fail_on_findings: bool,
     ledger_path: Path | None = None,
     show_open: bool = False,
@@ -801,7 +956,7 @@ def _run_monitored_pytest(
             baseline=baseline,
             runtime_dir=shard_dir,
             max_bytes=max_bytes,
-            as_json=as_json,
+            output_format=output_format,
             fail_on_findings=fail_on_findings,
             ledger_path=ledger_path,
             show_open=show_open,
@@ -811,14 +966,14 @@ def _run_monitored_pytest(
             review_model=review_model,
         )
     except (AnalysisError, ReviewError, OSError) as exc:
-        check_rc = _report_error(exc, as_json)
+        check_rc = _report_error(exc, output_format == "json")
     return proc.returncode if proc.returncode != 0 else check_rc
 
 
 def main_cli(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         prog="mip-delta",
-        description="MipCode v0.6 research preview for Python contract changes.",
+        description="MipCode v0.6 research preview for Python & Solidity contract changes.",
     )
     parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     parser.add_argument("--root", type=Path, default=Path("."), help="Workspace root directory")
@@ -830,17 +985,34 @@ def main_cli(argv: list[str] | None = None) -> int:
         help="Compare git working tree against --base-ref (default HEAD) + any runtime edges in --runtime-dir",
     )
     parser.add_argument(
+        "--check-merge",
+        action="store_true",
+        help="Analyze an in-progress git merge (MERGE_HEAD) or latest merge commit (HEAD^1..HEAD^2) against its merge-base",
+    )
+    parser.add_argument(
         "--audit-repo",
         action="store_true",
         help="Scan current workspace snapshot for standing wrapper parameter drops, dead self.<param> stores, and override incompatibilities without a git diff",
     )
+    parser.add_argument(
+        "--audit-solidity",
+        action="store_true",
+        help="Scan Solidity (.sol) files under --root (directory or single file) for structural contract defects",
+    )
+    parser.add_argument("--before", type=Path, default=None, help="Before-change source file for pair delta comparison (.sol or .py)")
+    parser.add_argument("--after", type=Path, default=None, help="After-change source file for pair delta comparison (.sol or .py)")
     parser.add_argument(
         "--run-pytest",
         action="store_true",
         help="Opt-in dynamic supplement: run pytest under Python 3.12 sys.monitoring and evaluate post-test deltas against --base-ref",
     )
     parser.add_argument("--pytest-args", type=str, default="", help="Arguments forwarded to pytest when --run-pytest is used")
-    parser.add_argument("--base-ref", type=str, default="HEAD", help="Git ref to compare working tree against (default: HEAD)")
+    parser.add_argument(
+        "--base-ref",
+        type=str,
+        default=None,
+        help="Git ref to compare working tree against (default: HEAD for --check-git; auto-resolved merge-base for --check-merge)",
+    )
     parser.add_argument(
         "--runtime-dir",
         type=Path,
@@ -892,8 +1064,19 @@ def main_cli(argv: list[str] | None = None) -> int:
         default=None,
         help="Model override for --review (default: claude-haiku-4-5 for API, haiku for claude CLI)",
     )
-    parser.add_argument("--json", action="store_true", help="Emit full JSON readout")
+    parser.add_argument(
+        "--format",
+        choices=("text", "json", "github"),
+        default=None,
+        help="Output format: text (default), json, or github (GitHub Actions ::warning annotations)",
+    )
+    parser.add_argument("--json", action="store_true", help="Emit full JSON readout (shorthand for --format json)")
     args = parser.parse_args(argv)
+
+    if args.json and args.format is not None and args.format != "json":
+        parser.error("--json conflicts with --format.")
+    output_format = "json" if args.json else (args.format or "text")
+    as_json = output_format == "json"
 
     if args.hook:
         return _run_hook(args.hook, sys.stdin.buffer.read().decode("utf-8", errors="replace"), args.enable)
@@ -906,7 +1089,7 @@ def main_cli(argv: list[str] | None = None) -> int:
                 raise AnalysisError(f"No open obligation {args.waive} in {args.ledger}")
             _save_ledger_file(args.ledger, ledger, base_commit)
         except (AnalysisError, OSError) as exc:
-            return _report_error(exc, args.json)
+            return _report_error(exc, as_json)
         try:
             log = _EventLog(args.ledger, session=_ledger_session(args.ledger.resolve()), base_commit=base_commit)
             log.add("waived", id=args.waive, reason=args.reason or "waived")
@@ -916,13 +1099,45 @@ def main_cli(argv: list[str] | None = None) -> int:
         return 0
     if args.open and args.ledger is None:
         parser.error("--open needs --ledger.")
-    if args.ledger is not None and not (args.check_git or args.run_pytest):
-        parser.error("--ledger applies to --check-git and --run-pytest.")
-    if not (args.check_git or args.run_pytest or args.audit_repo or (args.write_path and args.candidate_file is not None)):
-        parser.error("Either pass --check-git, --run-pytest, --audit-repo, or both --write-path and --candidate-file.")
+    if (args.before is None) != (args.after is None):
+        parser.error("--before and --after must be passed together.")
+    if args.ledger is not None and not (args.check_git or args.check_merge or args.run_pytest):
+        parser.error("--ledger applies to --check-git, --check-merge, and --run-pytest.")
+    if not (
+        args.check_git
+        or args.check_merge
+        or args.run_pytest
+        or args.audit_repo
+        or args.audit_solidity
+        or (args.before is not None and args.after is not None)
+        or (args.write_path and args.candidate_file is not None)
+    ):
+        parser.error(
+            "Either pass --check-git, --check-merge, --run-pytest, --audit-repo, --audit-solidity, "
+            "--before/--after, or both --write-path and --candidate-file."
+        )
 
     try:
+        if args.before is not None and args.after is not None:
+            return _run_pair_delta(
+                before_path=args.before.resolve(),
+                after_path=args.after.resolve(),
+                max_bytes=args.max_bytes,
+                output_format=output_format,
+                fail_on_findings=args.fail_on_findings,
+                enable=args.enable,
+            )
+
         root = args.root.resolve()
+        if args.audit_solidity:
+            if not root.exists():
+                raise AnalysisError(f"Solidity audit target does not exist: {root}")
+            return _run_audit_solidity(
+                root=root,
+                max_bytes=args.max_bytes,
+                output_format=output_format,
+                fail_on_findings=args.fail_on_findings,
+            )
         if not root.is_dir():
             raise AnalysisError(f"Workspace root is not a directory: {root}")
         runtime_dir = args.runtime_dir.resolve() if args.runtime_dir else (root / ".mipdelta" / "runtime")
@@ -932,21 +1147,28 @@ def main_cli(argv: list[str] | None = None) -> int:
                 root=root,
                 runtime_dir=runtime_dir,
                 max_bytes=args.max_bytes,
-                as_json=args.json,
+                output_format=output_format,
                 fail_on_findings=args.fail_on_findings,
                 review=args.review,
                 review_model=args.review_model,
             )
 
-        if args.run_pytest or args.check_git:
-            baseline = _git_baseline(root, args.base_ref)
+        if args.run_pytest or args.check_git or args.check_merge:
+            if args.check_merge:
+                baseline = _resolve_merge_base(root, args.base_ref)
+                effective_base_ref = args.base_ref or baseline[1]
+                source = "check-merge"
+            else:
+                effective_base_ref = args.base_ref or "HEAD"
+                baseline = _git_baseline(root, effective_base_ref)
+                source = "check-git"
             kwargs = {
                 "root": root,
-                "base_ref": args.base_ref,
+                "base_ref": effective_base_ref,
                 "baseline": baseline,
                 "runtime_dir": runtime_dir,
                 "max_bytes": args.max_bytes,
-                "as_json": args.json,
+                "output_format": output_format,
                 "fail_on_findings": args.fail_on_findings,
                 "ledger_path": args.ledger.resolve() if args.ledger else None,
                 "show_open": args.open,
@@ -956,7 +1178,7 @@ def main_cli(argv: list[str] | None = None) -> int:
             }
             if args.run_pytest:
                 return _run_monitored_pytest(pytest_args=args.pytest_args, **kwargs)
-            return _run_git_check(**kwargs)
+            return _run_git_check(source=source, **kwargs)
 
         new_text = _decode_source(args.write_path, args.candidate_file.read_bytes())
         _check_source_syntax(args.write_path, new_text)
@@ -994,40 +1216,25 @@ def main_cli(argv: list[str] | None = None) -> int:
             )
             advisory_text, failing = _apply_review_outcome(advisory_text, failing, review_result)
     except (AnalysisError, ReviewError, OSError) as exc:
-        return _report_error(exc, args.json)
+        return _report_error(exc, as_json)
 
-    if args.json:
-        payload = {
-            "path": res.path,
-            "before_sha256": res.before_sha256,
-            "after_sha256": res.after_sha256,
-            "content_changed": res.content_changed,
-            "skipped_unparsed_paths": sorted(cache.skipped),
-            "cross_file_triggered": res.cross_file_triggered,
-            "parses_executed": res.parses_executed,
-            "candidate_calls_inspected": res.candidate_calls_inspected,
-            "advisory_text": advisory_text,
-            "advisory_utf8_bytes": len(advisory_text.encode("utf-8")),
-            "wall_ms": round(res.wall_seconds * 1000.0, 3),
-            "findings": [
-                {
-                    "detector": f.detector,
-                    "symbol": f.symbol,
-                    "path": f.path,
-                    "start_line": f.start_line,
-                    "end_line": f.end_line,
-                    "resolution_source": f.resolution_source,
-                    "evidence": list(f.evidence),
-                }
-                for f in res.ranked_findings
-            ],
-        }
-        if review_result is not None:
-            payload["review"] = review_result.to_dict()
-        print(json.dumps(payload, indent=2))
-    elif advisory_text:
-        print(advisory_text)
-    _note_skipped(sorted(cache.skipped), args.json)
+    payload: dict[str, Any] = {
+        "path": res.path,
+        "before_sha256": res.before_sha256,
+        "after_sha256": res.after_sha256,
+        "content_changed": res.content_changed,
+        "skipped_unparsed_paths": sorted(cache.skipped),
+        "cross_file_triggered": res.cross_file_triggered,
+        "parses_executed": res.parses_executed,
+        "candidate_calls_inspected": res.candidate_calls_inspected,
+        "advisory_text": advisory_text,
+        "advisory_utf8_bytes": len(advisory_text.encode("utf-8")),
+        "wall_ms": round(res.wall_seconds * 1000.0, 3),
+        "findings": [_finding_json(f) for f in res.ranked_findings],
+    }
+    if review_result is not None:
+        payload["review"] = review_result.to_dict()
+    _emit_cli_output(output_format, payload, advisory_text, sorted(cache.skipped))
     return 1 if (args.fail_on_findings and failing) else 0
 
 

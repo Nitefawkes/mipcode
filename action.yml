@@ -1,0 +1,86 @@
+name: "mip-delta Architectural Delta Gate"
+description: "Deterministic Python & Solidity contract delta verification with optional Stage-2 triage."
+branding:
+  icon: "shield"
+  color: "blue"
+
+inputs:
+  mode:
+    description: "Analysis mode: check-git, check-merge, audit-repo, or audit-solidity"
+    required: false
+    default: "check-git"
+  base-ref:
+    description: "Git ref to compare working tree against (optional for check-merge; defaults to HEAD for check-git)"
+    required: false
+    default: ""
+  root:
+    description: "Workspace root directory relative to runner workspace"
+    required: false
+    default: "."
+  include-state-field-review:
+    description: "Set to 'true' to opt into state_field_review"
+    required: false
+    default: "false"
+  fail-on-findings:
+    description: "Exit non-zero if unsuppressed findings remain"
+    required: false
+    default: "true"
+  python-version:
+    description: "Python version to provision for mip-delta"
+    required: false
+    default: "3.12"
+  review:
+    description: "Set to 'true' to run Stage-2 --review when Stage 1 emits findings"
+    required: false
+    default: "false"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+    - name: Install mipcode
+      shell: bash
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install "${{ github.action_path }}"
+    - name: Run mip-delta
+      shell: bash
+      run: |
+        args=(--root "${{ inputs.root }}" --format github)
+        case "${{ inputs.mode }}" in
+          check-git)
+            args+=(--check-git)
+            if [ -n "${{ inputs.base-ref }}" ]; then
+              args+=(--base-ref "${{ inputs.base-ref }}")
+            fi
+            ;;
+          check-merge)
+            args+=(--check-merge)
+            if [ -n "${{ inputs.base-ref }}" ]; then
+              args+=(--base-ref "${{ inputs.base-ref }}")
+            fi
+            ;;
+          audit-repo)
+            args+=(--audit-repo)
+            ;;
+          audit-solidity)
+            args+=(--audit-solidity)
+            ;;
+          *)
+            echo "::error::Unsupported mip-delta action mode: ${{ inputs.mode }}" >&2
+            exit 2
+            ;;
+        esac
+        if [ "${{ inputs.include-state-field-review }}" = "true" ]; then
+          args+=(--enable state_field_review)
+        fi
+        if [ "${{ inputs.review }}" = "true" ]; then
+          args+=(--review)
+        fi
+        if [ "${{ inputs.fail-on-findings }}" = "true" ]; then
+          args+=(--fail-on-findings)
+        fi
+        mip-delta "${args[@]}"

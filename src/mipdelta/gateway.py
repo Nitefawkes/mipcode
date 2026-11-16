@@ -441,6 +441,8 @@ class ContainedGatewaySession:
         try:
             if self.metrics["calls"] > self.max_calls:
                 raise GatewayError("CALL_LIMIT", "Episode call allowance exhausted")
+            if self.metrics["visible_bytes"] >= self.max_visible_bytes:
+                raise GatewayError("VISIBLE_BYTE_LIMIT", "Episode visible byte allowance exhausted")
             if not isinstance(tool, str):
                 raise GatewayError("INVALID_ARGUMENTS", "tool must be a string")
             result = self._execute(tool, args)

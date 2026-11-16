@@ -1,0 +1,214 @@
+{
+  "experiment": "solidity_bounty_offline_eval",
+  "openbridge": {
+    "status": "evaluated",
+    "target": "ERC7786OpenBridge",
+    "files": 1,
+    "contracts": 1,
+    "functions": 19,
+    "wall_ms": 11.013,
+    "findings_count": 1,
+    "findings": [
+      {
+        "detector": "try_catch_sink_review",
+        "symbol": "ERC7786OpenBridge.sendMessage",
+        "path": "contracts/crosschain/ERC7786OpenBridge.sol",
+        "start_line": 124,
+        "end_line": 144,
+        "evidence": [
+          "try populates outbox[i] while non-reverting catch leaves entry zero-initialized before outbox reaches hash/emit/return sink"
+        ]
+      }
+    ]
+  },
+  "blinded_defi_suite": {
+    "status": "evaluated",
+    "pairs": {
+      "vault_4626": {
+        "wall_ms": 8.071,
+        "before_findings": [],
+        "after_findings": [
+          {
+            "detector": "state_sink_review",
+            "symbol": "PatchedVault4626._VIRTUAL_SHARES",
+            "path": "vault_4626_patched.sol",
+            "start_line": 20,
+            "end_line": 20,
+            "evidence": [
+              "private constant _VIRTUAL_SHARES is declared in PatchedVault4626 and never read in any method or modifier"
+            ]
+          },
+          {
+            "detector": "state_sink_review",
+            "symbol": "PatchedVault4626._VIRTUAL_ASSETS",
+            "path": "vault_4626_patched.sol",
+            "start_line": 21,
+            "end_line": 21,
+            "evidence": [
+              "private constant _VIRTUAL_ASSETS is declared in PatchedVault4626 and never read in any method or modifier"
+            ]
+          }
+        ],
+        "delta_findings": [
+          {
+            "detector": "state_sink_review",
+            "symbol": "PatchedVault4626._VIRTUAL_SHARES",
+            "path": "Vault4626.sol",
+            "start_line": 20,
+            "end_line": 20,
+            "evidence": [
+              "private constant _VIRTUAL_SHARES is declared in PatchedVault4626 and never read in any method or modifier"
+            ]
+          },
+          {
+            "detector": "state_sink_review",
+            "symbol": "PatchedVault4626._VIRTUAL_ASSETS",
+            "path": "Vault4626.sol",
+            "start_line": 21,
+            "end_line": 21,
+            "evidence": [
+              "private constant _VIRTUAL_ASSETS is declared in PatchedVault4626 and never read in any method or modifier"
+            ]
+          }
+        ],
+        "structural_delta": {
+          "before_findings": 0,
+          "after_findings": 2,
+          "new_findings": 2,
+          "added_state_vars": [
+            "PatchedVault4626._VIRTUAL_ASSETS",
+            "PatchedVault4626._VIRTUAL_SHARES",
+            "PatchedVault4626.asset",
+            "PatchedVault4626.balanceOf",
+            "PatchedVault4626.decimals",
+            "PatchedVault4626.name",
+            "PatchedVault4626.symbol",
+            "PatchedVault4626.totalSupply"
+          ],
+          "added_guards": {
+            "PatchedVault4626.deposit": [
+              "shares"
+            ],
+            "PatchedVault4626.withdraw": [
+              "balanceOf",
+              "msg",
+              "sender",
+              "shares"
+            ]
+          }
+        }
+      },
+      "synthetic_lending": {
+        "wall_ms": 13.027,
+        "before_findings": [],
+        "after_findings": [],
+        "delta_findings": [],
+        "structural_delta": {
+          "before_findings": 0,
+          "after_findings": 0,
+          "new_findings": 0,
+          "added_state_vars": [
+            "SyntheticLendingPoolPatched.LIQUIDATION_THRESHOLD",
+            "SyntheticLendingPoolPatched.LTV",
+            "SyntheticLendingPoolPatched.MAX_BORROW_PER_BLOCK",
+            "SyntheticLendingPoolPatched.collateralToken",
+            "SyntheticLendingPoolPatched.currentBlockBorrows",
+            "SyntheticLendingPoolPatched.debtToken",
+            "SyntheticLendingPoolPatched.lastBorrowBlock",
+            "SyntheticLendingPoolPatched.owner",
+            "SyntheticLendingPoolPatched.twapOracle",
+            "SyntheticLendingPoolPatched.userCollateral",
+            "SyntheticLendingPoolPatched.userDebt"
+          ],
+          "added_guards": {
+            "SyntheticLendingPoolPatched.depositCollateral": [
+              "amount"
+            ],
+            "SyntheticLendingPoolPatched.borrow": [
+              "MAX_BORROW_PER_BLOCK",
+              "currentBlockBorrows",
+              "debtAmount",
+              "maxBorrow",
+              "msg",
+              "sender",
+              "userDebt"
+            ],
+            "SyntheticLendingPoolPatched.repay": [
+              "amount"
+            ],
+            "SyntheticLendingPoolPatched.liquidate": [
+              "borrower",
+              "healthThreshold",
+              "userDebt"
+            ]
+          }
+        }
+      }
+    },
+    "controls": {
+      "benign_escrow.sol": {
+        "files": 1,
+        "contracts": 2,
+        "functions": 7,
+        "wall_ms": 1.586,
+        "findings_count": 0,
+        "findings": []
+      },
+      "benign_staking_rewards.sol": {
+        "files": 1,
+        "contracts": 2,
+        "functions": 10,
+        "wall_ms": 1.862,
+        "findings_count": 0,
+        "findings": []
+      }
+    }
+  },
+  "aqua_campaign_archive": {
+    "status": "evaluated",
+    "components_scanned": 4,
+    "total_files": 32,
+    "total_contracts": 40,
+    "total_functions": 210,
+    "total_findings": 0,
+    "total_wall_ms": 103.264,
+    "components": [
+      {
+        "component": "supporting/aqua",
+        "files_scanned": 1,
+        "contracts": 1,
+        "functions": 6,
+        "wall_ms": 2.39,
+        "findings_count": 0,
+        "findings": []
+      },
+      {
+        "component": "target/aqua",
+        "files_scanned": 3,
+        "contracts": 3,
+        "functions": 9,
+        "wall_ms": 4.13,
+        "findings_count": 0,
+        "findings": []
+      },
+      {
+        "component": "target/solidity-utils",
+        "files_scanned": 14,
+        "contracts": 14,
+        "functions": 73,
+        "wall_ms": 39.207,
+        "findings_count": 0,
+        "findings": []
+      },
+      {
+        "component": "target/swap-vm",
+        "files_scanned": 14,
+        "contracts": 22,
+        "functions": 122,
+        "wall_ms": 57.537,
+        "findings_count": 0,
+        "findings": []
+      }
+    ]
+  }
+}

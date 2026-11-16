@@ -1,16 +1,16 @@
 {
   "experiment": "cold_audit",
-  "mipdelta_sha": "238c50947035",
+  "mipdelta_sha": "917dd7154ceb",
   "noise_gate_threshold": 50,
   "noise_gate_exceeded": [],
   "totals": {
     "repositories": 24,
-    "files_scanned": 5719,
-    "candidate_calls_inspected": 77324,
-    "repositories_silent": 20,
-    "repositories_flagged": 4,
-    "stage1_findings": 12,
-    "median_wall_ms": 1274.19
+    "files_scanned": 5708,
+    "candidate_calls_inspected": 77052,
+    "repositories_silent": 22,
+    "repositories_flagged": 2,
+    "stage1_findings": 10,
+    "median_wall_ms": 1355.34
   },
   "repositories": [
     {
@@ -21,8 +21,8 @@
       "files_scanned": 60,
       "skipped_unparsed_count": 0,
       "candidate_calls_inspected": 1391,
-      "wall_ms": 663.472,
-      "process_wall_ms": 1043.87,
+      "wall_ms": 758.317,
+      "process_wall_ms": 1291.36,
       "stage1_findings_count": 0,
       "advisory_text": "",
       "findings": []
@@ -35,8 +35,8 @@
       "files_scanned": 38,
       "skipped_unparsed_count": 0,
       "candidate_calls_inspected": 731,
-      "wall_ms": 764.977,
-      "process_wall_ms": 1187.21,
+      "wall_ms": 798.293,
+      "process_wall_ms": 1247.56,
       "stage1_findings_count": 0,
       "advisory_text": "",
       "findings": []
@@ -49,8 +49,8 @@
       "files_scanned": 212,
       "skipped_unparsed_count": 0,
       "candidate_calls_inspected": 3325,
-      "wall_ms": 1910.505,
-      "process_wall_ms": 2375.56,
+      "wall_ms": 1857.905,
+      "process_wall_ms": 2483.1,
       "stage1_findings_count": 9,
       "advisory_text": "[mip-delta] rich/traceback.py:309 delegating_wrapper_review[static] Traceback.__init__; rich/traceback.py:309 delegating_wrapper_review[static] Traceback.__init__; rich/traceback.py:309 delegating_wrapper_review[static] Traceback.__init__ (+6)",
       "findings": [
@@ -172,8 +172,8 @@
       "files_scanned": 56,
       "skipped_unparsed_count": 0,
       "candidate_calls_inspected": 723,
-      "wall_ms": 748.457,
-      "process_wall_ms": 1216.6,
+      "wall_ms": 833.586,
+      "process_wall_ms": 1271.58,
       "stage1_findings_count": 0,
       "advisory_text": "",
       "findings": []
@@ -186,8 +186,8 @@
       "files_scanned": 65,
       "skipped_unparsed_count": 0,
       "candidate_calls_inspected": 1507,
-      "wall_ms": 954.929,
-      "process_wall_ms": 1328.61,
+      "wall_ms": 980.321,
+      "process_wall_ms": 1407.49,
       "stage1_findings_count": 0,
       "advisory_text": "",
       "findings": []
@@ -200,8 +200,8 @@
       "files_scanned": 70,
       "skipped_unparsed_count": 0,
       "candidate_calls_inspected": 3734,
-      "wall_ms": 1010.745,
-      "process_wall_ms": 1395.19,
+      "wall_ms": 970.065,
+      "process_wall_ms": 1360.46,
       "stage1_findings_count": 0,
       "advisory_text": "",
       "findings": []
@@ -214,8 +214,8 @@
       "files_scanned": 274,
       "skipped_unparsed_count": 0,
       "candidate_calls_inspected": 7770,
-      "wall_ms": 4805.772,
-      "process_wall_ms": 5320.26,
+      "wall_ms": 4801.626,
+      "process_wall_ms": 5291.46,
       "stage1_findings_count": 0,
       "advisory_text": "",
       "findings": []
@@ -228,8 +228,8 @@
       "files_scanned": 37,
       "skipped_unparsed_count": 0,
       "candidate_calls_inspected": 907,
-      "wall_ms": 612.038,
-      "process_wall_ms": 1022.7,
+      "wall_ms": 572.977,
+      "process_wall_ms": 1033.37,
       "stage1_findings_count": 0,
       "advisory_text": "",
       "findings": []
@@ -242,8 +242,8 @@
       "files_scanned": 546,
       "skipped_unparsed_count": 0,
       "candidate_calls_inspected": 7909,
-      "wall_ms": 6229.746,
-      "process_wall_ms": 6750.71,
+      "wall_ms": 7001.81,
+      "process_wall_ms": 7579.54,
       "stage1_findings_count": 0,
       "advisory_text": "",
       "findings": []
@@ -256,8 +256,8 @@
       "files_scanned": 83,
       "skipped_unparsed_count": 0,
       "candidate_calls_inspected": 2072,
-      "wall_ms": 1325.217,
-      "process_wall_ms": 1749.85,
+      "wall_ms": 1612.253,
+      "process_wall_ms": 2095.32,
       "stage1_findings_count": 0,
       "advisory_text": "",
       "findings": []
@@ -270,8 +270,8 @@
       "files_scanned": 91,
       "skipped_unparsed_count": 0,
       "candidate_calls_inspected": 1861,
-      "wall_ms": 1274.192,
-      "process_wall_ms": 1672.62,
+      "wall_ms": 1087.153,
+      "process_wall_ms": 1461.67,
       "stage1_findings_count": 1,
       "advisory_text": "[mip-delta] src/click/utils.py:131 delegating_wrapper_review[static] _LazyFile.__init__ (delegating wrapper _LazyFile.__init__ calls open_stream without forwarding optional parameter atomic)",
       "findings": [
@@ -305,8 +305,8 @@
       "files_scanned": 83,
       "skipped_unparsed_count": 0,
       "candidate_calls_inspected": 1061,
-      "wall_ms": 635.57,
-      "process_wall_ms": 1001.5,
+      "wall_ms": 658.769,
+      "process_wall_ms": 1052.87,
       "stage1_findings_count": 0,
       "advisory_text": "",
       "findings": []
@@ -319,8 +319,8 @@
       "files_scanned": 142,
       "skipped_unparsed_count": 0,
       "candidate_calls_inspected": 3462,
-      "wall_ms": 1351.453,
-      "process_wall_ms": 1705.21,
+      "wall_ms": 1561.876,
+      "process_wall_ms": 2061.04,
       "stage1_findings_count": 0,
       "advisory_text": "",
       "findings": []
@@ -333,8 +333,8 @@
       "files_scanned": 60,
       "skipped_unparsed_count": 0,
       "candidate_calls_inspected": 2822,
-      "wall_ms": 928.69,
-      "process_wall_ms": 1263.97,
+      "wall_ms": 1087.82,
+      "process_wall_ms": 1667.34,
       "stage1_findings_count": 0,
       "advisory_text": "",
       "findings": []
@@ -347,8 +347,8 @@
       "files_scanned": 1223,
       "skipped_unparsed_count": 0,
       "candidate_calls_inspected": 2641,
-      "wall_ms": 4722.457,
-      "process_wall_ms": 5274.83,
+      "wall_ms": 4781.942,
+      "process_wall_ms": 5270.89,
       "stage1_findings_count": 0,
       "advisory_text": "",
       "findings": []
@@ -358,35 +358,14 @@
       "url": "https://github.com/fastapi/typer.git",
       "head_sha": "73500169e87b4e31717d687818c5ed955b584c18",
       "head_sha_short": "73500169e87b",
-      "files_scanned": 643,
+      "files_scanned": 629,
       "skipped_unparsed_count": 0,
-      "candidate_calls_inspected": 2511,
-      "wall_ms": 1443.605,
-      "process_wall_ms": 1892.47,
-      "stage1_findings_count": 1,
-      "advisory_text": "[mip-delta] typer/_click/utils.py:135 delegating_wrapper_review[static] LazyFile.__init__ (delegating wrapper LazyFile.__init__ calls open_stream without forwarding optional parameter atomic)",
-      "findings": [
-        {
-          "detector": "delegating_wrapper_review",
-          "symbol": "LazyFile.__init__",
-          "path": "typer/_click/utils.py",
-          "start_line": 135,
-          "end_line": 135,
-          "resolution_source": "static_ast",
-          "evidence": [
-            "delegating wrapper LazyFile.__init__ calls open_stream without forwarding optional parameter atomic"
-          ]
-        }
-      ],
-      "review": {
-        "verdict": "suppress_false_alarm",
-        "suppressed": true,
-        "reason": "The flagged branch only runs when `self.name == \"-\"`, and `open_stream` returns early for `\"-\"` before it reads `atomic`, with a comment saying standard streams ignore the atomic flag. Not forwarding `atomic` therefore has no behavioral effect, and the diff is empty, so nothing here is a new contract break.",
-        "backend": "claude_cli",
-        "model": "claude-haiku-5-5",
-        "wall_ms": 5682.668,
-        "cost_usd": 0.001233
-      }
+      "candidate_calls_inspected": 1713,
+      "wall_ms": 1355.338,
+      "process_wall_ms": 1799.23,
+      "stage1_findings_count": 0,
+      "advisory_text": "",
+      "findings": []
     },
     {
       "repo": "starlette",
@@ -396,8 +375,8 @@
       "files_scanned": 84,
       "skipped_unparsed_count": 0,
       "candidate_calls_inspected": 1687,
-      "wall_ms": 963.077,
-      "process_wall_ms": 1397.9,
+      "wall_ms": 1159.678,
+      "process_wall_ms": 1639.01,
       "stage1_findings_count": 0,
       "advisory_text": "",
       "findings": []
@@ -410,8 +389,8 @@
       "files_scanned": 84,
       "skipped_unparsed_count": 0,
       "candidate_calls_inspected": 1870,
-      "wall_ms": 807.846,
-      "process_wall_ms": 1203.87,
+      "wall_ms": 899.989,
+      "process_wall_ms": 1360.93,
       "stage1_findings_count": 0,
       "advisory_text": "",
       "findings": []
@@ -424,8 +403,8 @@
       "files_scanned": 194,
       "skipped_unparsed_count": 0,
       "candidate_calls_inspected": 2701,
-      "wall_ms": 1411.673,
-      "process_wall_ms": 1849.71,
+      "wall_ms": 1679.873,
+      "process_wall_ms": 2118.05,
       "stage1_findings_count": 0,
       "advisory_text": "",
       "findings": []
@@ -438,8 +417,8 @@
       "files_scanned": 20,
       "skipped_unparsed_count": 0,
       "candidate_calls_inspected": 379,
-      "wall_ms": 419.326,
-      "process_wall_ms": 786.63,
+      "wall_ms": 332.832,
+      "process_wall_ms": 740.24,
       "stage1_findings_count": 0,
       "advisory_text": "",
       "findings": []
@@ -452,8 +431,8 @@
       "files_scanned": 173,
       "skipped_unparsed_count": 0,
       "candidate_calls_inspected": 4499,
-      "wall_ms": 5053.879,
-      "process_wall_ms": 5536.3,
+      "wall_ms": 4394.534,
+      "process_wall_ms": 4877.76,
       "stage1_findings_count": 0,
       "advisory_text": "",
       "findings": []
@@ -466,8 +445,8 @@
       "files_scanned": 422,
       "skipped_unparsed_count": 18,
       "candidate_calls_inspected": 3532,
-      "wall_ms": 4399.302,
-      "process_wall_ms": 4905.98,
+      "wall_ms": 5647.533,
+      "process_wall_ms": 6093.07,
       "stage1_findings_count": 0,
       "advisory_text": "",
       "findings": []
@@ -480,8 +459,8 @@
       "files_scanned": 987,
       "skipped_unparsed_count": 0,
       "candidate_calls_inspected": 11829,
-      "wall_ms": 7704.069,
-      "process_wall_ms": 8210.62,
+      "wall_ms": 7828.932,
+      "process_wall_ms": 8369.4,
       "stage1_findings_count": 0,
       "advisory_text": "",
       "findings": []
@@ -489,37 +468,16 @@
     {
       "repo": "mipcode",
       "url": "https://github.com/Nitefawkes/mipcode.git",
-      "head_sha": "238c509470351de684d83a8ec0fcd6c1c2e80ad6",
-      "head_sha_short": "238c50947035",
-      "files_scanned": 72,
+      "head_sha": "917dd7154ceb4f9fcc12479d867622cda3651c2b",
+      "head_sha_short": "917dd7154ceb",
+      "files_scanned": 75,
       "skipped_unparsed_count": 0,
-      "candidate_calls_inspected": 6400,
-      "wall_ms": 1127.289,
-      "process_wall_ms": 1507.84,
-      "stage1_findings_count": 1,
-      "advisory_text": "[mip-delta] src/mipdelta/gateway.py:354 parameter_sink_review[static] ContainedGatewaySession.__init__ (parameter max_visible_bytes is only stored on self.max_visible_bytes, which is never read; verify its intended behavioral sink)",
-      "findings": [
-        {
-          "detector": "parameter_sink_review",
-          "symbol": "ContainedGatewaySession.__init__",
-          "path": "src/mipdelta/gateway.py",
-          "start_line": 354,
-          "end_line": 409,
-          "resolution_source": "static_ast",
-          "evidence": [
-            "parameter max_visible_bytes is only stored on self.max_visible_bytes, which is never read; verify its intended behavioral sink"
-          ]
-        }
-      ],
-      "review": {
-        "verdict": "review_worthy",
-        "suppressed": false,
-        "reason": "The production diff is empty, so this is not a newly added parameter, and the snippet shows only `__init__`, so the claim that `self.max_visible_bytes` is never read cannot be confirmed here. A cap that is stored but unenforced would be a real risk, since a `visible_bytes` metric exists and the sibling `max_response_bytes` may be enforced elsewhere, so a developer should check the visible-output path.",
-        "backend": "claude_cli",
-        "model": "claude-haiku-5-5",
-        "wall_ms": 6735.013,
-        "cost_usd": 0.001294
-      }
+      "candidate_calls_inspected": 6926,
+      "wall_ms": 1400.086,
+      "process_wall_ms": 1869.84,
+      "stage1_findings_count": 0,
+      "advisory_text": "",
+      "findings": []
     }
   ]
 }

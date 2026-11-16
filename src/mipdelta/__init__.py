@@ -33,6 +33,7 @@ from .monitoring import (
 )
 from .resolve import MutableResolutionIndex
 from .session import DeltaSession
+from .solidity import analyze_solidity_delta, audit_solidity_workspace, parse_solidity_file
 from .stubs import TypeCandidateIndex, parse_stub_tree
 
 
@@ -53,7 +54,7 @@ def _resolve_package_version() -> str:
     try:
         return importlib.metadata.version("mipcode")
     except importlib.metadata.PackageNotFoundError:
-        return "0.6.2"
+        return "0.6.3"
 
 
 __version__ = _resolve_package_version()
@@ -81,13 +82,16 @@ __all__ = [
     "WriteDeltaResult",
     "analyze_changed_files_in_index",
     "analyze_delta",
+    "analyze_solidity_delta",
     "audit_index",
+    "audit_solidity_workspace",
     "audit_workspace",
     "deduplicate_findings",
     "format_advisory",
     "gateway_tool_schemas",
     "install_process_collector_from_env",
     "parse_file",
+    "parse_solidity_file",
     "parse_stub_tree",
     "rank_findings",
 ]

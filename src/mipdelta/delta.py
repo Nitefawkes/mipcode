@@ -64,7 +64,7 @@ _PROVENANCE_TAG = {
 
 
 _VENDORED_DIRS = frozenset(
-    {"vendor", "_vendor", "vendored", "third_party", "3rd_party", "third-party", "3rdparty", "extern", "external"}
+    {"vendor", "_vendor", "vendored", "third_party", "3rd_party", "third-party", "3rdparty", "extern", "external", "_click"}
 )
 
 

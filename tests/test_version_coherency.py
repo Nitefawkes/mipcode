@@ -58,6 +58,17 @@ def test_pre_commit_hooks_yaml_is_coherent():
     assert "pass_filenames: false" in text
 
 
+def test_github_action_yaml_is_coherent():
+    action_path = REPO_ROOT / "action.yml"
+    assert action_path.is_file()
+    text = action_path.read_text(encoding="utf-8")
+    assert 'using: "composite"' in text
+    assert "mip-delta" in text
+    assert "--format github" in text
+    for mode in ("check-git", "check-merge", "audit-repo", "audit-solidity"):
+        assert mode in text
+
+
 def test_markdown_links_resolve_to_tracked_files_and_headings():
     if not (REPO_ROOT / ".git").exists():
         pytest.skip("Not a git checkout")

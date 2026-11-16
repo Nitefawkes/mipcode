@@ -66,7 +66,7 @@ The check compares the working tree with `HEAD`, so it also sees changes that ar
 
 ## Run on a pull request
 
-In CI, compare the pull request with the point where it left its base branch. This GitHub Actions job prints the report in its log and does not fail the build:
+Use the official composite [GitHub Action](../action.yml) or invoke `mip-delta` directly with `--format github` to emit inline workflow `::warning` annotations on changed lines:
 
 ```yaml
 jobs:
@@ -76,16 +76,22 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: actions/setup-python@v5
+      - uses: Nitefawkes/mipcode@main
         with:
-          python-version: "3.12"
-      - run: python -m pip install "git+https://github.com/Nitefawkes/mipcode@v0.6.2"  # or @main
-      - run: mip-delta --check-git --base-ref "$(git merge-base "origin/$BASE" HEAD)"
+          mode: check-git
+          base-ref: origin/${{ github.base_ref }}
+          fail-on-findings: "false"
+```
+
+Or run via `pip` directly in a step:
+
+```yaml
+      - run: mip-delta --check-git --base-ref "$(git merge-base "origin/$BASE" HEAD)" --format github
         env:
           BASE: ${{ github.base_ref }}
 ```
 
-`fetch-depth: 0` fetches the history that `git merge-base` needs. Add `--fail-on-findings` to make the job fail when the check reports a site. Start without it: on upstream history most reports were not defects, and a CI job has no ledger in which to waive one.
+`fetch-depth: 0` fetches the history that `git merge-base` needs. Add `--fail-on-findings` (or `fail-on-findings: "true"`) to make the job fail when the check reports a site. Start without it (or pair with `--review`): on upstream history most Stage-1 reports without `--review` were not defects, and a CI job has no ledger in which to waive one.
 
 ## Filter flagged diffs with Stage-2 micro-triage (`--review`)
 
@@ -103,13 +109,32 @@ mip-delta --check-git --base-ref "$(git merge-base "origin/$BASE" HEAD)" --revie
 
 ## Check a merge
 
-Two branches can merge without a textual conflict and still disagree. One changes a function's contract and updates its callers. The other adds a caller that uses the old contract. After merging, compare the merged tree with the merge base:
+Two branches can merge without a textual conflict and still disagree. One changes a function's contract and updates its callers. The other adds a caller that uses the old contract. `--check-merge` automatically computes the `git merge-base` for an active `MERGE_HEAD`, a completed merge commit (`HEAD^1` vs `HEAD^2`), or an explicit `--base-ref` target branch:
 
 ```sh
-mip-delta --check-git --base-ref "$(git merge-base HEAD~1 HEAD^2)"
+mip-delta --check-merge
+mip-delta --check-merge --base-ref origin/main --format github --fail-on-findings
 ```
 
-A branch that completed its own migration contributes no findings, so what remains comes from the combination. Use the two branch names in place of `HEAD~1` and `HEAD^2` when checking before the merge commit exists.
+A branch that completed its own migration contributes no findings, so what remains comes from the combination.
+
+## Audit Solidity contracts (`--audit-solidity`)
+
+Run a zero-dependency structural contract check across a `.sol` directory or single file (`mip-delta --audit-solidity`) or compare a before/after contract pair (`--before` / `--after`):
+
+```sh
+mip-delta --audit-solidity --root contracts/ --fail-on-findings
+mip-delta --before Vault_v1.sol --after Vault_v2.sol --json
+mip-delta --audit-solidity --root contracts/ --format github
+```
+
+Static Solidity checks cover:
+- **`try_catch_sink_review`:** Pre-allocated memory arrays written in a `try` block whose non-reverting `catch` leaves zero-initialized entries before `keccak256` / `abi.encode` / `emit` / `return` sinks.
+- **`state_sink_review`:** `private` or `internal` constants and state variables never read in their contract or derived contracts (skipping `__gap` storage slots).
+- **`parameter_sink_review`:** Unused named parameters in concrete contract bodies.
+- **`delegating_wrapper_review` & `override_modifier_review`:** Wrapper/router calls dropping shared guard parameters (with branch-forwarding awareness) or overrides dropping security modifiers (`nonReentrant`, `whenNotPaused`, `onlyOwner`) without invoking `super`.
+
+See the [offline Solidity & Web3 evaluation](../results/solidity_bounty/README.md).
 
 ## Audit a repository snapshot at rest (`--audit-repo`)
 

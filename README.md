@@ -75,15 +75,29 @@ To make sure every subsystem in `src/mipdelta/` earned its keep against real tes
 
 You don't need a git diff to try `mip-delta` on a codebase. `mip-delta --audit-repo` scans a resting `HEAD` snapshot for standing wrapper option drops (`delegating_wrapper_review`), dead `self.<param>` configuration attributes never read anywhere in the workspace (`parameter_sink_review`), and hard subclass parameter-kind mismatches (`override_signature_review`).
 
-In a [24-repository cold sweep](results/cold_audit/README.md) ([protocol](experiments/cold_audit/README.md)) across popular Python libraries (`5,719` production files, `77,324` candidate calls, median scan `1.27 s`):
+In a [24-repository cold sweep](results/cold_audit/README.md) ([protocol](experiments/cold_audit/README.md)) across popular Python libraries (`5,708` production files, `77,052` candidate calls, median scan `1.36 s`):
 
-- **20 of 24 repositories (`83.3%`) emitted zero alerts**, showing strict quietness on mature codebases even with no diff boundary.
-- **10 of 12 Stage-1 findings (`83.3%`) were real standing bugs:** `Textualize/rich` (`rich/traceback.py:309` `Traceback.__init__` dropping 5 `locals_*` options, `rich/traceback.py:487` recursive `Traceback.extract` dropping `locals_max_depth`/`locals_max_string` on `ExceptionGroup`s, and 2 dead `self.locals_hide_{dunder,sunder}` stores) plus MipCode's own `ContainedGatewaySession.__init__` storing an unread `self.max_visible_bytes` quota (`src/mipdelta/gateway.py:383`).
-- **`--review` reached `100%` kept precision for `$0.0124` total:** Stage-2 Haiku triage (reading injected `[callee contract]` signatures) suppressed both benign `LazyFile` stdin `"-"` findings in `click` and `typer` (`$0.0011`–`$0.0012` each) while keeping `rich` (`confirm_omission`) and `mipcode` (`review_worthy`).
+- **22 of 24 repositories (`91.7%`) emitted zero alerts**, showing strict quietness on mature codebases even with no diff boundary.
+- **9 of 10 Stage-1 findings (`90.0%`) were real standing bugs:** `Textualize/rich` (`rich/traceback.py:309` `Traceback.__init__` dropping 5 `locals_*` options, `rich/traceback.py:487` recursive `Traceback.extract` dropping `locals_max_depth`/`locals_max_string` on `ExceptionGroup`s, and 2 dead `self.locals_hide_{dunder,sunder}` stores). In the initial sweep (`20/24` silent), it also caught MipCode's own `ContainedGatewaySession.__init__` storing an unread `self.max_visible_bytes` quota (`src/mipdelta/gateway.py`), which has since been enforced (`0` self-findings).
+- **`--review` reached `100%` kept precision for `$0.0099` total:** Stage-2 Haiku triage (reading injected `[callee contract]` signatures) suppressed the remaining benign `LazyFile` stdin `"-"` finding in `click` (`$0.001102`) while keeping `rich` (`confirm_omission`, `$0.008752`).
 
 ```sh
 mip-delta --audit-repo --root . --json
 mip-delta --audit-repo --root . --review
+```
+
+### Solidity & Web3 Contract-Delta Preview (`--audit-solidity`)
+
+`mip-delta` also includes a zero-dependency Solidity structural contract analyzer (`mipdelta.solidity`) targeting cross-contract and patch-delta defects where `solc` compiles cleanly: `try_catch_sink_review` (non-reverting `catch` leaving pre-allocated `memory` array slots zero-initialized before hash/emit sinks), `state_sink_review` (dead private/internal constants or state variables), `parameter_sink_review`, `delegating_wrapper_review` (with branch-forwarding awareness), and `override_modifier_review`.
+
+In our [offline Web3 & Solidity evaluation](results/solidity_bounty/README.md) ([harness](experiments/solidity_bounty/run_offline_eval.py)):
+- **`ERC7786OpenBridge`:** Flagged `ERC7786OpenBridge.sendMessage` (`try_catch_sink_review`, `L124–L144`) in `11.0 ms` with `0` unrelated findings.
+- **Blinded DeFi patch delta (`vault_4626` → `vault_4626_patched`):** Caught both dead `private constant` inflation-defense constants (`_VIRTUAL_SHARES`, `_VIRTUAL_ASSETS`) in `8.1 ms`, with `0` false positives across `synthetic_lending` and benign escrow/staking controls.
+- **Production DeFi archives (32 `.sol` files, 40 contracts, 210 functions):** Scanned in `103.3 ms` with `0` false positives.
+
+```sh
+mip-delta --audit-solidity --root contracts/ --fail-on-findings
+mip-delta --before Vault_v1.sol --after Vault_v2.sol --json
 ```
 
 ## Quick start
@@ -109,8 +123,8 @@ The report points to `consumer.py:5` and names `required_keyword_missing`.
 ## Where to run it
 
 - **Before a commit.** Add the [pre-commit hook](.pre-commit-hooks.yaml) to `.pre-commit-config.yaml` (`rev: v0.6.2` or `rev: main`, `id: mip-delta`) to stop the commit while reported sites are open. A site you judge intentional can be `--waive`d (see [usage guide](docs/usage.md#run-before-a-commit)).
-- **On a pull request.** Copy the [GitHub Actions job](docs/usage.md#run-on-a-pull-request) to compare a pull request against its base branch and print advisories in the CI log.
-- **After a merge.** Two branches can merge without a textual conflict and still disagree about a contract. A [merge check](docs/usage.md#check-a-merge) compares the merged tree with the merge base.
+- **On a pull request.** Use the official composite [GitHub Action](action.yml) (`uses: Nitefawkes/mipcode@main`) or pass `--format github` to emit native `::warning` workflow annotations on changed lines (see [usage guide](docs/usage.md#run-on-a-pull-request)).
+- **After a merge.** Run `mip-delta --check-merge` (auto-resolving `MERGE_HEAD`, `HEAD^1`/`HEAD^2`, or `--base-ref`) to catch two branches that merged without textual conflicts yet broke a shared contract (see [usage guide](docs/usage.md#check-a-merge)).
 
 A reported site stays open until a later edit resolves it. Stateless `--base-ref` covers single-shot CI PR gates; when running repeated local checks or agent hooks, `--ledger` deduplicates open sites (`0` churn across line edits), `--open` lists what remains, and `--waive` records an intentional one. The [usage guide](docs/usage.md) covers these, opt-in checks, and observing dynamic calls during tests (`--run-pytest`).
 
@@ -126,7 +140,8 @@ The check can still run as [Claude Code hooks](docs/usage.md#run-as-claude-code-
 
 ## Research and development
 
-- [Cold repo bug-hunter](results/cold_audit/README.md) runs diff-free `mip-delta --audit-repo` across 24 resting `HEAD` snapshots (`5,719` files, `20/24` silent, `10/12` Stage-1 real standing bugs, `100%` Stage-2 kept precision for `$0.0124` total API cost).
+- [Cold repo bug-hunter](results/cold_audit/README.md) runs diff-free `mip-delta --audit-repo` across 24 resting `HEAD` snapshots (`5,708` files, `22/24` silent, `9/10` Stage-1 real standing bugs in `rich`, `100%` Stage-2 kept precision for `$0.0099` total API cost).
+- [Solidity & Web3 offline benchmark](results/solidity_bounty/README.md) tests zero-dependency `mip-delta --audit-solidity` and `--before/--after` deltas on cross-chain bridge (`ERC7786OpenBridge`), ERC-4626/lending patches, and 32 production `.sol` contracts.
 - [Two-stage precision sieve](results/two_stage_sieve/README.md) compares AST-only `mip-delta`, AST-gated `--review` Haiku triage, and unguided Haiku diff review across 67 blinded commits from the ten-repository replay.
 - [Experiment 2 audit](results/audit_rt_ledger/README.md) stress-tests opt-in `--run-pytest` PEP 669 dynamic call observation across four real test suites (`90.0%` mutation recall, `+14.17%` median warm overhead) and audits `ObligationLedger` across 20 multi-commit upstream PRs (`0` anchor churn across line shifts, scoped strictly to hook/session deduplication).
 - [Held-out validation, round one](results/held_out/README.md) and [round two](results/held_out/round2/README.md) report the ten-repository replays, the reading of reported sites, recall on constructed omissions, and the mypy comparison. The [regression check](results/held_out/regression/README.md) reruns them after the detector fixes.
