@@ -1,0 +1,167 @@
+{
+  "experiment": "solidity_holdout_corpus",
+  "totals": {
+    "frozen_version": "v0.6.4",
+    "targets_evaluated": 8,
+    "targets_silent": 7,
+    "targets_flagged": 1,
+    "files_scanned": 448,
+    "contracts": 467,
+    "functions": 3356,
+    "total_wall_ms": 1245.958,
+    "total_findings": 2
+  },
+  "targets": [
+    {
+      "target": "v4-core",
+      "url": "https://github.com/Uniswap/v4-core.git",
+      "subdir": "src",
+      "description": "Uniswap v4 core AMM pools, hooks & libraries",
+      "head_sha": "bea7f6d1c11cd5dc4f0d5151ffa37a1c239feee6",
+      "head_sha_short": "bea7f6d1c11c",
+      "status": "evaluated",
+      "files_scanned": 46,
+      "contracts": 44,
+      "functions": 222,
+      "wall_ms": 104.448,
+      "findings_count": 0,
+      "by_detector": {},
+      "findings": []
+    },
+    {
+      "target": "permit2",
+      "url": "https://github.com/Uniswap/permit2.git",
+      "subdir": "src",
+      "description": "Uniswap Permit2 signature-based token approvals",
+      "head_sha": "cc56ad0f3439c502c246fc5cfcc3db92bb8b7219",
+      "head_sha_short": "cc56ad0f3439",
+      "status": "evaluated",
+      "files_scanned": 16,
+      "contracts": 15,
+      "functions": 55,
+      "wall_ms": 25.225,
+      "findings_count": 0,
+      "by_detector": {},
+      "findings": []
+    },
+    {
+      "target": "morpho-blue",
+      "url": "https://github.com/morpho-org/morpho-blue.git",
+      "subdir": "src",
+      "description": "Morpho Blue minimal lending primitive & math",
+      "head_sha": "339a885801972740eb27f51da110a4675b839d42",
+      "head_sha_short": "339a88580197",
+      "status": "evaluated",
+      "files_scanned": 33,
+      "contracts": 39,
+      "functions": 147,
+      "wall_ms": 54.137,
+      "findings_count": 0,
+      "by_detector": {},
+      "findings": []
+    },
+    {
+      "target": "metamorpho",
+      "url": "https://github.com/morpho-org/metamorpho.git",
+      "subdir": "src",
+      "description": "MetaMorpho ERC-4626 curated lending vaults",
+      "head_sha": "87ee5faf910d7224cee70120a94b0921c15ecab7",
+      "head_sha_short": "87ee5faf910d",
+      "status": "evaluated",
+      "files_scanned": 12,
+      "contracts": 18,
+      "functions": 127,
+      "wall_ms": 36.584,
+      "findings_count": 0,
+      "by_detector": {},
+      "findings": []
+    },
+    {
+      "target": "openzeppelin-contracts",
+      "url": "https://github.com/OpenZeppelin/openzeppelin-contracts.git",
+      "subdir": "contracts",
+      "description": "OpenZeppelin Contracts core Solidity standards",
+      "head_sha": "7df9390d5989ea2cb7a70ad93f96245d8a82574e",
+      "head_sha_short": "7df9390d5989",
+      "status": "evaluated",
+      "files_scanned": 249,
+      "contracts": 258,
+      "functions": 2307,
+      "wall_ms": 787.638,
+      "findings_count": 2,
+      "by_detector": {
+        "state_sink_review": 2
+      },
+      "findings": [
+        {
+          "detector": "state_sink_review",
+          "symbol": "EIP712._nameFallback",
+          "path": "utils/cryptography/EIP712.sol",
+          "start_line": 59,
+          "end_line": 59,
+          "evidence": [
+            "private state variable _nameFallback is declared in EIP712 and never read in any method or modifier"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "EIP712._versionFallback",
+          "path": "utils/cryptography/EIP712.sol",
+          "start_line": 64,
+          "end_line": 64,
+          "evidence": [
+            "private state variable _versionFallback is declared in EIP712 and never read in any method or modifier"
+          ]
+        }
+      ]
+    },
+    {
+      "target": "solmate",
+      "url": "https://github.com/transmissions11/solmate.git",
+      "subdir": "src",
+      "description": "Solmate gas-optimized core building blocks",
+      "head_sha": "89365b880c4f3c786bdd453d4b8e8fe410344a69",
+      "head_sha_short": "89365b880c4f",
+      "status": "evaluated",
+      "files_scanned": 20,
+      "contracts": 22,
+      "functions": 145,
+      "wall_ms": 46.6,
+      "findings_count": 0,
+      "by_detector": {},
+      "findings": []
+    },
+    {
+      "target": "limit-order-protocol",
+      "url": "https://github.com/1inch/limit-order-protocol.git",
+      "subdir": "contracts",
+      "description": "1inch Limit Order Protocol v4 settlement",
+      "head_sha": "50bd1300315606a3d32e9021898374c9d0dc2335",
+      "head_sha_short": "50bd13003156",
+      "status": "evaluated",
+      "files_scanned": 43,
+      "contracts": 43,
+      "functions": 179,
+      "wall_ms": 79.922,
+      "findings_count": 0,
+      "by_detector": {},
+      "findings": []
+    },
+    {
+      "target": "sablier-v2-core",
+      "url": "https://github.com/sablier-labs/v2-core.git",
+      "subdir": "lockup/src",
+      "description": "Sablier Lockup V2 streaming core contracts",
+      "head_sha": "18fce3d1cad30f1e641fe9eff3a913ee5cdd54ae",
+      "head_sha_short": "18fce3d1cad3",
+      "status": "evaluated",
+      "files_scanned": 29,
+      "contracts": 28,
+      "functions": 174,
+      "wall_ms": 111.404,
+      "findings_count": 0,
+      "by_detector": {},
+      "findings": []
+    }
+  ]
+}
