@@ -1,19 +1,35 @@
 [build-system]
-requires = ["setuptools>=68.0"]
+requires = ["setuptools>=77.0.3"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "mipcode"
 version = "0.6.4"
-description = "Deterministic AST and runtime-traced Python contract checks across call sites and subclasses (mip-delta)"
-readme = "README.md"
+description = "Static Python call-contract checks and Solidity structural analysis with mip-delta"
+readme = "README-pypi.md"
 requires-python = ">=3.10"
-license = {text = "Apache-2.0"}
+license = "Apache-2.0"
+license-files = ["LICENSE", "NOTICE"]
 authors = [
   {name = "Brian Gansz"}
 ]
 keywords = ["python", "static-analysis", "pre-commit", "code-review", "contract-testing", "ci", "ai-agents", "mipdelta", "mipcode"]
 dependencies = []
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Software Development :: Quality Assurance",
+]
+
+[project.urls]
+Source = "https://github.com/Nitefawkes/mipcode"
+Documentation = "https://github.com/Nitefawkes/mipcode/blob/v0.6.4/docs/usage.md"
+Issues = "https://github.com/Nitefawkes/mipcode/issues"
 
 [project.optional-dependencies]
 test = ["pytest>=8"]
@@ -33,3 +49,8 @@ mip-guardrail = "mipcode.real_repo_deploy:main_cli"
 lod-build = "semantic_lod.compiler:main_cli"
 lod-verify-edit = "semantic_lod.mcp_server:main_verify_edit_cli"
 lod-guardrail = "semantic_lod.real_repo_deploy:main_cli"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["mipcode", "mipdelta", "semantic_lod"]
+namespaces = false

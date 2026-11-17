@@ -1,0 +1,3 @@
+include LICENSE NOTICE README-pypi.md
+exclude README.md
+prune tests
