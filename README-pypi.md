@@ -7,8 +7,8 @@ research preview. Findings are prompts for review.
 
 ## Install
 
-Use Python 3.10 or later. The base package has no third-party runtime
-dependencies. The Git comparison commands also require Git.
+Use Python 3.10 or later. The base package has no third-party Python runtime
+dependencies. Install Git for Python repository auditing and Git comparisons.
 
 ```sh
 python -m pip install mipcode
