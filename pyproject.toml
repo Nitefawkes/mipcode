@@ -3,7 +3,7 @@ requires = ["setuptools>=77.0.3"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "mipcode"
+name = "coherion-mipcode"
 version = "0.6.4"
 description = "Static Python call-contract checks and Solidity structural analysis with mip-delta"
 readme = "README-pypi.md"
