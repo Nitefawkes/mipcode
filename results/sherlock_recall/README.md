@@ -76,20 +76,37 @@ Only 2 findings are tagged `existing_detector_gap`. So the misses are mostly sha
 
 **Human spot-check.** It applies only to `same_defect` hits, and there were none, so the operator had nothing to check. Human-confirmed recall equals model-confirmed recall by construction (ledger R24).
 
+**Recall by pattern.** The plan pre-registers this measure, but `score.py` does not compute it. These figures were derived post-hoc from the committed outputs, using the same denominator as the table above (findings of the class with a production site, grouped by final pattern). There were no hits, so recall is 0 for every pattern.
+
+| Pattern | in_class | adjacent |
+| --- | ---: | ---: |
+| `sibling_missing_guard` | 0 of 8 | 0 of 0 |
+| `paired_op_mismatch` | 0 of 5 | 0 of 1 |
+| `param_unread` | 0 of 3 | 0 of 0 |
+| `param_not_forwarded` | 0 of 1 | 0 of 0 |
+| `override_mismatch` | 0 of 1 | 0 of 1 |
+| `dead_state` | 0 of 1 | 0 of 0 |
+| `hardcoded_safety_param` | 0 of 0 | 0 of 4 |
+| `other` | 0 of 4 | 0 of 10 |
+| **Total** | **0 of 23** | **0 of 16** |
+
 Read together with class coverage, as the plan requires: 0% recall on a class that is 17% of paid findings, plus 15% adjacent, means the present snapshot detectors are not where the value lies on contest code. The miss buckets say what to build instead.
 
 ## Readers
 
 **Calls.** 360 reader calls, all answered: Sonnet 156, Haiku 156, Opus tie-breaker 48. There were no refusals, no invalid outputs, and no served-model mismatches (`fallback_ran` 0). The same-defect reader added 4 calls.
 
-**Agreement between Sonnet and Haiku:**
+**Agreement between Sonnet and Haiku**, as computed by the frozen `score.py` over all pairs:
 
 | Label | Raw agreement | Cohen's κ |
 | --- | ---: | ---: |
 | class | 80.1% | 0.60 |
 | pattern (n=125) | 92.0% | 0.82 |
+| pattern, in_class/adjacent pairs only (n=32), post-hoc | 68.8% | 0.61 |
 
-Mean Jaccard on the tag sets is 0.74. The raw labels are in `labels_measurement.json`.
+Mean Jaccard on the tag sets is 0.74 over all 156 pairs, and 0.64 over the 32 in_class/adjacent pairs (post-hoc).
+
+The frozen figures overstate agreement. Of the 125 pairs whose classes match, 93 are out_of_class on both sides. Pattern is null and the tag set is empty there, so each such pair counts as full agreement. The post-hoc rows keep only pairs where both readers' class is in_class or adjacent, the only pairs where pattern and tags apply. They were computed from `labels_measurement.json` after the run, using the same κ formula as `score.py`; `score.py` does not produce them. They change no outcome or decision. The raw labels are in `labels_measurement.json`.
 
 **Cost.** CLI-reported notional cost for the measurement set was about $4.72 (cumulative ledger $6.52, including the dev set and preflight), against the $15 cap. Recomputed at list prices from recorded tokens, it is $3.99. It was paid from the operator's Claude subscription, not billed (ledger R19).
 
@@ -102,13 +119,14 @@ Mean Jaccard on the tag sets is 0.74. The raw labels are in `labels_measurement.
   The fixes (`4494caa`..`123e9d8`) touch only `run_recall.py`. Directories are skipped. For leveraged-vaults, a plumbing checkout writes only safe regular blobs. It dropped 22 entries: 19 colon-named JSON files and 3 submodule links, and no `.sol` file. No git security setting was changed.
 
   The whole measurement set was then re-run once. The 12 contests that had succeeded reproduced identically, apart from `wall_ms`. Only per-contest counts were seen between the two runs. No detector, prompt or threshold changed.
+- **Reader input leak, one finding (jala-swap M-1).** The report parser's fence regex (`sherlock_report.py`) also matches a line that begins with inline triple-backtick code. In `2024-02-jala-swap:M-1` that hid every heading after the first line of Vulnerability Detail. The readers of that finding therefore saw the PoC, the Recommendation and the full Discussion, which includes the note that the team fixed the issue and the fix commit. This breaks the rule that readers never see PoC or Discussion. A scan of all 204 findings found no other affected finding, and the dev set is clean. The finding is labeled `adjacent`, `override_mismatch`, `[cross_file_or_dependency_visibility]`. It was not relabeled. Excluding it would move the cross-file bucket from 8 to 7 and leave the decision unchanged (sibling-guard asymmetry 18, safety-parameter weighting 10). The parser fix is deferred to the next study so the committed outputs stay reproducible from the committed code.
 - **Transport (R19).** Labeling used Claude Code CLI 2.1.322 in print mode on the subscription, with no server-side fallbacks. The frozen plan discloses the reader context.
 - **Obligation sites.** One obligation site couldn't be resolved: teller M-11 names a function rather than a file. That finding still has its cited-file candidates.
 - **Dev set.** Dev numbers are in `summary_dev.json` and are not pooled here.
 
 ## Limits
 
-- **Model labels.** Class, pattern and capability labels come from model readers; no human relabeled them. Class κ of 0.60 is moderate, and class carries more uncertainty than pattern.
+- **Model labels.** Class, pattern and capability labels come from model readers; no human relabeled them. Class κ of 0.60 is moderate. Where pattern applies (in_class/adjacent pairs), pattern κ is 0.61 and tag Jaccard is 0.64, so pattern and tag labels are no more reliable than class labels. The miss-bucket ranking rests on those tags.
 - **Small in-class sample.** With n=23, recall can't be told apart from a few percent. The outcome reading rests on the interval's upper bound of 14.3%.
 - **Snapshot mode.** The analyzer saw no diffs. A change-review measurement needs the fix commits, not the audited snapshot.
 - **Narrow scope.** The draw covers Sherlock's EVM contests only. Fourteen non-Solidity contests were excluded at selection.
