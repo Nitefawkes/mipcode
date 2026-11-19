@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "coherion-mipcode"
-version = "0.6.4"
+version = "0.6.5"
 description = "Static Python call-contract checks and Solidity structural analysis with mip-delta"
 readme = "README-pypi.md"
 requires-python = ">=3.10"
