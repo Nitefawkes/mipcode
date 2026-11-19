@@ -41,32 +41,60 @@ def _git_env() -> dict:
     return env
 
 
+def _kill_tree(p: subprocess.Popen) -> None:
+    """Kill the child and all its descendants (git spawns git-remote-https)."""
+    if os.name == "nt":
+        subprocess.run(["taskkill", "/T", "/F", "/PID", str(p.pid)], capture_output=True)
+    else:
+        p.kill()
+
+
+def _run_with_tree_kill(argv, *, cwd=None, env=None, timeout) -> subprocess.CompletedProcess:
+    """Like subprocess.run(capture_output, text) but a timeout kills the whole process tree
+    and always re-raises TimeoutExpired instead of blocking on inherited pipes."""
+    p = subprocess.Popen(argv, cwd=cwd, env=env, stdout=subprocess.PIPE,
+                         stderr=subprocess.PIPE, text=True, encoding="utf-8")
+    try:
+        out, err = p.communicate(timeout=timeout)
+    except subprocess.TimeoutExpired:
+        _kill_tree(p)
+        try:
+            p.communicate(timeout=10)
+        except subprocess.TimeoutExpired:
+            pass
+        raise
+    return subprocess.CompletedProcess(argv, p.returncode, out, err)
+
+
 def _git(d: Path, *args: str) -> subprocess.CompletedProcess:
     timeout = 600 if args and args[0] == "fetch" else 120
-    return subprocess.run(["git", "-c", "core.longpaths=true", "-C", str(d), *args],
-                          capture_output=True, text=True, encoding="utf-8",
-                          env=_git_env(), timeout=timeout)
+    return _run_with_tree_kill(["git", "-c", "core.longpaths=true", "-C", str(d), *args],
+                               env=_git_env(), timeout=timeout)
 
 
 def clone_at(repo: str, sha: str, cache: Path) -> Path:
     """Shallow-fetch `sha` of `repo` into cache/<owner>__<name>@<sha>; reuse if present."""
     d = Path(cache) / f"{repo.replace('/', '__')}@{sha}"
-    try:
-        if (d / ".git").exists():
-            head = _git(d, "rev-parse", "HEAD")
-            if head.returncode == 0 and head.stdout.strip() == sha:
-                return d
-        d.mkdir(parents=True, exist_ok=True)
-        steps = [("init", "-q"),
-                 ("fetch", "--depth", "1", remote_url(repo), sha),
-                 ("checkout", "--quiet", "--force", "FETCH_HEAD")]
-        for step in steps:
-            r = _git(d, *step)
-            if r.returncode != 0:
-                raise RuntimeError(
-                    f"git {step[0]} failed for {repo}@{sha}: {r.stderr.strip()[:300]}")
-    except subprocess.TimeoutExpired as exc:
-        raise RuntimeError(f"git timed out after {exc.timeout}s for {repo}@{sha}") from exc
+
+    def git(*args: str) -> subprocess.CompletedProcess:
+        try:
+            return _git(d, *args)
+        except subprocess.TimeoutExpired as exc:
+            raise RuntimeError(
+                f"git {args[0]} timed out after {exc.timeout}s for {repo}@{sha}") from exc
+
+    if (d / ".git").exists():
+        head = git("rev-parse", "HEAD")
+        if head.returncode == 0 and head.stdout.strip() == sha:
+            return d
+    d.mkdir(parents=True, exist_ok=True)
+    steps = [("init", "-q"),
+             ("fetch", "--depth", "1", remote_url(repo), sha),
+             ("checkout", "--quiet", "--force", "FETCH_HEAD")]
+    for step in steps:
+        r = git(*step)
+        if r.returncode != 0:
+            raise RuntimeError(f"git {step[0]} failed for {repo}@{sha}: {r.stderr.strip()[:300]}")
     return d
 
 
@@ -78,9 +106,9 @@ def run_audit(root: Path, label: str = "") -> dict:
     t0 = time.perf_counter()
     who = label or "analyzer run"
     try:
-        proc = subprocess.run(
+        proc = _run_with_tree_kill(
             [sys.executable, "-m", "mipdelta.cli", "--audit-solidity", "--root", str(root), "--json"],
-            cwd=ROOT, env=env, capture_output=True, text=True, encoding="utf-8", timeout=600)
+            cwd=ROOT, env=env, timeout=600)
     except subprocess.TimeoutExpired as exc:
         raise RuntimeError(f"{who}: analyzer timed out after {exc.timeout}s") from exc
     wall_ms = round((time.perf_counter() - t0) * 1000, 1)

@@ -98,14 +98,14 @@ def _make_src(tmp_path):
 def test_git_calls_use_longpaths_and_no_prompt_env(tmp_path, monkeypatch):
     src, sha = _make_src(tmp_path)
     monkeypatch.setattr(run_recall, "remote_url", lambda repo: "file://" + src.as_posix())
-    real = subprocess.run
+    real = run_recall._run_with_tree_kill
     calls = []
 
-    def spy(argv, *a, **kw):
+    def spy(argv, **kw):
         calls.append((list(argv), kw))
-        return real(argv, *a, **kw)
+        return real(argv, **kw)
 
-    monkeypatch.setattr(run_recall.subprocess, "run", spy)
+    monkeypatch.setattr(run_recall, "_run_with_tree_kill", spy)
     run_recall.clone_at("own/name", sha, tmp_path / "cache")
     git_calls = [(argv, kw) for argv, kw in calls if argv[0] == "git"]
     assert git_calls
@@ -114,30 +114,56 @@ def test_git_calls_use_longpaths_and_no_prompt_env(tmp_path, monkeypatch):
         assert kw["env"]["GIT_TERMINAL_PROMPT"] == "0"
         assert kw["env"]["GCM_INTERACTIVE"] == "never"
         assert kw["env"]["GIT_ASKPASS"] == ""
-        assert not kw.get("shell")
         assert kw["timeout"] == (600 if "fetch" in argv else 120)
 
 
-def test_git_timeout_becomes_runtime_error(tmp_path, monkeypatch):
-    def boom(argv, *a, **kw):
-        raise subprocess.TimeoutExpired(argv, kw.get("timeout", 0))
+class _HangingPopen:
+    """Popen stand-in whose first communicate() times out; records the kill path."""
+    instances = []
 
-    monkeypatch.setattr(run_recall.subprocess, "run", boom)
-    with pytest.raises(RuntimeError, match="own/name"):
+    def __init__(self, argv, **kw):
+        self.args, self.kw, self.pid, self.returncode = argv, kw, 4242, None
+        self.calls = []
+        _HangingPopen.instances.append(self)
+
+    def communicate(self, timeout=None):
+        self.calls.append(timeout)
+        if len(self.calls) == 1:
+            raise subprocess.TimeoutExpired(self.args, timeout)
+        raise subprocess.TimeoutExpired(self.args, timeout)  # drain also hangs: swallowed
+
+
+def _hang(monkeypatch):
+    _HangingPopen.instances = []
+    killed = []
+    monkeypatch.setattr(run_recall.subprocess, "Popen", _HangingPopen)
+    monkeypatch.setattr(run_recall, "_kill_tree", lambda p: killed.append(p.pid))
+    return killed
+
+
+def test_git_timeout_kills_tree_and_becomes_runtime_error(tmp_path, monkeypatch):
+    killed = _hang(monkeypatch)
+    with pytest.raises(RuntimeError, match=r"git init timed out after 120s for own/name"):
         run_recall.clone_at("own/name", "a" * 40, tmp_path / "cache")
+    assert killed == [4242]
+    assert _HangingPopen.instances[0].calls == [120, 10]  # drained with 10s cap
+    assert _HangingPopen.instances[0].kw.get("shell") is None
 
 
-def test_analyzer_timeout_becomes_runtime_error(tmp_path, monkeypatch):
-    seen = {}
-
-    def boom(argv, *a, **kw):
-        seen.update(kw)
-        raise subprocess.TimeoutExpired(argv, kw.get("timeout", 0))
-
-    monkeypatch.setattr(run_recall.subprocess, "run", boom)
+def test_analyzer_timeout_kills_tree_and_becomes_runtime_error(tmp_path, monkeypatch):
+    killed = _hang(monkeypatch)
     with pytest.raises(RuntimeError, match="2024-08-x"):
         run_recall.run_audit(tmp_path, label="2024-08-x")
-    assert seen["timeout"] == 600
+    assert killed == [4242]
+    assert _HangingPopen.instances[0].calls[0] == 600
+
+
+def test_kill_tree_uses_taskkill_on_windows(monkeypatch):
+    seen = []
+    monkeypatch.setattr(run_recall.os, "name", "nt")
+    monkeypatch.setattr(run_recall.subprocess, "run", lambda argv, **kw: seen.append(argv))
+    run_recall._kill_tree(type("P", (), {"pid": 7})())
+    assert seen == [["taskkill", "/T", "/F", "/PID", "7"]]
 
 
 def test_clone_at_recovers_from_failed_checkout(tmp_path, monkeypatch):
