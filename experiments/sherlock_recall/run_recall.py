@@ -72,6 +72,9 @@ def _git(d: Path, *args: str) -> subprocess.CompletedProcess:
                                env=_git_env(), timeout=timeout)
 
 
+_WIN_INVALID_SPARSE = ("/*", "!*:*", "!*<*", "!*>*", "!*|*", "!*?*", '!*"*')
+
+
 def clone_at(repo: str, sha: str, cache: Path) -> Path:
     """Shallow-fetch `sha` of `repo` into cache/<owner>__<name>@<sha>; reuse if present."""
     d = Path(cache) / f"{repo.replace('/', '__')}@{sha}"
@@ -93,6 +96,13 @@ def clone_at(repo: str, sha: str, cache: Path) -> Path:
              ("checkout", "--quiet", "--force", "FETCH_HEAD")]
     for step in steps:
         r = git(*step)
+        if r.returncode != 0 and step[0] == "checkout" and "invalid path" in r.stderr:
+            # Paths with characters illegal on NTFS (e.g. ':'): exclude them and retry.
+            sp = git("sparse-checkout", "set", "--no-cone", *_WIN_INVALID_SPARSE)
+            if sp.returncode != 0:
+                raise RuntimeError(
+                    f"git sparse-checkout failed for {repo}@{sha}: {sp.stderr.strip()[:300]}")
+            r = git(*step)
         if r.returncode != 0:
             raise RuntimeError(f"git {step[0]} failed for {repo}@{sha}: {r.stderr.strip()[:300]}")
     return d
@@ -128,7 +138,7 @@ def _production_counts(root: Path) -> tuple[int, int]:
     files = lines = 0
     for p in sorted(root.rglob("*.sol")):
         rel = p.relative_to(root).as_posix()
-        if rel.split("/")[0] == ".git":
+        if rel.split("/")[0] == ".git" or not p.is_file():
             continue
         if is_production_sol(rel):
             files += 1

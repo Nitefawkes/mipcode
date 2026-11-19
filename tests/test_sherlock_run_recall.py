@@ -217,3 +217,55 @@ def test_no_local_paths_guard():
     with pytest.raises(ValueError):
         run_recall._assert_no_local_paths({"p": "file:///tmp/x"})
     run_recall._assert_no_local_paths({"p": "pkg/contracts/Vault.sol"})
+
+
+def test_production_counts_skips_sol_named_directories(tmp_path):
+    (tmp_path / "src").mkdir()
+    (tmp_path / "src" / "A.sol").write_text("a\nb\nc\n", encoding="utf-8")
+    d = tmp_path / "broadcast" / "Deploy.s.sol"
+    d.mkdir(parents=True)
+    (d / "run-latest.json").write_text("{}", encoding="utf-8")
+    (tmp_path / "src" / "Deploy.s.sol").mkdir()  # production-looking path, still a directory
+    assert run_recall._production_counts(tmp_path) == (1, 3)
+
+
+def _fake_git_runner(monkeypatch, checkout_results):
+    calls = []
+    results = list(checkout_results)
+
+    def fake(argv, **kw):
+        sub = argv[argv.index("-C") + 2:]
+        calls.append(list(sub))
+        if sub[0] == "checkout":
+            rc, err = results.pop(0)
+            return subprocess.CompletedProcess(argv, rc, "", err)
+        return subprocess.CompletedProcess(argv, 0, "", "")
+
+    monkeypatch.setattr(run_recall, "_run_with_tree_kill", fake)
+    return calls
+
+
+def test_clone_at_sparse_retry_on_invalid_path(tmp_path, monkeypatch):
+    calls = _fake_git_runner(
+        monkeypatch, [(128, "error: invalid path 'a/b:c.json'"), (0, "")])
+    d = run_recall.clone_at("own/name", "abc123", tmp_path / "cache")
+    assert d == tmp_path / "cache" / "own__name@abc123"
+    names = [c[0] for c in calls]
+    assert names == ["init", "fetch", "checkout", "sparse-checkout", "checkout"]
+    sparse = calls[3]
+    assert sparse[:3] == ["sparse-checkout", "set", "--no-cone"]
+    assert "!*:*" in sparse
+    assert calls[4] == ["checkout", "--quiet", "--force", "FETCH_HEAD"]
+
+
+def test_clone_at_other_checkout_failure_raises_without_sparse(tmp_path, monkeypatch):
+    calls = _fake_git_runner(monkeypatch, [(128, "fatal: something else")])
+    with pytest.raises(RuntimeError, match="checkout failed"):
+        run_recall.clone_at("own/name", "abc123", tmp_path / "cache")
+    assert all(c[0] != "sparse-checkout" for c in calls)
+
+
+def test_clone_at_sparse_retry_failure_raises(tmp_path, monkeypatch):
+    _fake_git_runner(monkeypatch, [(128, "error: invalid path 'x:y'"), (1, "boom")])
+    with pytest.raises(RuntimeError, match="checkout failed"):
+        run_recall.clone_at("own/name", "abc123", tmp_path / "cache")
