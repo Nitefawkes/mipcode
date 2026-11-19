@@ -104,17 +104,17 @@ mip-delta --before Vault_v1.sol --after Vault_v2.sol --json
 
 ## Quick start
 
-From the repository root, activate a fresh virtual environment with Python 3.10 or later.
+From your project’s Git checkout, activate a fresh virtual environment with Python 3.10 or later.
 
 ```sh
-python -m pip install -e .
+python -m pip install coherion-mipcode
 mip-delta --help
 mip-delta --check-git --root . --json
 ```
 
 The Git check compares the working tree with `HEAD` by default. A clean checkout returns an empty findings list. Omit `--json` for compact text.
 
-Try a bundled example that adds a required keyword. The command checks the proposed edit in memory.
+From the MipCode source checkout, try the bundled example that adds a required keyword. The command checks the proposed edit in memory.
 
 ```sh
 mip-delta --root examples/contract-delta/before --write-path formatter.py --candidate-file examples/contract-delta/after/formatter.py
@@ -125,7 +125,7 @@ The report points to `consumer.py:5` and names `required_keyword_missing`.
 ## Where to run it
 
 - **Before a commit.** Add the [pre-commit hook](.pre-commit-hooks.yaml) to `.pre-commit-config.yaml` (`rev: v0.6.2` or `rev: main`, `id: mip-delta`) to stop the commit while reported sites are open. A site you judge intentional can be `--waive`d (see [usage guide](docs/usage.md#run-before-a-commit)).
-- **On a pull request.** Use the official composite [GitHub Action](action.yml) (`uses: Nitefawkes/mipcode@main`) or pass `--format github` to emit native `::warning` workflow annotations on changed lines (see [usage guide](docs/usage.md#run-on-a-pull-request)).
+- **On a pull request.** Use the [MipCode PR Caller Check on GitHub Marketplace](https://github.com/marketplace/actions/mipcode-pr-caller-check) to annotate affected Python callers. The [workflow example](docs/usage.md#run-on-a-pull-request) pins the tested Action and shows how to make findings block a job.
 - **After a merge.** Run `mip-delta --check-merge` (auto-resolving `MERGE_HEAD`, `HEAD^1`/`HEAD^2`, or `--base-ref`) to catch two branches that merged without textual conflicts yet broke a shared contract (see [usage guide](docs/usage.md#check-a-merge)).
 
 A reported site stays open until a later edit resolves it. Stateless `--base-ref` covers single-shot CI PR gates; when running repeated local checks or agent hooks, `--ledger` deduplicates open sites (`0` churn across line edits), `--open` lists what remains, and `--waive` records an intentional one. The [usage guide](docs/usage.md) covers these, opt-in checks, and observing dynamic calls during tests (`--run-pytest`).

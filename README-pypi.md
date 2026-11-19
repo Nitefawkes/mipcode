@@ -40,7 +40,8 @@ These commands analyze source locally. Runtime observation with
 Model-assisted review with `--review` is also opt-in and uses configured
 Anthropic API credentials or an authenticated Claude CLI.
 
-See the [usage guide](https://github.com/Nitefawkes/mipcode/blob/v0.6.4/docs/usage.md)
+For pull requests, use the [MipCode PR Caller Check on GitHub Marketplace](https://github.com/marketplace/actions/mipcode-pr-caller-check).
+See the [usage guide](https://github.com/Nitefawkes/mipcode/blob/main/docs/usage.md)
 for CI, pre-commit hooks, and command options, or the
 [source repository](https://github.com/Nitefawkes/mipcode) for evaluation results.
 

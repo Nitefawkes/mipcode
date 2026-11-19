@@ -28,7 +28,7 @@ classifiers = [
 
 [project.urls]
 Source = "https://github.com/Nitefawkes/mipcode"
-Documentation = "https://github.com/Nitefawkes/mipcode/blob/v0.6.4/docs/usage.md"
+Documentation = "https://github.com/Nitefawkes/mipcode/blob/main/docs/usage.md"
 Issues = "https://github.com/Nitefawkes/mipcode/issues"
 
 [project.optional-dependencies]
