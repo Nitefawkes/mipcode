@@ -20,7 +20,7 @@ from urllib.parse import unquote
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from llm import BudgetExceeded, CostLedger, Reader, make_client  # noqa: E402
+from llm import CostLedger, Reader, RunHalted, make_client  # noqa: E402
 from match_hits import candidates_for, is_production_sol, norm_path  # noqa: E402
 from run_recall import clone_at  # noqa: E402
 from sherlock_report import JudgedFinding, Site, reader_sections  # noqa: E402
@@ -418,6 +418,7 @@ def main(argv=None, reader=None) -> int:
     ap.add_argument("--recall-set", default=None)
     ap.add_argument("--hits", default=None)
     ap.add_argument("--cache", default=None, help="base cache dir (clones/, llm/, ledger.json)")
+    ap.add_argument("--transport", choices=["cli", "sdk"], default="cli")
     args = ap.parse_args(argv)
     out_dir = Path(args.out)
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -429,7 +430,7 @@ def main(argv=None, reader=None) -> int:
                 if c["set"] == args.which]
     hits = {c["name"]: c for c in json.loads(hits_path.read_text(encoding="utf-8"))["contests"]}
     if reader is None:
-        reader = Reader(make_client(), CostLedger(cache / "ledger.json", cap_usd=CAP_USD), cache / "llm")
+        reader = Reader(make_client(args.transport), CostLedger(cache / "ledger.json", cap_usd=CAP_USD), cache / "llm")
 
     work = []  # (contest, findings, analyzer findings, sources, repo .sol files)
     errors: list[dict] = []
@@ -464,9 +465,9 @@ def main(argv=None, reader=None) -> int:
                                      sources, repo_files=repo_files, errors=errors)
             cand_rows.extend(cands)
             check_candidates(cands, findings, sources, reader, out=sd_rows)
-    except BudgetExceeded as exc:
+    except RunHalted as exc:
         partial = True
-        errors.append({"contest": None, "stage": "budget", "error": str(exc)})
+        errors.append({"contest": None, "stage": "halt", "error": f"{type(exc).__name__}: {exc}"})
 
     _write(out_dir, f"labels_{args.which}.json", args.which, partial, label_rows, {"errors": errors})
     _write(out_dir, f"candidates_{args.which}.json", args.which, partial, cand_rows)

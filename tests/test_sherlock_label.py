@@ -653,6 +653,21 @@ def test_main_budget_exceeded_writes_partial_and_returns_2(tmp_path, monkeypatch
     assert [r["finding_id"] for r in labels["rows"]] == ["2025-01-demo:H-1"]
 
 
+def test_main_writes_partial_on_run_halted(tmp_path, monkeypatch):
+    f = make_finding(sites=(Site(REPO, SHA, "src/Vault.sol", 5, 5, False),))
+    clone = _write_inputs(tmp_path, [f], [])
+    monkeypatch.setattr(label, "clone_at", lambda repo, sha, cache: clone)
+
+    class Halting:
+        def call(self, *a, **k):
+            raise llm.UsageLimitReached("5-hour limit")
+
+    assert label.main(["--set", "dev", "--out", str(tmp_path)], reader=Halting()) == 2
+    payload = json.loads((tmp_path / "labels_dev.json").read_text(encoding="utf-8"))
+    assert payload["partial"] is True
+    assert any(e["stage"] == "halt" and "UsageLimitReached" in e["error"] for e in payload["errors"])
+
+
 def test_main_clone_failure_skips_contest_and_records_error(tmp_path, monkeypatch):
     """Ruling R15(a): no code-less labels are paid for or cached."""
     f = make_finding(sites=(Site(REPO, SHA, "src/Vault.sol", 5, 5, False),))

@@ -1,14 +1,20 @@
 """Model client for the Sherlock recall study: preflight, cost ledger, refusal handling.
 
-This is the only module that talks to Claude models. The ``anthropic`` SDK is
-imported lazily (inside ``make_client``/``main``) so tests run with fakes.
+This is the only module that talks to Claude models. The default transport is the
+Claude Code CLI in print mode (``CliClient``, subscription billed, Ruling R19); the
+``anthropic`` SDK transport is kept as an option and imported lazily (inside
+``make_client``) so the CLI path and the tests never import it.
 """
 from __future__ import annotations
 
 import argparse
 import hashlib
 import json
+import re
+import shutil
+import subprocess
 import sys
+import tempfile
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
@@ -28,7 +34,19 @@ PRICES: dict[str, tuple[float, float]] = {
 }
 
 
-class BudgetExceeded(Exception):
+class RunHalted(Exception):
+    """The run must stop cleanly; the halting call is neither cached nor charged."""
+
+
+class BudgetExceeded(RunHalted):
+    pass
+
+
+class UsageLimitReached(RunHalted):
+    pass
+
+
+class TransportError(RunHalted):
     pass
 
 
@@ -56,6 +74,10 @@ class CostLedger:
         self.spent_usd += _cost(model, in_tok, out_tok)
         self._save()
 
+    def charge_usd(self, usd: float) -> None:
+        self.spent_usd += float(usd)
+        self._save()
+
     def would_exceed(self, est_usd: float) -> bool:
         return self.spent_usd + est_usd > self.cap_usd
 
@@ -69,6 +91,66 @@ class CallResult:
     refusal_category: str | None
     in_tok: int
     out_tok: int
+
+_LIMIT_RE = re.compile(r"usage limit|rate limit|limit reached|quota", re.IGNORECASE)
+_CLI_FLAGS = ["--output-format", "json", "--tools", "", "--no-session-persistence",
+              "--strict-mcp-config", "--setting-sources", "", "--disable-slash-commands",
+              "--exclude-dynamic-system-prompt-sections"]
+
+
+def _default_run(argv: list[str], stdin: str, cwd: str, timeout_s: int) -> tuple[int, str, str]:
+    """Popen with stdin and a tree-kill on timeout (same technique as run_recall)."""
+    from run_recall import _kill_tree  # lazy; run_recall's _run_with_tree_kill has no stdin
+    p = subprocess.Popen(argv, cwd=cwd, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                         stderr=subprocess.PIPE, text=True, encoding="utf-8")
+    try:
+        out, err = p.communicate(input=stdin, timeout=timeout_s)
+    except subprocess.TimeoutExpired as exc:
+        _kill_tree(p)
+        try:
+            p.communicate(timeout=10)
+        except subprocess.TimeoutExpired:
+            pass
+        raise TransportError(f"claude -p timed out after {timeout_s}s") from exc
+    return p.returncode, out, err
+
+
+class CliClient:
+    """``claude -p`` transport (subscription). One isolated process per call."""
+
+    def __init__(self, exe: str | None = None, run=None, timeout_s: int = 600):
+        self.exe = exe or shutil.which("claude.exe") or shutil.which("claude")
+        if not self.exe:
+            raise TransportError("claude CLI not found on PATH")
+        self.run = run or _default_run
+        self.timeout_s = timeout_s
+        self.last_stderr = ""
+
+    def invoke(self, model: str, effort: str, system: str, user: str, schema: dict) -> dict:
+        with tempfile.TemporaryDirectory() as tmp:
+            sys_file = Path(tmp) / "system_prompt.txt"
+            sys_file.write_text(system, "utf-8")
+            argv = [self.exe, "-p", "--model", model, "--effort", effort, *_CLI_FLAGS,
+                    "--system-prompt-file", str(sys_file), "--json-schema", json.dumps(schema)]
+            rc, out, err = self.run(argv, user, tmp, self.timeout_s)
+        self.last_stderr = err or ""
+        try:
+            data = json.loads(out)
+        except (ValueError, TypeError):
+            data = None
+        if not isinstance(data, dict):
+            raise TransportError(
+                f"claude -p exit {rc}, no JSON object on stdout; stderr: {(err or '').strip()[:300]}")
+        if rc != 0 and not data.get("is_error"):
+            raise TransportError(f"claude -p exit {rc}; stderr: {(err or '').strip()[:300]}")
+        return data
+
+    def version(self) -> str:
+        with tempfile.TemporaryDirectory() as tmp:
+            rc, out, err = self.run([self.exe, "--version"], "", tmp, 60)
+        if rc != 0:
+            raise TransportError(f"claude --version exit {rc}: {(err or '').strip()[:300]}")
+        return out.strip()
 
 
 class Reader:
@@ -103,6 +185,9 @@ class Reader:
             raise BudgetExceeded(
                 f"estimated ${est:.4f} would exceed cap ${self.ledger.cap_usd:.2f} "
                 f"(spent ${self.ledger.spent_usd:.4f})")
+
+        if isinstance(self.client, CliClient):
+            return self._call_cli(model, effort, system, user, schema, key, cpath)
 
         response = self._create(model, effort, system, user, schema)
 
@@ -142,9 +227,71 @@ class Reader:
         }), "utf-8")
         return result
 
+    def _call_cli(self, model, effort, system, user, schema, key, cpath) -> CallResult:
+        d = self.client.invoke(model, effort, system, user, schema)
+        if d.get("is_error"):
+            text = f"{d.get('result') or ''}\n{self.client.last_stderr}"
+            if d.get("api_error_status") == 429 or _LIMIT_RE.search(text):
+                raise UsageLimitReached(text.strip()[:300] or "usage limit reached")
+            raise TransportError(f"claude -p reported an error: {text.strip()[:300]}")
+
+        keys = set((d.get("modelUsage") or {}).keys())
+        if keys == {model}:
+            served, fallback_ran = model, False
+        else:
+            served, fallback_ran = ("+".join(sorted(keys)) or "unknown"), True
+
+        usage = d.get("usage") or {}
+        in_tok = sum(int(usage.get(k) or 0) for k in
+                     ("input_tokens", "cache_creation_input_tokens", "cache_read_input_tokens"))
+        out_tok = int(usage.get("output_tokens") or 0)
+        cost = float(d.get("total_cost_usd") or 0.0)
+        self.ledger.charge_usd(cost)
+
+        status, data, category = "invalid", None, None
+        if (d.get("stop_reason") == "refusal" or "refusal" in str(d.get("subtype") or "")
+                or "refusal" in str(d.get("terminal_reason") or "")):
+            status = "refused"
+            details = d.get("stop_details")
+            if isinstance(details, dict):
+                category = details.get("category")
+        elif isinstance(d.get("structured_output"), dict):
+            status, data = "ok", d["structured_output"]
+
+        result = CallResult(status, data, served, fallback_ran, category, in_tok, out_tok)
+        self.cache_dir.mkdir(parents=True, exist_ok=True)
+        cpath.write_text(json.dumps({
+            "key": key,
+            "result": asdict(result),
+            "raw": {"model": served, "served_keys": sorted(keys), "total_cost_usd": cost,
+                    "duration_ms": d.get("duration_ms"), "num_turns": d.get("num_turns"),
+                    "usage": {"input_tokens": in_tok, "output_tokens": out_tok}},
+        }), "utf-8")
+        return result
+
+
+_PREFLIGHT_SCHEMA = {"type": "object", "properties": {"ok": {"type": "boolean"}},
+                     "required": ["ok"], "additionalProperties": False}
+
 
 def preflight(client, model_ids: list[str]) -> dict[str, str]:
     out: dict[str, str] = {}
+    if isinstance(client, CliClient):
+        for mid in model_ids:
+            try:
+                d = client.invoke(mid, "low", "Reply only via the schema.", "Return ok=true.",
+                                  _PREFLIGHT_SCHEMA)
+            except TransportError as exc:
+                raise RuntimeError(f"preflight failed for model {mid}: {exc}") from exc
+            served = set((d.get("modelUsage") or {}).keys())
+            so = d.get("structured_output")
+            if (d.get("is_error") or served != {mid} or not isinstance(so, dict)
+                    or not isinstance(so.get("ok"), bool)):
+                raise RuntimeError(
+                    f"preflight failed for model {mid}: modelUsage={sorted(served)} "
+                    f"is_error={d.get('is_error')} structured_output={so!r}")
+            out[mid] = mid
+        return out
     for mid in model_ids:
         try:
             m = client.models.retrieve(mid)
@@ -156,17 +303,27 @@ def preflight(client, model_ids: list[str]) -> dict[str, str]:
     return out
 
 
-def make_client():
-    import anthropic  # lazy: only the real client needs the SDK
-    return anthropic.Anthropic()
+def make_client(transport: str = "cli"):
+    if transport == "cli":
+        return CliClient()
+    if transport == "sdk":
+        import anthropic  # lazy: only the SDK transport needs it
+        return anthropic.Anthropic()
+    raise ValueError(f"unknown transport {transport!r} (expected 'cli' or 'sdk')")
 
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--preflight", action="store_true")
+    ap.add_argument("--transport", choices=["cli", "sdk"], default="cli")
     args = ap.parse_args(argv)
     if args.preflight:
-        print(json.dumps(preflight(make_client(), STUDY_MODELS), indent=2))
+        client = make_client(args.transport)
+        models = preflight(client, STUDY_MODELS)
+        if isinstance(client, CliClient):
+            print(json.dumps({"cli_version": client.version(), "models": models}, indent=2))
+        else:
+            print(json.dumps(models, indent=2))
         return 0
     ap.print_help()
     return 2
