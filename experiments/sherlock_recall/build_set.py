@@ -43,6 +43,10 @@ class GhSource(Protocol):
     def first_issue_date(self, repo: str) -> str | None: ...
 
 
+class GhError(RuntimeError):
+    """A gh invocation failed for a reason other than a definitive 404."""
+
+
 class CliGhSource:
     """GhSource backed by the `gh` CLI; raw responses are cached on disk (manual use only)."""
 
@@ -51,20 +55,35 @@ class CliGhSource:
         self.cache_dir.mkdir(parents=True, exist_ok=True)
 
     def _run(self, key: str, args: list[str]) -> str | None:
+        """Return stdout, or None for empty output or a definitive 404. Other failures raise GhError."""
         path = self.cache_dir / (re.sub(r"[^A-Za-z0-9._-]+", "_", key) + ".txt")
         if path.exists():
             text = path.read_text(encoding="utf-8")
-            return None if text == _NONE else text
-        proc = subprocess.run(["gh", *args], capture_output=True, text=True, encoding="utf-8")
-        out = proc.stdout if proc.returncode == 0 else None
-        path.write_text(out if out is not None else _NONE, encoding="utf-8")
-        return out
+            return text if text != _NONE and text.strip() else None
+        try:
+            proc = subprocess.run(["gh", *args], capture_output=True, text=True, encoding="utf-8")
+        except FileNotFoundError as exc:
+            raise GhError("gh executable not found") from exc
+        if proc.returncode != 0:
+            err = proc.stderr or ""
+            if "HTTP 404" in err or "Not Found" in err:
+                path.write_text(_NONE, encoding="utf-8")
+                return None
+            raise GhError(f"gh {' '.join(args[:2])} failed ({proc.returncode}): {err.strip()[:200]}")
+        out = proc.stdout or ""
+        path.write_text(out, encoding="utf-8")
+        return out if out.strip() else None
 
     def list_judging_repos(self) -> list[str]:
         out = self._run("search_judging", [
             "api", "-X", "GET", "search/repositories", "-f", f"q=org:{ORG} judging in:name",
             "--paginate", "--jq", ".items[].name"])
-        return sorted({n for n in (out or "").split() if n.endswith("-judging")})
+        names = sorted({n for n in (out or "").split() if n.endswith("-judging")})
+        if not names:
+            (self.cache_dir / "search_judging.txt").unlink(missing_ok=True)
+            raise GhError("judging repo search returned no repositories")
+        return names
+
 
     def readme(self, repo: str) -> str | None:
         return self._run(f"readme_{repo}", [
@@ -147,22 +166,27 @@ def assess(name: str, src: GhSource) -> tuple[Contest, list[JudgedFinding]]:
     if share < SOL_THRESHOLD:
         return out(False, "non_solidity", share, findings)
 
-    refs = {s.ref for f in findings for s in f.sites if not s.external}
     reason = "eligible"
-    if len(refs) == 1 and SHA_RE.match(next(iter(refs))):
-        sha = next(iter(refs))
+    pins = {s.ref for f in findings for s in f.sites if not s.external and SHA_RE.match(s.ref)}
+    if len(pins) == 1:
+        sha = next(iter(pins))
     else:
+        if len(pins) > 1:
+            reason += "|mixed_pins"
         date = src.first_issue_date(judging)
         sha = src.commit_before(companion, date) if date else None
         if sha is None:
             sha = src.commit_before(companion, "")
             reason += "|ref_fallback_head"
-    if sha is not None:
-        findings = [
-            dataclasses.replace(
-                f, sites=tuple(s if s.external else dataclasses.replace(s, ref=sha) for s in f.sites))
-            for f in findings
-        ]
+    if sha is None:
+        return out(False, "ref_unresolved", share, findings)
+
+    def fix(site):
+        if site.external or SHA_RE.match(site.ref):
+            return site
+        return dataclasses.replace(site, ref=sha)
+
+    findings = [dataclasses.replace(f, sites=tuple(fix(s) for s in f.sites)) for f in findings]
     return out(True, reason, share, findings, sha)
 
 
@@ -186,7 +210,13 @@ def main(argv=None, src: GhSource | None = None) -> int:
 
     names = sorted({_strip(r) for r in src.list_judging_repos() if r.endswith("-judging")})
     names = [n for n in names if WINDOW[0] <= (contest_month(n) or "") <= WINDOW[1]]
-    assessed = {n: assess(n, src) for n in names}
+    assessed = {}
+    for n in names:
+        try:
+            assessed[n] = assess(n, src)
+        except Exception as exc:  # per-contest isolation: record and continue
+            assessed[n] = (Contest(n, f"{ORG}/{n}-judging", f"{ORG}/{n}", False,
+                                   f"assess_error:{type(exc).__name__}", 0.0, 0, None), [])
     contests = [dataclasses.asdict(c) for c, _ in assessed.values()]
     eligible = [n for n, (c, _) in assessed.items() if c.eligible]
 

@@ -142,3 +142,108 @@ def test_main_writes_outputs(tmp_path):
     dry = tmp_path / "dry"
     assert bs.main(["--out", str(dry), "--dry-list"], src=src) == 0
     assert (dry / "contests.json").exists() and not (dry / "recall_set.json").exists()
+
+
+def test_mixed_pin_and_main_resolve_to_pin_without_api_call():
+    n = "2024-08-x"
+    comp = f"sherlock-audit/{n}"
+    txt = report(comp, "db23bf6") + "\n" + report(comp, "main", num=2, sev="M")
+    g = fake(n, readme=txt)
+    g.commits.clear()  # any commit_before call would return None
+    c, fs = bs.assess(n, g)
+    assert c.eligible and c.resolved_sha == "db23bf6" and c.reason == "eligible"
+    assert {s.ref for f in fs for s in f.sites} == {"db23bf6"}
+
+
+def test_disagreeing_pins_keep_pins_and_flag():
+    n = "2024-08-x"
+    comp = f"sherlock-audit/{n}"
+    txt = (report(comp, "db23bf6") + "\n" + report(comp, "aaaaaaa", num=2, sev="M")
+           + "\n" + report(comp, "main", num=3, sev="M"))
+    c, fs = bs.assess(n, fake(n, readme=txt))
+    assert c.reason == "eligible|mixed_pins" and c.resolved_sha == "abc123"
+    assert sorted(s.ref for f in fs for s in f.sites) == ["aaaaaaa", "abc123", "db23bf6"]
+
+
+def test_unresolved_ref_is_ineligible():
+    n = "2024-08-x"
+    g = fake(n, ref="main")
+    g.commits.clear()
+    c, _ = bs.assess(n, g)
+    assert not c.eligible and c.reason == "ref_unresolved" and c.resolved_sha is None
+
+
+class BoomGh(FakeGh):
+    def repo_exists(self, repo):
+        if "boom" in repo:
+            raise bs.GhError("rate limited")
+        return super().repo_exists(repo)
+
+
+def test_main_isolates_per_contest_errors(tmp_path):
+    good, bad = "2024-01-good", "2024-02-boom"
+    g = fake(good)
+    src = BoomGh(g.repos, g.readmes, g.first_dates, g.commits, judging=[f"{good}-judging", f"{bad}-judging"])
+    assert bs.main(["--out", str(tmp_path), "--dry-list"], src=src) == 0
+    cs = {c["name"]: c for c in json.loads((tmp_path / "contests.json").read_text(encoding="utf-8"))["contests"]}
+    assert cs[bad]["reason"] == "assess_error:GhError" and not cs[bad]["eligible"]
+    assert cs[good]["eligible"]
+
+
+def test_main_propagates_listing_failure(tmp_path):
+    class Down(FakeGh):
+        def list_judging_repos(self):
+            raise bs.GhError("down")
+    try:
+        bs.main(["--out", str(tmp_path)], src=Down())
+    except bs.GhError:
+        return
+    raise AssertionError("expected GhError")
+
+
+class _P:
+    def __init__(self, rc=0, out="", err=""):
+        self.returncode, self.stdout, self.stderr = rc, out, err
+
+
+def test_cli_gh_source_error_handling(tmp_path, monkeypatch):
+    calls = []
+    resp = {"v": _P(0, "abc\n")}
+
+    def fake_run(cmd, **kw):
+        calls.append(cmd)
+        assert kw.get("shell") is None and cmd[0] == "gh"
+        return resp["v"]
+
+    monkeypatch.setattr(bs.subprocess, "run", fake_run)
+    g = bs.CliGhSource(tmp_path)
+    # success is cached
+    assert g.commit_before("o/r", "d") == "abc"
+    assert g.commit_before("o/r", "d") == "abc" and len(calls) == 1
+    # empty stdout -> None
+    resp["v"] = _P(0, "  \n")
+    assert g.first_issue_date("o/e") is None
+    # 404 -> None and cached
+    resp["v"] = _P(1, "", "gh: Not Found (HTTP 404)")
+    assert g.repo_exists("o/gone") is False
+    n = len(calls)
+    resp["v"] = _P(0, "o/gone")
+    assert g.repo_exists("o/gone") is False and len(calls) == n
+    # 500 -> GhError, not cached
+    resp["v"] = _P(1, "", "gh: Server Error (HTTP 500)")
+    try:
+        g.repo_exists("o/flaky")
+        raise AssertionError("expected GhError")
+    except bs.GhError:
+        pass
+    resp["v"] = _P(0, "o/flaky")
+    assert g.repo_exists("o/flaky") is True
+    # gh missing
+    def missing(cmd, **kw):
+        raise FileNotFoundError
+    monkeypatch.setattr(bs.subprocess, "run", missing)
+    try:
+        g.repo_exists("o/other")
+        raise AssertionError("expected GhError")
+    except bs.GhError:
+        pass
