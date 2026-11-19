@@ -1,0 +1,2987 @@
+{
+  "set": "dev",
+  "partial": false,
+  "rows": [
+    {
+      "finding_id": "2025-06-superfluid-locker-system:H-1",
+      "contest": "2025-06-superfluid-locker-system",
+      "severity": "H",
+      "final": {
+        "class": "in_class",
+        "pattern": "sibling_missing_guard",
+        "would_catch_with": [
+          "sibling_guard_asymmetry"
+        ],
+        "obligation_site": null,
+        "needs_tiebreak": false,
+        "n_readers": 2,
+        "n_valid": 2,
+        "low_confidence": false,
+        "capability_split": false
+      },
+      "calls": [
+        {
+          "reader": "A",
+          "model": "claude-sonnet-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "in_class",
+            "pattern": "sibling_missing_guard",
+            "would_catch_with": [
+              "sibling_guard_asymmetry"
+            ],
+            "obligation_site": null,
+            "rationale": "provideLiquidity lacks the getAvailableBalance() check against staked tokens that other token-spending paths (e.g., unstake/withdraw/stake) apply. The finding names no exact peer site, but the missing guard is a sibling-asymmetry."
+          },
+          "served_model": "claude-sonnet-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 4779,
+          "out_tok": 255
+        },
+        {
+          "reader": "B",
+          "model": "claude-haiku-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "in_class",
+            "pattern": "sibling_missing_guard",
+            "would_catch_with": [
+              "sibling_guard_asymmetry"
+            ],
+            "obligation_site": null,
+            "rationale": "provideLiquidity spends supAmount from the locker without checking getAvailableBalance(), while the staking path already enforces that balance check. The missing guard in a sibling token-spending entry point is the root cause."
+          },
+          "served_model": "claude-haiku-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 4800,
+          "out_tok": 683
+        }
+      ]
+    },
+    {
+      "finding_id": "2025-06-superfluid-locker-system:H-2",
+      "contest": "2025-06-superfluid-locker-system",
+      "severity": "H",
+      "final": {
+        "class": "out_of_class",
+        "pattern": null,
+        "would_catch_with": [],
+        "obligation_site": null,
+        "needs_tiebreak": false,
+        "n_readers": 2,
+        "n_valid": 2,
+        "low_confidence": false,
+        "capability_split": false
+      },
+      "calls": [
+        {
+          "reader": "A",
+          "model": "claude-sonnet-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Pump is computed on msg.value while the LP uses the full WETH balance. This is an economic and logic mismatch in how the amount is computed. It has no sibling function or guard to compare against."
+          },
+          "served_model": "claude-sonnet-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 4326,
+          "out_tok": 213
+        },
+        {
+          "reader": "B",
+          "model": "claude-haiku-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Root cause is accounting logic: provideLiquidity sizes the LP position from the locker's total WETH balance (balanceOf(this)) instead of the amount deposited in this call, so pre-sent WETH bypasses the pump. No peer site meets the obligation; it is a logic defect, not a sibling omission."
+          },
+          "served_model": "claude-haiku-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 4343,
+          "out_tok": 581
+        }
+      ]
+    },
+    {
+      "finding_id": "2025-06-superfluid-locker-system:M-1",
+      "contest": "2025-06-superfluid-locker-system",
+      "severity": "M",
+      "final": {
+        "class": "out_of_class",
+        "pattern": null,
+        "would_catch_with": [],
+        "obligation_site": null,
+        "needs_tiebreak": false,
+        "n_readers": 2,
+        "n_valid": 2,
+        "low_confidence": false,
+        "capability_split": false
+      },
+      "calls": [
+        {
+          "reader": "A",
+          "model": "claude-sonnet-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Economic flaw: a sole staker/LP gets the penalty distribution back to their own locker, bypassing the 80% fee. This is a design/economic issue, with no sibling guard or parameter-consistency obligation."
+          },
+          "served_model": "claude-sonnet-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 5019,
+          "out_tok": 223
+        },
+        {
+          "reader": "B",
+          "model": "claude-haiku-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Root cause is economic: when the locker is the sole staker/LP, the penalty distributed via FLUID.distribute flows back to the locker, so the instant-unlock fee is bypassed. The check only tests total units is non-zero. No sibling site meets an omitted obligation, so this is not a consistency defect."
+          },
+          "served_model": "claude-haiku-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 5033,
+          "out_tok": 489
+        }
+      ]
+    },
+    {
+      "finding_id": "2025-06-superfluid-locker-system:M-2",
+      "contest": "2025-06-superfluid-locker-system",
+      "severity": "M",
+      "final": {
+        "class": "out_of_class",
+        "pattern": null,
+        "would_catch_with": [],
+        "obligation_site": null,
+        "needs_tiebreak": false,
+        "n_readers": 2,
+        "n_valid": 2,
+        "low_confidence": false,
+        "capability_split": false
+      },
+      "calls": [
+        {
+          "reader": "A",
+          "model": "claude-sonnet-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "The unlock check reverts when a pool has zero units, even if that pool's tax allocation is zero. This is a logic flaw in a condition. It has no sibling guard or peer to compare against, and no dropped or unread parameter."
+          },
+          "served_model": "claude-sonnet-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 3812,
+          "out_tok": 225
+        },
+        {
+          "reader": "B",
+          "model": "claude-haiku-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Root cause is an over-strict revert in unlock: it reverts on totalUnits == 0 without considering whether the allocation BP is zero. This is a logic/economic condition error, with no named peer site or sibling guard that handles it correctly."
+          },
+          "served_model": "claude-haiku-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 3829,
+          "out_tok": 599
+        }
+      ]
+    },
+    {
+      "finding_id": "2025-06-superfluid-locker-system:M-3",
+      "contest": "2025-06-superfluid-locker-system",
+      "severity": "M",
+      "final": {
+        "class": "out_of_class",
+        "pattern": null,
+        "would_catch_with": [],
+        "obligation_site": null,
+        "needs_tiebreak": false,
+        "n_readers": 2,
+        "n_valid": 2,
+        "low_confidence": false,
+        "capability_split": false
+      },
+      "calls": [
+        {
+          "reader": "A",
+          "model": "claude-sonnet-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "cancelProgram recomputes the initial deposit from current governance parameters instead of storing the funded amount. This is a logic/accounting flaw from external config drift. It has no sibling guard or paired-op mismatch to compare against."
+          },
+          "served_model": "claude-sonnet-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 8128,
+          "out_tok": 226
+        },
+        {
+          "reader": "B",
+          "model": "claude-haiku-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "cancelProgram recomputes the refund from live Superfluid governance parameters (min deposit, liquidation period) instead of the amount fixed at funding. This is external-parameter drift, an external-integration issue. No sibling site omits a guard, parameter, or state read that a peer applies."
+          },
+          "served_model": "claude-haiku-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 8150,
+          "out_tok": 532
+        }
+      ]
+    },
+    {
+      "finding_id": "2025-06-superfluid-locker-system:M-4",
+      "contest": "2025-06-superfluid-locker-system",
+      "severity": "M",
+      "final": {
+        "class": "in_class",
+        "pattern": "sibling_missing_guard",
+        "would_catch_with": [
+          "sibling_guard_asymmetry"
+        ],
+        "obligation_site": "fluid/packages/contracts/src/FluidLocker.sol#L420",
+        "needs_tiebreak": false,
+        "n_readers": 2,
+        "n_valid": 2,
+        "low_confidence": false,
+        "capability_split": false
+      },
+      "calls": [
+        {
+          "reader": "A",
+          "model": "claude-sonnet-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "in_class",
+            "pattern": "sibling_missing_guard",
+            "would_catch_with": [
+              "sibling_guard_asymmetry"
+            ],
+            "obligation_site": "fluid/packages/contracts/src/FluidLocker.sol#L420",
+            "rationale": "provideLiquidity and withdrawLiquidity lack the unlockAvailable modifier that the sibling unlock/withdraw functions in FluidLocker apply, so SUP can be withdrawn while the unlock flag is false."
+          },
+          "served_model": "claude-sonnet-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 4949,
+          "out_tok": 271
+        },
+        {
+          "reader": "B",
+          "model": "claude-haiku-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "in_class",
+            "pattern": "sibling_missing_guard",
+            "would_catch_with": [
+              "sibling_guard_asymmetry"
+            ],
+            "obligation_site": null,
+            "rationale": "Root cause: provideLiquidity() and withdrawLiquidity() omit the unlockAvailable modifier that the locker's unlock-gated paths apply, so SUP can be withdrawn while the unlock flag is false. The finding names no explicit peer site."
+          },
+          "served_model": "claude-haiku-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 4971,
+          "out_tok": 483
+        }
+      ]
+    },
+    {
+      "finding_id": "2025-06-superfluid-locker-system:M-5",
+      "contest": "2025-06-superfluid-locker-system",
+      "severity": "M",
+      "final": {
+        "class": "out_of_class",
+        "pattern": null,
+        "would_catch_with": [],
+        "obligation_site": null,
+        "needs_tiebreak": false,
+        "n_readers": 2,
+        "n_valid": 2,
+        "low_confidence": false,
+        "capability_split": false
+      },
+      "calls": [
+        {
+          "reader": "A",
+          "model": "claude-sonnet-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Math/logic defect: the buffer is computed on the summed flow rate, ignoring the per-flow minimum deposit, so it is underestimated. There is no sibling or omission structure to compare against."
+          },
+          "served_model": "claude-sonnet-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 3591,
+          "out_tok": 216
+        },
+        {
+          "reader": "B",
+          "model": "claude-haiku-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Root cause is a math defect: the start-funding buffer is computed on the summed flow rate, but the minimum-deposit floor applies per distributed flow, so the total is underestimated. No sibling site or omitted guard/parameter is involved."
+          },
+          "served_model": "claude-haiku-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 3614,
+          "out_tok": 362
+        }
+      ]
+    },
+    {
+      "finding_id": "2025-06-superfluid-locker-system:M-6",
+      "contest": "2025-06-superfluid-locker-system",
+      "severity": "M",
+      "final": {
+        "class": "out_of_class",
+        "pattern": null,
+        "would_catch_with": [],
+        "obligation_site": null,
+        "needs_tiebreak": false,
+        "n_readers": 2,
+        "n_valid": 2,
+        "low_confidence": false,
+        "capability_split": false
+      },
+      "calls": [
+        {
+          "reader": "A",
+          "model": "claude-sonnet-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Economic/price manipulation: withdrawLiquidity pays out ETH from a manipulated pool, which bypasses the tax. There is no sibling guard or consistency omission to compare against. The mitigation is a TWAP or liquidity check, which is an economic/oracle design defect."
+          },
+          "served_model": "claude-sonnet-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 5128,
+          "out_tok": 245
+        },
+        {
+          "reader": "B",
+          "model": "claude-haiku-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Root cause is an economic/oracle defect: withdrawLiquidity has no price-manipulation check (no TWAP or pool-depth guard), so a flashloaned pool skew lets the owner exit in ETH and avoid the SUP tax. No sibling-consistency or omitted-parameter structure."
+          },
+          "served_model": "claude-haiku-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 5148,
+          "out_tok": 349
+        }
+      ]
+    },
+    {
+      "finding_id": "2024-04-alchemix:H-1",
+      "contest": "2024-04-alchemix",
+      "severity": "H",
+      "final": {
+        "class": "out_of_class",
+        "pattern": null,
+        "would_catch_with": [],
+        "obligation_site": null,
+        "needs_tiebreak": false,
+        "n_readers": 2,
+        "n_valid": 2,
+        "low_confidence": false,
+        "capability_split": false
+      },
+      "calls": [
+        {
+          "reader": "A",
+          "model": "claude-sonnet-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "The slippage bound uses OP/USD and ETH/USD oracle prices as proxies for alUSD and alETH output. This is an oracle and economic modeling flaw. There is no sibling, guard, or parameter-consistency structure to compare against."
+          },
+          "served_model": "claude-sonnet-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 5461,
+          "out_tok": 233
+        },
+        {
+          "reader": "B",
+          "model": "claude-haiku-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Root cause is an oracle/price-model error: expectedExchange prices OP against USD/ETH Chainlink feeds instead of the actual alUSD/alETH exchange rate. Both branches share the same flawed model, with no sibling site meeting an omitted obligation or guard."
+          },
+          "served_model": "claude-haiku-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 5480,
+          "out_tok": 552
+        }
+      ]
+    },
+    {
+      "finding_id": "2024-06-new-scope:H-1",
+      "contest": "2024-06-new-scope",
+      "severity": "H",
+      "final": {
+        "class": "out_of_class",
+        "pattern": null,
+        "would_catch_with": [],
+        "obligation_site": null,
+        "needs_tiebreak": false,
+        "n_readers": 2,
+        "n_valid": 2,
+        "low_confidence": false,
+        "capability_split": false
+      },
+      "calls": [
+        {
+          "reader": "A",
+          "model": "claude-sonnet-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "_repayDebtTokens assigns nextDebtShares the burnt amount instead of the remaining total debt shares. This is a wrong-value logic error. The finding names no peer site that does it correctly, and it has no omission structure."
+          },
+          "served_model": "claude-sonnet-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 5171,
+          "out_tok": 420
+        },
+        {
+          "reader": "B",
+          "model": "claude-haiku-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Root cause is a wrong value assigned to debtReserveCache.nextDebtShares (burnt amount instead of remaining total debt shares), which feeds the rate calculation. This is a logic/math defect with no sibling entry point, omitted guard, or paired-operation mismatch to compare against."
+          },
+          "served_model": "claude-haiku-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 5190,
+          "out_tok": 782
+        }
+      ]
+    },
+    {
+      "finding_id": "2024-06-new-scope:H-2",
+      "contest": "2024-06-new-scope",
+      "severity": "H",
+      "final": {
+        "class": "in_class",
+        "pattern": "paired_op_mismatch",
+        "would_catch_with": [],
+        "obligation_site": null,
+        "needs_tiebreak": true,
+        "n_readers": 3,
+        "n_valid": 3,
+        "low_confidence": false,
+        "capability_split": true
+      },
+      "calls": [
+        {
+          "reader": "A",
+          "model": "claude-sonnet-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Unit mismatch: liquidation treats debt and supply shares as asset amounts, and the code never converts shares to assets with the borrow or liquidity index. This is a logic and math defect. The finding names no sibling or peer site that handles the conversion correctly."
+          },
+          "served_model": "claude-sonnet-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 7076,
+          "out_tok": 236
+        },
+        {
+          "reader": "B",
+          "model": "claude-haiku-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "in_class",
+            "pattern": "paired_op_mismatch",
+            "would_catch_with": [
+              "cross_file_or_dependency_visibility"
+            ],
+            "obligation_site": null,
+            "rationale": "Units mismatch: _calculateDebt and supplyShares/debtShares yield share values, which flow into _calculateAvailableCollateralToLiquidate and repayDebt that expect asset amounts. The borrow-index and liquidity-index conversion is applied on other paths but skipped here, so the paired operations disagree."
+          },
+          "served_model": "claude-haiku-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 7094,
+          "out_tok": 1070
+        },
+        {
+          "reader": "C",
+          "model": "claude-opus-5-5",
+          "effort": "medium",
+          "status": "ok",
+          "data": {
+            "class": "in_class",
+            "pattern": "paired_op_mismatch",
+            "would_catch_with": [
+              "none_of_these"
+            ],
+            "obligation_site": null,
+            "rationale": "Units mismatch: liquidation reads raw debtShares/supplyShares and compares them with asset-denominated debtToCover, then passes them to repayDebt, which expects assets. Assets are scaled on one path only; the fix is to use the getDebtBalance/getSupplyBalance helpers."
+          },
+          "served_model": "claude-opus-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 7074,
+          "out_tok": 891
+        }
+      ]
+    },
+    {
+      "finding_id": "2024-06-new-scope:H-3",
+      "contest": "2024-06-new-scope",
+      "severity": "H",
+      "final": {
+        "class": "out_of_class",
+        "pattern": null,
+        "would_catch_with": [],
+        "obligation_site": null,
+        "needs_tiebreak": false,
+        "n_readers": 2,
+        "n_valid": 2,
+        "low_confidence": false,
+        "capability_split": false
+      },
+      "calls": [
+        {
+          "reader": "A",
+          "model": "claude-sonnet-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Design/economic issue: reserve liquidity can be drained by withdrawals or borrows, blocking liquidation payout. No sibling guard, unread parameter or paired-operation mismatch is involved. It is a missing feature, not an inconsistency."
+          },
+          "served_model": "claude-sonnet-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 4016,
+          "out_tok": 234
+        },
+        {
+          "reader": "B",
+          "model": "claude-haiku-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Root cause is a protocol design/economic issue: reserves lack per-position borrow/withdraw locks, so lending liquidity can be drained and collateral cannot be paid to liquidators. No sibling entry point or parameter omission is identified."
+          },
+          "served_model": "claude-haiku-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 4037,
+          "out_tok": 304
+        }
+      ]
+    },
+    {
+      "finding_id": "2024-06-new-scope:H-4",
+      "contest": "2024-06-new-scope",
+      "severity": "H",
+      "final": {
+        "class": "out_of_class",
+        "pattern": null,
+        "would_catch_with": [],
+        "obligation_site": null,
+        "needs_tiebreak": true,
+        "n_readers": 3,
+        "n_valid": 3,
+        "low_confidence": false,
+        "capability_split": false
+      },
+      "calls": [
+        {
+          "reader": "A",
+          "model": "claude-sonnet-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "adjacent",
+            "pattern": "other",
+            "would_catch_with": [
+              "cross_file_or_dependency_visibility"
+            ],
+            "obligation_site": null,
+            "rationale": "totalAssets reads pool balances without first updating the reserve liquidityIndex, so it returns stale values. This is an omitted update with no named sibling in the vault. Seeing it requires pool semantics (getBalanceByPosition and forceUpdateReserve) in another contract."
+          },
+          "served_model": "claude-sonnet-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 4884,
+          "out_tok": 257
+        },
+        {
+          "reader": "B",
+          "model": "claude-haiku-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Root cause is stale accounting: CuratedVault.totalAssets sums position balances without first refreshing the pool liquidityIndex, so a flash-loan deposit mints shares at pre-accrual price and captures yield. This is an economic/accounting design flaw with no sibling-site omission or consistency mismatch."
+          },
+          "served_model": "claude-haiku-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 4905,
+          "out_tok": 519
+        },
+        {
+          "reader": "C",
+          "model": "claude-opus-5-5",
+          "effort": "medium",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "totalAssets reads pool balances using a stale liquidityIndex, so yield that has built up but not been recorded is missed and flash-loan deposits capture it. This is stale accounting in how the vault uses the external pool. No peer site or consistency obligation is named."
+          },
+          "served_model": "claude-opus-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 4883,
+          "out_tok": 551
+        }
+      ]
+    },
+    {
+      "finding_id": "2024-06-new-scope:H-5",
+      "contest": "2024-06-new-scope",
+      "severity": "H",
+      "final": {
+        "class": "in_class",
+        "pattern": "paired_op_mismatch",
+        "would_catch_with": [
+          "none_of_these"
+        ],
+        "obligation_site": null,
+        "needs_tiebreak": true,
+        "n_readers": 3,
+        "n_valid": 3,
+        "low_confidence": false,
+        "capability_split": false
+      },
+      "calls": [
+        {
+          "reader": "A",
+          "model": "claude-sonnet-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Accounting bug: shares burned only for the liquidator's collateral amount, not the protocol fee also transferred out. It is a math/accounting logic error with no sibling or peer site that handles it correctly."
+          },
+          "served_model": "claude-sonnet-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 8077,
+          "out_tok": 218
+        },
+        {
+          "reader": "B",
+          "model": "claude-haiku-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "adjacent",
+            "pattern": "paired_op_mismatch",
+            "would_catch_with": [
+              "none_of_these"
+            ],
+            "obligation_site": null,
+            "rationale": "The protocol fee is transferred out of the pool, but _burnCollateralTokens burns shares only for actualCollateralToLiquidate, excluding the fee. The fee-transfer and share-burn paths disagree. The finding names no peer site that handles it correctly, and the fix requires accounting semantics."
+          },
+          "served_model": "claude-haiku-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 8103,
+          "out_tok": 857
+        },
+        {
+          "reader": "C",
+          "model": "claude-opus-5-5",
+          "effort": "medium",
+          "status": "ok",
+          "data": {
+            "class": "in_class",
+            "pattern": "paired_op_mismatch",
+            "would_catch_with": [
+              "none_of_these"
+            ],
+            "obligation_site": null,
+            "rationale": "Liquidation transfers collateral to the liquidator and the protocol fee to the treasury, but only burns shares for the liquidator portion. The fee outflow has no matching share burn, so the transfer and the accounting disagree."
+          },
+          "served_model": "claude-opus-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 8076,
+          "out_tok": 851
+        }
+      ]
+    },
+    {
+      "finding_id": "2024-06-new-scope:H-6",
+      "contest": "2024-06-new-scope",
+      "severity": "H",
+      "final": {
+        "class": "out_of_class",
+        "pattern": null,
+        "would_catch_with": [],
+        "obligation_site": null,
+        "needs_tiebreak": false,
+        "n_readers": 2,
+        "n_valid": 2,
+        "low_confidence": false,
+        "capability_split": false
+      },
+      "calls": [
+        {
+          "reader": "A",
+          "model": "claude-sonnet-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Access-design/trust issue: the pool deployer can set an arbitrary interest rate strategy that reverts and locks funds. There is no omitted check or sibling inconsistency to compare against."
+          },
+          "served_model": "claude-sonnet-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 3587,
+          "out_tok": 214
+        },
+        {
+          "reader": "B",
+          "model": "claude-haiku-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Root cause is access design: the pool deployer is trusted to choose an arbitrary interestRateStrategyAddress, and a malicious one can revert. No sibling site meets a missing consistency obligation; the defect is a trust/permission model issue."
+          },
+          "served_model": "claude-haiku-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 3605,
+          "out_tok": 318
+        }
+      ]
+    },
+    {
+      "finding_id": "2024-06-new-scope:H-7",
+      "contest": "2024-06-new-scope",
+      "severity": "H",
+      "final": {
+        "class": "out_of_class",
+        "pattern": null,
+        "would_catch_with": [],
+        "obligation_site": null,
+        "needs_tiebreak": false,
+        "n_readers": 2,
+        "n_valid": 2,
+        "low_confidence": false,
+        "capability_split": false
+      },
+      "calls": [
+        {
+          "reader": "A",
+          "model": "claude-sonnet-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Economic/accounting design flaw: bad debt isn't socialized across suppliers because shares convert to assets at liquidityIndex. No sibling, omitted parameter, or paired-operation inconsistency to compare against."
+          },
+          "served_model": "claude-sonnet-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 4453,
+          "out_tok": 224
+        },
+        {
+          "reader": "B",
+          "model": "claude-haiku-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Root cause is an economic/accounting design defect: withdrawals use shares * liquidityIndex and never socialize accumulated bad debt, so early withdrawers escape loss. No sibling site, dropped parameter, or paired-operation omission is identified."
+          },
+          "served_model": "claude-haiku-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 4466,
+          "out_tok": 384
+        }
+      ]
+    },
+    {
+      "finding_id": "2024-06-new-scope:H-8",
+      "contest": "2024-06-new-scope",
+      "severity": "H",
+      "final": {
+        "class": "adjacent",
+        "pattern": "other",
+        "would_catch_with": [
+          "cross_file_or_dependency_visibility"
+        ],
+        "obligation_site": null,
+        "needs_tiebreak": true,
+        "n_readers": 3,
+        "n_valid": 3,
+        "low_confidence": false,
+        "capability_split": false
+      },
+      "calls": [
+        {
+          "reader": "A",
+          "model": "claude-sonnet-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Liquidation in the pool doesn't notify the NFT position manager, so reward balances go stale. This is a cross-contract integration and design gap. It has no sibling or base site that already meets an obligation to compare against."
+          },
+          "served_model": "claude-sonnet-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 4937,
+          "out_tok": 221
+        },
+        {
+          "reader": "B",
+          "model": "claude-haiku-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "in_class",
+            "pattern": "sibling_missing_guard",
+            "would_catch_with": [
+              "sibling_guard_asymmetry",
+              "cross_file_or_dependency_visibility"
+            ],
+            "obligation_site": null,
+            "rationale": "Root cause: the liquidation path omits the NFTPositionManager balance update that other position-changing paths perform, so _balances stays stale and rewards keep accruing. A sibling entry point lacks the update its peers apply."
+          },
+          "served_model": "claude-haiku-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 4963,
+          "out_tok": 686
+        },
+        {
+          "reader": "C",
+          "model": "claude-opus-5-5",
+          "effort": "medium",
+          "status": "ok",
+          "data": {
+            "class": "adjacent",
+            "pattern": "other",
+            "would_catch_with": [
+              "cross_file_or_dependency_visibility"
+            ],
+            "obligation_site": null,
+            "rationale": "This is an omission: the Pool's liquidation path never updates the reward balances that NFTRewardsDistributor mirrors, so liquidated positions keep earning rewards. The finding names no peer site, and catching it means connecting the Pool and NFT contracts across files."
+          },
+          "served_model": "claude-opus-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 4935,
+          "out_tok": 601
+        }
+      ]
+    },
+    {
+      "finding_id": "2024-06-new-scope:H-9",
+      "contest": "2024-06-new-scope",
+      "severity": "H",
+      "final": {
+        "class": "in_class",
+        "pattern": "paired_op_mismatch",
+        "would_catch_with": [],
+        "obligation_site": "zerolend-one/contracts/core/pool/configuration/PositionBalanceConfiguration.sol#L48-L49",
+        "needs_tiebreak": true,
+        "n_readers": 3,
+        "n_valid": 3,
+        "low_confidence": false,
+        "capability_split": true
+      },
+      "calls": [
+        {
+          "reader": "A",
+          "model": "claude-sonnet-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "executeMintToTreasury wrongly decrements totalSupply.supplyShares and doesn't decrement underlyingBalance. This is an accounting logic error in one function. Paired-op framing is weak, and no sibling guard or param is omitted."
+          },
+          "served_model": "claude-sonnet-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 6289,
+          "out_tok": 233
+        },
+        {
+          "reader": "B",
+          "model": "claude-haiku-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "in_class",
+            "pattern": "paired_op_mismatch",
+            "would_catch_with": [
+              "cross_file_or_dependency_visibility"
+            ],
+            "obligation_site": "zerolend-one/contracts/core/pool/configuration/PositionBalanceConfiguration.sol#L48-L49",
+            "rationale": "Invariant that totalSupply.supplyShares equals the sum of user balances. Deposit and withdraw update both in tandem, but executeMintToTreasury decrements only totalSupply.supplyShares with no matching balance change, breaking the paired-state invariant."
+          },
+          "served_model": "claude-haiku-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 6306,
+          "out_tok": 1134
+        },
+        {
+          "reader": "C",
+          "model": "claude-opus-5-5",
+          "effort": "medium",
+          "status": "ok",
+          "data": {
+            "class": "in_class",
+            "pattern": "paired_op_mismatch",
+            "would_catch_with": [
+              "none_of_these"
+            ],
+            "obligation_site": "zerolend-one/contracts/core/pool/configuration/PositionBalanceConfiguration.sol#L94",
+            "rationale": "totalSupply.supplyShares is normally updated together with a position's supplyShares (deposit/withdrawCollateral). executeMintToTreasury lowers only the total, with no matching balance change, so the invariant breaks and the last withdrawals underflow."
+          },
+          "served_model": "claude-opus-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 6290,
+          "out_tok": 775
+        }
+      ]
+    },
+    {
+      "finding_id": "2024-06-new-scope:H-10",
+      "contest": "2024-06-new-scope",
+      "severity": "H",
+      "final": {
+        "class": "out_of_class",
+        "pattern": null,
+        "would_catch_with": [],
+        "obligation_site": null,
+        "needs_tiebreak": false,
+        "n_readers": 2,
+        "n_valid": 2,
+        "low_confidence": false,
+        "capability_split": false
+      },
+      "calls": [
+        {
+          "reader": "A",
+          "model": "claude-sonnet-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Operation-ordering logic bug in executeRepay. updateInterestRates runs before repayDebt refreshes cache.nextDebtShares, so the rate uses stale total debt. The finding names no sibling or base site that meets an obligation."
+          },
+          "served_model": "claude-sonnet-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 8197,
+          "out_tok": 416
+        },
+        {
+          "reader": "B",
+          "model": "claude-haiku-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Root cause is call ordering in executeRepay: updateInterestRates runs before repayDebt, so it reads a stale nextDebtShares and the wrong totalDebt. The finding names no peer site that orders these correctly. It is a logic/sequencing defect, not a sibling omission."
+          },
+          "served_model": "claude-haiku-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 8214,
+          "out_tok": 801
+        }
+      ]
+    },
+    {
+      "finding_id": "2024-06-new-scope:H-11",
+      "contest": "2024-06-new-scope",
+      "severity": "H",
+      "final": {
+        "class": "out_of_class",
+        "pattern": null,
+        "would_catch_with": [],
+        "obligation_site": null,
+        "needs_tiebreak": false,
+        "n_readers": 2,
+        "n_valid": 2,
+        "low_confidence": false,
+        "capability_split": false
+      },
+      "calls": [
+        {
+          "reader": "A",
+          "model": "claude-sonnet-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "getSupplyBalance/getDebtBalance use a wrong formula (shares + index-delta increase instead of shares.rayMul(index)). It is a math error, not a missing guard, an unforwarded parameter, or a peer mismatch. The correct sibling is only a fix reference."
+          },
+          "served_model": "claude-sonnet-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 12952,
+          "out_tok": 425
+        },
+        {
+          "reader": "B",
+          "model": "claude-haiku-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Root cause is a wrong math formula in getSupplyBalance/getDebtBalance: returns shares plus an index-based increase, mixing share and asset units. No sibling, parameter, or omitted guard is involved, so it is a logic/math defect, not a consistency omission."
+          },
+          "served_model": "claude-haiku-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 12978,
+          "out_tok": 451
+        }
+      ]
+    },
+    {
+      "finding_id": "2024-06-new-scope:M-1",
+      "contest": "2024-06-new-scope",
+      "severity": "M",
+      "final": {
+        "class": "adjacent",
+        "pattern": "hardcoded_safety_param",
+        "would_catch_with": [
+          "safety_param_weighting"
+        ],
+        "obligation_site": null,
+        "needs_tiebreak": false,
+        "n_readers": 2,
+        "n_valid": 2,
+        "low_confidence": false,
+        "capability_split": false
+      },
+      "calls": [
+        {
+          "reader": "A",
+          "model": "claude-sonnet-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "adjacent",
+            "pattern": "hardcoded_safety_param",
+            "would_catch_with": [
+              "safety_param_weighting"
+            ],
+            "obligation_site": null,
+            "rationale": "A single hardcoded 30-minute heartbeat/staleness threshold is applied to every oracle and chain in getAssetPrice. It is a hardcoded safety parameter with no sibling to compare against."
+          },
+          "served_model": "claude-sonnet-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 3678,
+          "out_tok": 236
+        },
+        {
+          "reader": "B",
+          "model": "claude-haiku-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "adjacent",
+            "pattern": "hardcoded_safety_param",
+            "would_catch_with": [
+              "safety_param_weighting"
+            ],
+            "obligation_site": null,
+            "rationale": "Root cause is a hardcoded 30-minute staleness heartbeat in PoolGetters::getAssetPrice applied to all feeds, though Chainlink heartbeats differ per chain/asset. No sibling site meets a different obligation, so this is a hardcoded safety threshold, not a sibling inconsistency."
+          },
+          "served_model": "claude-haiku-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 3695,
+          "out_tok": 581
+        }
+      ]
+    },
+    {
+      "finding_id": "2024-06-new-scope:M-2",
+      "contest": "2024-06-new-scope",
+      "severity": "M",
+      "final": {
+        "class": "adjacent",
+        "pattern": "hardcoded_safety_param",
+        "would_catch_with": [
+          "fork_upstream_diff"
+        ],
+        "obligation_site": "Morpho's SharesMathLib (morpho-blue src/libraries/SharesMathLib.sol), which sets VIRTUAL_SHARES and VIRTUAL_ASSETS to nonzero values",
+        "needs_tiebreak": true,
+        "n_readers": 3,
+        "n_valid": 3,
+        "low_confidence": false,
+        "capability_split": false
+      },
+      "calls": [
+        {
+          "reader": "A",
+          "model": "claude-sonnet-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "adjacent",
+            "pattern": "hardcoded_safety_param",
+            "would_catch_with": [
+              "fork_upstream_diff"
+            ],
+            "obligation_site": null,
+            "rationale": "VIRTUAL_SHARES and VIRTUAL_ASSETS are hardcoded to 0, which removes the inflation protection that the Morpho upstream has (1e6 and 1). This is a divergence from the fork with no in-repo sibling to compare against."
+          },
+          "served_model": "claude-sonnet-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 4837,
+          "out_tok": 258
+        },
+        {
+          "reader": "B",
+          "model": "claude-haiku-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "adjacent",
+            "pattern": "hardcoded_safety_param",
+            "would_catch_with": [
+              "fork_upstream_diff",
+              "safety_param_weighting"
+            ],
+            "obligation_site": "Morpho's SharesMathLib (morpho-blue src/libraries/SharesMathLib.sol), which sets VIRTUAL_SHARES and VIRTUAL_ASSETS to nonzero values",
+            "rationale": "Root cause is the VIRTUAL_SHARES and VIRTUAL_ASSETS constants hardcoded to 0, diverging from the Morpho base that uses nonzero values to block inflation attacks. No in-repo sibling meets the obligation, so it is adjacent rather than in-class."
+          },
+          "served_model": "claude-haiku-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 4862,
+          "out_tok": 840
+        },
+        {
+          "reader": "C",
+          "model": "claude-opus-5-5",
+          "effort": "medium",
+          "status": "ok",
+          "data": {
+            "class": "adjacent",
+            "pattern": "hardcoded_safety_param",
+            "would_catch_with": [
+              "fork_upstream_diff",
+              "cross_file_or_dependency_visibility"
+            ],
+            "obligation_site": null,
+            "rationale": "VIRTUAL_SHARES and VIRTUAL_ASSETS are hardcoded to 0, which turns off the inflation protection that the Morpho upstream gets from 1e6/1. No sibling in the repo handles this correctly; the defect only shows up as a divergence from the external fork upstream."
+          },
+          "served_model": "claude-opus-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 4837,
+          "out_tok": 445
+        }
+      ]
+    },
+    {
+      "finding_id": "2024-06-new-scope:M-3",
+      "contest": "2024-06-new-scope",
+      "severity": "M",
+      "final": {
+        "class": "out_of_class",
+        "pattern": null,
+        "would_catch_with": [],
+        "obligation_site": null,
+        "needs_tiebreak": false,
+        "n_readers": 2,
+        "n_valid": 2,
+        "low_confidence": false,
+        "capability_split": false
+      },
+      "calls": [
+        {
+          "reader": "A",
+          "model": "claude-sonnet-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Economic sandwich attack: adding a market with existing assets instantly raises totalAssets, so a depositor can capture the jump. This is a design and economic flaw. It has no omitted guard or sibling inconsistency."
+          },
+          "served_model": "claude-sonnet-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 6543,
+          "out_tok": 223
+        },
+        {
+          "reader": "B",
+          "model": "claude-haiku-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Root cause is economic: _setCap immediately adds an existing market's supplyAssets to lastTotalAssets, causing an instant share-price jump that an attacker can sandwich. No sibling omission, unread parameter, or paired-operation mismatch; it is a design/MEV-economic defect."
+          },
+          "served_model": "claude-haiku-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 6563,
+          "out_tok": 414
+        }
+      ]
+    },
+    {
+      "finding_id": "2024-06-new-scope:M-4",
+      "contest": "2024-06-new-scope",
+      "severity": "M",
+      "final": {
+        "class": "out_of_class",
+        "pattern": null,
+        "would_catch_with": [],
+        "obligation_site": null,
+        "needs_tiebreak": false,
+        "n_readers": 2,
+        "n_valid": 2,
+        "low_confidence": false,
+        "capability_split": false
+      },
+      "calls": [
+        {
+          "reader": "A",
+          "model": "claude-sonnet-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Oracle decimals assumption: health factor sums prices with differing decimals (e.g., 18-decimal AMPL feed). This is a math/oracle-integration defect with no sibling site or guard to compare against."
+          },
+          "served_model": "claude-sonnet-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 3936,
+          "out_tok": 221
+        },
+        {
+          "reader": "B",
+          "model": "claude-haiku-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Root cause is an oracle-integration assumption: calculateUserAccountData sums Chainlink prices assumed to share 8 decimals, but some feeds (AMPL/USD, 18 decimals) break that. No peer site normalizes decimals, so this is not a sibling omission or paired-op mismatch."
+          },
+          "served_model": "claude-haiku-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 3953,
+          "out_tok": 448
+        }
+      ]
+    },
+    {
+      "finding_id": "2024-06-new-scope:M-5",
+      "contest": "2024-06-new-scope",
+      "severity": "M",
+      "final": {
+        "class": "in_class",
+        "pattern": "sibling_missing_guard",
+        "would_catch_with": [
+          "sibling_guard_asymmetry"
+        ],
+        "obligation_site": "zerolend-one/contracts/core/pool/logic/SupplyLogic.sol#L125",
+        "needs_tiebreak": false,
+        "n_readers": 2,
+        "n_valid": 2,
+        "low_confidence": false,
+        "capability_split": false
+      },
+      "calls": [
+        {
+          "reader": "A",
+          "model": "claude-sonnet-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "in_class",
+            "pattern": "sibling_missing_guard",
+            "would_catch_with": [
+              "sibling_guard_asymmetry"
+            ],
+            "obligation_site": "zerolend-one/contracts/core/pool/logic/SupplyLogic.sol#L125",
+            "rationale": "executeMintToTreasury transfers underlying out without calling updateInterestRates, while sibling withdraw, borrow, supply and repay paths all update rates when liquidity changes. It is a missing step that peers apply."
+          },
+          "served_model": "claude-sonnet-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 15366,
+          "out_tok": 273
+        },
+        {
+          "reader": "B",
+          "model": "claude-haiku-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "in_class",
+            "pattern": "sibling_missing_guard",
+            "would_catch_with": [
+              "sibling_guard_asymmetry"
+            ],
+            "obligation_site": "zerolend-one/contracts/core/pool/logic/SupplyLogic.sol#L69-L81",
+            "rationale": "Root cause: executeMintToTreasury moves underlying out without calling updateInterestRates, while sibling paths (executeSupply, executeWithdraw, executeBorrow, executeRepay) call updateInterestRates before the token transfer. One peer omits the required rate-update step."
+          },
+          "served_model": "claude-haiku-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 15382,
+          "out_tok": 729
+        }
+      ]
+    },
+    {
+      "finding_id": "2024-06-new-scope:M-6",
+      "contest": "2024-06-new-scope",
+      "severity": "M",
+      "final": {
+        "class": "out_of_class",
+        "pattern": null,
+        "would_catch_with": [],
+        "obligation_site": null,
+        "needs_tiebreak": false,
+        "n_readers": 2,
+        "n_valid": 2,
+        "low_confidence": false,
+        "capability_split": false
+      },
+      "calls": [
+        {
+          "reader": "A",
+          "model": "claude-sonnet-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Reward accounting uses asset-amount balances (getBalance) instead of shares, so balances go stale as the liquidity index grows. This is a math/accounting unit error with no sibling or omission structure to compare against."
+          },
+          "served_model": "claude-sonnet-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 5195,
+          "out_tok": 221
+        },
+        {
+          "reader": "B",
+          "model": "claude-haiku-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Root cause is an accounting/economic design flaw: reward balances record index-dependent asset amounts (getBalance) instead of shares, so stale snapshots misallocate rewards. No sibling omission, unforwarded parameter, or paired-op mismatch is shown."
+          },
+          "served_model": "claude-haiku-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 5228,
+          "out_tok": 760
+        }
+      ]
+    },
+    {
+      "finding_id": "2024-06-new-scope:M-7",
+      "contest": "2024-06-new-scope",
+      "severity": "M",
+      "final": {
+        "class": "adjacent",
+        "pattern": "other",
+        "would_catch_with": [],
+        "obligation_site": null,
+        "needs_tiebreak": true,
+        "n_readers": 3,
+        "n_valid": 3,
+        "low_confidence": false,
+        "capability_split": true
+      },
+      "calls": [
+        {
+          "reader": "A",
+          "model": "claude-sonnet-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "adjacent",
+            "pattern": "other",
+            "would_catch_with": [
+              "cross_file_or_dependency_visibility"
+            ],
+            "obligation_site": null,
+            "rationale": "NFTPositionManager omits a wrapper for Pool.setUserUseReserveAsCollateral. It's a missing feature with no sibling guard to compare. Spotting it means comparing the manager's API with the Pool's across files."
+          },
+          "served_model": "claude-sonnet-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 5007,
+          "out_tok": 242
+        },
+        {
+          "reader": "B",
+          "model": "claude-haiku-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "in_class",
+            "pattern": "sibling_missing_guard",
+            "would_catch_with": [
+              "sibling_guard_asymmetry",
+              "cross_file_or_dependency_visibility"
+            ],
+            "obligation_site": null,
+            "rationale": "Root cause is PositionManager omitting the setUserUseReserveAsCollateral entry point that the Pool exposes via its base contracts. The sibling entry point lacks a function its peer applies, so users cannot toggle collateral. The validateHFAndLtv DoS follows from that missing toggle."
+          },
+          "served_model": "claude-haiku-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 5035,
+          "out_tok": 886
+        },
+        {
+          "reader": "C",
+          "model": "claude-opus-5-5",
+          "effort": "medium",
+          "status": "ok",
+          "data": {
+            "class": "adjacent",
+            "pattern": "other",
+            "would_catch_with": [
+              "none_of_these"
+            ],
+            "obligation_site": null,
+            "rationale": "NFTPositionManager has no wrapper for the Pool's setUserUseReserveAsCollateral, so positions can't turn collateral off, and withdrawals revert when a reserve's LTV is zero. This is a whole missing function, not a dropped guard or parameter, so no sibling-asymmetry shape fits."
+          },
+          "served_model": "claude-opus-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 5004,
+          "out_tok": 649
+        }
+      ]
+    },
+    {
+      "finding_id": "2024-06-new-scope:M-8",
+      "contest": "2024-06-new-scope",
+      "severity": "M",
+      "final": {
+        "class": "in_class",
+        "pattern": "sibling_missing_guard",
+        "would_catch_with": [
+          "sibling_guard_asymmetry"
+        ],
+        "obligation_site": "zerolend-one/contracts/core/pool/logic/SupplyLogic.sol#L125",
+        "needs_tiebreak": false,
+        "n_readers": 2,
+        "n_valid": 2,
+        "low_confidence": false,
+        "capability_split": false
+      },
+      "calls": [
+        {
+          "reader": "A",
+          "model": "claude-sonnet-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "in_class",
+            "pattern": "sibling_missing_guard",
+            "would_catch_with": [
+              "sibling_guard_asymmetry"
+            ],
+            "obligation_site": "zerolend-one/contracts/core/pool/logic/SupplyLogic.sol#L125",
+            "rationale": "Liquidation sends the protocol fee to the treasury without calling updateInterestRates. Withdraw, borrow, supply and repay all update the rates before moving underlying. The liquidation path is missing the step its peers apply."
+          },
+          "served_model": "claude-sonnet-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 15289,
+          "out_tok": 275
+        },
+        {
+          "reader": "B",
+          "model": "claude-haiku-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "in_class",
+            "pattern": "sibling_missing_guard",
+            "would_catch_with": [
+              "sibling_guard_asymmetry"
+            ],
+            "obligation_site": "zerolend-one/contracts/core/pool/logic/SupplyLogic.sol#L125-L134",
+            "rationale": "Liquidation transfers underlying out to treasury without calling updateInterestRates first. Peer paths (executeWithdraw, executeSupply, executeBorrow, executeRepay) all update rates before moving liquidity, so the liquidation path omits a step its siblings apply."
+          },
+          "served_model": "claude-haiku-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 15314,
+          "out_tok": 752
+        }
+      ]
+    },
+    {
+      "finding_id": "2024-06-new-scope:M-9",
+      "contest": "2024-06-new-scope",
+      "severity": "M",
+      "final": {
+        "class": "out_of_class",
+        "pattern": null,
+        "would_catch_with": [],
+        "obligation_site": null,
+        "needs_tiebreak": false,
+        "n_readers": 2,
+        "n_valid": 2,
+        "low_confidence": false,
+        "capability_split": false
+      },
+      "calls": [
+        {
+          "reader": "A",
+          "model": "claude-sonnet-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "A global reserveFactor change is applied to treasury accrual, while the cached liquidityRate still reflects the old factor. This is an economic/accounting timing flaw. It has no omitted guard, unread parameter, or sibling site to compare against."
+          },
+          "served_model": "claude-sonnet-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 7289,
+          "out_tok": 231
+        },
+        {
+          "reader": "B",
+          "model": "claude-haiku-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Root cause is a global reserveFactor read live by updateState while the cached liquidity rate reflects the old factor, so interest accrual and treasury minting use different factors. This is an accounting and economic timing defect. No peer site already meets the obligation; the fix is a per-pool snapshot design change."
+          },
+          "served_model": "claude-haiku-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 7308,
+          "out_tok": 646
+        }
+      ]
+    },
+    {
+      "finding_id": "2024-06-new-scope:M-10",
+      "contest": "2024-06-new-scope",
+      "severity": "M",
+      "final": {
+        "class": "out_of_class",
+        "pattern": null,
+        "would_catch_with": [],
+        "obligation_site": null,
+        "needs_tiebreak": false,
+        "n_readers": 2,
+        "n_valid": 2,
+        "low_confidence": false,
+        "capability_split": false
+      },
+      "calls": [
+        {
+          "reader": "A",
+          "model": "claude-sonnet-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Economic/design defect: supply index uses linear interest while borrow index compounds, leaving unclaimable surplus with no skim function. It is a math/design choice, not a missing guard or a sibling inconsistency."
+          },
+          "served_model": "claude-sonnet-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 11987,
+          "out_tok": 221
+        },
+        {
+          "reader": "B",
+          "model": "claude-haiku-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Root cause is an economic/math defect: supply interest uses linear accrual while borrow interest uses compounded accrual, so borrowers pay more than suppliers can claim. No sibling omission, unread parameter, or paired-op rounding mismatch is involved."
+          },
+          "served_model": "claude-haiku-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 12001,
+          "out_tok": 419
+        }
+      ]
+    },
+    {
+      "finding_id": "2024-06-new-scope:M-11",
+      "contest": "2024-06-new-scope",
+      "severity": "M",
+      "final": {
+        "class": "out_of_class",
+        "pattern": null,
+        "would_catch_with": [],
+        "obligation_site": null,
+        "needs_tiebreak": false,
+        "n_readers": 2,
+        "n_valid": 2,
+        "low_confidence": false,
+        "capability_split": false
+      },
+      "calls": [
+        {
+          "reader": "A",
+          "model": "claude-sonnet-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Economic/accounting flaw: treasury fees stored as shares accrue supply interest, so the fee is converted to assets at a later liquidityIndex and comes out higher than intended. There is no sibling guard, dropped parameter or mismatched override to compare against."
+          },
+          "served_model": "claude-sonnet-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 6709,
+          "out_tok": 237
+        },
+        {
+          "reader": "B",
+          "model": "claude-haiku-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Root cause is an economic/accounting design flaw: fee is stored as supply shares at nextLiquidityIndex, then those shares accrue interest and are converted at the later index, so the treasury earns more than reserveFactor. No sibling, parameter, or override omission is involved."
+          },
+          "served_model": "claude-haiku-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 6741,
+          "out_tok": 553
+        }
+      ]
+    },
+    {
+      "finding_id": "2024-06-new-scope:M-12",
+      "contest": "2024-06-new-scope",
+      "severity": "M",
+      "final": {
+        "class": "adjacent",
+        "pattern": "other",
+        "would_catch_with": [
+          "cross_file_or_dependency_visibility"
+        ],
+        "obligation_site": null,
+        "needs_tiebreak": true,
+        "n_readers": 3,
+        "n_valid": 3,
+        "low_confidence": false,
+        "capability_split": false
+      },
+      "calls": [
+        {
+          "reader": "A",
+          "model": "claude-sonnet-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "The vault's _supplyPool ignores the underlying pool's own supply cap, so deposits revert or the queue order shifts. This is a missing integration check against external pool logic. It has no sibling or base site that already meets the obligation, so it is a logic/integration defect."
+          },
+          "served_model": "claude-sonnet-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 7355,
+          "out_tok": 238
+        },
+        {
+          "reader": "B",
+          "model": "claude-haiku-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "adjacent",
+            "pattern": "other",
+            "would_catch_with": [
+              "cross_file_or_dependency_visibility"
+            ],
+            "obligation_site": null,
+            "rationale": "Root cause is an omitted check: _supplyPool bounds toSupply only by the vault's own config cap and current supply, not the underlying ZeroLend pool's reserve supplyCap (enforced in validateSupply). The missing check needs external pool config, and no in-contract sibling applies it, so it is adjacent, not in_class."
+          },
+          "served_model": "claude-haiku-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 7371,
+          "out_tok": 688
+        },
+        {
+          "reader": "C",
+          "model": "claude-opus-5-5",
+          "effort": "medium",
+          "status": "ok",
+          "data": {
+            "class": "adjacent",
+            "pattern": "other",
+            "would_catch_with": [
+              "cross_file_or_dependency_visibility"
+            ],
+            "obligation_site": null,
+            "rationale": "_supplyPool limits toSupply by the vault's own cap but not by the underlying pool's supplyCap. That is a missing check with no peer site to compare against, and seeing it needs the pool's validateSupply logic. So it is an integration omission, not a sibling inconsistency."
+          },
+          "served_model": "claude-opus-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 7352,
+          "out_tok": 443
+        }
+      ]
+    },
+    {
+      "finding_id": "2024-06-new-scope:M-13",
+      "contest": "2024-06-new-scope",
+      "severity": "M",
+      "final": {
+        "class": "in_class",
+        "pattern": "param_not_forwarded",
+        "would_catch_with": [
+          "cross_file_or_dependency_visibility",
+          "fork_upstream_diff"
+        ],
+        "obligation_site": "https://github.com/morpho-org/metamorpho/blob/cc6b01610c9b0000d965faef705e1670859d9c0f/src/MetaMorpho.sol#L382-L389",
+        "needs_tiebreak": true,
+        "n_readers": 3,
+        "n_valid": 3,
+        "low_confidence": false,
+        "capability_split": false
+      },
+      "calls": [
+        {
+          "reader": "A",
+          "model": "claude-sonnet-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "in_class",
+            "pattern": "dead_state",
+            "would_catch_with": [
+              "fork_upstream_diff",
+              "existing_detector_gap"
+            ],
+            "obligation_site": "https://github.com/morpho-org/metamorpho/blob/cc6b01610c9b0000d965faef705e1670859d9c0f/src/MetaMorpho.sol#L382-L389",
+            "rationale": "In reallocate(), when allocation.assets==0 the local `shares` is set but never read, and toWithdraw is zeroed. Metamorpho withdraws by shares there, but withdrawSimple takes assets, so it gets 0 and reverts."
+          },
+          "served_model": "claude-sonnet-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 7174,
+          "out_tok": 535
+        },
+        {
+          "reader": "B",
+          "model": "claude-haiku-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "in_class",
+            "pattern": "param_not_forwarded",
+            "would_catch_with": [
+              "fork_upstream_diff",
+              "cross_file_or_dependency_visibility"
+            ],
+            "obligation_site": null,
+            "rationale": "On allocation.assets==0, reallocate computes `shares = supplyShares` but never forwards it; it zeroes toWithdraw and calls withdrawSimple(asset) with 0, which the pool rejects. Metamorpho's share-based withdraw is the forked peer that the port dropped."
+          },
+          "served_model": "claude-haiku-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 7192,
+          "out_tok": 1284
+        },
+        {
+          "reader": "C",
+          "model": "claude-opus-5-5",
+          "effort": "medium",
+          "status": "ok",
+          "data": {
+            "class": "in_class",
+            "pattern": "param_not_forwarded",
+            "would_catch_with": [
+              "fork_upstream_diff",
+              "cross_file_or_dependency_visibility"
+            ],
+            "obligation_site": "https://github.com/morpho-org/metamorpho/blob/cc6b01610c9b0000d965faef705e1670859d9c0f/src/MetaMorpho.sol#L382-L389",
+            "rationale": "Forked from Metamorpho: on full withdrawal, shares=supplyShares is computed but never forwarded (withdrawSimple only takes assets), so toWithdraw=0 is passed and reverts on amount!=0. Upstream forwards shares to withdraw."
+          },
+          "served_model": "claude-opus-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 7171,
+          "out_tok": 1063
+        }
+      ]
+    },
+    {
+      "finding_id": "2024-06-new-scope:M-14",
+      "contest": "2024-06-new-scope",
+      "severity": "M",
+      "final": {
+        "class": "out_of_class",
+        "pattern": null,
+        "would_catch_with": [],
+        "obligation_site": null,
+        "needs_tiebreak": false,
+        "n_readers": 2,
+        "n_valid": 2,
+        "low_confidence": false,
+        "capability_split": false
+      },
+      "calls": [
+        {
+          "reader": "A",
+          "model": "claude-sonnet-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "_repay reads getDebt with a stale borrowIndex before pool.repay accrues interest, so the balance check fails. This is a logic and ordering bug in the accounting. It has no sibling guard or dropped parameter to compare against."
+          },
+          "served_model": "claude-sonnet-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 13463,
+          "out_tok": 228
+        },
+        {
+          "reader": "B",
+          "model": "claude-haiku-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Root cause is stale accounting: _repay reads previousDebtBalance before pool.repay() runs updateState, so interest accrual is folded into the balance-mismatch check. The finding names no peer site that meets the obligation; the fix is a direct reserve update. Logic defect, no sibling omission."
+          },
+          "served_model": "claude-haiku-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 13490,
+          "out_tok": 694
+        }
+      ]
+    },
+    {
+      "finding_id": "2024-06-new-scope:M-15",
+      "contest": "2024-06-new-scope",
+      "severity": "M",
+      "final": {
+        "class": "out_of_class",
+        "pattern": null,
+        "would_catch_with": [],
+        "obligation_site": null,
+        "needs_tiebreak": false,
+        "n_readers": 2,
+        "n_valid": 2,
+        "low_confidence": false,
+        "capability_split": false
+      },
+      "calls": [
+        {
+          "reader": "A",
+          "model": "claude-sonnet-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "The repay balance check compares debt deltas, which are computed with rounded ray math, against repaid assets. That can mismatch by 1 wei and revert. This is a rounding or math defect with no sibling or omission structure to compare against."
+          },
+          "served_model": "claude-sonnet-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 6835,
+          "out_tok": 226
+        },
+        {
+          "reader": "B",
+          "model": "claude-haiku-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Root cause is rounding error in rayMul/rayDiv share-to-asset conversion making the strict equality check in _repay (debt delta must equal repaid.assets) revert on 1-wei mismatches. This is a math defect with no sibling omission or consistency obligation."
+          },
+          "served_model": "claude-haiku-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 6854,
+          "out_tok": 409
+        }
+      ]
+    },
+    {
+      "finding_id": "2024-02-perennial-v2-3:H-1",
+      "contest": "2024-02-perennial-v2-3",
+      "severity": "H",
+      "final": {
+        "class": "out_of_class",
+        "pattern": null,
+        "would_catch_with": [],
+        "obligation_site": null,
+        "needs_tiebreak": false,
+        "n_readers": 2,
+        "n_valid": 2,
+        "low_confidence": false,
+        "capability_split": false
+      },
+      "calls": [
+        {
+          "reader": "A",
+          "model": "claude-sonnet-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Empty orders skip the oracle request, so settlement uses a non-existent oracle version with price 0. That corrupts fee and funding accounting. This is a protocol logic and accounting design flaw with no sibling guard or peer to compare against."
+          },
+          "served_model": "claude-sonnet-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 6653,
+          "out_tok": 230
+        },
+        {
+          "reader": "B",
+          "model": "claude-haiku-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Root cause is oracle/accounting logic: empty orders skip oracle.request, so settlement uses an invalid oracle version with price=0 in fee and funding math. No sibling site meets a missing obligation; the fix is to carry forward the last valid price."
+          },
+          "served_model": "claude-haiku-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 6678,
+          "out_tok": 536
+        }
+      ]
+    },
+    {
+      "finding_id": "2024-02-perennial-v2-3:H-2",
+      "contest": "2024-02-perennial-v2-3",
+      "severity": "H",
+      "final": {
+        "class": "adjacent",
+        "pattern": "other",
+        "would_catch_with": [
+          "none_of_these"
+        ],
+        "obligation_site": null,
+        "needs_tiebreak": true,
+        "n_readers": 3,
+        "n_valid": 3,
+        "low_confidence": false,
+        "capability_split": false
+      },
+      "calls": [
+        {
+          "reader": "A",
+          "model": "claude-sonnet-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Design/logic flaw: validity is derived from price != 0, while expired commits copy the previous price, so they look valid. No sibling or peer guard, unread parameter or mismatched override is involved. It needs a separate validity map."
+          },
+          "served_model": "claude-sonnet-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 6694,
+          "out_tok": 225
+        },
+        {
+          "reader": "B",
+          "model": "claude-haiku-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "in_class",
+            "pattern": "branch_zero_value",
+            "would_catch_with": [
+              "sibling_guard_asymmetry"
+            ],
+            "obligation_site": "perennial-v2/packages/perennial-oracle/contracts/keeper/KeeperOracle.sol#L111",
+            "rationale": "Validity is encoded as price != 0 in at(). The expired branch of _commitRequested copies the previous valid price into _prices instead of leaving zero, so the expired version reads as valid. The non-expired branch and at() rely on the zero convention."
+          },
+          "served_model": "claude-haiku-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 6712,
+          "out_tok": 907
+        },
+        {
+          "reader": "C",
+          "model": "claude-opus-5-5",
+          "effort": "medium",
+          "status": "ok",
+          "data": {
+            "class": "adjacent",
+            "pattern": "other",
+            "would_catch_with": [
+              "none_of_these"
+            ],
+            "obligation_site": null,
+            "rationale": "After the timeout, _commitRequested stores the previous price for an expired version, but at() decides validity from price != 0. The write and read sides disagree on how invalidity is encoded, and no peer site handles it correctly; fixing it needs a new validity map."
+          },
+          "served_model": "claude-opus-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 6688,
+          "out_tok": 838
+        }
+      ]
+    },
+    {
+      "finding_id": "2024-02-perennial-v2-3:H-3",
+      "contest": "2024-02-perennial-v2-3",
+      "severity": "H",
+      "final": {
+        "class": "in_class",
+        "pattern": "paired_op_mismatch",
+        "would_catch_with": [
+          "sibling_guard_asymmetry"
+        ],
+        "obligation_site": "perennial-v2/packages/perennial-vault/contracts/types/Checkpoint.sol#L191",
+        "needs_tiebreak": false,
+        "n_readers": 2,
+        "n_valid": 2,
+        "low_confidence": false,
+        "capability_split": false
+      },
+      "calls": [
+        {
+          "reader": "A",
+          "model": "claude-sonnet-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "in_class",
+            "pattern": "paired_op_mismatch",
+            "would_catch_with": [
+              "sibling_guard_asymmetry"
+            ],
+            "obligation_site": "perennial-v2/packages/perennial-vault/contracts/types/Checkpoint.sol#L191",
+            "rationale": "_withoutSettlementFeeGlobal subtracts the full settlementFee for both deposits and redeems. _withoutSettlementFeeLocal splits the fee per order. The global and local paths disagree, so local totals exceed global totals."
+          },
+          "served_model": "claude-sonnet-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 6237,
+          "out_tok": 284
+        },
+        {
+          "reader": "B",
+          "model": "claude-haiku-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "in_class",
+            "pattern": "paired_op_mismatch",
+            "would_catch_with": [
+              "sibling_guard_asymmetry"
+            ],
+            "obligation_site": "perennial-v2/packages/perennial-vault/contracts/types/Checkpoint.sol#L191-L196",
+            "rationale": "_withoutSettlementFeeGlobal subtracts the full settlementFee from each deposit and each redeem, so the fee is counted twice globally. _withoutSettlementFeeLocal splits it by orders, so it is counted once. The global and local paths disagree on fee weighting, which causes the mismatch."
+          },
+          "served_model": "claude-haiku-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 6255,
+          "out_tok": 812
+        }
+      ]
+    },
+    {
+      "finding_id": "2024-02-perennial-v2-3:M-1",
+      "contest": "2024-02-perennial-v2-3",
+      "severity": "M",
+      "final": {
+        "class": "out_of_class",
+        "pattern": null,
+        "would_catch_with": [],
+        "obligation_site": null,
+        "needs_tiebreak": false,
+        "n_readers": 2,
+        "n_valid": 2,
+        "low_confidence": false,
+        "capability_split": false
+      },
+      "calls": [
+        {
+          "reader": "A",
+          "model": "claude-sonnet-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Economic/logic flaw: weight 0 yields collateral equal to the margin, while minPosition keeps the position open, so leverage is at its maximum. No sibling or peer site meets a consistency obligation that this one misses."
+          },
+          "served_model": "claude-sonnet-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 4458,
+          "out_tok": 225
+        },
+        {
+          "reader": "B",
+          "model": "claude-haiku-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Root cause is allocation economics: for weight=0 markets, marketCollateral collapses to margin, so the leftover position sits at max leverage and risks liquidation. No sibling site or omitted guard/parameter is compared; it is a logic/risk-design defect."
+          },
+          "served_model": "claude-haiku-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 4483,
+          "out_tok": 564
+        }
+      ]
+    },
+    {
+      "finding_id": "2024-02-perennial-v2-3:M-2",
+      "contest": "2024-02-perennial-v2-3",
+      "severity": "M",
+      "final": {
+        "class": "out_of_class",
+        "pattern": null,
+        "would_catch_with": [],
+        "obligation_site": null,
+        "needs_tiebreak": false,
+        "n_readers": 2,
+        "n_valid": 2,
+        "low_confidence": false,
+        "capability_split": false
+      },
+      "calls": [
+        {
+          "reader": "A",
+          "model": "claude-sonnet-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Economic/design flaw: maker exposure from adiabatic fees is distributed by position size instead of individual exposure. No sibling site or omitted guard/param to compare against; it is a math/accounting design issue."
+          },
+          "served_model": "claude-sonnet-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 5410,
+          "out_tok": 220
+        },
+        {
+          "reader": "B",
+          "model": "claude-haiku-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Root cause is an economic/allocation design flaw: maker adiabatic-fee exposure is split by total maker position size (makerValue.increment weighted by fromPosition.maker) instead of individual exposure. No omitted guard, dropped parameter, or sibling inconsistency is involved."
+          },
+          "served_model": "claude-haiku-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 5439,
+          "out_tok": 477
+        }
+      ]
+    },
+    {
+      "finding_id": "2024-02-perennial-v2-3:M-3",
+      "contest": "2024-02-perennial-v2-3",
+      "severity": "M",
+      "final": {
+        "class": "out_of_class",
+        "pattern": null,
+        "would_catch_with": [],
+        "obligation_site": null,
+        "needs_tiebreak": false,
+        "n_readers": 2,
+        "n_valid": 2,
+        "low_confidence": false,
+        "capability_split": false
+      },
+      "calls": [
+        {
+          "reader": "A",
+          "model": "claude-sonnet-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "The code calls an Optimism GasPriceOracle function, scalar(), that the Ecotone upgrade deprecated, so it always reverts. This is an external-integration defect. It has no sibling or omission structure to compare against."
+          },
+          "served_model": "claude-sonnet-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 4943,
+          "out_tok": 225
+        },
+        {
+          "reader": "B",
+          "model": "claude-haiku-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Root cause is an external-integration break: Optimism's GasPriceOracle.scalar() reverts after the Ecotone upgrade, so _calldataFee() in Kept_Optimism always reverts. No sibling site, dropped parameter, or consistency obligation is involved."
+          },
+          "served_model": "claude-haiku-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 4971,
+          "out_tok": 325
+        }
+      ]
+    },
+    {
+      "finding_id": "2024-02-perennial-v2-3:M-4",
+      "contest": "2024-02-perennial-v2-3",
+      "severity": "M",
+      "final": {
+        "class": "out_of_class",
+        "pattern": null,
+        "would_catch_with": [],
+        "obligation_site": null,
+        "needs_tiebreak": false,
+        "n_readers": 2,
+        "n_valid": 2,
+        "low_confidence": false,
+        "capability_split": false
+      },
+      "calls": [
+        {
+          "reader": "A",
+          "model": "claude-sonnet-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Math/logic error: withdrawal is subtracted both in collateral (allocate) and added again in _ineligable, so assets double-subtract it. No sibling or peer site to compare against; it's an accounting bug, not an omission or consistency defect."
+          },
+          "served_model": "claude-sonnet-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 5993,
+          "out_tok": 232
+        },
+        {
+          "reader": "B",
+          "model": "claude-haiku-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Root cause is an arithmetic error: `withdrawal` is subtracted twice in the assets calculation (once in collateral, again via `_ineligable` adding it back). No sibling, parameter forwarding, or paired-operation consistency obligation is violated; it is a math defect."
+          },
+          "served_model": "claude-haiku-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 6016,
+          "out_tok": 452
+        }
+      ]
+    },
+    {
+      "finding_id": "2024-02-perennial-v2-3:M-5",
+      "contest": "2024-02-perennial-v2-3",
+      "severity": "M",
+      "final": {
+        "class": "out_of_class",
+        "pattern": null,
+        "would_catch_with": [],
+        "obligation_site": null,
+        "needs_tiebreak": true,
+        "n_readers": 3,
+        "n_valid": 3,
+        "low_confidence": false,
+        "capability_split": false
+      },
+      "calls": [
+        {
+          "reader": "A",
+          "model": "claude-sonnet-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Stale-cache/aliasing bug: _credit writes storage while the account's in-memory context.local is later stored over it, so self-liquidator or self-referrer fees are lost. It is a state-handling logic flaw with no sibling guard, parameter or paired-op omission to compare."
+          },
+          "served_model": "claude-sonnet-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 4484,
+          "out_tok": 244
+        },
+        {
+          "reader": "B",
+          "model": "claude-haiku-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "in_class",
+            "pattern": "dead_state",
+            "would_catch_with": [
+              "existing_detector_gap"
+            ],
+            "obligation_site": null,
+            "rationale": "_credit writes claimable to _locals[account] but settle() later stores the in-memory context.local over it when liquidator/referrer equals account. The write is effectively never persisted, so the state is dead for self-credit. No named peer site."
+          },
+          "served_model": "claude-haiku-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 4513,
+          "out_tok": 1076
+        },
+        {
+          "reader": "C",
+          "model": "claude-opus-5-5",
+          "effort": "medium",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Aliasing bug: when liquidator/referrer equals the account, _credit writes claimable directly to _locals storage, then _storeContext overwrites it with the stale context.local held in memory. No peer site handles it correctly and no parameter or guard is missing."
+          },
+          "served_model": "claude-opus-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 4482,
+          "out_tok": 542
+        }
+      ]
+    },
+    {
+      "finding_id": "2024-02-perennial-v2-3:M-6",
+      "contest": "2024-02-perennial-v2-3",
+      "severity": "M",
+      "final": {
+        "class": "out_of_class",
+        "pattern": null,
+        "would_catch_with": [],
+        "obligation_site": null,
+        "needs_tiebreak": false,
+        "n_readers": 2,
+        "n_valid": 2,
+        "low_confidence": false,
+        "capability_split": false
+      },
+      "calls": [
+        {
+          "reader": "A",
+          "model": "claude-sonnet-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Wrong external getter used: pendings(address(this)) instead of pending() for global state. It's a call-selection logic error against the market interface, with no sibling guard, unforwarded param, or paired-op structure to compare."
+          },
+          "served_model": "claude-sonnet-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 4593,
+          "out_tok": 222
+        },
+        {
+          "reader": "B",
+          "model": "claude-haiku-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Root cause is a wrong data-source selection: pendingGlobal is loaded via market.pendings(address(this)), the local-pending accessor, instead of market.pending(). No sibling entry point or paired operation is omitting a guard or check. It is a logic error in which accessor feeds the position math."
+          },
+          "served_model": "claude-haiku-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 4612,
+          "out_tok": 591
+        }
+      ]
+    },
+    {
+      "finding_id": "2024-02-perennial-v2-3:M-7",
+      "contest": "2024-02-perennial-v2-3",
+      "severity": "M",
+      "final": {
+        "class": "adjacent",
+        "pattern": "other",
+        "would_catch_with": [
+          "none_of_these"
+        ],
+        "obligation_site": null,
+        "needs_tiebreak": true,
+        "n_readers": 3,
+        "n_valid": 3,
+        "low_confidence": false,
+        "capability_split": false
+      },
+      "calls": [
+        {
+          "reader": "A",
+          "model": "claude-sonnet-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "adjacent",
+            "pattern": "sibling_missing_guard",
+            "would_catch_with": [
+              "none_of_these"
+            ],
+            "obligation_site": null,
+            "rationale": "_processReferrer lacks a check blocking protected (liquidation) orders from setting a referrer. No sibling site applies this guard, so it's an omission needing protocol semantics (liquidations are unauthorized, third-party-triggered)."
+          },
+          "served_model": "claude-sonnet-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 4485,
+          "out_tok": 242
+        },
+        {
+          "reader": "B",
+          "model": "claude-haiku-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "in_class",
+            "pattern": "sibling_missing_guard",
+            "would_catch_with": [
+              "sibling_guard_asymmetry"
+            ],
+            "obligation_site": null,
+            "rationale": "Non-empty referrer-setting orders are gated by authorization, but liquidation (protected) orders bypass that gate and can still set a referrer for an account with none. _processReferrer lacks the protected-order guard its peer paths apply."
+          },
+          "served_model": "claude-haiku-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 4514,
+          "out_tok": 721
+        },
+        {
+          "reader": "C",
+          "model": "claude-opus-5-5",
+          "effort": "medium",
+          "status": "ok",
+          "data": {
+            "class": "adjacent",
+            "pattern": "other",
+            "would_catch_with": [
+              "none_of_these"
+            ],
+            "obligation_site": null,
+            "rationale": "Missing check: unauthorized liquidation (protected) orders can set a user's referrer in _processReferrer, which locks it permanently. No peer site applies this guard; spotting it needs semantics about authorization and protected orders."
+          },
+          "served_model": "claude-opus-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 4481,
+          "out_tok": 559
+        }
+      ]
+    },
+    {
+      "finding_id": "2024-02-perennial-v2-3:M-8",
+      "contest": "2024-02-perennial-v2-3",
+      "severity": "M",
+      "final": {
+        "class": "out_of_class",
+        "pattern": null,
+        "would_catch_with": [],
+        "obligation_site": null,
+        "needs_tiebreak": true,
+        "n_readers": 3,
+        "n_valid": 3,
+        "low_confidence": false,
+        "capability_split": false
+      },
+      "calls": [
+        {
+          "reader": "A",
+          "model": "claude-sonnet-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Design/logic flaw: using market.update as a settle call triggers a margin check that can revert, causing keeper and vault DoS. It's a wrong-function and semantic issue, not a missing guard or parameter mismatch against a sibling. Market.settle exists but isn't a peer obligation."
+          },
+          "served_model": "claude-sonnet-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 7035,
+          "out_tok": 247
+        },
+        {
+          "reader": "B",
+          "model": "claude-haiku-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "in_class",
+            "pattern": "other",
+            "would_catch_with": [
+              "sibling_guard_asymmetry"
+            ],
+            "obligation_site": "perennial-v2/packages/perennial-vault/contracts/Vault.sol#L336-L339",
+            "rationale": "Settlement paths call market.update with empty order, which runs the margin check and reverts for under-margin accounts. Peer _settleUnderlying uses market.settle, which skips that check. KeeperOracle._settle repeats the same update-based pattern."
+          },
+          "served_model": "claude-haiku-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 7060,
+          "out_tok": 842
+        },
+        {
+          "reader": "C",
+          "model": "claude-opus-5-5",
+          "effort": "medium",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Root cause: an empty market.update is used to settle accounts, but the margin invariant still applies and reverts for accounts below margin, blocking keeper and vault flows. This is a wrong-function choice, not a missing guard or param."
+          },
+          "served_model": "claude-opus-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 7037,
+          "out_tok": 711
+        }
+      ]
+    },
+    {
+      "finding_id": "2024-02-perennial-v2-3:M-9",
+      "contest": "2024-02-perennial-v2-3",
+      "severity": "M",
+      "final": {
+        "class": "out_of_class",
+        "pattern": null,
+        "would_catch_with": [],
+        "obligation_site": null,
+        "needs_tiebreak": false,
+        "n_readers": 2,
+        "n_valid": 2,
+        "low_confidence": false,
+        "capability_split": false
+      },
+      "calls": [
+        {
+          "reader": "A",
+          "model": "claude-sonnet-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Math/fee-formula error: settlement fee and trade fee are applied multiplicatively rather than additively, giving a small share inflation. It is an economic logic flaw with no sibling or omission structure."
+          },
+          "served_model": "claude-sonnet-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 8587,
+          "out_tok": 217
+        },
+        {
+          "reader": "B",
+          "model": "claude-haiku-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "out_of_class",
+            "pattern": null,
+            "would_catch_with": [],
+            "obligation_site": null,
+            "rationale": "Root cause is a math defect: settlement and trade fees are composed multiplicatively (1-s)(1-t) in toSharesGlobal via _withoutSettlementFee then _withSpread, instead of additively (1-s-t). No parameter, guard, or sibling omission is involved."
+          },
+          "served_model": "claude-haiku-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 8608,
+          "out_tok": 467
+        }
+      ]
+    },
+    {
+      "finding_id": "2024-02-perennial-v2-3:M-10",
+      "contest": "2024-02-perennial-v2-3",
+      "severity": "M",
+      "final": {
+        "class": "in_class",
+        "pattern": "param_unread",
+        "would_catch_with": [
+          "existing_detector_gap"
+        ],
+        "obligation_site": null,
+        "needs_tiebreak": true,
+        "n_readers": 3,
+        "n_valid": 3,
+        "low_confidence": false,
+        "capability_split": false
+      },
+      "calls": [
+        {
+          "reader": "A",
+          "model": "claude-sonnet-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "in_class",
+            "pattern": "param_unread",
+            "would_catch_with": [
+              "existing_detector_gap"
+            ],
+            "obligation_site": null,
+            "rationale": "ChainlinkFactory._applicableValue leaves the numRequested parameter unnamed and unread. It sums fees for every payload, so non-requested versions get paid too. The override ignores a parameter that its interface supplies for this purpose."
+          },
+          "served_model": "claude-sonnet-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 4201,
+          "out_tok": 240
+        },
+        {
+          "reader": "B",
+          "model": "claude-haiku-5-5",
+          "effort": "low",
+          "status": "ok",
+          "data": {
+            "class": "in_class",
+            "pattern": "param_unread",
+            "would_catch_with": [
+              "existing_detector_gap",
+              "cross_file_or_dependency_visibility"
+            ],
+            "obligation_site": null,
+            "rationale": "_applicableValue takes numRequested but leaves it unnamed and unread, so fees are summed over all payloads. The protocol requires fees only for requested versions. The fix scales by numRequested, which the finding says a peer or base handles, but no site is named."
+          },
+          "served_model": "claude-haiku-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 4229,
+          "out_tok": 635
+        },
+        {
+          "reader": "C",
+          "model": "claude-opus-5-5",
+          "effort": "medium",
+          "status": "ok",
+          "data": {
+            "class": "in_class",
+            "pattern": "param_unread",
+            "would_catch_with": [
+              "existing_detector_gap"
+            ],
+            "obligation_site": null,
+            "rationale": "ChainlinkFactory._applicableValue overrides the base hook but leaves the numRequested parameter unnamed and unread. It sums fees over all payloads, so non-requested versions are charged keeper fees too, against the protocol definition."
+          },
+          "served_model": "claude-opus-5-5",
+          "fallback_ran": false,
+          "refusal_category": null,
+          "in_tok": 4201,
+          "out_tok": 562
+        }
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "contest": "2024-06-new-scope",
+      "finding_id": "2024-06-new-scope:M-2",
+      "stage": "obligation_site",
+      "obligation_site": "Morpho's SharesMathLib (morpho-blue src/libraries/SharesMathLib.sol), which sets VIRTUAL_SHARES and VIRTUAL_ASSETS to nonzero values",
+      "error": "unresolved: no file in the clone matches \"Morpho's SharesMathLib (morpho-blue src/libraries/SharesMathLib.sol), which sets VIRTUAL_SHARES and VIRTUAL_ASSETS to nonzero values\""
+    },
+    {
+      "contest": "2024-06-new-scope",
+      "finding_id": "2024-06-new-scope:M-13",
+      "stage": "obligation_site",
+      "obligation_site": "https://github.com/morpho-org/metamorpho/blob/cc6b01610c9b0000d965faef705e1670859d9c0f/src/MetaMorpho.sol#L382-L389",
+      "error": "unresolved: no file in the clone matches 'src/MetaMorpho.sol'"
+    }
+  ]
+}

@@ -1,0 +1,305 @@
+{
+  "agreement": {
+    "class": {
+      "kappa": 0.5348017621145376,
+      "n": 48,
+      "raw": 0.7708333333333334
+    },
+    "n_both_ok": 48,
+    "pattern": {
+      "kappa": 0.9342806394316164,
+      "n": 37,
+      "raw": 0.972972972972973
+    },
+    "would_catch_with": {
+      "mean_jaccard": 0.7465277777777778,
+      "n": 48
+    }
+  },
+  "class_coverage": {
+    "by_severity": {
+      "H": {
+        "adjacent": {
+          "count": 2,
+          "share": 0.11764705882352941
+        },
+        "in_class": {
+          "count": 5,
+          "share": 0.29411764705882354
+        },
+        "n": 17,
+        "out_of_class": {
+          "count": 10,
+          "share": 0.5882352941176471
+        },
+        "unlabeled": {
+          "count": 0,
+          "share": 0.0
+        }
+      },
+      "M": {
+        "adjacent": {
+          "count": 5,
+          "share": 0.16129032258064516
+        },
+        "in_class": {
+          "count": 5,
+          "share": 0.16129032258064516
+        },
+        "n": 31,
+        "out_of_class": {
+          "count": 21,
+          "share": 0.6774193548387096
+        },
+        "unlabeled": {
+          "count": 0,
+          "share": 0.0
+        }
+      }
+    },
+    "overall": {
+      "adjacent": {
+        "count": 7,
+        "share": 0.14583333333333334
+      },
+      "in_class": {
+        "count": 10,
+        "share": 0.20833333333333334
+      },
+      "n": 48,
+      "out_of_class": {
+        "count": 31,
+        "share": 0.6458333333333334
+      },
+      "unlabeled": {
+        "count": 0,
+        "share": 0.0
+      }
+    }
+  },
+  "engine_commit": "3ebdabd",
+  "label_errors": [
+    {
+      "contest": "2024-06-new-scope",
+      "error": "unresolved: no file in the clone matches \"Morpho's SharesMathLib (morpho-blue src/libraries/SharesMathLib.sol), which sets VIRTUAL_SHARES and VIRTUAL_ASSETS to nonzero values\"",
+      "finding_id": "2024-06-new-scope:M-2",
+      "obligation_site": "Morpho's SharesMathLib (morpho-blue src/libraries/SharesMathLib.sol), which sets VIRTUAL_SHARES and VIRTUAL_ASSETS to nonzero values",
+      "stage": "obligation_site"
+    },
+    {
+      "contest": "2024-06-new-scope",
+      "error": "unresolved: no file in the clone matches 'src/MetaMorpho.sol'",
+      "finding_id": "2024-06-new-scope:M-13",
+      "obligation_site": "https://github.com/morpho-org/metamorpho/blob/cc6b01610c9b0000d965faef705e1670859d9c0f/src/MetaMorpho.sol#L382-L389",
+      "stage": "obligation_site"
+    }
+  ],
+  "miss_buckets": {
+    "empty_tags": {
+      "capability_split_false": {
+        "H": 0,
+        "M": 0
+      },
+      "capability_split_true": {
+        "H": 2,
+        "M": 1
+      }
+    },
+    "n_misses": 17,
+    "tags": {
+      "cross_file_or_dependency_visibility": {
+        "H": 1,
+        "M": 2,
+        "solo": 2,
+        "total": 3
+      },
+      "existing_detector_gap": {
+        "H": 0,
+        "M": 1,
+        "solo": 1,
+        "total": 1
+      },
+      "fork_upstream_diff": {
+        "H": 0,
+        "M": 2,
+        "solo": 1,
+        "total": 2
+      },
+      "none_of_these": {
+        "H": 2,
+        "M": 1,
+        "solo": 3,
+        "total": 3
+      },
+      "safety_param_weighting": {
+        "H": 0,
+        "M": 1,
+        "solo": 1,
+        "total": 1
+      },
+      "sibling_guard_asymmetry": {
+        "H": 2,
+        "M": 3,
+        "solo": 5,
+        "total": 5
+      }
+    }
+  },
+  "n_findings": 48,
+  "next_build": {
+    "candidates": [
+      "sibling_guard_asymmetry",
+      "cross_file_or_dependency_visibility"
+    ],
+    "no_new_parser_candidates": [
+      "sibling_guard_asymmetry"
+    ],
+    "note": "needs no new parser: sibling_guard_asymmetry; needs a new parser: cross_file_or_dependency_visibility",
+    "preference": "no_new_parser",
+    "tie": true
+  },
+  "operational": {
+    "analyzer_by_contest": [
+      {
+        "all_findings_count": 60,
+        "error": null,
+        "n_findings": 33,
+        "name": "2025-06-superfluid-locker-system"
+      },
+      {
+        "all_findings_count": 46,
+        "error": null,
+        "n_findings": 9,
+        "name": "2024-04-alchemix"
+      },
+      {
+        "all_findings_count": 10,
+        "error": null,
+        "n_findings": 3,
+        "name": "2024-06-new-scope"
+      },
+      {
+        "all_findings_count": 5,
+        "error": null,
+        "n_findings": 5,
+        "name": "2024-02-perennial-v2-3"
+      }
+    ],
+    "capability_split": 3,
+    "fallback_ran_by_model": {},
+    "invalid_by_model": {},
+    "invalid_total": 0,
+    "low_confidence": 0,
+    "n_calls": 120,
+    "refusals_by_model": {},
+    "tokens_and_cost_by_model": {
+      "claude-haiku-5-5": {
+        "est_usd": 0.046252800000000004,
+        "in_tok": 310308,
+        "out_tok": 30444,
+        "priced": true
+      },
+      "claude-opus-5-5": {
+        "est_usd": 0.519664,
+        "in_tok": 82511,
+        "out_tok": 9481,
+        "priced": true
+      },
+      "claude-sonnet-5-5": {
+        "est_usd": 0.832236,
+        "in_tok": 348253,
+        "out_tok": 13573,
+        "priced": true
+      }
+    },
+    "total_est_usd": 1.3981528,
+    "unlabeled": 0,
+    "unpriced_calls": 0
+  },
+  "outcome": {
+    "based_on": "full",
+    "spot_check_present": false,
+    "value": "inconclusive:low|partial"
+  },
+  "partial": {
+    "candidates": false,
+    "labels": false,
+    "same_defect": false
+  },
+  "recall": {
+    "ci": [
+      0.0,
+      0.2775401687666166
+    ],
+    "cls": "in_class",
+    "full": {
+      "ci": [
+        0.0,
+        0.2775401687666166
+      ],
+      "k": 0,
+      "n": 10,
+      "rate": 0.0
+    },
+    "full_human": {
+      "ci": [
+        0.0,
+        0.2775401687666166
+      ],
+      "k": 0,
+      "n": 10,
+      "rate": 0.0
+    },
+    "hit_ids": [],
+    "hit_ids_human": [],
+    "n": 10,
+    "strict": {
+      "ci": [
+        0.0,
+        0.2775401687666166
+      ],
+      "k": 0,
+      "n": 10,
+      "rate": 0.0
+    }
+  },
+  "recall_adjacent": {
+    "ci": [
+      0.0,
+      0.3903430336530645
+    ],
+    "cls": "adjacent",
+    "full": {
+      "ci": [
+        0.0,
+        0.3903430336530645
+      ],
+      "k": 0,
+      "n": 6,
+      "rate": 0.0
+    },
+    "full_human": {
+      "ci": [
+        0.0,
+        0.3903430336530645
+      ],
+      "k": 0,
+      "n": 6,
+      "rate": 0.0
+    },
+    "hit_ids": [],
+    "hit_ids_human": [],
+    "n": 6,
+    "strict": {
+      "ci": [
+        0.0,
+        0.3903430336530645
+      ],
+      "k": 0,
+      "n": 6,
+      "rate": 0.0
+    }
+  },
+  "set": "dev",
+  "small_sample_note": "n=10 in_class findings; Wilson 95% CI [0.000, 0.278]. Sample not topped up or altered (spec section 5)."
+}
