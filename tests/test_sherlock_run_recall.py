@@ -225,7 +225,7 @@ def test_production_counts_skips_sol_named_directories(tmp_path):
     d = tmp_path / "broadcast" / "Deploy.s.sol"
     d.mkdir(parents=True)
     (d / "run-latest.json").write_text("{}", encoding="utf-8")
-    (tmp_path / "src" / "Deploy.s.sol").mkdir()  # production-looking path, still a directory
+    (tmp_path / "src" / "Lib.sol").mkdir()  # production-looking path, still a directory
     assert run_recall._production_counts(tmp_path) == (1, 3)
 
 
