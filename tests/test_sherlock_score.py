@@ -220,3 +220,17 @@ def test_main_writes_summary_and_prints_one_line(tmp_path, capsys):
     score.main(["--set", "dev", "--dir", str(tmp_path)])
     s = json.loads((tmp_path / "summary_dev.json").read_text(encoding="utf-8"))
     assert s["outcome"]["based_on"] == "full_human" and s["recall"]["full_human"]["k"] == 1
+
+
+def test_cost_uses_served_model_and_flags_unpriced():
+    labels = [{"finding_id": "1", "severity": "H", "final": {"class": "in_class"},
+               "calls": [call("A", None, fallback_ran=True, served_model="claude-opus-5-5"),
+                         call("B", None, model="mystery-model", served_model="mystery-model")]}]
+    op = score.operational(labels, [], {})
+    pi, po = llm.PRICES["claude-opus-5-5"]
+    cost = op["tokens_and_cost_by_model"]
+    assert "claude-sonnet-5-5" not in cost
+    assert cost["claude-opus-5-5"]["est_usd"] == pytest.approx((1000 * pi + 100 * po) / 1e6)
+    assert op["fallback_ran_by_model"] == {"claude-sonnet-5-5": 1}  # still the requested model
+    assert cost["mystery-model"]["priced"] is False and op["unpriced_calls"] == 1
+    assert op["total_est_usd"] == pytest.approx(cost["claude-opus-5-5"]["est_usd"])

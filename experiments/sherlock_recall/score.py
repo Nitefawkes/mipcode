@@ -235,13 +235,15 @@ def agreement(labels: list[dict]) -> dict:
 # ------------------------------------------------------------------ operational counts
 
 def operational(labels: list[dict], same_defect: list[dict], hits: dict) -> dict:
-    """Counts keyed by the REQUESTED model (the call record's `model`), as the cost ledger charges."""
+    """Refusal/invalid/fallback counts are keyed by the requested model; tokens and cost by the billed
+    model (`served_model` if priced, else requested), exactly as the ledger charges."""
     calls = [c for r in labels for c in r.get("calls", [])]
     calls += [r["call"] for r in same_defect if isinstance(r.get("call"), dict)]
     refusals: dict = defaultdict(Counter)
     fallback: Counter = Counter()
     invalid: Counter = Counter()
     tokens: dict = defaultdict(lambda: {"in_tok": 0, "out_tok": 0})
+    unpriced = 0
     for c in calls:
         m = c.get("model", "?")
         if c.get("status") == "refused":
@@ -250,8 +252,12 @@ def operational(labels: list[dict], same_defect: list[dict], hits: dict) -> dict
             invalid[m] += 1
         if c.get("fallback_ran"):
             fallback[m] += 1
-        tokens[m]["in_tok"] += c.get("in_tok") or 0
-        tokens[m]["out_tok"] += c.get("out_tok") or 0
+        served = c.get("served_model")
+        billed = served if served in PRICES else m  # same rule as the ledger (llm.Reader.call)
+        tokens[billed]["in_tok"] += c.get("in_tok") or 0
+        tokens[billed]["out_tok"] += c.get("out_tok") or 0
+        if billed not in PRICES:
+            unpriced += 1
     cost = {}
     for m, t in sorted(tokens.items()):
         pi, po = PRICES.get(m, (0.0, 0.0))
@@ -267,6 +273,7 @@ def operational(labels: list[dict], same_defect: list[dict], hits: dict) -> dict
         "capability_split": sum(1 for f in finals if f.get("capability_split")),
         "unlabeled": sum(1 for f in finals if f.get("class") is None),
         "tokens_and_cost_by_model": cost,
+        "unpriced_calls": unpriced,
         "total_est_usd": sum(v["est_usd"] for v in cost.values()),
         "analyzer_by_contest": [
             {"name": c.get("name"), "n_findings": len(c.get("findings", [])),
