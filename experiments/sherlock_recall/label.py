@@ -15,6 +15,7 @@ import re
 import sys
 from collections import Counter
 from pathlib import Path
+from urllib.parse import unquote
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -76,6 +77,11 @@ def prompt_sha(prompt: str, schema: dict) -> str:
     """Cache-busting hash: editing the prompt or the schema invalidates cached answers."""
     blob = prompt + json.dumps(schema, sort_keys=True)
     return hashlib.sha256(blob.encode("utf-8")).hexdigest()
+
+
+def input_sha16(user: str) -> str:
+    """Ruling R15(b): cache keys carry a hash of the exact user text, so a changed input never hits."""
+    return hashlib.sha256(user.encode("utf-8")).hexdigest()[:16]
 
 
 CLASS_SHA = prompt_sha(CLASS_PROMPT, CLASS_SCHEMA)
@@ -197,15 +203,31 @@ def _majority(values: list, tiebreak_value):
 
 
 def consensus(labels: list[dict | None]) -> dict:
-    """Final label from 2 (A, B) or 3 (A, B, tie-breaker) labels; None = refused or invalid reader."""
+    """Final label from 2 (A, B) or 3 (A, B, tie-breaker) labels; None = refused or invalid reader.
+
+    Ruling R16: `class` is the majority of the valid labels (else the tie-breaker's, which may
+    be None = unlabeled). `pattern`, `would_catch_with` and `obligation_site` come only from
+    readers whose class equals the final class (in order A, B, C).
+    """
     valid = [x for x in labels if x is not None]
     third = labels[2] if len(labels) >= 3 and labels[2] is not None else None
     final_class = _majority([x["class"] for x in valid], third["class"] if third else None)
-    final_pattern = _majority([x.get("pattern") for x in valid], third.get("pattern") if third else None)
-    tags = Counter(t for x in valid for t in set(x.get("would_catch_with") or []))
-    wcw = sorted(t for t, n in tags.items() if n >= 2)
-    obligation = next((x.get("obligation_site") for x in labels
-                       if x is not None and x["class"] == final_class and x.get("obligation_site")), None)
+    matching = [x for x in valid if final_class is not None and x["class"] == final_class]
+
+    final_pattern = None
+    wcw: list[str] = []
+    capability_split = False
+    if matching and final_class != "out_of_class":
+        fallback = third if third is not None and third["class"] == final_class else matching[0]
+        final_pattern = _majority([x.get("pattern") for x in matching], fallback.get("pattern"))
+        if len(matching) == 1:
+            wcw = sorted(set(matching[0].get("would_catch_with") or []))
+        else:
+            tags = Counter(t for x in matching for t in set(x.get("would_catch_with") or []))
+            wcw = sorted(t for t, n in tags.items() if n >= 2)
+            capability_split = not wcw and bool(tags)
+    obligation = None if final_class == "out_of_class" else next(
+        (x.get("obligation_site") for x in matching if x.get("obligation_site")), None)
     a, b = (labels + [None, None])[:2]
     needs_tiebreak = (
         a is None or b is None
@@ -221,6 +243,8 @@ def consensus(labels: list[dict | None]) -> dict:
         "needs_tiebreak": needs_tiebreak,
         "n_readers": len(labels),
         "n_valid": len(valid),
+        "low_confidence": len(valid) == 1,
+        "capability_split": capability_split,
     }
 
 
@@ -233,7 +257,8 @@ def _contest_of(finding_id: str) -> str:
 
 def _call_class(reader, who: str, model_effort: tuple[str, str], f: JudgedFinding, user: str):
     model, effort = model_effort
-    res = reader.call(model, effort, CLASS_PROMPT, user, CLASS_SCHEMA, f"{model}:{f.finding_id}:{CLASS_SHA}")
+    key = f"{model}:{f.finding_id}:{CLASS_SHA}:{input_sha16(user)}"
+    res = reader.call(model, effort, CLASS_PROMPT, user, CLASS_SCHEMA, key)
     record = {"reader": who, "model": model, "effort": effort, **dataclasses.asdict(res)}
     return record, _valid_label(res.data if res.status == "ok" else None)
 
@@ -262,27 +287,61 @@ def label_findings(findings, sources: dict[str, str], reader, out: list | None =
 # ------------------------------------------------------------------ candidates & same-defect
 
 
-def _obligation_path(final: dict) -> str | None:
-    site = final.get("obligation_site")
-    if not site:
-        return None
-    path = norm_path(site.split("#", 1)[0].strip())
-    return path or None
+_PERMALINK_PATH_RE = re.compile(r"github\.com/[^/\s]+/[^/\s]+/blob/[^/\s]+/([^#?\s>)`]+)")
+_LINE_SUFFIX_RE = re.compile(r"(?:[:\s]+L?\d+(?:\s*-\s*L?\d+)?)$")
+
+
+def resolve_obligation_path(site: str | None, repo_files) -> tuple[str | None, str | None]:
+    """Map a reader's `obligation_site` to a repo-relative path among `repo_files`.
+
+    Accepts `path#Lnn`, a GitHub permalink (any ref), a bare or partial file name
+    (resolved by a unique path-suffix match), and `path:Lnn`. Returns (path, None) or
+    (None, reason) when the site can't be resolved to exactly one file.
+    """
+    if not site or not site.strip():
+        return None, None
+    raw = site.strip().strip("`<>\"' ")
+    m = _PERMALINK_PATH_RE.search(raw)
+    path = unquote(m.group(1)) if m else raw.split("#", 1)[0]
+    path = norm_path(_LINE_SUFFIX_RE.sub("", path.strip().strip("`<>\"' ")))
+    if not path:
+        return None, f"unresolved: no path in {site!r}"
+    files = {norm_path(p) for p in repo_files}
+    if path in files:
+        return path, None
+    hits = sorted(p for p in files if p.endswith("/" + path))
+    if len(hits) == 1:
+        return hits[0], None
+    if not hits:
+        return None, f"unresolved: no file in the clone matches {path!r}"
+    return None, f"ambiguous: {path!r} matches {len(hits)} files"
 
 
 def build_candidates(label_rows: list[dict], findings, analyzer_findings: list[dict],
-                     sources: dict[str, str]) -> list[dict]:
-    """Candidate rows for findings whose final class is in_class or adjacent (Ruling R12)."""
+                     sources: dict[str, str], repo_files=None, errors: list | None = None) -> list[dict]:
+    """Candidate rows for findings whose final class is in_class or adjacent (Ruling R12).
+
+    `repo_files` lists the clone's `.sol` paths used to resolve obligation sites; it defaults
+    to every path the sources, sites and analyzer findings mention. Unresolved obligation
+    sites are appended to `errors`.
+    """
     by_id = {f.finding_id: f for f in findings}
     prod_sources = {norm_path(k): v for k, v in sources.items() if is_production_sol(k)}
+    if repo_files is None:
+        repo_files = (set(sources) | {s.path for f in findings for s in f.sites if not s.external}
+                      | {a.get("path", "") for a in analyzer_findings})
     rows: list[dict] = []
     for lr in label_rows:
         final = lr["final"]
         f = by_id.get(lr["finding_id"])
         if f is None or final.get("class") not in CHECKED_CLASSES:
             continue
-        cands = candidates_for(f.finding_id, list(f.sites), _obligation_path(final),
-                               analyzer_findings, prod_sources)
+        obl_path, why = resolve_obligation_path(final.get("obligation_site"), repo_files)
+        if why is not None and errors is not None:
+            errors.append({"contest": _contest_of(f.finding_id), "finding_id": f.finding_id,
+                           "stage": "obligation_site", "obligation_site": final.get("obligation_site"),
+                           "error": why})
+        cands = candidates_for(f.finding_id, list(f.sites), obl_path, analyzer_findings, prod_sources)
         for i, c in enumerate(cands):
             rows.append({"finding_id": c.finding_id, "index": i, "closeness": c.closeness,
                          "site": dataclasses.asdict(c.site) if c.site is not None else None,
@@ -299,7 +358,7 @@ def check_candidates(cands: list[dict], findings, sources: dict[str, str], reade
     for cand in cands:
         f = by_id[cand["finding_id"]]
         user = build_same_defect_input(f, cand, sources)
-        key = f"{model}:{f.finding_id}:{cand['index']}:{SAME_DEFECT_SHA}"
+        key = f"{model}:{f.finding_id}:{cand['index']}:{SAME_DEFECT_SHA}:{input_sha16(user)}"
         res = reader.call(model, effort, SAME_DEFECT_PROMPT, user, SAME_DEFECT_SCHEMA, key)
         data = res.data if res.status == "ok" and isinstance(res.data, dict) else {}
         verdict = data.get("verdict") if data.get("verdict") in VERDICTS else None
@@ -332,6 +391,17 @@ def load_sources(clone: Path, paths) -> dict[str, str]:
     return out
 
 
+def list_sol_files(clone: Path) -> list[str]:
+    """Repo-relative POSIX paths of every `.sol` file in a clone (outside `.git`)."""
+    root = Path(clone)
+    out = []
+    for p in root.rglob("*.sol"):
+        rel = p.relative_to(root).as_posix()
+        if rel.split("/")[0] != ".git" and p.is_file():
+            out.append(rel)
+    return sorted(out)
+
+
 def _scrub(msg: str) -> str:
     return re.sub(r"(?:[A-Za-z]:[/\\][^\s'\"]*|file://\S*)", "<path>", msg)
 
@@ -361,7 +431,7 @@ def main(argv=None, reader=None) -> int:
     if reader is None:
         reader = Reader(make_client(), CostLedger(cache / "ledger.json", cap_usd=CAP_USD), cache / "llm")
 
-    work = []  # (contest, findings, analyzer findings, sources)
+    work = []  # (contest, findings, analyzer findings, sources, repo .sol files)
     errors: list[dict] = []
     for c in contests:
         findings = [finding_from_dict(d) for d in c["findings"]]
@@ -372,22 +442,26 @@ def main(argv=None, reader=None) -> int:
         analyzer = [] if "error" in entry else list(entry.get("findings", []))
         paths = [s.path for f in findings for s in f.sites if not s.external] + [a.get("path", "") for a in analyzer]
         try:
-            sources = load_sources(clone_at(c["companion_repo"], c["resolved_sha"], cache / "clones"), paths)
-        except Exception as exc:  # per-contest isolation: label without code rather than abort
-            errors.append({"contest": c["name"], "stage": "clone", "error": _scrub(f"{type(exc).__name__}: {exc}")})
-            sources = {}
-        work.append((c["name"], findings, analyzer, sources))
+            clone = clone_at(c["companion_repo"], c["resolved_sha"], cache / "clones")
+            sources = load_sources(clone, paths)
+            repo_files = list_sol_files(clone)
+        except Exception as exc:  # Ruling R15(a): skip the contest; never pay for code-less labels
+            errors.append({"contest": c["name"], "stage": "clone", "n_findings_skipped": len(findings),
+                           "error": _scrub(f"{type(exc).__name__}: {exc}")})
+            continue
+        work.append((c["name"], findings, analyzer, sources, repo_files))
 
     label_rows: list[dict] = []
     cand_rows: list[dict] = []
     sd_rows: list[dict] = []
     partial = False
     try:
-        for _, findings, _, sources in work:
+        for _, findings, _, sources, _ in work:
             label_findings(findings, sources, reader, out=label_rows)
-        for _, findings, analyzer, sources in work:
+        for _, findings, analyzer, sources, repo_files in work:
             ids = {f.finding_id for f in findings}
-            cands = build_candidates([r for r in label_rows if r["finding_id"] in ids], findings, analyzer, sources)
+            cands = build_candidates([r for r in label_rows if r["finding_id"] in ids], findings, analyzer,
+                                     sources, repo_files=repo_files, errors=errors)
             cand_rows.extend(cands)
             check_candidates(cands, findings, sources, reader, out=sd_rows)
     except BudgetExceeded as exc:

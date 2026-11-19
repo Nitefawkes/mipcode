@@ -1,6 +1,7 @@
 """Blind class labeling, consensus, and same-defect checks (no network, no clones)."""
 from __future__ import annotations
 
+import hashlib
 import importlib
 import json
 import sys
@@ -32,6 +33,10 @@ CAPABILITIES = ["sibling_guard_asymmetry", "safety_param_weighting", "cross_file
 SONNET, HAIKU, OPUS = "claude-sonnet-5-5", "claude-haiku-5-5", "claude-opus-5-5"
 REPO = "sherlock-audit/2025-01-demo"
 SHA = "a" * 40
+
+
+def h16(text: str) -> str:
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()[:16]
 
 
 def src_lines(n: int, tag: str = "line") -> str:
@@ -215,7 +220,7 @@ def test_consensus_two_agreeing_readers():
     assert out == {"class": "in_class", "pattern": "param_unread",
                    "would_catch_with": ["fork_upstream_diff", "safety_param_weighting"],
                    "obligation_site": "src/A.sol#L10", "needs_tiebreak": False, "n_readers": 2,
-                   "n_valid": 2}
+                   "n_valid": 2, "low_confidence": False, "capability_split": False}
 
 
 def test_consensus_drops_tag_chosen_by_one_reader():
@@ -224,8 +229,123 @@ def test_consensus_drops_tag_chosen_by_one_reader():
     assert label.consensus([a, b])["would_catch_with"] == ["safety_param_weighting"]
     c = lab(wcw=("existing_detector_gap",))
     assert label.consensus([a, b, c])["would_catch_with"] == ["safety_param_weighting"]
-    # with A refused, both remaining readers must choose a tag
-    assert label.consensus([None, b, c])["would_catch_with"] == []
+    # with A refused, both remaining class-matching readers must choose a tag
+    out = label.consensus([None, b, c])
+    assert out["would_catch_with"] == [] and out["capability_split"] is True
+
+
+# --- Ruling R16: pattern and tags are conditioned on the final class
+
+
+def test_r16_tags_split_between_class_matching_readers():
+    a = lab(cls="in_class", wcw=("sibling_guard_asymmetry",))
+    b = lab(cls="out_of_class", pattern=None, wcw=())
+    c = lab(cls="in_class", wcw=("fork_upstream_diff",))
+    out = label.consensus([a, b, c])
+    assert out["class"] == "in_class" and out["would_catch_with"] == [] and out["capability_split"] is True
+    assert out["low_confidence"] is False
+
+
+def test_r16_no_class_majority_out_of_class_tiebreaker_nulls_pattern():
+    a = lab(cls="in_class", pattern="param_unread")
+    b = lab(cls="adjacent", pattern="param_unread")
+    c = lab(cls="out_of_class", pattern=None, wcw=())
+    out = label.consensus([a, b, c])
+    assert out["class"] == "out_of_class" and out["pattern"] is None and out["would_catch_with"] == []
+    assert out["capability_split"] is False
+
+
+def test_r16_out_of_class_final_forces_null_pattern_and_no_tags():
+    a = lab(cls="out_of_class", pattern="other", wcw=("none_of_these",))
+    b = lab(cls="out_of_class", pattern="other", wcw=("none_of_these",))
+    out = label.consensus([a, b])
+    assert out["class"] == "out_of_class" and out["pattern"] is None and out["would_catch_with"] == []
+
+
+def test_r16_pattern_and_tags_only_from_class_matching_readers():
+    # B's pattern/tags must not leak into the final label: B disagrees on class
+    a = lab(cls="adjacent", pattern="hardcoded_safety_param", wcw=("safety_param_weighting",))
+    b = lab(cls="in_class", pattern="param_unread", wcw=("existing_detector_gap",))
+    c = lab(cls="adjacent", pattern="hardcoded_safety_param", wcw=("safety_param_weighting",))
+    out = label.consensus([a, b, c])
+    assert out["class"] == "adjacent" and out["pattern"] == "hardcoded_safety_param"
+    assert out["would_catch_with"] == ["safety_param_weighting"]
+
+
+def test_r16_pattern_tie_uses_tiebreaker_when_it_matches_class():
+    a = lab(pattern="param_unread", wcw=("safety_param_weighting",))
+    b = lab(pattern="dead_state", wcw=("safety_param_weighting",))
+    c = lab(pattern="param_not_forwarded", wcw=("safety_param_weighting",))
+    out = label.consensus([a, b, c])
+    assert out["pattern"] == "param_not_forwarded"
+
+
+def test_r16_pattern_tie_falls_back_to_first_matching_reader():
+    a = lab(pattern="param_unread", wcw=("safety_param_weighting",))
+    b = lab(pattern="dead_state", wcw=("safety_param_weighting",))
+    c = lab(cls="out_of_class", pattern=None, wcw=())
+    out = label.consensus([a, b, c])
+    assert out["class"] == "in_class" and out["pattern"] == "param_unread"
+    assert out["would_catch_with"] == ["safety_param_weighting"] and out["capability_split"] is False
+
+
+def test_r16_single_class_matching_reader_supplies_its_tags():
+    a = lab(cls="adjacent", pattern="other", wcw=("cross_file_or_dependency_visibility",))
+    b = lab(cls="out_of_class", pattern=None, wcw=())
+    c = lab(cls="adjacent", pattern="hardcoded_safety_param", wcw=())
+    out = label.consensus([a, b, c])
+    # two readers match adjacent; no tag reaches 2 votes -> split
+    assert out["class"] == "adjacent" and out["would_catch_with"] == [] and out["capability_split"] is True
+    # A refused, B and C split on class -> tie-breaker C decides; C is the only matching reader
+    b2 = lab(cls="adjacent", pattern="other", wcw=("safety_param_weighting",))
+    c2 = lab(cls="in_class", pattern="param_unread", wcw=("existing_detector_gap", "fork_upstream_diff"))
+    out2 = label.consensus([None, b2, c2])
+    assert out2["class"] == "in_class" and out2["pattern"] == "param_unread"
+    assert out2["would_catch_with"] == ["existing_detector_gap", "fork_upstream_diff"]
+    assert out2["capability_split"] is False and out2["low_confidence"] is False
+    # two matching readers agree on one tag, extra single-vote tags dropped
+    d = lab(cls="adjacent", pattern="other", wcw=("cross_file_or_dependency_visibility",))
+    e = lab(cls="in_class", wcw=("sibling_guard_asymmetry",))
+    g = lab(cls="adjacent", pattern="other", wcw=("cross_file_or_dependency_visibility", "none_of_these"))
+    out4 = label.consensus([e, d, g])
+    assert out4["would_catch_with"] == ["cross_file_or_dependency_visibility"]
+
+
+def test_r16_exactly_one_matching_reader_tags_used():
+    a = lab(cls="in_class", pattern="param_unread", wcw=("existing_detector_gap", "fork_upstream_diff"))
+    b = lab(cls="adjacent", pattern="other", wcw=("safety_param_weighting",))
+    c = lab(cls="in_class", pattern="dead_state", wcw=("safety_param_weighting",))
+    # in_class by majority (A, C); now a 2-label case where only A is valid and matches
+    out = label.consensus([a, None])
+    assert out["class"] == "in_class"
+    assert out["would_catch_with"] == ["existing_detector_gap", "fork_upstream_diff"]
+    assert out["capability_split"] is False
+    out3 = label.consensus([a, b, c])
+    assert out3["pattern"] == "dead_state"  # pattern tie among A, C -> tie-breaker C matches class
+
+
+def test_r16_one_valid_label_of_three_is_taken_in_full_with_low_confidence():
+    b = lab(cls="adjacent", pattern="branch_zero_value", wcw=("existing_detector_gap", "none_of_these"),
+            obl="src/P.sol#L3")
+    out = label.consensus([None, b, None])
+    assert out["class"] == "adjacent" and out["pattern"] == "branch_zero_value"
+    assert out["would_catch_with"] == ["existing_detector_gap", "none_of_these"]
+    assert out["obligation_site"] == "src/P.sol#L3"
+    assert out["low_confidence"] is True and out["capability_split"] is False and out["n_valid"] == 1
+
+
+def test_r16_tiebreaker_refused_while_a_and_b_disagree_on_class():
+    a = lab(cls="in_class")
+    b = lab(cls="adjacent", pattern="other")
+    out = label.consensus([a, b, None])
+    assert out["class"] is None and out["pattern"] is None and out["would_catch_with"] == []
+    assert out["obligation_site"] is None
+    assert out["low_confidence"] is False and out["n_valid"] == 2
+
+
+def test_r16_both_matching_readers_choose_no_tags_is_not_a_split():
+    out = label.consensus([lab(wcw=()), lab(wcw=())])
+    assert out["would_catch_with"] == [] and out["capability_split"] is False
 
 
 def test_consensus_two_readers_disagree_on_class_or_pattern():
@@ -313,7 +433,19 @@ def test_label_cache_keys_include_model_finding_and_prompt_sha():
     r = FakeReader({SONNET: ok(lab()), HAIKU: ok(lab(), HAIKU)})
     label.label_findings([f], {}, r)
     sha = label.prompt_sha(label.CLASS_PROMPT, label.CLASS_SCHEMA)
-    assert [c["key"] for c in r.calls] == [f"{SONNET}:{f.finding_id}:{sha}", f"{HAIKU}:{f.finding_id}:{sha}"]
+    user = label.build_class_input(f, {})
+    assert r.calls[0]["user"] == user
+    assert [c["key"] for c in r.calls] == [f"{SONNET}:{f.finding_id}:{sha}:{h16(user)}",
+                                          f"{HAIKU}:{f.finding_id}:{sha}:{h16(user)}"]
+
+
+def test_label_cache_key_changes_when_reader_input_changes():
+    f = make_finding()
+    r1 = FakeReader({SONNET: ok(lab()), HAIKU: ok(lab(), HAIKU)})
+    r2 = FakeReader({SONNET: ok(lab()), HAIKU: ok(lab(), HAIKU)})
+    label.label_findings([f], {}, r1)
+    label.label_findings([f], {"src/Vault.sol": src_lines(100)}, r2)
+    assert r1.calls[0]["key"] != r2.calls[0]["key"]
 
 
 def test_refused_reader_a_gets_label_from_b_and_c():
@@ -375,10 +507,48 @@ def test_candidates_use_final_obligation_site():
     call = reader.calls[0]
     assert call["model"] == SONNET and call["effort"] == "medium"
     sha = label.prompt_sha(label.SAME_DEFECT_PROMPT, label.SAME_DEFECT_SCHEMA)
-    assert call["key"] == f"{SONNET}:{f.finding_id}:0:{sha}"
+    assert call["key"] == f"{SONNET}:{f.finding_id}:0:{sha}:{h16(call['user'])}"
     assert checked[0]["finding_id"] == f.finding_id and checked[0]["index"] == 0
     assert checked[0]["verdict"] == "same_defect" and checked[0]["rationale"] == "same"
     assert checked[0]["call"]["status"] == "ok"
+
+
+REPO_FILES = ["src/Vault.sol", "src/Base.sol", "src/Unrelated.sol", "src/a/Twin.sol", "src/b/Twin.sol"]
+
+
+@pytest.mark.parametrize("obl", [
+    f"https://github.com/{REPO}/blob/{SHA}/src/Base.sol#L4",
+    f"https://github.com/{REPO}/blob/main/src/Base.sol#L4-L9",
+    "<https://github.com/sherlock-audit/2025-01-demo/blob/main/src%2FBase.sol#L4>",
+    "Base.sol#L4",
+    "Base.sol",
+    "`Base.sol:L4`",
+    "./src\\Base.sol#L4",
+])
+def test_obligation_site_forms_resolve_to_repo_path(obl):
+    assert label.resolve_obligation_path(obl, REPO_FILES) == ("src/Base.sol", None)
+
+
+def test_obligation_site_permalink_and_bare_name_yield_candidates():
+    f = make_finding(sites=(Site(REPO, SHA, "src/Vault.sol", 5, 5, False),))
+    a_obl = analyzer("src/Base.sol", 4)
+    for obl in (f"https://github.com/{REPO}/blob/{SHA}/src/Base.sol#L4", "Base.sol#L4"):
+        errors: list = []
+        cands = label.build_candidates([label_row(f, obl=obl)], [f], [a_obl], {"src/Base.sol": VAULT},
+                                       repo_files=REPO_FILES, errors=errors)
+        assert [(c["closeness"], c["analyzer"]["path"]) for c in cands] == [("file", "src/Base.sol")], obl
+        assert errors == []
+
+
+def test_unresolved_or_ambiguous_obligation_site_is_recorded():
+    f = make_finding(sites=(Site(REPO, SHA, "src/Vault.sol", 5, 5, False),))
+    for obl, why in (("Missing.sol#L1", "unresolved"), ("Twin.sol#L2", "ambiguous")):
+        errors: list = []
+        label.build_candidates([label_row(f, obl=obl)], [f], [analyzer("src/a/Twin.sol", 2)], {},
+                               repo_files=REPO_FILES, errors=errors)
+        assert len(errors) == 1 and errors[0]["finding_id"] == f.finding_id
+        assert errors[0]["stage"] == "obligation_site" and why in errors[0]["error"]
+        assert errors[0]["obligation_site"] == obl
 
 
 def test_candidates_without_obligation_site_skip_obligation_file():
@@ -483,7 +653,8 @@ def test_main_budget_exceeded_writes_partial_and_returns_2(tmp_path, monkeypatch
     assert [r["finding_id"] for r in labels["rows"]] == ["2025-01-demo:H-1"]
 
 
-def test_main_clone_failure_still_labels_with_unavailable_source(tmp_path, monkeypatch):
+def test_main_clone_failure_skips_contest_and_records_error(tmp_path, monkeypatch):
+    """Ruling R15(a): no code-less labels are paid for or cached."""
     f = make_finding(sites=(Site(REPO, SHA, "src/Vault.sol", 5, 5, False),))
     _write_inputs(tmp_path, [f], [])
 
@@ -493,9 +664,38 @@ def test_main_clone_failure_still_labels_with_unavailable_source(tmp_path, monke
     monkeypatch.setattr(label, "clone_at", boom)
     reader = FakeReader({SONNET: ok(lab()), HAIKU: ok(lab(), HAIKU)})
     assert label.main(["--set", "dev", "--out", str(tmp_path)], reader=reader) == 0
-    assert "[source unavailable]" in reader.calls[0]["user"]
+    assert reader.calls == []
     labels = json.loads((tmp_path / "labels_dev.json").read_text(encoding="utf-8"))
-    assert labels["errors"] and "secret" not in json.dumps(labels)
+    assert labels["rows"] == []
+    clone_errors = [e for e in labels["errors"] if e["stage"] == "clone"]
+    assert clone_errors and clone_errors[0]["contest"] == "2025-01-demo"
+    assert "secret" not in json.dumps(labels)
+
+
+def test_main_resolves_permalink_obligation_site_against_clone(tmp_path, monkeypatch):
+    f = make_finding(sites=(Site(REPO, SHA, "src/Vault.sol", 5, 5, False),))
+    a_obl = analyzer("pkg/core/Base.sol", 4)
+    clone = _write_inputs(tmp_path, [f], [a_obl])
+    (clone / "pkg" / "core").mkdir(parents=True)
+    (clone / "pkg" / "core" / "Base.sol").write_text(VAULT, encoding="utf-8")
+    monkeypatch.setattr(label, "clone_at", lambda repo, sha, cache: clone)
+    obl = f"https://github.com/{REPO}/blob/{SHA}/core/Base.sol#L4"
+    reader = FakeReader({SONNET: ok(lab(obl=obl)), HAIKU: ok(lab(obl=obl), HAIKU)},
+                        same_defect=ok({"verdict": "same_defect", "rationale": "x"}))
+    assert label.main(["--set", "dev", "--out", str(tmp_path)], reader=reader) == 0
+    cands = json.loads((tmp_path / "candidates_dev.json").read_text(encoding="utf-8"))["rows"]
+    assert [(c["closeness"], c["analyzer"]["path"]) for c in cands] == [("file", "pkg/core/Base.sol")]
+
+
+def test_main_records_unresolved_obligation_site(tmp_path, monkeypatch):
+    f = make_finding(sites=(Site(REPO, SHA, "src/Vault.sol", 5, 5, False),))
+    clone = _write_inputs(tmp_path, [f], [])
+    monkeypatch.setattr(label, "clone_at", lambda repo, sha, cache: clone)
+    reader = FakeReader({SONNET: ok(lab(obl="Nowhere.sol#L1")), HAIKU: ok(lab(obl="Nowhere.sol#L1"), HAIKU)})
+    assert label.main(["--set", "dev", "--out", str(tmp_path)], reader=reader) == 0
+    labels = json.loads((tmp_path / "labels_dev.json").read_text(encoding="utf-8"))
+    errs = [e for e in labels["errors"] if e["stage"] == "obligation_site"]
+    assert len(errs) == 1 and errs[0]["finding_id"] == f.finding_id and errs[0]["contest"] == "2025-01-demo"
 
 
 def test_load_sources_refuses_paths_outside_clone(tmp_path):

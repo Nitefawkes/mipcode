@@ -31,5 +31,5 @@ Answer with one JSON object that matches the provided schema:
 - `class`: one of `in_class`, `adjacent`, `out_of_class`.
 - `pattern`: one tag from the pattern list for `in_class` and `adjacent`; `null` for `out_of_class`.
 - `would_catch_with`: the tags from the `would_catch_with` list that apply, for `in_class` and `adjacent` (use `none_of_these` alone when no other tag applies); an empty list for `out_of_class`.
-- `obligation_site`: for `in_class`, the site that already meets the obligation (the peer or base), written as `path#Lnn` with the path relative to the repository root as shown in the code headers, if the finding names one; otherwise `null`.
+- `obligation_site`: for `in_class`, the site that already meets the obligation (the peer or base), if the finding names one, written as `path#Lnn` with the path relative to the repository root, or as the GitHub permalink if that is how the finding gives it; otherwise `null`. Its code may not be among the cited code shown to you.
 - `rationale`: at most 300 characters naming the root cause that decided the class.
