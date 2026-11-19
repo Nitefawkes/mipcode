@@ -113,6 +113,32 @@ Each reader assigns:
 - **Final labels:** `class` and `pattern` take the majority of the three. A `would_catch_with` tag is kept if at least two readers chose it (both, when only two read).
 - **Reporting:** raw agreement and Cohen's κ for `class` and `pattern`, plus Jaccard overlap for `would_catch_with`, with all raw labels.
 - **Transport** *(my call)*: `label.py` uses the official `anthropic` Python SDK as an **experiment-only** dependency. It is installed in the dev environment and **not** added to the package's runtime dependencies, so `mip-delta` stays zero-dependency. It doesn't reuse `review.py`, which is frozen with the engine and hardwired to the Stage-2 prompt, schema and `max_tokens`. The SDK installed now (0.87.0) may be older than `output_config` and `fallbacks`, so the builder upgrades it and records the version used. Credentials come from `ANTHROPIC_API_KEY` or an `ant auth login` profile. The `claude -p` CLI fallback is not used, because it can't pin the model.
+- **Amendment 2026-11-19 (pre-freeze; user decision, ledger Ruling R19). This supersedes the Transport, Refusals and preflight lines above wherever they conflict.**
+  - **Transport.** The default transport is the Claude Code CLI in print mode, billed against the user's Claude subscription, so no API key is needed. Upgrading the SDK to 2.10.0 broke other tools in the global Python, and it was reverted. The SDK transport stays in the code as an option but is not used for the measurement.
+  - **Invocation.** Each call runs `claude -p` from an empty temporary directory with these flags:
+    - `--model <id>` and `--effort <level>`
+    - `--system-prompt-file <prompt>`
+    - `--json-schema <schema>`
+    - `--output-format json`
+    - `--tools ""`
+    - `--no-session-persistence`
+    - `--strict-mcp-config`
+    - `--setting-sources ""`
+    - `--disable-slash-commands`
+    - `--exclude-dynamic-system-prompt-sections`
+
+    The user text goes on stdin. The answer is read from `structured_output`. The served model is read from the `modelUsage` keys, and the CLI binary's version is recorded.
+  - **Model pinning.** `--model` pins the model, so the earlier objection no longer holds. A probe on 2026-11-19 returned `modelUsage` keyed by exactly the requested ID.
+  - **Reader context (disclosed).** `--bare` accepts only an API key, so subscription calls can't use it. Probes on 2026-11-19 checked what a reader receives with `--setting-sources ""`. No hooks, memory files, plugins, skills or MCP servers load. The context still holds:
+    - the CLI's fixed agent-SDK preamble (independent tool calls, deferred tools);
+    - the `StructuredOutput` tool that the schema adds;
+    - environment information (working directory, OS, scratchpad path, a rule for untrusted downloads, model ID, date);
+    - the account email.
+
+    None of this mentions mipcode, the analyzer, or any contest. The frozen README records the probe output.
+  - **Fallbacks.** The CLI has no server-side `fallbacks`. A refusal is recorded as `refused`, and the tie-breaker reads instead, as the Haiku rule above already provides. `fallback_ran` is always false, and refusal counts are still reported.
+  - **Cost and limits.** Calls are paid from subscription usage limits, not billed dollars. The $15 cap stays as a notional brake on the CLI's reported `total_cost_usd`. Reaching a usage limit, or any CLI transport error, halts the run cleanly without caching that call. Because every answered call is cached, re-running resumes where the run stopped.
+  - **Preflight.** `llm.py --preflight` makes one tiny schema-constrained call per model and checks that `modelUsage` names exactly that ID. This replaces `models.retrieve`.
 
 **Cost cap:** $15 for all labeling and same-defect checks, frozen in the plan.
 - **Rough estimate** at current list prices (per million tokens, input/output: Sonnet 5.5 $2/$10, Haiku 5.5 $0.10/$0.50, Opus 5.5 $4/$20), assuming about 300 findings, about 6k input tokens per read, and about 1.3k output tokens including thinking at `low`:

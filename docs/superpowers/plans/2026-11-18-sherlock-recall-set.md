@@ -20,6 +20,7 @@
 - **Results are force-added:** `results/` is gitignored, so commit results with `git add -f`, as earlier studies did.
 - **Seed** `20261118`. **Draw** 20 contests; the first 4 drawn are the dev set and the other 16 are the measurement set. **Contest window:** 2024-01 to 2025-12, inclusive, by the `YYYY-MM` repo prefix.
 - **Models:** reader A `claude-sonnet-5-5` at effort `low`; reader B `claude-haiku-5-5` at effort `low`; tie-breaker `claude-opus-5-5` at effort `medium`; same-defect reader `claude-sonnet-5-5` at effort `medium`. No `temperature`/`top_p`/`top_k`. JSON comes through `output_config.format`, never forced `tool_choice`. Sonnet and Opus calls send `fallbacks: "default"` with beta `server-side-fallback-2026-07-01`.
+- **Transport amendment (2026-11-19, Ruling R19):** labeling runs through `claude -p` on the user's subscription, using the flags in spec §3 "Amendment 2026-11-19". There are no server-side fallbacks, so `fallback_ran` is always false. The $15 cap is notional and applies to the CLI's `total_cost_usd`. A usage limit or a transport error halts the run without caching that call. Preflight makes one tiny call per model and checks `modelUsage`. The SDK transport stays as an option but is unused. Task 8b adds this transport.
 - **Cost cap:** $15.00 total for all model calls. Pricing per million tokens (input/output): Sonnet 5.5 $2/$10, Haiku 5.5 $0.10/$0.50, Opus 5.5 $4/$20.
 - **Production `.sol` file:** ends in `.sol`, not `.t.sol` or `.s.sol`, and no path segment (case-insensitive) is `test`, `tests`, `script`, `scripts`, `mock`, `mocks`, `lib` or `node_modules`.
 - **Hit closeness:** `strict` means within ±3 lines of a site range; `function` means the same function or modifier body (from `mipdelta.solidity.parse_solidity_file`); `file` means anywhere else in a cited file or the obligation file.
@@ -488,7 +489,7 @@ git commit -m "feat(sherlock-recall): class coverage, miss buckets, decision rul
 - Consumes: every module above.
 - Produces: a committed plan whose git timestamp comes before any measurement-set analyzer run.
 
-The operator must supply credentials: `ANTHROPIC_API_KEY` or an `ant auth login` profile. If neither is available, stop here and ask.
+The operator must supply credentials, either an `ANTHROPIC_API_KEY` or an `ant auth login` profile. If neither is available, stop here and ask. *Amended (R19): the CLI transport uses the logged-in Claude Code subscription instead, so no API key is needed.*
 
 - [ ] **Step 1: Build the candidate list and the draw**
 
