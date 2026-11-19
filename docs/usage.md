@@ -66,32 +66,34 @@ The check compares the working tree with `HEAD`, so it also sees changes that ar
 
 ## Run on a pull request
 
-Use the official composite [GitHub Action](../action.yml) or invoke `mip-delta` directly with `--format github` to emit inline workflow `::warning` annotations on changed lines:
+Add the [MipCode PR Caller Check](https://github.com/marketplace/actions/mipcode-pr-caller-check) to `.github/workflows/mipcode.yml`. The Action checks Python changes and annotates affected callers, including callers outside the diff.
 
 ```yaml
+name: MipCode
+on: pull_request
+permissions:
+  contents: read
+
 jobs:
-  contract-check:
+  check-callers:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
-      - uses: Nitefawkes/mipcode@main
-        with:
-          mode: check-git
-          base-ref: origin/${{ github.base_ref }}
-          fail-on-findings: "false"
+          persist-credentials: false
+      - uses: Nitefawkes/mipcode-action@3756b2f9f77eb21e286cb1082fd8506942a2017d # v1.0.0
 ```
 
-Or run via `pip` directly in a step:
+The Action uses the pull request event to select the baseline. Keep `fetch-depth: 0` so the base and head history are available. Findings produce warnings by default. To block the job on a finding, set the Action input `fail-on-findings` to `'true'`. Setup and analysis errors fail the job in either mode.
+
+If your workflow installs the CLI directly, use the same full-history checkout and supply a comparison baseline:
 
 ```yaml
-      - run: mip-delta --check-git --base-ref "$(git merge-base "origin/$BASE" HEAD)" --format github
+      - run: mip-delta --check-git --base-ref "$(git merge-base "$BASE" HEAD)" --format github
         env:
-          BASE: ${{ github.base_ref }}
+          BASE: ${{ github.event.pull_request.base.sha }}
 ```
-
-`fetch-depth: 0` fetches the history that `git merge-base` needs. Add `--fail-on-findings` (or `fail-on-findings: "true"`) to make the job fail when the check reports a site. Start without it (or pair with `--review`): on upstream history most Stage-1 reports without `--review` were not defects, and a CI job has no ledger in which to waive one.
 
 ## Filter flagged diffs with Stage-2 micro-triage (`--review`)
 

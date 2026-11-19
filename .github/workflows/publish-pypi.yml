@@ -1,0 +1,72 @@
+name: Publish to PyPI
+
+on:
+  push:
+    tags:
+      - 'pypi-v*'
+
+permissions: {}
+
+jobs:
+  build:
+    if: github.repository == 'Nitefawkes/mipcode'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.12'
+      - name: Verify the release tag
+        run: |
+          python - <<'PY'
+          import os
+          import tomllib
+          with open("pyproject.toml", "rb") as file:
+              project = tomllib.load(file)["project"]
+          expected_tag = f"pypi-v{project['version']}"
+          if project["name"] != "coherion-mipcode" or os.environ["GITHUB_REF_NAME"] != expected_tag:
+              raise SystemExit(f"Expected tag {expected_tag} for coherion-mipcode")
+          PY
+      - name: Build and check distributions
+        run: |
+          python -m pip install 'build==1.6.1' 'setuptools==84.2.1' 'twine==7.0.0'
+          python -m build --no-isolation
+          python -m twine check --strict dist/*
+      - name: Smoke test the installed wheel
+        run: |
+          python -m pip install --no-deps dist/*.whl
+          test "$(mip-delta --version)" = "mip-delta ${GITHUB_REF_NAME#pypi-v}"
+          mip-delta --root examples/contract-delta/before --audit-repo --json
+          mip-delta --root examples/contract-delta/before --write-path formatter.py \
+            --candidate-file examples/contract-delta/after/formatter.py --json > example-finding.json
+          python - <<'PY'
+          import json
+          with open("example-finding.json") as file:
+              findings = json.load(file)["findings"]
+          if not any(finding["detector"] == "required_keyword_missing" for finding in findings):
+              raise SystemExit("Expected a missing required keyword at the example call site")
+          PY
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: pypi-distributions
+          path: dist/
+          if-no-files-found: error
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/project/coherion-mipcode/
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: pypi-distributions
+          path: dist/
+      - uses: pypa/gh-action-pypi-publish@7245906fb61fa33a13554f9d5fb856fe61758086 # v1.14.3
