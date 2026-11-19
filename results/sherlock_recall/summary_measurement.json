@@ -1,0 +1,363 @@
+{
+  "agreement": {
+    "class": {
+      "kappa": 0.5967983991995999,
+      "n": 156,
+      "raw": 0.8012820512820513
+    },
+    "n_both_ok": 156,
+    "pattern": {
+      "kappa": 0.8153346136800119,
+      "n": 125,
+      "raw": 0.92
+    },
+    "would_catch_with": {
+      "mean_jaccard": 0.7393162393162392,
+      "n": 156
+    }
+  },
+  "class_coverage": {
+    "by_severity": {
+      "H": {
+        "adjacent": {
+          "count": 2,
+          "share": 0.046511627906976744
+        },
+        "in_class": {
+          "count": 7,
+          "share": 0.16279069767441862
+        },
+        "n": 43,
+        "out_of_class": {
+          "count": 34,
+          "share": 0.7906976744186046
+        },
+        "unlabeled": {
+          "count": 0,
+          "share": 0.0
+        }
+      },
+      "M": {
+        "adjacent": {
+          "count": 21,
+          "share": 0.18584070796460178
+        },
+        "in_class": {
+          "count": 20,
+          "share": 0.17699115044247787
+        },
+        "n": 113,
+        "out_of_class": {
+          "count": 72,
+          "share": 0.6371681415929203
+        },
+        "unlabeled": {
+          "count": 0,
+          "share": 0.0
+        }
+      }
+    },
+    "overall": {
+      "adjacent": {
+        "count": 23,
+        "share": 0.14743589743589744
+      },
+      "in_class": {
+        "count": 27,
+        "share": 0.17307692307692307
+      },
+      "n": 156,
+      "out_of_class": {
+        "count": 106,
+        "share": 0.6794871794871795
+      },
+      "unlabeled": {
+        "count": 0,
+        "share": 0.0
+      }
+    }
+  },
+  "engine_commit": "3ebdabd",
+  "label_errors": [
+    {
+      "contest": "2024-04-teller-finance",
+      "error": "unresolved: no file in the clone matches \"SmartCommitmentForwarder::acceptCommitmentWithRecipient (named in the finding's Recommendation; not in the cited code)\"",
+      "finding_id": "2024-04-teller-finance:M-11",
+      "obligation_site": "SmartCommitmentForwarder::acceptCommitmentWithRecipient (named in the finding's Recommendation; not in the cited code)",
+      "stage": "obligation_site"
+    }
+  ],
+  "miss_buckets": {
+    "empty_tags": {
+      "capability_split_false": {
+        "H": 0,
+        "M": 0
+      },
+      "capability_split_true": {
+        "H": 1,
+        "M": 3
+      }
+    },
+    "n_misses": 50,
+    "tags": {
+      "cross_file_or_dependency_visibility": {
+        "H": 0,
+        "M": 8,
+        "solo": 4,
+        "total": 8
+      },
+      "existing_detector_gap": {
+        "H": 1,
+        "M": 1,
+        "solo": 2,
+        "total": 2
+      },
+      "fork_upstream_diff": {
+        "H": 0,
+        "M": 1,
+        "solo": 1,
+        "total": 1
+      },
+      "none_of_these": {
+        "H": 0,
+        "M": 12,
+        "solo": 11,
+        "total": 12
+      },
+      "safety_param_weighting": {
+        "H": 3,
+        "M": 7,
+        "solo": 8,
+        "total": 10
+      },
+      "sibling_guard_asymmetry": {
+        "H": 4,
+        "M": 14,
+        "solo": 15,
+        "total": 18
+      }
+    }
+  },
+  "n_findings": 156,
+  "next_build": {
+    "count": 18,
+    "tie": false,
+    "top": "sibling_guard_asymmetry"
+  },
+  "operational": {
+    "analyzer_by_contest": [
+      {
+        "all_findings_count": 0,
+        "error": null,
+        "n_findings": 0,
+        "name": "2024-02-jala-swap"
+      },
+      {
+        "all_findings_count": 54,
+        "error": null,
+        "n_findings": 4,
+        "name": "2024-01-olympus-on-chain-governance"
+      },
+      {
+        "all_findings_count": 5,
+        "error": null,
+        "n_findings": 0,
+        "name": "2024-04-interest-rate-model"
+      },
+      {
+        "all_findings_count": 0,
+        "error": null,
+        "n_findings": 0,
+        "name": "2024-07-kwenta-staking-contracts"
+      },
+      {
+        "all_findings_count": 12,
+        "error": null,
+        "n_findings": 0,
+        "name": "2024-06-leveraged-vaults"
+      },
+      {
+        "all_findings_count": 1,
+        "error": null,
+        "n_findings": 1,
+        "name": "2024-11-ethos-network-ii"
+      },
+      {
+        "all_findings_count": 0,
+        "error": null,
+        "n_findings": 0,
+        "name": "2024-08-saffron-finance"
+      },
+      {
+        "all_findings_count": 3,
+        "error": null,
+        "n_findings": 2,
+        "name": "2024-03-nouns-dao-2"
+      },
+      {
+        "all_findings_count": 4,
+        "error": null,
+        "n_findings": 0,
+        "name": "2024-04-arcadia-pricing-module"
+      },
+      {
+        "all_findings_count": 1,
+        "error": null,
+        "n_findings": 1,
+        "name": "2025-07-malda"
+      },
+      {
+        "all_findings_count": 1,
+        "error": null,
+        "n_findings": 0,
+        "name": "2024-01-looksrare"
+      },
+      {
+        "all_findings_count": 32,
+        "error": null,
+        "n_findings": 10,
+        "name": "2024-04-teller-finance"
+      },
+      {
+        "all_findings_count": 9,
+        "error": null,
+        "n_findings": 6,
+        "name": "2024-12-numa-audit"
+      },
+      {
+        "all_findings_count": 2,
+        "error": null,
+        "n_findings": 0,
+        "name": "2024-02-leverage-contracts"
+      },
+      {
+        "all_findings_count": 5,
+        "error": null,
+        "n_findings": 0,
+        "name": "2024-07-exactly-stacking-contracts"
+      },
+      {
+        "all_findings_count": 26,
+        "error": null,
+        "n_findings": 0,
+        "name": "2024-05-napier-update"
+      }
+    ],
+    "capability_split": 4,
+    "fallback_ran_by_model": {},
+    "invalid_by_model": {},
+    "invalid_total": 0,
+    "low_confidence": 0,
+    "n_calls": 364,
+    "refusals_by_model": {},
+    "tokens_and_cost_by_model": {
+      "claude-haiku-5-5": {
+        "est_usd": 0.133453,
+        "in_tok": 852585,
+        "out_tok": 96389,
+        "priced": true
+      },
+      "claude-opus-5-5": {
+        "est_usd": 1.729848,
+        "in_tok": 263622,
+        "out_tok": 33768,
+        "priced": true
+      },
+      "claude-sonnet-5-5": {
+        "est_usd": 2.1263,
+        "in_tok": 866840,
+        "out_tok": 39262,
+        "priced": true
+      }
+    },
+    "total_est_usd": 3.989601,
+    "unlabeled": 0,
+    "unpriced_calls": 0
+  },
+  "outcome": {
+    "based_on": "full",
+    "spot_check_present": false,
+    "value": "low"
+  },
+  "partial": {
+    "candidates": false,
+    "labels": false,
+    "same_defect": false
+  },
+  "recall": {
+    "ci": [
+      0.0,
+      0.14312112541726274
+    ],
+    "cls": "in_class",
+    "full": {
+      "ci": [
+        0.0,
+        0.14312112541726274
+      ],
+      "k": 0,
+      "n": 23,
+      "rate": 0.0
+    },
+    "full_human": {
+      "ci": [
+        0.0,
+        0.14312112541726274
+      ],
+      "k": 0,
+      "n": 23,
+      "rate": 0.0
+    },
+    "hit_ids": [],
+    "hit_ids_human": [],
+    "n": 23,
+    "strict": {
+      "ci": [
+        0.0,
+        0.14312112541726274
+      ],
+      "k": 0,
+      "n": 23,
+      "rate": 0.0
+    }
+  },
+  "recall_adjacent": {
+    "ci": [
+      0.0,
+      0.19361341827271994
+    ],
+    "cls": "adjacent",
+    "full": {
+      "ci": [
+        0.0,
+        0.19361341827271994
+      ],
+      "k": 0,
+      "n": 16,
+      "rate": 0.0
+    },
+    "full_human": {
+      "ci": [
+        0.0,
+        0.19361341827271994
+      ],
+      "k": 0,
+      "n": 16,
+      "rate": 0.0
+    },
+    "hit_ids": [],
+    "hit_ids_human": [],
+    "n": 16,
+    "strict": {
+      "ci": [
+        0.0,
+        0.19361341827271994
+      ],
+      "k": 0,
+      "n": 16,
+      "rate": 0.0
+    }
+  },
+  "set": "measurement",
+  "small_sample_note": "n=23 in_class findings; Wilson 95% CI [0.000, 0.143]. Sample not topped up or altered (spec section 5)."
+}

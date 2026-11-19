@@ -1,0 +1,452 @@
+{
+  "set": "measurement",
+  "engine_commit": "3ebdabd",
+  "contests": [
+    {
+      "name": "2024-02-jala-swap",
+      "companion_repo": "sherlock-audit/2024-02-jala-swap",
+      "resolved_sha": "030d3ed54214754301154bce0e58ea534100a7e3",
+      "files_scanned": 33,
+      "production_files": 22,
+      "production_lines": 2448,
+      "wall_ms": 536.8,
+      "all_findings_count": 0,
+      "findings": []
+    },
+    {
+      "name": "2024-01-olympus-on-chain-governance",
+      "companion_repo": "sherlock-audit/2024-01-olympus-on-chain-governance",
+      "resolved_sha": "6171681cfeec8a24b0449f988b75908b5e640a35",
+      "files_scanned": 213,
+      "production_files": 126,
+      "production_lines": 26063,
+      "wall_ms": 3378.5,
+      "all_findings_count": 54,
+      "findings": [
+        {
+          "detector": "state_sink_review",
+          "symbol": "ERC20.ERC20TOKEN_ERC1820_INTERFACE_ID",
+          "path": "bophades/src/external/OlympusERC20.sol",
+          "start_line": 646,
+          "end_line": 646,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "private constant ERC20TOKEN_ERC1820_INTERFACE_ID is declared in ERC20 and never read in any method or modifier"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "UniswapV3Price.TWAP_MINIMUM_OBSERVATION_SECONDS",
+          "path": "bophades/src/modules/PRICE/submodules/feeds/UniswapV3Price.sol",
+          "start_line": 31,
+          "end_line": 31,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "internal constant TWAP_MINIMUM_OBSERVATION_SECONDS is declared in UniswapV3Price and never read in any method or modifier"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "UniswapV3Price.MIN_TICK",
+          "path": "bophades/src/modules/PRICE/submodules/feeds/UniswapV3Price.sol",
+          "start_line": 43,
+          "end_line": 43,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "internal constant MIN_TICK is declared in UniswapV3Price and never read in any method or modifier"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "UniswapV3Price.MAX_TICK",
+          "path": "bophades/src/modules/PRICE/submodules/feeds/UniswapV3Price.sol",
+          "start_line": 45,
+          "end_line": 45,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "internal constant MAX_TICK is declared in UniswapV3Price and never read in any method or modifier"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2024-04-interest-rate-model",
+      "companion_repo": "sherlock-audit/2024-04-interest-rate-model",
+      "resolved_sha": "8f6ef1b0868d3ea3a98a5ab7e8b3a164857681d7",
+      "files_scanned": 48,
+      "production_files": 20,
+      "production_lines": 6365,
+      "wall_ms": 1211.4,
+      "all_findings_count": 5,
+      "findings": []
+    },
+    {
+      "name": "2024-07-kwenta-staking-contracts",
+      "companion_repo": "sherlock-audit/2024-07-kwenta-staking-contracts",
+      "resolved_sha": "0527fb7425206a3338c23177416436c6286cedf9",
+      "files_scanned": 77,
+      "production_files": 38,
+      "production_lines": 5787,
+      "wall_ms": 1097.0,
+      "all_findings_count": 0,
+      "findings": []
+    },
+    {
+      "name": "2024-06-leveraged-vaults",
+      "companion_repo": "sherlock-audit/2024-06-leveraged-vaults",
+      "resolved_sha": "14d3eaf0445c251c52c86ce88a84a3f5b9dfad94",
+      "files_scanned": 167,
+      "production_files": 116,
+      "production_lines": 11709,
+      "wall_ms": 1234.0,
+      "all_findings_count": 12,
+      "findings": []
+    },
+    {
+      "name": "2024-11-ethos-network-ii",
+      "companion_repo": "sherlock-audit/2024-11-ethos-network-ii",
+      "resolved_sha": "57c02df7c56f0b18c681a89ebccc28c86c72d8d8",
+      "files_scanned": 38,
+      "production_files": 27,
+      "production_lines": 5478,
+      "wall_ms": 581.7,
+      "all_findings_count": 1,
+      "findings": [
+        {
+          "detector": "state_sink_review",
+          "symbol": "EthosProfile.acceptedIdIndexByProfileIdAndId",
+          "path": "ethos/packages/contracts/contracts/EthosProfile.sol",
+          "start_line": 804,
+          "end_line": 804,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "private state variable acceptedIdIndexByProfileIdAndId is declared in EthosProfile and never read in any method or modifier"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2024-08-saffron-finance",
+      "companion_repo": "sherlock-audit/2024-08-saffron-finance",
+      "resolved_sha": "38dd9c8436db341c331f1b14545770c1766fc0ee",
+      "files_scanned": 10,
+      "production_files": 8,
+      "production_lines": 1562,
+      "wall_ms": 510.0,
+      "all_findings_count": 0,
+      "findings": []
+    },
+    {
+      "name": "2024-03-nouns-dao-2",
+      "companion_repo": "sherlock-audit/2024-03-nouns-dao-2",
+      "resolved_sha": "8f6879efaf831eb7fc9d4a4ad2b62b5334220d87",
+      "files_scanned": 149,
+      "production_files": 68,
+      "production_lines": 15382,
+      "wall_ms": 1403.1,
+      "all_findings_count": 3,
+      "findings": [
+        {
+          "detector": "state_sink_review",
+          "symbol": "NounsDescriptor.COPYRIGHT_CC0_1_0_UNIVERSAL_LICENSE",
+          "path": "nouns-monorepo/packages/nouns-contracts/contracts/NounsDescriptor.sol",
+          "start_line": 32,
+          "end_line": 32,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "internal constant COPYRIGHT_CC0_1_0_UNIVERSAL_LICENSE is declared in NounsDescriptor and never read in any method or modifier"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "NounsDescriptorV2.COPYRIGHT_CC0_1_0_UNIVERSAL_LICENSE",
+          "path": "nouns-monorepo/packages/nouns-contracts/contracts/NounsDescriptorV2.sol",
+          "start_line": 34,
+          "end_line": 34,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "internal constant COPYRIGHT_CC0_1_0_UNIVERSAL_LICENSE is declared in NounsDescriptorV2 and never read in any method or modifier"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2024-04-arcadia-pricing-module",
+      "companion_repo": "sherlock-audit/2024-04-arcadia-pricing-module",
+      "resolved_sha": "54832626b806dcb72e250935fc193acb95e0cf8a",
+      "files_scanned": 477,
+      "production_files": 66,
+      "production_lines": 9693,
+      "wall_ms": 2304.0,
+      "all_findings_count": 4,
+      "findings": []
+    },
+    {
+      "name": "2025-07-malda",
+      "companion_repo": "sherlock-audit/2025-07-malda",
+      "resolved_sha": "798d00b879b8412ca4049ba09dba5ae42464cfe7",
+      "files_scanned": 182,
+      "production_files": 73,
+      "production_lines": 10259,
+      "wall_ms": 1088.5,
+      "all_findings_count": 1,
+      "findings": [
+        {
+          "detector": "state_sink_review",
+          "symbol": "ExponentialNoError.halfExpScale",
+          "path": "malda-lending/src/utils/ExponentialNoError.sol",
+          "start_line": 36,
+          "end_line": 36,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "internal constant halfExpScale is declared in ExponentialNoError and never read in any method or modifier"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2024-01-looksrare",
+      "companion_repo": "sherlock-audit/2024-01-looksrare",
+      "resolved_sha": "7d76b96a58a6aee38f23bb38b8a5daa3bdc03f7c",
+      "files_scanned": 40,
+      "production_files": 8,
+      "production_lines": 3641,
+      "wall_ms": 788.5,
+      "all_findings_count": 1,
+      "findings": []
+    },
+    {
+      "name": "2024-04-teller-finance",
+      "companion_repo": "sherlock-audit/2024-04-teller-finance",
+      "resolved_sha": "defe55469a2576735af67483acf31d623e13592d",
+      "files_scanned": 171,
+      "production_files": 93,
+      "production_lines": 16306,
+      "wall_ms": 1495.4,
+      "all_findings_count": 32,
+      "findings": [
+        {
+          "detector": "parameter_sink_review",
+          "symbol": "CollateralManager.onERC1155Received",
+          "path": "teller-protocol-v2-audit-2024/packages/contracts/contracts/CollateralManager.sol",
+          "start_line": 556,
+          "end_line": 569,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "parameter id of CollateralManager.onERC1155Received is never read in body or modifiers"
+          ]
+        },
+        {
+          "detector": "parameter_sink_review",
+          "symbol": "CollateralManager.onERC1155Received",
+          "path": "teller-protocol-v2-audit-2024/packages/contracts/contracts/CollateralManager.sol",
+          "start_line": 556,
+          "end_line": 569,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "parameter value of CollateralManager.onERC1155Received is never read in body or modifiers"
+          ]
+        },
+        {
+          "detector": "parameter_sink_review",
+          "symbol": "CollateralManager.onERC1155BatchReceived",
+          "path": "teller-protocol-v2-audit-2024/packages/contracts/contracts/CollateralManager.sol",
+          "start_line": 571,
+          "end_line": 588,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "parameter _values of CollateralManager.onERC1155BatchReceived is never read in body or modifiers"
+          ]
+        },
+        {
+          "detector": "parameter_sink_review",
+          "symbol": "MarketRegistry._revokeStakeholderViaDelegation",
+          "path": "teller-protocol-v2-audit-2024/packages/contracts/contracts/MarketRegistry.sol",
+          "start_line": 1184,
+          "end_line": 1200,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "parameter _v of MarketRegistry._revokeStakeholderViaDelegation is never read in body or modifiers"
+          ]
+        },
+        {
+          "detector": "parameter_sink_review",
+          "symbol": "MarketRegistry._revokeStakeholderViaDelegation",
+          "path": "teller-protocol-v2-audit-2024/packages/contracts/contracts/MarketRegistry.sol",
+          "start_line": 1184,
+          "end_line": 1200,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "parameter _r of MarketRegistry._revokeStakeholderViaDelegation is never read in body or modifiers"
+          ]
+        },
+        {
+          "detector": "parameter_sink_review",
+          "symbol": "MarketRegistry._revokeStakeholderViaDelegation",
+          "path": "teller-protocol-v2-audit-2024/packages/contracts/contracts/MarketRegistry.sol",
+          "start_line": 1184,
+          "end_line": 1200,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "parameter _s of MarketRegistry._revokeStakeholderViaDelegation is never read in body or modifiers"
+          ]
+        },
+        {
+          "detector": "parameter_sink_review",
+          "symbol": "TellerV2._lenderCloseLoanWithRecipient",
+          "path": "teller-protocol-v2-audit-2024/packages/contracts/contracts/TellerV2.sol",
+          "start_line": 745,
+          "end_line": 774,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "parameter _collateralRecipient of TellerV2._lenderCloseLoanWithRecipient is never read in body or modifiers"
+          ]
+        },
+        {
+          "detector": "parameter_sink_review",
+          "symbol": "CollateralEscrowV1.onERC1155Received",
+          "path": "teller-protocol-v2-audit-2024/packages/contracts/contracts/escrow/CollateralEscrowV1.sol",
+          "start_line": 206,
+          "end_line": 219,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "parameter id of CollateralEscrowV1.onERC1155Received is never read in body or modifiers"
+          ]
+        },
+        {
+          "detector": "parameter_sink_review",
+          "symbol": "CollateralEscrowV1.onERC1155Received",
+          "path": "teller-protocol-v2-audit-2024/packages/contracts/contracts/escrow/CollateralEscrowV1.sol",
+          "start_line": 206,
+          "end_line": 219,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "parameter value of CollateralEscrowV1.onERC1155Received is never read in body or modifiers"
+          ]
+        },
+        {
+          "detector": "parameter_sink_review",
+          "symbol": "CollateralEscrowV1.onERC1155BatchReceived",
+          "path": "teller-protocol-v2-audit-2024/packages/contracts/contracts/escrow/CollateralEscrowV1.sol",
+          "start_line": 221,
+          "end_line": 238,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "parameter _values of CollateralEscrowV1.onERC1155BatchReceived is never read in body or modifiers"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2024-12-numa-audit",
+      "companion_repo": "sherlock-audit/2024-12-numa-audit",
+      "resolved_sha": "ae1d7781efb4cb2c3a40c642887ddadeecabb97d",
+      "files_scanned": 115,
+      "production_files": 66,
+      "production_lines": 14539,
+      "wall_ms": 1070.6,
+      "all_findings_count": 9,
+      "findings": [
+        {
+          "detector": "parameter_sink_review",
+          "symbol": "vaultV2Deployer.constructor",
+          "path": "Numa/contracts/deployment/vaultV2Deployer.sol",
+          "start_line": 38,
+          "end_line": 51,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "parameter _numaAddress of vaultV2Deployer.constructor is never read in body or modifiers"
+          ]
+        },
+        {
+          "detector": "parameter_sink_review",
+          "symbol": "vaultV2Deployer.constructor",
+          "path": "Numa/contracts/deployment/vaultV2Deployer.sol",
+          "start_line": 38,
+          "end_line": 51,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "parameter _lstAddress of vaultV2Deployer.constructor is never read in body or modifiers"
+          ]
+        },
+        {
+          "detector": "parameter_sink_review",
+          "symbol": "vaultV2Deployer.constructor",
+          "path": "Numa/contracts/deployment/vaultV2Deployer.sol",
+          "start_line": 38,
+          "end_line": 51,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "parameter _pricefeedAddress of vaultV2Deployer.constructor is never read in body or modifiers"
+          ]
+        },
+        {
+          "detector": "parameter_sink_review",
+          "symbol": "vaultV2Deployer.constructor",
+          "path": "Numa/contracts/deployment/vaultV2Deployer.sol",
+          "start_line": 38,
+          "end_line": 51,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "parameter _uptimeAddress of vaultV2Deployer.constructor is never read in body or modifiers"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "NumaComptroller.closeFactorMinMantissa",
+          "path": "Numa/contracts/lending/NumaComptroller.sol",
+          "start_line": 105,
+          "end_line": 105,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "internal constant closeFactorMinMantissa is declared in NumaComptroller and never read in any method or modifier"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "NumaComptroller.closeFactorMaxMantissa",
+          "path": "Numa/contracts/lending/NumaComptroller.sol",
+          "start_line": 108,
+          "end_line": 108,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "internal constant closeFactorMaxMantissa is declared in NumaComptroller and never read in any method or modifier"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2024-02-leverage-contracts",
+      "companion_repo": "sherlock-audit/2024-02-leverage-contracts",
+      "resolved_sha": "c9ac221d2a4c7dd427f62c8d30f90c2834ca7b91",
+      "files_scanned": 56,
+      "production_files": 44,
+      "production_lines": 5828,
+      "wall_ms": 628.8,
+      "all_findings_count": 2,
+      "findings": []
+    },
+    {
+      "name": "2024-07-exactly-stacking-contracts",
+      "companion_repo": "sherlock-audit/2024-07-exactly-stacking-contracts",
+      "resolved_sha": "3eb87e3edf3bcd57c4cc1c6a73e8255f575b76de",
+      "files_scanned": 54,
+      "production_files": 23,
+      "production_lines": 7214,
+      "wall_ms": 1229.1,
+      "all_findings_count": 5,
+      "findings": []
+    },
+    {
+      "name": "2024-05-napier-update",
+      "companion_repo": "sherlock-audit/2024-05-napier-update",
+      "resolved_sha": "c31af59c6399182fd04b40530d79d98632d2bfa7",
+      "files_scanned": 187,
+      "production_files": 84,
+      "production_lines": 7141,
+      "wall_ms": 1929.6,
+      "all_findings_count": 26,
+      "findings": []
+    }
+  ]
+}

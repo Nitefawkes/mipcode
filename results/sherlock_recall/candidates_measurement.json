@@ -1,0 +1,102 @@
+{
+  "set": "measurement",
+  "partial": false,
+  "rows": [
+    {
+      "finding_id": "2024-04-teller-finance:H-1",
+      "index": 0,
+      "closeness": "strict",
+      "site": {
+        "repo": "sherlock-audit/2024-04-teller-finance",
+        "ref": "defe55469a2576735af67483acf31d623e13592d",
+        "path": "teller-protocol-v2-audit-2024/packages/contracts/contracts/TellerV2.sol",
+        "line_start": 738,
+        "line_end": 743,
+        "external": false
+      },
+      "analyzer": {
+        "detector": "parameter_sink_review",
+        "symbol": "TellerV2._lenderCloseLoanWithRecipient",
+        "path": "teller-protocol-v2-audit-2024/packages/contracts/contracts/TellerV2.sol",
+        "start_line": 745,
+        "end_line": 774,
+        "resolution_source": "static_ast",
+        "evidence": [
+          "parameter _collateralRecipient of TellerV2._lenderCloseLoanWithRecipient is never read in body or modifiers"
+        ]
+      }
+    },
+    {
+      "finding_id": "2024-04-teller-finance:H-9",
+      "index": 0,
+      "closeness": "file",
+      "site": {
+        "repo": "sherlock-audit/2024-04-teller-finance",
+        "ref": "defe55469a2576735af67483acf31d623e13592d",
+        "path": "teller-protocol-v2-audit-2024/packages/contracts/contracts/TellerV2.sol",
+        "line_start": 803,
+        "line_end": 803,
+        "external": false
+      },
+      "analyzer": {
+        "detector": "parameter_sink_review",
+        "symbol": "TellerV2._lenderCloseLoanWithRecipient",
+        "path": "teller-protocol-v2-audit-2024/packages/contracts/contracts/TellerV2.sol",
+        "start_line": 745,
+        "end_line": 774,
+        "resolution_source": "static_ast",
+        "evidence": [
+          "parameter _collateralRecipient of TellerV2._lenderCloseLoanWithRecipient is never read in body or modifiers"
+        ]
+      }
+    },
+    {
+      "finding_id": "2024-04-teller-finance:M-1",
+      "index": 0,
+      "closeness": "file",
+      "site": {
+        "repo": "sherlock-audit/2024-04-teller-finance",
+        "ref": "defe55469a2576735af67483acf31d623e13592d",
+        "path": "teller-protocol-v2-audit-2024/packages/contracts/contracts/TellerV2.sol",
+        "line_start": 867,
+        "line_end": 867,
+        "external": false
+      },
+      "analyzer": {
+        "detector": "parameter_sink_review",
+        "symbol": "TellerV2._lenderCloseLoanWithRecipient",
+        "path": "teller-protocol-v2-audit-2024/packages/contracts/contracts/TellerV2.sol",
+        "start_line": 745,
+        "end_line": 774,
+        "resolution_source": "static_ast",
+        "evidence": [
+          "parameter _collateralRecipient of TellerV2._lenderCloseLoanWithRecipient is never read in body or modifiers"
+        ]
+      }
+    },
+    {
+      "finding_id": "2024-04-teller-finance:M-10",
+      "index": 0,
+      "closeness": "file",
+      "site": {
+        "repo": "sherlock-audit/2024-04-teller-finance",
+        "ref": "defe55469a2576735af67483acf31d623e13592d",
+        "path": "teller-protocol-v2-audit-2024/packages/contracts/contracts/TellerV2.sol",
+        "line_start": 481,
+        "line_end": 481,
+        "external": false
+      },
+      "analyzer": {
+        "detector": "parameter_sink_review",
+        "symbol": "TellerV2._lenderCloseLoanWithRecipient",
+        "path": "teller-protocol-v2-audit-2024/packages/contracts/contracts/TellerV2.sol",
+        "start_line": 745,
+        "end_line": 774,
+        "resolution_source": "static_ast",
+        "evidence": [
+          "parameter _collateralRecipient of TellerV2._lenderCloseLoanWithRecipient is never read in body or modifiers"
+        ]
+      }
+    }
+  ]
+}

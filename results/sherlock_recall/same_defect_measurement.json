@@ -1,0 +1,86 @@
+{
+  "set": "measurement",
+  "partial": false,
+  "rows": [
+    {
+      "finding_id": "2024-04-teller-finance:H-1",
+      "index": 0,
+      "verdict": "related",
+      "rationale": "The analyzer flags an unused _collateralRecipient parameter in the same function. The finding's root cause is different: the `sender == bid.lender` check fails when bid.lender is USING_LENDER_MANAGER, and getLoanLender relies on NFT ownership. Fixing the unused parameter wouldn't fix that.",
+      "call": {
+        "model": "claude-sonnet-5-5",
+        "effort": "medium",
+        "status": "ok",
+        "data": {
+          "verdict": "related",
+          "rationale": "The analyzer flags an unused _collateralRecipient parameter in the same function. The finding's root cause is different: the `sender == bid.lender` check fails when bid.lender is USING_LENDER_MANAGER, and getLoanLender relies on NFT ownership. Fixing the unused parameter wouldn't fix that."
+        },
+        "served_model": "claude-sonnet-5-5",
+        "fallback_ran": false,
+        "refusal_category": null,
+        "in_tok": 5190,
+        "out_tok": 182
+      }
+    },
+    {
+      "finding_id": "2024-04-teller-finance:H-9",
+      "index": 0,
+      "verdict": "unrelated",
+      "rationale": "The finding concerns liquidateDefaultedLoanWithIncentive in LenderCommitmentGroup using getAmountOwedForBid(false), which omits interest. The analyzer flags an unused _collateralRecipient parameter in TellerV2._lenderCloseLoanWithRecipient. That is a different function and a different concern.",
+      "call": {
+        "model": "claude-sonnet-5-5",
+        "effort": "medium",
+        "status": "ok",
+        "data": {
+          "verdict": "unrelated",
+          "rationale": "The finding concerns liquidateDefaultedLoanWithIncentive in LenderCommitmentGroup using getAmountOwedForBid(false), which omits interest. The analyzer flags an unused _collateralRecipient parameter in TellerV2._lenderCloseLoanWithRecipient. That is a different function and a different concern."
+        },
+        "served_model": "claude-sonnet-5-5",
+        "fallback_ran": false,
+        "refusal_category": null,
+        "in_tok": 4303,
+        "out_tok": 189
+      }
+    },
+    {
+      "finding_id": "2024-04-teller-finance:M-1",
+      "index": 0,
+      "verdict": "unrelated",
+      "rationale": "The finding concerns _repayLoan allowing overpayment because _payment isn't capped. The analyzer flags an unused _collateralRecipient parameter in _lenderCloseLoanWithRecipient, a different function and concern.",
+      "call": {
+        "model": "claude-sonnet-5-5",
+        "effort": "medium",
+        "status": "ok",
+        "data": {
+          "verdict": "unrelated",
+          "rationale": "The finding concerns _repayLoan allowing overpayment because _payment isn't capped. The analyzer flags an unused _collateralRecipient parameter in _lenderCloseLoanWithRecipient, a different function and concern."
+        },
+        "served_model": "claude-sonnet-5-5",
+        "fallback_ran": false,
+        "refusal_category": null,
+        "in_tok": 4304,
+        "out_tok": 153
+      }
+    },
+    {
+      "finding_id": "2024-04-teller-finance:M-10",
+      "index": 0,
+      "verdict": "unrelated",
+      "rationale": "The finding is about market fee front-running in lenderAcceptBid (missing fee-bound parameter). The analyzer flags an unused _collateralRecipient parameter in _lenderCloseLoanWithRecipient, a different function and concern.",
+      "call": {
+        "model": "claude-sonnet-5-5",
+        "effort": "medium",
+        "status": "ok",
+        "data": {
+          "verdict": "unrelated",
+          "rationale": "The finding is about market fee front-running in lenderAcceptBid (missing fee-bound parameter). The analyzer flags an unused _collateralRecipient parameter in _lenderCloseLoanWithRecipient, a different function and concern."
+        },
+        "served_model": "claude-sonnet-5-5",
+        "fallback_ran": false,
+        "refusal_category": null,
+        "in_tok": 3704,
+        "out_tok": 157
+      }
+    }
+  ]
+}
