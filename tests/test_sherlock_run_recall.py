@@ -280,3 +280,37 @@ def test_clone_at_other_checkout_failure_raises_without_sparse(tmp_path, monkeyp
     with pytest.raises(RuntimeError, match="checkout failed"):
         run_recall.clone_at("own/name", "abc123", tmp_path / "cache")
     assert all(c[0] != "sparse-checkout" for c in calls)
+
+
+def test_plumbing_drops_git_dir_and_windows_aliased_paths(tmp_path, monkeypatch):
+    bad = [".git/hooks/x", ".git" + chr(92) + "hooks" + chr(92) + "x", "GIT~1/config",
+           ".GIT/config", "con.sol", "a/nul", "a/NUL.txt", "lpt1/x.sol"]
+    ls = b"".join(b"100644 blob " + b"a" * 40 + b"\t" + p.encode() + b"\0" for p in bad)
+    ls += b"100644 blob " + b"b" * 40 + b"\tsrc/ok.sol\0"
+    _fake_git_runner(monkeypatch, [(128, "error: invalid path 'x'")], ls_tree=ls,
+                     blobs={"a" * 40: b"evil", "b" * 40: b"ok"})
+    d = run_recall.clone_at("own/name", "abc123", tmp_path / "cache")
+    written = sorted(p.relative_to(d).as_posix() for p in d.rglob("*") if p.is_file())
+    assert written == ["src/ok.sol"]
+    assert run_recall.LAST_PLUMBING_DROPPED == len(bad)
+
+
+def test_plumbing_missing_blob_raises(tmp_path, monkeypatch):
+    calls = []
+
+    def fake(argv, **kw):
+        sub = argv[argv.index("-C") + 2:]
+        calls.append(sub)
+        if sub[0] == "checkout":
+            return subprocess.CompletedProcess(argv, 128, "", "error: invalid path 'x'")
+        if sub[0] == "ls-tree":
+            return subprocess.CompletedProcess(
+                argv, 0, b"100644 blob " + b"a" * 40 + b"\tsrc/A.sol\0", b"")
+        if sub[0] == "cat-file":
+            return subprocess.CompletedProcess(argv, 0, b"a" * 40 + b" missing\n", b"")
+        return subprocess.CompletedProcess(argv, 0, "", "")
+
+    monkeypatch.setattr(run_recall, "_run_with_tree_kill", fake)
+    with pytest.raises(RuntimeError, match="unexpected header"):
+        run_recall.clone_at("own/name", "abc123", tmp_path / "cache")
+    assert not any(c[0] == "update-ref" for c in calls)

@@ -76,14 +76,22 @@ def _git(d: Path, *args: str, text: bool = True, input=None) -> subprocess.Compl
 
 
 _WIN_FORBIDDEN_RE = re.compile(r'[<>:"|?*\x00-\x1f]')
+_GIT_SHORTNAME_RE = re.compile(r"git~\d+")
+_WIN_RESERVED_RE = re.compile(r"con|prn|aux|nul|com[1-9]|lpt[1-9]")
 LAST_PLUMBING_DROPPED = 0  # entries dropped by the most recent plumbing checkout fallback
 
 
 def _safe_tree_path(path: str) -> bool:
-    if not path or path.startswith("/") or _WIN_FORBIDDEN_RE.search(path):
+    if (not path or path.startswith("/") or "\\" in path
+            or _WIN_FORBIDDEN_RE.search(path)):
         return False
     for comp in path.split("/"):
-        if comp in ("", ".", "..") or comp.lower() == ".git" or comp[-1] in ". ":
+        if comp in ("", ".", "..") or comp[-1] in ". ":
+            return False
+        low = comp.lower()
+        if low == ".git" or _GIT_SHORTNAME_RE.fullmatch(low):
+            return False
+        if _WIN_RESERVED_RE.fullmatch(low.split(".")[0].rstrip()):
             return False
     return True
 
@@ -128,8 +136,11 @@ def _plumbing_checkout(d: Path, run) -> int:
             pos = nl + 1 + size + 1
             target = (d / path).resolve()
             try:
-                target.relative_to(root)
+                rel_parts = target.relative_to(root).parts
             except ValueError:
+                dropped += 1
+                continue
+            if not rel_parts or os.path.normcase(rel_parts[0]) == os.path.normcase(".git"):
                 dropped += 1
                 continue
             target.parent.mkdir(parents=True, exist_ok=True)
