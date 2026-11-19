@@ -33,26 +33,40 @@ def remote_url(repo: str) -> str:
     return f"https://github.com/{repo}.git"
 
 
+def _git_env() -> dict:
+    env = os.environ.copy()
+    env["GIT_TERMINAL_PROMPT"] = "0"
+    env["GCM_INTERACTIVE"] = "never"
+    env["GIT_ASKPASS"] = ""
+    return env
+
+
 def _git(d: Path, *args: str) -> subprocess.CompletedProcess:
-    return subprocess.run(["git", "-C", str(d), *args], capture_output=True, text=True,
-                          encoding="utf-8")
+    timeout = 600 if args and args[0] == "fetch" else 120
+    return subprocess.run(["git", "-c", "core.longpaths=true", "-C", str(d), *args],
+                          capture_output=True, text=True, encoding="utf-8",
+                          env=_git_env(), timeout=timeout)
 
 
 def clone_at(repo: str, sha: str, cache: Path) -> Path:
     """Shallow-fetch `sha` of `repo` into cache/<owner>__<name>@<sha>; reuse if present."""
     d = Path(cache) / f"{repo.replace('/', '__')}@{sha}"
-    if (d / ".git").exists():
-        head = _git(d, "rev-parse", "HEAD")
-        if head.returncode == 0 and head.stdout.strip() == sha:
-            return d
-    d.mkdir(parents=True, exist_ok=True)
-    steps = [("init", "-q"),
-             ("fetch", "--depth", "1", remote_url(repo), sha),
-             ("checkout", "--quiet", "FETCH_HEAD")]
-    for step in steps:
-        r = _git(d, *step)
-        if r.returncode != 0:
-            raise RuntimeError(f"git {step[0]} failed for {repo}@{sha}: {r.stderr.strip()[:300]}")
+    try:
+        if (d / ".git").exists():
+            head = _git(d, "rev-parse", "HEAD")
+            if head.returncode == 0 and head.stdout.strip() == sha:
+                return d
+        d.mkdir(parents=True, exist_ok=True)
+        steps = [("init", "-q"),
+                 ("fetch", "--depth", "1", remote_url(repo), sha),
+                 ("checkout", "--quiet", "--force", "FETCH_HEAD")]
+        for step in steps:
+            r = _git(d, *step)
+            if r.returncode != 0:
+                raise RuntimeError(
+                    f"git {step[0]} failed for {repo}@{sha}: {r.stderr.strip()[:300]}")
+    except subprocess.TimeoutExpired as exc:
+        raise RuntimeError(f"git timed out after {exc.timeout}s for {repo}@{sha}") from exc
     return d
 
 
@@ -62,11 +76,14 @@ def run_audit(root: Path, label: str = "") -> dict:
     env["PYTHONPATH"] = os.pathsep.join(
         [str(ROOT / "src")] + ([env["PYTHONPATH"]] if env.get("PYTHONPATH") else []))
     t0 = time.perf_counter()
-    proc = subprocess.run(
-        [sys.executable, "-m", "mipdelta.cli", "--audit-solidity", "--root", str(root), "--json"],
-        cwd=ROOT, env=env, capture_output=True, text=True, encoding="utf-8")
-    wall_ms = round((time.perf_counter() - t0) * 1000, 1)
     who = label or "analyzer run"
+    try:
+        proc = subprocess.run(
+            [sys.executable, "-m", "mipdelta.cli", "--audit-solidity", "--root", str(root), "--json"],
+            cwd=ROOT, env=env, capture_output=True, text=True, encoding="utf-8", timeout=600)
+    except subprocess.TimeoutExpired as exc:
+        raise RuntimeError(f"{who}: analyzer timed out after {exc.timeout}s") from exc
+    wall_ms = round((time.perf_counter() - t0) * 1000, 1)
     if proc.returncode != 0:
         raise RuntimeError(f"{who}: analyzer exited {proc.returncode}: {proc.stderr.strip()[:300]}")
     try:

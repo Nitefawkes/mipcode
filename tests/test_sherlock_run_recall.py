@@ -86,6 +86,75 @@ def test_clone_at_local_file_repo_and_reuse(tmp_path, monkeypatch):
     assert run_recall.clone_at("own/name", sha, cache) == d  # reused, no fetch
 
 
+def _make_src(tmp_path):
+    src = tmp_path / "src"
+    _write_tree(src)
+    _git(src, "init", "-q")
+    _git(src, "-c", "user.name=t", "-c", "user.email=t@t", "add", "-A")
+    _git(src, "-c", "user.name=t", "-c", "user.email=t@t", "commit", "-q", "-m", "c")
+    return src, _git(src, "rev-parse", "HEAD")
+
+
+def test_git_calls_use_longpaths_and_no_prompt_env(tmp_path, monkeypatch):
+    src, sha = _make_src(tmp_path)
+    monkeypatch.setattr(run_recall, "remote_url", lambda repo: "file://" + src.as_posix())
+    real = subprocess.run
+    calls = []
+
+    def spy(argv, *a, **kw):
+        calls.append((list(argv), kw))
+        return real(argv, *a, **kw)
+
+    monkeypatch.setattr(run_recall.subprocess, "run", spy)
+    run_recall.clone_at("own/name", sha, tmp_path / "cache")
+    git_calls = [(argv, kw) for argv, kw in calls if argv[0] == "git"]
+    assert git_calls
+    for argv, kw in git_calls:
+        assert argv[1:3] == ["-c", "core.longpaths=true"]
+        assert kw["env"]["GIT_TERMINAL_PROMPT"] == "0"
+        assert kw["env"]["GCM_INTERACTIVE"] == "never"
+        assert kw["env"]["GIT_ASKPASS"] == ""
+        assert not kw.get("shell")
+        assert kw["timeout"] == (600 if "fetch" in argv else 120)
+
+
+def test_git_timeout_becomes_runtime_error(tmp_path, monkeypatch):
+    def boom(argv, *a, **kw):
+        raise subprocess.TimeoutExpired(argv, kw.get("timeout", 0))
+
+    monkeypatch.setattr(run_recall.subprocess, "run", boom)
+    with pytest.raises(RuntimeError, match="own/name"):
+        run_recall.clone_at("own/name", "a" * 40, tmp_path / "cache")
+
+
+def test_analyzer_timeout_becomes_runtime_error(tmp_path, monkeypatch):
+    seen = {}
+
+    def boom(argv, *a, **kw):
+        seen.update(kw)
+        raise subprocess.TimeoutExpired(argv, kw.get("timeout", 0))
+
+    monkeypatch.setattr(run_recall.subprocess, "run", boom)
+    with pytest.raises(RuntimeError, match="2024-08-x"):
+        run_recall.run_audit(tmp_path, label="2024-08-x")
+    assert seen["timeout"] == 600
+
+
+def test_clone_at_recovers_from_failed_checkout(tmp_path, monkeypatch):
+    src, sha = _make_src(tmp_path)
+    monkeypatch.setattr(run_recall, "remote_url", lambda repo: "file://" + src.as_posix())
+    cache = tmp_path / "cache"
+    d = cache / f"own__name@{sha}"
+    d.mkdir(parents=True)
+    _git(d, "init", "-q")  # unborn HEAD
+    stale = d / "pkg" / "contracts" / "Vault.sol"  # partially populated tree
+    stale.parent.mkdir(parents=True)
+    stale.write_text("// partial", encoding="utf-8")
+    assert run_recall.clone_at("own/name", sha, cache) == d
+    assert _git(d, "rev-parse", "HEAD") == sha
+    assert stale.read_text(encoding="utf-8") == VAULT
+
+
 def test_main_records_per_contest_error_and_writes_json(tmp_path, monkeypatch):
     repo = tmp_path / "repo"
     _write_tree(repo)
