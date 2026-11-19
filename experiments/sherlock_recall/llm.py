@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -98,9 +99,17 @@ _CLI_FLAGS = ["--output-format", "json", "--tools", "", "--no-session-persistenc
               "--exclude-dynamic-system-prompt-sections"]
 
 
+def _kill_tree(p: subprocess.Popen) -> None:
+    """Kill the child and its descendants (run_recall's helper, inlined: importing
+    run_recall pulls in the frozen engine, which the CLI path must not need)."""
+    if os.name == "nt":
+        subprocess.run(["taskkill", "/T", "/F", "/PID", str(p.pid)], capture_output=True)
+    else:
+        p.kill()
+
+
 def _default_run(argv: list[str], stdin: str, cwd: str, timeout_s: int) -> tuple[int, str, str]:
-    """Popen with stdin and a tree-kill on timeout (same technique as run_recall)."""
-    from run_recall import _kill_tree  # lazy; run_recall's _run_with_tree_kill has no stdin
+    """Popen with stdin and a tree-kill on timeout."""
     p = subprocess.Popen(argv, cwd=cwd, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                          stderr=subprocess.PIPE, text=True, encoding="utf-8")
     try:
