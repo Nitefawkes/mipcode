@@ -229,9 +229,10 @@ def test_production_counts_skips_sol_named_directories(tmp_path):
     assert run_recall._production_counts(tmp_path) == (1, 3)
 
 
-def _fake_git_runner(monkeypatch, checkout_results):
+def _fake_git_runner(monkeypatch, checkout_results, ls_tree=b"", blobs=None):
     calls = []
     results = list(checkout_results)
+    blobs = blobs or {}
 
     def fake(argv, **kw):
         sub = argv[argv.index("-C") + 2:]
@@ -239,23 +240,39 @@ def _fake_git_runner(monkeypatch, checkout_results):
         if sub[0] == "checkout":
             rc, err = results.pop(0)
             return subprocess.CompletedProcess(argv, rc, "", err)
+        if sub[0] == "ls-tree":
+            return subprocess.CompletedProcess(argv, 0, ls_tree, b"")
+        if sub[0] == "cat-file":
+            out = b""
+            for oid in kw["input"].decode().split():
+                out += f"{oid} blob {len(blobs[oid])}\n".encode() + blobs[oid] + b"\n"
+            return subprocess.CompletedProcess(argv, 0, out, b"")
         return subprocess.CompletedProcess(argv, 0, "", "")
 
     monkeypatch.setattr(run_recall, "_run_with_tree_kill", fake)
     return calls
 
 
-def test_clone_at_sparse_retry_on_invalid_path(tmp_path, monkeypatch):
-    calls = _fake_git_runner(
-        monkeypatch, [(128, "error: invalid path 'a/b:c.json'"), (0, "")])
+def test_clone_at_plumbing_fallback_on_invalid_path(tmp_path, monkeypatch):
+    good = b"contract A {}\r\n\x00bin"
+    ls = b"".join([
+        b"100644 blob " + b"a" * 40 + b"\tsrc/A.sol\0",
+        b"100644 blob " + b"b" * 40 + b"\tx/b:c.json\0",
+        b"120000 blob " + b"c" * 40 + b"\tsrc/link.sol\0",
+        b"160000 commit " + b"d" * 40 + b"\tlib/sub\0",
+        b"100644 blob " + b"e" * 40 + b"\t../evil.sol\0",
+    ])
+    calls = _fake_git_runner(monkeypatch, [(128, "error: invalid path 'a/b:c.json'")],
+                             ls_tree=ls, blobs={"a" * 40: good})
     d = run_recall.clone_at("own/name", "abc123", tmp_path / "cache")
     assert d == tmp_path / "cache" / "own__name@abc123"
-    names = [c[0] for c in calls]
-    assert names == ["init", "fetch", "checkout", "sparse-checkout", "checkout"]
-    sparse = calls[3]
-    assert sparse[:3] == ["sparse-checkout", "set", "--no-cone"]
-    assert "!*:*" in sparse
-    assert calls[4] == ["checkout", "--quiet", "--force", "FETCH_HEAD"]
+    written = sorted(p.relative_to(d).as_posix() for p in d.rglob("*") if p.is_file())
+    assert written == ["src/A.sol"]
+    assert (d / "src" / "A.sol").read_bytes() == good
+    assert not (tmp_path / "cache" / "evil.sol").exists()
+    assert run_recall.LAST_PLUMBING_DROPPED == 4
+    assert ["update-ref", "HEAD", "FETCH_HEAD"] in calls
+    assert all(c[0] != "sparse-checkout" and "core.protectNTFS=false" not in c for c in calls)
 
 
 def test_clone_at_other_checkout_failure_raises_without_sparse(tmp_path, monkeypatch):
@@ -263,9 +280,3 @@ def test_clone_at_other_checkout_failure_raises_without_sparse(tmp_path, monkeyp
     with pytest.raises(RuntimeError, match="checkout failed"):
         run_recall.clone_at("own/name", "abc123", tmp_path / "cache")
     assert all(c[0] != "sparse-checkout" for c in calls)
-
-
-def test_clone_at_sparse_retry_failure_raises(tmp_path, monkeypatch):
-    _fake_git_runner(monkeypatch, [(128, "error: invalid path 'x:y'"), (1, "boom")])
-    with pytest.raises(RuntimeError, match="checkout failed"):
-        run_recall.clone_at("own/name", "abc123", tmp_path / "cache")

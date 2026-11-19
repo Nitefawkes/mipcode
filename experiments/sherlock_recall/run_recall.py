@@ -49,13 +49,16 @@ def _kill_tree(p: subprocess.Popen) -> None:
         p.kill()
 
 
-def _run_with_tree_kill(argv, *, cwd=None, env=None, timeout) -> subprocess.CompletedProcess:
+def _run_with_tree_kill(argv, *, cwd=None, env=None, timeout, text=True, input=None) -> subprocess.CompletedProcess:
     """Like subprocess.run(capture_output, text) but a timeout kills the whole process tree
     and always re-raises TimeoutExpired instead of blocking on inherited pipes."""
     p = subprocess.Popen(argv, cwd=cwd, env=env, stdout=subprocess.PIPE,
-                         stderr=subprocess.PIPE, text=True, encoding="utf-8")
+                         stderr=subprocess.PIPE, stdin=subprocess.PIPE if input is not None else None,
+                         text=text,
+                         encoding="utf-8" if text else None)
     try:
-        out, err = p.communicate(timeout=timeout)
+        out, err = (p.communicate(timeout=timeout) if input is None
+                     else p.communicate(input, timeout=timeout))
     except subprocess.TimeoutExpired:
         _kill_tree(p)
         try:
@@ -66,13 +69,72 @@ def _run_with_tree_kill(argv, *, cwd=None, env=None, timeout) -> subprocess.Comp
     return subprocess.CompletedProcess(argv, p.returncode, out, err)
 
 
-def _git(d: Path, *args: str) -> subprocess.CompletedProcess:
-    timeout = 600 if args and args[0] == "fetch" else 120
+def _git(d: Path, *args: str, text: bool = True, input=None) -> subprocess.CompletedProcess:
+    timeout = 600 if args and args[0] in ("fetch",) else 120
     return _run_with_tree_kill(["git", "-c", "core.longpaths=true", "-C", str(d), *args],
-                               env=_git_env(), timeout=timeout)
+                               env=_git_env(), timeout=timeout, text=text, input=input)
 
 
-_WIN_INVALID_SPARSE = ("/*", "!*:*", "!*<*", "!*>*", "!*|*", "!*?*", '!*"*')
+_WIN_FORBIDDEN_RE = re.compile(r'[<>:"|?*\x00-\x1f]')
+LAST_PLUMBING_DROPPED = 0  # entries dropped by the most recent plumbing checkout fallback
+
+
+def _safe_tree_path(path: str) -> bool:
+    if not path or path.startswith("/") or _WIN_FORBIDDEN_RE.search(path):
+        return False
+    for comp in path.split("/"):
+        if comp in ("", ".", "..") or comp.lower() == ".git" or comp[-1] in ". ":
+            return False
+    return True
+
+
+def _plumbing_checkout(d: Path, run) -> int:
+    """Write FETCH_HEAD's regular files into d without touching the index (so git's NTFS
+    path check never runs). `run(args, input=None)` runs a git subcommand returning bytes.
+    Returns the number of dropped entries. Never executes anything from the tree."""
+    ls = run(["ls-tree", "-r", "-z", "FETCH_HEAD"])
+    if ls.returncode != 0:
+        raise RuntimeError(f"git ls-tree failed: {ls.stderr.decode('utf-8', 'replace').strip()[:300]}")
+    dropped = 0
+    keep: list[tuple[str, str]] = []  # (oid, relpath)
+    for entry in ls.stdout.split(b"\0"):
+        if not entry:
+            continue
+        meta, _, raw = entry.partition(b"\t")
+        parts = meta.split(b" ")
+        try:
+            path = raw.decode("utf-8")
+        except UnicodeDecodeError:
+            dropped += 1
+            continue
+        if (len(parts) != 3 or parts[1] != b"blob" or parts[0] not in (b"100644", b"100755")
+                or not _safe_tree_path(path)):
+            dropped += 1
+            continue
+        keep.append((parts[2].decode("ascii"), path))
+    root = d.resolve()
+    if keep:
+        cf = run(["cat-file", "--batch"], input="".join(oid + "\n" for oid, _ in keep).encode("ascii"))
+        if cf.returncode != 0:
+            raise RuntimeError(f"git cat-file failed: {cf.stderr.decode('utf-8', 'replace').strip()[:300]}")
+        buf, pos = cf.stdout, 0
+        for oid, path in keep:
+            nl = buf.index(b"\n", pos)
+            header = buf[pos:nl].split(b" ")
+            if len(header) != 3 or header[0].decode("ascii") != oid or header[1] != b"blob":
+                raise RuntimeError(f"git cat-file: unexpected header for {oid}")
+            size = int(header[2])
+            data = buf[nl + 1:nl + 1 + size]
+            pos = nl + 1 + size + 1
+            target = (d / path).resolve()
+            try:
+                target.relative_to(root)
+            except ValueError:
+                dropped += 1
+                continue
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(data)
+    return dropped
 
 
 def clone_at(repo: str, sha: str, cache: Path) -> Path:
@@ -97,12 +159,23 @@ def clone_at(repo: str, sha: str, cache: Path) -> Path:
     for step in steps:
         r = git(*step)
         if r.returncode != 0 and step[0] == "checkout" and "invalid path" in r.stderr:
-            # Paths with characters illegal on NTFS (e.g. ':'): exclude them and retry.
-            sp = git("sparse-checkout", "set", "--no-cone", *_WIN_INVALID_SPARSE)
-            if sp.returncode != 0:
+            # Paths illegal on NTFS (e.g. ':'): no git security setting is changed. Write the
+            # tree's regular files via ls-tree/cat-file (no index), then point HEAD at the SHA.
+            global LAST_PLUMBING_DROPPED
+
+            def run(args, input=None):
+                try:
+                    return _git(d, *args, text=False, input=input)
+                except subprocess.TimeoutExpired as exc:
+                    raise RuntimeError(
+                        f"git {args[0]} timed out after {exc.timeout}s for {repo}@{sha}") from exc
+
+            LAST_PLUMBING_DROPPED = _plumbing_checkout(d, run)
+            r = git("update-ref", "HEAD", "FETCH_HEAD")
+            if r.returncode != 0:
                 raise RuntimeError(
-                    f"git sparse-checkout failed for {repo}@{sha}: {sp.stderr.strip()[:300]}")
-            r = git(*step)
+                    f"git update-ref failed for {repo}@{sha}: {r.stderr.strip()[:300]}")
+            continue
         if r.returncode != 0:
             raise RuntimeError(f"git {step[0]} failed for {repo}@{sha}: {r.stderr.strip()[:300]}")
     return d
