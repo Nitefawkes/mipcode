@@ -140,6 +140,8 @@ The newer evidence is weaker for this use. In a [small pilot](results/pilot/READ
 
 The check can still run as [Claude Code hooks](docs/usage.md#run-as-claude-code-hooks), which add new sites after an edit and list open ones before the agent finishes. Treat the hooks as experimental.
 
+For coding and security agents integrating `mip-delta` directly, see [`SKILL.md`](SKILL.md) and the public machine-readable discovery endpoints ([`llms.txt`](https://coherion.net/mipcode/llms.txt), [`skill.md`](https://coherion.net/mipcode/skill.md), and [`findings.json`](https://coherion.net/mipcode/findings.json)).
+
 ## Research and development
 
 - [Cold repo bug-hunter](results/cold_audit/README.md) runs diff-free `mip-delta --audit-repo` across 24 resting `HEAD` snapshots (`5,708` files, `22/24` silent, `9/10` Stage-1 real standing bugs in `rich`, `100%` Stage-2 kept precision for `$0.009854` total API cost).
