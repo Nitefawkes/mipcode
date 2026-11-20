@@ -372,6 +372,8 @@ def test_cli_version():
 
 def test_make_client_transport_choice(monkeypatch):
     monkeypatch.delitem(sys.modules, "anthropic", raising=False)
+    # CI runners have no claude CLI; resolve it to a stand-in path (nothing is executed).
+    monkeypatch.setattr(llm.shutil, "which", lambda name: "/fake/bin/" + name)
     assert isinstance(llm.make_client("cli"), llm.CliClient)
     assert "anthropic" not in sys.modules
     with pytest.raises(ValueError):

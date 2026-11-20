@@ -33,7 +33,7 @@
 
 ## Review Focus
 
-1. **Markdown-wrapped permalinks.** Links in `[text](url)`, `<url>`, or followed by `)`, `.`, `,` or a backtick must parse to a clean URL. Also accept `#L10-L20`, `#L10`, no anchor, and URL-encoded paths. Test owner: Task 1.
+1. **Markdown-wrapped permalinks.** Links in `[text](https://...)`, `<https://...>`, or followed by `)`, `.`, `,` or a backtick must parse to a clean URL. Also accept `#L10-L20`, `#L10`, no anchor, and URL-encoded paths. Test owner: Task 1.
 2. **One issue with links in several sections.** Only Code Snippet or Root Cause links become sites. A Root Cause that only links to an external repo yields zero companion sites, and the finding is still kept for class coverage. Test owner: Task 1.
 3. **Missing, private or renamed companion repo, or a judging README with no H/M.** The contest is recorded as ineligible with a reason, and the build continues. Test owner: Task 2.
 4. **Analyzer paths that differ from site paths.** These include backslashes, `./` prefixes, or the clone root nested one directory deep. They must normalize to the same POSIX path relative to the repo root before matching. Test owner: Task 3.
