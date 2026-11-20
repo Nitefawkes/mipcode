@@ -82,7 +82,7 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
-      - uses: Nitefawkes/mipcode-action@3756b2f9f77eb21e286cb1082fd8506942a2017d # v1.0.0
+      - uses: Nitefawkes/mipcode-action@fe72dc8f7ab4cb55375e268a36b0c36836b5770f # v1.0.1
 ```
 
 The Action uses the pull request event to select the baseline. Keep `fetch-depth: 0` so the base and head history are available. Findings produce warnings by default. To block the job on a finding, set the Action input `fail-on-findings` to `'true'`. Setup and analysis errors fail the job in either mode.
