@@ -476,6 +476,30 @@ def format_advisory(findings: Iterable[Finding], *, max_bytes: int = 250, max_it
     return out
 
 
+def _call_forwards_param(call: CallFact, parameter: str, target_pos: Iterable[str] = ()) -> bool:
+    """True when `parameter` reaches `call` directly, via kwargs, positionally, or via local def-use."""
+    return (
+        parameter in call.keyword_names
+        or call.has_kwargs
+        or parameter in call.value_names
+        or parameter in call.forwarded_params
+        or parameter in tuple(target_pos)[: call.positional_count]
+    )
+
+
+def _sibling_forwards_param(
+    fn: FunctionFact, target_name: str, parameter: str, target_pos: Iterable[str] = ()
+) -> bool:
+    return any(
+        sibling.callee_name == target_name and _call_forwards_param(sibling, parameter, target_pos)
+        for sibling in fn.own_calls
+    )
+
+
+def _fn_ignores_param(fn: FunctionFact, param: str) -> bool:
+    return param in fn.ignored_params or _docstring_marks_ignored(fn, param)
+
+
 def analyze_changed_files_in_index(
     before_changed: Mapping[str, FileFacts | None],
     after_changed: Mapping[str, FileFacts],
@@ -928,29 +952,30 @@ def analyze_changed_files_in_index(
                 # and abstain on ordinary consumers relying on backward-compatible defaults.
                 # Only warn when an enclosing delegating wrapper (same method/function name
                 # or accepting the same parameter name) calls target without forwarding it.
-                if parameter in call.keyword_names or call.has_kwargs or parameter in call.value_names:
+                if (
+                    parameter in call.keyword_names
+                    or call.has_kwargs
+                    or parameter in call.value_names
+                    or parameter in call.forwarded_params
+                ):
                     continue
                 owner_fn = caller_facts.functions.get(call.owner_function) if call.owner_function else None
                 if owner_fn is None:
                     continue
                 if owner_fn.path == target.path and owner_fn.qualname == target.qualname:
                     continue
+                if _fn_ignores_param(owner_fn, parameter):
+                    continue
                 owner_param_names = {p.name for p in owner_fn.parameters}
+                if parameter in owner_param_names and parameter in owner_fn.params_with_sink:
+                    continue
                 is_delegating_wrapper = (owner_fn.name == target.name) or (parameter in owner_param_names)
                 if not is_delegating_wrapper:
                     continue
                 # If the delegating wrapper accepts `parameter` and forwards it to `target.name` in a
                 # conditional branch (e.g. `if base_iri is not None: return plugin.serialize(x, base_iri=base_iri)`
                 # followed by fallback `return plugin.serialize(x)`), do not flag the fallback call.
-                if parameter in owner_param_names and any(
-                    sibling.callee_name == target.name
-                    and (
-                        parameter in sibling.keyword_names
-                        or sibling.has_kwargs
-                        or parameter in sibling.value_names
-                    )
-                    for sibling in owner_fn.own_calls
-                ):
+                if parameter in owner_param_names and _sibling_forwards_param(owner_fn, target.name, parameter):
                     continue
                 findings.append(
                     Finding(
@@ -967,8 +992,62 @@ def analyze_changed_files_in_index(
                     )
                 )
 
+    # 5b. Wrapper-side diff check: newly added wrapper parameter not forwarded to an accepting callee
+    for owner_fn, parameter in added_parameters:
+        if (
+            owner_fn.is_stub
+            or not owner_fn.own_calls
+            or _fn_ignores_param(owner_fn, parameter)
+            or parameter in owner_fn.params_with_sink
+        ):
+            continue
+        owner_file = after_changed.get(owner_fn.path)
+        if owner_file is None:
+            continue
+        for call in owner_fn.own_calls:
+            if call.has_kwargs or call.has_varargs:
+                continue
+            candidate_calls_inspected += 1
+            resolved = resolve_call_with_provenance(call, owner_file, index)
+            if len(resolved) != 1:
+                continue
+            target, matched_prov = resolved[0]
+            if target.path == owner_fn.path and target.qualname == owner_fn.qualname:
+                continue
+            target_params = _parameter_map(target)
+            target_param = target_params.get(parameter)
+            if target_param is None or target_param.default is None:
+                continue
+            target_pos = [
+                p.name for p in target.parameters if p.name not in {"self", "cls"} and p.kind in {"posonly", "positional"}
+            ]
+            if _call_forwards_param(call, parameter, target_pos):
+                continue
+            if _sibling_forwards_param(owner_fn, target.name, parameter, target_pos):
+                continue
+            shared = {p.name for p in owner_fn.parameters if p.name not in {"self", "cls"}} & set(target_params)
+            passed = {sp for sp in shared if _call_forwards_param(call, sp, target_pos)}
+            if not (len(passed) >= 1 or owner_fn.name == target.name):
+                continue
+            findings.append(
+                Finding(
+                    "delegating_wrapper_review",
+                    owner_fn.qualname,
+                    owner_file.path,
+                    call.line,
+                    call.line,
+                    "candidate",
+                    (
+                        f"delegating wrapper {owner_fn.qualname} calls {target.qualname} without forwarding optional parameter {parameter}",
+                    ),
+                    matched_prov,
+                )
+            )
+
     # 6. Intra-function unused added parameter & dead self.<param> store checks
     for target, parameter in added_parameters:
+        if _fn_ignores_param(target, parameter):
+            continue
         if parameter not in target.local_name_reads:
             findings.append(
                 Finding(
@@ -1011,7 +1090,7 @@ def analyze_changed_files_in_index(
         if fn is None:
             continue
         for tested_name, line in fn.bare_truthy_checks:
-            if tested_name in nullable_names:
+            if tested_name in nullable_names and not _fn_ignores_param(fn, tested_name):
                 findings.append(
                     Finding(
                         "parameter_truthiness_review",
@@ -1224,11 +1303,7 @@ def _cold_wrapper_findings(
                 target_pos = [
                     p.name for p in target.parameters if p.name not in {"self", "cls"} and p.kind in {"posonly", "positional"}
                 ]
-                passed = (
-                    (set(call.keyword_names) & shared)
-                    | (set(target_pos[: call.positional_count]) & shared)
-                    | (set(call.value_names) & shared)
-                )
+                passed = {sp for sp in shared if _call_forwards_param(call, sp, target_pos)}
                 forwarded_opt = {p for p in passed if target_params[p].default is not None}
                 forwarded_stems = {_prefix_stem(p) for p in forwarded_opt if _prefix_stem(p)}
                 repo_forwarded = forwarded_to_target.get((target.path, target.qualname), set())
@@ -1237,11 +1312,9 @@ def _cold_wrapper_findings(
                 for p in sorted(shared - passed):
                     if p.startswith("_") or target_params[p].default is None or owner_params[p].default is None:
                         continue
-                    if any(
-                        sibling.callee_name == target.name
-                        and (p in sibling.keyword_names or sibling.has_kwargs or p in sibling.value_names)
-                        for sibling in fn.own_calls
-                    ):
+                    if _fn_ignores_param(fn, p):
+                        continue
+                    if _sibling_forwards_param(fn, target.name, p, target_pos):
                         continue
                     stem = _prefix_stem(p)
                     unread_hit = (
@@ -1250,7 +1323,6 @@ def _cold_wrapper_findings(
                         and (len(passed) >= 1 or fn.name == target.name)
                         and not _unread_parameter_is_expected(fn, p, ff, index)
                         and not _constructor_pair_reads(fn, p, ff)
-                        and not _docstring_marks_ignored(fn, p)
                     )
                     stored_hit = (
                         not is_recursive
@@ -1265,7 +1337,15 @@ def _cold_wrapper_findings(
                         and p in repo_forwarded
                         and (len(forwarded_opt) >= 3 if is_recursive else len(forwarded_opt) >= 2)
                     )
-                    if unread_hit or stored_hit or family_hit:
+                    local_read_hit = (
+                        not is_recursive
+                        and p in fn.local_name_reads
+                        and p not in fn.params_with_sink
+                        and bool(forwarded_opt)
+                        and not _unread_parameter_is_expected(fn, p, ff, index)
+                        and not _constructor_pair_reads(fn, p, ff)
+                    )
+                    if unread_hit or stored_hit or family_hit or local_read_hit:
                         findings.append(
                             Finding(
                                 "delegating_wrapper_review",
@@ -1301,6 +1381,7 @@ def _cold_dead_store_findings(index: MutableResolutionIndex, all_attr_loads: set
                 and param.name in fn.field_writes
                 and param.name not in fn.non_self_store_reads
                 and param.name not in all_attr_loads
+                and not _fn_ignores_param(fn, param.name)
             ]
             if not candidate_names:
                 continue

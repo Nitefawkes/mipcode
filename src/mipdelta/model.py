@@ -77,6 +77,7 @@ class CallFact:
     _ast_node: ast.Call | None = field(default=None, repr=False, compare=False)
     _result_consumer: ast.AST | None = field(default=None, repr=False, compare=False)
     under_broad_except: bool = False
+    forwarded_params: frozenset[str] = frozenset()
 
 
 @dataclass
@@ -111,6 +112,8 @@ class FunctionFact:
     local_name_stores: frozenset[str] = frozenset()
     non_self_store_reads: frozenset[str] = frozenset()
     attr_loads: frozenset[str] = frozenset()
+    ignored_params: frozenset[str] = frozenset()
+    params_with_sink: frozenset[str] = frozenset()
 
     @property
     def decorator_names(self) -> tuple[str, ...]:

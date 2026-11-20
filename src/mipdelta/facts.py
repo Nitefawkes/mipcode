@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 import ast
+import io
 import operator
+import re
+import tokenize
 from dataclasses import replace
 from pathlib import PurePosixPath
 from typing import Iterable
@@ -351,6 +354,7 @@ def _call_fact(
     enclosing_caught_exceptions: tuple[str, ...] = (),
     result_consumer: ast.AST | None = None,
     under_broad_except: bool = False,
+    forwarded_params: frozenset[str] = frozenset(),
 ) -> CallFact | None:
     chain = dotted(node.func)
     constructed = None
@@ -418,6 +422,7 @@ def _call_fact(
         node,
         result_consumer,
         under_broad_except,
+        forwarded_params,
     )
 
 
@@ -688,6 +693,445 @@ class _FunctionScanner(_CallContextScanner):
         super().visit_Call(node)
 
 
+_PRAGMA_RE = re.compile(
+    r"\bmip-delta\s*:\s*(?:intentional-sink|ignore)\s*\(([^)]*)\)",
+    re.IGNORECASE,
+)
+_LOGGING_RECEIVERS = frozenset({
+    "log", "logger", "_log", "_logger", "logging", "structlog", "console", "stderr", "stdout",
+})
+_LOGGING_METHODS = frozenset({
+    "debug", "info", "warning", "warn", "error", "exception", "critical", "fatal", "log", "trace", "write", "print",
+})
+_LOGGING_BUILTINS = frozenset({"print", "pprint", "pformat", "breakpoint"})
+_VALIDATION_PREFIXES = (
+    "validate", "check", "verify", "ensure", "assert", "sanitize", "guard", "require",
+)
+_PURE_VALUE_BUILTINS = frozenset({
+    "abs", "all", "any", "ascii", "bin", "bool", "bytes", "callable", "chr",
+    "dict", "dir", "divmod", "enumerate", "filter", "float", "format", "frozenset",
+    "getattr", "hasattr", "hash", "hex", "id", "int", "isinstance", "issubclass",
+    "iter", "len", "list", "map", "max", "min", "oct", "ord", "pow", "range",
+    "repr", "reversed", "round", "set", "slice", "sorted", "str", "sum", "tuple",
+    "type", "zip",
+})
+_MUTATING_METHODS = frozenset({"append", "extend", "update", "setdefault", "add", "insert"})
+
+
+def _extract_pragma_comments(text: str) -> dict[int, tuple[str, ...]]:
+    """Parse `# mip-delta: intentional-sink(...)` and `# mip-delta: ignore(...)` comments via tokenize."""
+    if "mip-delta" not in text.lower():
+        return {}
+    by_line: dict[int, list[str]] = {}
+    try:
+        for tok in tokenize.generate_tokens(io.StringIO(text).readline):
+            if tok.type != tokenize.COMMENT:
+                continue
+            for match in _PRAGMA_RE.finditer(tok.string):
+                names = [part.strip() for part in match.group(1).split(",") if part.strip()]
+                if names:
+                    by_line.setdefault(tok.start[0], []).extend(names)
+    except (tokenize.TokenError, IndentationError):
+        pass
+    return {line: tuple(dict.fromkeys(names)) for line, names in by_line.items()}
+
+
+def _is_logging_call(node: ast.Call) -> bool:
+    chain = dotted(node.func)
+    if len(chain) == 1 and chain[0] in _LOGGING_BUILTINS:
+        return True
+    if isinstance(node.func, ast.Attribute):
+        method = node.func.attr.lower()
+        if chain == ("warnings", "warn"):
+            return True
+        if len(chain) >= 2:
+            recv = chain[-2].lower()
+            if (recv in _LOGGING_RECEIVERS or recv.endswith(("_log", "_logger"))) and method in _LOGGING_METHODS:
+                return True
+            if recv == "traceback" and method.startswith("print"):
+                return True
+            if recv in {"self", "cls"} and method in {"log", "debug"}:
+                return True
+        elif isinstance(node.func.value, ast.Call):
+            inner = dotted(node.func.value.func)
+            if inner and inner[-1].lower() in {"getlogger", "get_logger"} and method in _LOGGING_METHODS:
+                return True
+    return False
+
+
+def _is_validation_call(node: ast.Call) -> bool:
+    chain = dotted(node.func)
+    if not chain:
+        return False
+    leaf = chain[-1].lstrip("_").lower()
+    return leaf.startswith(_VALIDATION_PREFIXES)
+
+
+def _target_names(target: ast.AST, *, include_ignored: bool = False) -> list[str]:
+    names: list[str] = []
+    pending = [target]
+    while pending:
+        cur = pending.pop()
+        if isinstance(cur, ast.Name):
+            if include_ignored or cur.id not in {"self", "cls", "_"}:
+                names.append(cur.id)
+        elif isinstance(cur, (ast.Tuple, ast.List)):
+            pending.extend(cur.elts)
+        elif isinstance(cur, ast.Starred):
+            pending.append(cur.value)
+        elif not include_ignored and isinstance(cur, (ast.Subscript, ast.Attribute)):
+            if isinstance(cur.value, ast.Name) and cur.value.id not in {"self", "cls", "_"}:
+                names.append(cur.value.id)
+    return names
+
+
+def _is_self_attr_target(target: ast.AST) -> bool:
+    pending = [target]
+    while pending:
+        cur = pending.pop()
+        if isinstance(cur, (ast.Tuple, ast.List)):
+            pending.extend(cur.elts)
+        elif isinstance(cur, ast.Starred):
+            pending.append(cur.value)
+        elif isinstance(cur, ast.Attribute) and isinstance(cur.value, ast.Name) and cur.value.id == "self":
+            return True
+        elif isinstance(cur, ast.Subscript) and isinstance(cur.value, ast.Attribute):
+            if isinstance(cur.value.value, ast.Name) and cur.value.value.id == "self":
+                return True
+    return False
+
+
+def _expr_load_names(node: ast.AST, bound: frozenset[str] = frozenset()) -> set[str]:
+    found: set[str] = set()
+
+    def visit(cur: ast.AST, cur_bound: frozenset[str]) -> None:
+        if isinstance(cur, ast.Name):
+            if isinstance(cur.ctx, ast.Load) and cur.id not in cur_bound:
+                found.add(cur.id)
+            return
+        if isinstance(cur, ast.Lambda):
+            lbound = set(cur_bound)
+            for arg in (*cur.args.posonlyargs, *cur.args.args, *cur.args.kwonlyargs):
+                lbound.add(arg.arg)
+            if cur.args.vararg:
+                lbound.add(cur.args.vararg.arg)
+            if cur.args.kwarg:
+                lbound.add(cur.args.kwarg.arg)
+            visit(cur.body, frozenset(lbound))
+            return
+        if isinstance(cur, (ast.ListComp, ast.SetComp, ast.GeneratorExp, ast.DictComp)):
+            cbound = set(cur_bound)
+            for gen in cur.generators:
+                visit(gen.iter, frozenset(cbound))
+                cbound.update(_target_names(gen.target, include_ignored=True))
+                frozen = frozenset(cbound)
+                for cond in gen.ifs:
+                    visit(cond, frozen)
+            frozen = frozenset(cbound)
+            if isinstance(cur, ast.DictComp):
+                visit(cur.key, frozen)
+                visit(cur.value, frozen)
+            else:
+                visit(cur.elt, frozen)
+            return
+        if isinstance(cur, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+            return
+        for child in ast.iter_child_nodes(cur):
+            visit(child, cur_bound)
+
+    visit(node, bound)
+    return found
+
+
+def _has_non_trivial_call(expr: ast.AST) -> bool:
+    pending = [expr]
+    while pending:
+        cur = pending.pop()
+        if isinstance(cur, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef, ast.Lambda)):
+            continue
+        if isinstance(cur, ast.Await):
+            return True
+        if isinstance(cur, ast.Call):
+            if not _is_logging_call(cur) and not _is_validation_call(cur):
+                chain = dotted(cur.func)
+                if not (len(chain) == 1 and chain[0] in _PURE_VALUE_BUILTINS):
+                    return True
+        pending.extend(ast.iter_child_nodes(cur))
+    return False
+
+
+def _collect_defuse_bindings(
+    body: list[ast.stmt],
+) -> tuple[list[tuple[list[str], set[str]]], set[str]]:
+    """Collect intra-function local variable bindings and closure-captured outer names."""
+    bindings: list[tuple[list[str], set[str]]] = []
+    closure_reads: set[str] = set()
+
+    def scan_expr_named(expr: ast.AST) -> None:
+        pending = [expr]
+        while pending:
+            cur = pending.pop()
+            if isinstance(cur, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+                continue
+            if isinstance(cur, ast.NamedExpr):
+                tnames = _target_names(cur.target)
+                if tnames:
+                    bindings.append((tnames, _expr_load_names(cur.value)))
+            elif isinstance(cur, ast.Call):
+                if (
+                    isinstance(cur.func, ast.Attribute)
+                    and cur.func.attr in _MUTATING_METHODS
+                    and isinstance(cur.func.value, ast.Name)
+                    and cur.func.value.id not in {"self", "cls", "_"}
+                ):
+                    rnames: set[str] = set()
+                    for a in cur.args:
+                        rnames.update(_expr_load_names(a))
+                    for kw in cur.keywords:
+                        rnames.update(_expr_load_names(kw.value))
+                    if rnames:
+                        bindings.append(([cur.func.value.id], rnames))
+            pending.extend(ast.iter_child_nodes(cur))
+
+    def scan_stmts(stmts: list[ast.stmt]) -> None:
+        for stmt in stmts:
+            if isinstance(stmt, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                inner_bound: set[str] = {
+                    a.arg for a in (*stmt.args.posonlyargs, *stmt.args.args, *stmt.args.kwonlyargs)
+                }
+                if stmt.args.vararg:
+                    inner_bound.add(stmt.args.vararg.arg)
+                if stmt.args.kwarg:
+                    inner_bound.add(stmt.args.kwarg.arg)
+                free_loads = {
+                    child.id
+                    for child in ast.walk(stmt)
+                    if isinstance(child, ast.Name)
+                    and isinstance(child.ctx, ast.Load)
+                    and child.id not in inner_bound
+                    and child.id not in {"self", "cls", "_"}
+                }
+                if free_loads:
+                    closure_reads.update(free_loads)
+                    bindings.append(([stmt.name], free_loads))
+                continue
+            if isinstance(stmt, ast.ClassDef):
+                continue
+            if isinstance(stmt, ast.Assign):
+                rnames = _expr_load_names(stmt.value)
+                for tgt in stmt.targets:
+                    if isinstance(tgt, ast.Subscript):
+                        rnames.update(_expr_load_names(tgt.slice))
+                    tnames = _target_names(tgt)
+                    if tnames and rnames:
+                        bindings.append((tnames, rnames))
+                scan_expr_named(stmt.value)
+            elif isinstance(stmt, ast.AnnAssign) and stmt.value is not None:
+                rnames = _expr_load_names(stmt.value)
+                if isinstance(stmt.target, ast.Subscript):
+                    rnames.update(_expr_load_names(stmt.target.slice))
+                tnames = _target_names(stmt.target)
+                if tnames and rnames:
+                    bindings.append((tnames, rnames))
+                scan_expr_named(stmt.value)
+            elif isinstance(stmt, ast.AugAssign):
+                rnames = _expr_load_names(stmt.value)
+                tnames = _target_names(stmt.target)
+                if tnames and rnames:
+                    bindings.append((tnames, rnames))
+                scan_expr_named(stmt.value)
+            elif isinstance(stmt, (ast.For, ast.AsyncFor)):
+                tnames = _target_names(stmt.target)
+                rnames = _expr_load_names(stmt.iter)
+                if tnames and rnames:
+                    bindings.append((tnames, rnames))
+                scan_expr_named(stmt.iter)
+                scan_stmts(stmt.body)
+                scan_stmts(stmt.orelse)
+            elif isinstance(stmt, (ast.With, ast.AsyncWith)):
+                for item in stmt.items:
+                    scan_expr_named(item.context_expr)
+                    if item.optional_vars is not None:
+                        tnames = _target_names(item.optional_vars)
+                        rnames = _expr_load_names(item.context_expr)
+                        if tnames and rnames:
+                            bindings.append((tnames, rnames))
+                scan_stmts(stmt.body)
+            elif isinstance(stmt, ast.If):
+                scan_expr_named(stmt.test)
+                scan_stmts(stmt.body)
+                scan_stmts(stmt.orelse)
+            elif isinstance(stmt, ast.While):
+                scan_expr_named(stmt.test)
+                scan_stmts(stmt.body)
+                scan_stmts(stmt.orelse)
+            elif isinstance(stmt, (ast.Try, getattr(ast, "TryStar", ast.Try))):
+                scan_stmts(stmt.body)
+                for handler in stmt.handlers:
+                    scan_stmts(handler.body)
+                scan_stmts(stmt.orelse)
+                scan_stmts(stmt.finalbody)
+            elif hasattr(ast, "Match") and isinstance(stmt, ast.Match):
+                scan_expr_named(stmt.subject)
+                for case in stmt.cases:
+                    scan_stmts(case.body)
+            elif isinstance(stmt, ast.Expr):
+                scan_expr_named(stmt.value)
+            elif isinstance(stmt, (ast.Return, ast.Yield, ast.YieldFrom)) and stmt.value is not None:
+                scan_expr_named(stmt.value)
+
+    scan_stmts(body)
+    return bindings, closure_reads
+
+
+def _analyze_defuse(
+    body: list[ast.stmt], calls: list[ast.Call], param_names: set[str]
+) -> tuple[dict[int, frozenset[str]], frozenset[str]]:
+    """Propagate parameter dependencies to outbound calls and classify real behavioral sinks."""
+    if not param_names:
+        return {}, frozenset()
+
+    deps: dict[str, set[str]] = {p: {p} for p in param_names}
+    bindings, closure_reads = _collect_defuse_bindings(body)
+
+    changed = True
+    while changed:
+        changed = False
+        for tnames, rnames in bindings:
+            propagated: set[str] = set()
+            for rname in rnames:
+                propagated.update(deps.get(rname, ()))
+            if not propagated:
+                continue
+            for tname in tnames:
+                bucket = deps.setdefault(tname, set())
+                if not propagated <= bucket:
+                    bucket.update(propagated)
+                    changed = True
+
+    def params_in_expr(expr: ast.AST) -> set[str]:
+        out: set[str] = set()
+        for name in _expr_load_names(expr):
+            out.update(deps.get(name, ()))
+        return out
+
+    call_forwarded: dict[int, frozenset[str]] = {}
+    for call_node in calls:
+        fwd: set[str] = set()
+        for arg in call_node.args:
+            fwd.update(params_in_expr(arg))
+        for kw in call_node.keywords:
+            fwd.update(params_in_expr(kw.value))
+        if fwd:
+            call_forwarded[id(call_node)] = frozenset(fwd)
+
+    sunk: set[str] = set()
+    for name in closure_reads:
+        sunk.update(deps.get(name, ()))
+
+    def collect_sinks(stmts: list[ast.stmt], guard_params: frozenset[str] = frozenset()) -> bool:
+        has_effect = False
+        for stmt in stmts:
+            if isinstance(stmt, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+                continue
+            if isinstance(stmt, ast.Return):
+                if stmt.value is not None:
+                    sunk.update(params_in_expr(stmt.value))
+                has_effect = True
+            elif isinstance(stmt, (ast.Break, ast.Continue)):
+                has_effect = True
+            elif isinstance(stmt, ast.Raise):
+                if stmt.exc is not None:
+                    exc_params = params_in_expr(stmt.exc)
+                    sunk.update(exc_params - guard_params if guard_params else exc_params)
+                if stmt.cause is not None:
+                    sunk.update(params_in_expr(stmt.cause))
+            elif isinstance(stmt, (ast.Assert, ast.Pass)):
+                continue
+            elif isinstance(stmt, ast.Expr):
+                val = stmt.value.value if isinstance(stmt.value, ast.Await) else stmt.value
+                if isinstance(val, ast.Yield):
+                    if val.value is not None:
+                        sunk.update(params_in_expr(val.value))
+                    has_effect = True
+                elif isinstance(val, ast.YieldFrom):
+                    sunk.update(params_in_expr(val.value))
+                    has_effect = True
+                elif isinstance(val, ast.Call):
+                    if not _is_logging_call(val) and not _is_validation_call(val):
+                        sunk.update(call_forwarded.get(id(val), ()))
+                        sunk.update(params_in_expr(val.func))
+                        has_effect = True
+            elif isinstance(stmt, ast.Assign):
+                if any(_is_self_attr_target(t) for t in stmt.targets):
+                    sunk.update(params_in_expr(stmt.value))
+                    has_effect = True
+                elif all(isinstance(t, ast.Name) and t.id == "_" for t in stmt.targets):
+                    val = stmt.value.value if isinstance(stmt.value, ast.Await) else stmt.value
+                    if isinstance(val, ast.Call) and not _is_logging_call(val) and not _is_validation_call(val):
+                        sunk.update(params_in_expr(val))
+                        has_effect = True
+                elif _has_non_trivial_call(stmt.value):
+                    has_effect = True
+            elif isinstance(stmt, ast.AnnAssign) and stmt.value is not None:
+                if _is_self_attr_target(stmt.target):
+                    sunk.update(params_in_expr(stmt.value))
+                    has_effect = True
+                elif _has_non_trivial_call(stmt.value):
+                    has_effect = True
+            elif isinstance(stmt, ast.AugAssign):
+                if _is_self_attr_target(stmt.target):
+                    sunk.update(params_in_expr(stmt.value))
+                    has_effect = True
+                elif _has_non_trivial_call(stmt.value):
+                    has_effect = True
+            elif isinstance(stmt, ast.If):
+                test_params = frozenset(params_in_expr(stmt.test))
+                sub_guard = guard_params | test_params
+                b_eff = collect_sinks(stmt.body, sub_guard)
+                e_eff = collect_sinks(stmt.orelse, sub_guard)
+                if b_eff or e_eff:
+                    sunk.update(test_params)
+                    has_effect = True
+            elif isinstance(stmt, ast.While):
+                test_params = frozenset(params_in_expr(stmt.test))
+                sunk.update(test_params)
+                collect_sinks(stmt.body, guard_params | test_params)
+                collect_sinks(stmt.orelse, guard_params)
+                has_effect = True
+            elif isinstance(stmt, (ast.For, ast.AsyncFor)):
+                iter_params = params_in_expr(stmt.iter)
+                b_eff = collect_sinks(stmt.body, guard_params)
+                e_eff = collect_sinks(stmt.orelse, guard_params)
+                if b_eff or e_eff:
+                    sunk.update(iter_params)
+                    has_effect = True
+            elif isinstance(stmt, (ast.With, ast.AsyncWith)):
+                for item in stmt.items:
+                    sunk.update(params_in_expr(item.context_expr))
+                collect_sinks(stmt.body, guard_params)
+                has_effect = True
+            elif isinstance(stmt, (ast.Try, getattr(ast, "TryStar", ast.Try))):
+                t_eff = collect_sinks(stmt.body, guard_params)
+                for handler in stmt.handlers:
+                    t_eff = collect_sinks(handler.body, guard_params) or t_eff
+                t_eff = collect_sinks(stmt.orelse, guard_params) or t_eff
+                t_eff = collect_sinks(stmt.finalbody, guard_params) or t_eff
+                has_effect = has_effect or t_eff
+            elif hasattr(ast, "Match") and isinstance(stmt, ast.Match):
+                subj_params = frozenset(params_in_expr(stmt.subject))
+                m_eff = False
+                for case in stmt.cases:
+                    m_eff = collect_sinks(case.body, guard_params | subj_params) or m_eff
+                if m_eff:
+                    sunk.update(subj_params)
+                    has_effect = True
+        return has_effect
+
+    collect_sinks(body)
+    return call_forwarded, frozenset(sunk)
+
+
 def _shift_call(call: CallFact, line_delta: int) -> CallFact:
     return replace(call, line=call.line + line_delta)
 
@@ -698,6 +1142,7 @@ class _ModuleScanner(_CallContextScanner):
         path: str,
         source_lines: list[str] | None = None,
         prior_facts: FileFacts | None = None,
+        pragma_comments: dict[int, tuple[str, ...]] | None = None,
     ) -> None:
         super().__init__()
         self.path = path.replace("\\", "/")
@@ -708,6 +1153,7 @@ class _ModuleScanner(_CallContextScanner):
             if (prior_facts is not None and prior_facts.parse_error is None and prior_facts.module == self.module)
             else None
         )
+        self.pragma_comments = pragma_comments or {}
         self.functions: dict[str, FunctionFact] = {}
         self.classes: dict[str, ClassFact] = {}
         self.calls: list[CallFact] = []
@@ -822,6 +1268,8 @@ class _ModuleScanner(_CallContextScanner):
                 local_name_stores=prior_fn.local_name_stores,
                 non_self_store_reads=prior_fn.non_self_store_reads,
                 attr_loads=prior_fn.attr_loads,
+                ignored_params=prior_fn.ignored_params,
+                params_with_sink=prior_fn.params_with_sink,
             )
             self.attr_loads.update(prior_fn.attr_loads)
             self.functions[qual] = fact
@@ -842,6 +1290,28 @@ class _ModuleScanner(_CallContextScanner):
             if var_name in local.dereferenced_vars and var_name not in local.guarded_vars:
                 local.dereferenced_calls.add(call_id)
         params, param_anns = _parameters(node.args)
+        active_params = {
+            p.name for p in params if p.name not in {"self", "cls"} and p.name in local.local_name_reads
+        }
+        call_forwarded, params_with_sink = _analyze_defuse(node.body, local.calls, active_params)
+        ignored: set[str] = set()
+        if self.pragma_comments:
+            fn_start = start_idx + 1
+            nested_spans = [
+                (
+                    nested.decorator_list[0].lineno
+                    if isinstance(nested, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef))
+                    and nested.decorator_list
+                    else nested.lineno,
+                    getattr(nested, "end_lineno", nested.lineno),
+                )
+                for nested in local.nested_declarations
+            ]
+            for line_no, names in self.pragma_comments.items():
+                if fn_start <= line_no <= end_line and not any(
+                    ns <= line_no <= ne for ns, ne in nested_spans
+                ):
+                    ignored.update(names)
         ret_ann = _annotation_head(node.returns)
         ret_allows_none = _return_allows_none(node.returns)
         is_prop = "property" in {dotted(d)[-1] for d in node.decorator_list if dotted(d)}
@@ -857,6 +1327,7 @@ class _ModuleScanner(_CallContextScanner):
                 enclosing_caught_exceptions=local.call_caught_exceptions.get(cid, ()),
                 result_consumer=local._result_consumers.get(cid),
                 under_broad_except=(cid in local.calls_under_broad_except),
+                forwarded_params=call_forwarded.get(cid, frozenset()),
             )
             if row:
                 own_calls_list.append(row)
@@ -898,6 +1369,8 @@ class _ModuleScanner(_CallContextScanner):
             local_name_stores=frozenset(local.local_name_stores),
             non_self_store_reads=frozenset(local.non_self_store_reads),
             attr_loads=fn_attr_loads,
+            ignored_params=frozenset(ignored),
+            params_with_sink=params_with_sink,
         )
         self.functions[qual] = fact
         if class_qual and class_qual in self.classes:
@@ -927,7 +1400,8 @@ def parse_file(path: str, text: str, *, prior_facts: FileFacts | None = None) ->
         tree = ast.parse(text, filename=normalized)
     except SyntaxError as exc:
         return FileFacts(normalized, module_name(normalized), {}, {}, [], {}, f"{exc.msg} at line {exc.lineno}")
-    scanner = _ModuleScanner(normalized, text.splitlines(), prior_facts=prior_facts)
+    pragmas = _extract_pragma_comments(text)
+    scanner = _ModuleScanner(normalized, text.splitlines(), prior_facts=prior_facts, pragma_comments=pragmas)
     scanner.visit(tree)
     module_name_stores, constant_defaults = callable_stores(tree.body), _module_constants(tree)
     return FileFacts(
