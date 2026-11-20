@@ -860,40 +860,141 @@ def _has_non_trivial_call(expr: ast.AST) -> bool:
     return False
 
 
-def _collect_defuse_bindings(
-    body: list[ast.stmt],
-) -> tuple[list[tuple[list[str], set[str]]], set[str]]:
-    """Collect intra-function local variable bindings and closure-captured outer names."""
-    bindings: list[tuple[list[str], set[str]]] = []
+def _stmts_always_exit(stmts: list[ast.stmt]) -> bool:
+    return bool(stmts) and isinstance(stmts[-1], (ast.Return, ast.Raise, ast.Break, ast.Continue))
+
+
+def _analyze_defuse(
+    body: list[ast.stmt], calls: list[ast.Call], param_names: set[str]
+) -> tuple[dict[int, frozenset[str]], frozenset[str]]:
+    """Propagate parameter dependencies forward in control-flow order and classify behavioral sinks."""
+    if not param_names:
+        return {}, frozenset()
+
+    init_env: dict[str, frozenset[str]] = {p: frozenset({p}) for p in param_names}
+    call_forwarded: dict[int, set[str]] = {}
+    sunk: set[str] = set()
     closure_reads: set[str] = set()
+    max_loop_iters = max(2, len(param_names) + 1)
 
-    def scan_expr_named(expr: ast.AST) -> None:
-        pending = [expr]
-        while pending:
-            cur = pending.pop()
-            if isinstance(cur, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
-                continue
-            if isinstance(cur, ast.NamedExpr):
-                tnames = _target_names(cur.target)
-                if tnames:
-                    bindings.append((tnames, _expr_load_names(cur.value)))
-            elif isinstance(cur, ast.Call):
-                if (
-                    isinstance(cur.func, ast.Attribute)
-                    and cur.func.attr in _MUTATING_METHODS
-                    and isinstance(cur.func.value, ast.Name)
-                    and cur.func.value.id not in {"self", "cls", "_"}
-                ):
-                    rnames: set[str] = set()
-                    for a in cur.args:
-                        rnames.update(_expr_load_names(a))
-                    for kw in cur.keywords:
-                        rnames.update(_expr_load_names(kw.value))
-                    if rnames:
-                        bindings.append(([cur.func.value.id], rnames))
-            pending.extend(ast.iter_child_nodes(cur))
+    def join_envs(
+        a: dict[str, frozenset[str]], b: dict[str, frozenset[str]]
+    ) -> dict[str, frozenset[str]]:
+        out = dict(a)
+        for name, vals in b.items():
+            out[name] = out.get(name, frozenset()) | vals
+        return out
 
-    def scan_stmts(stmts: list[ast.stmt]) -> None:
+    def params_in(expr: ast.AST, env: dict[str, frozenset[str]]) -> frozenset[str]:
+        out: set[str] = set()
+        for name in _expr_load_names(expr):
+            if name in env:
+                out.update(env[name])
+        return frozenset(out)
+
+    def apply_target(
+        tgt: ast.AST,
+        rhs: frozenset[str],
+        env: dict[str, frozenset[str]],
+        ctrl: frozenset[str],
+    ) -> None:
+        if isinstance(tgt, ast.Name):
+            if tgt.id not in {"self", "cls", "_"}:
+                if rhs:
+                    env[tgt.id] = rhs
+                else:
+                    env.pop(tgt.id, None)
+        elif isinstance(tgt, (ast.Tuple, ast.List)):
+            for elt in tgt.elts:
+                apply_target(elt, rhs, env, ctrl)
+        elif isinstance(tgt, ast.Starred):
+            apply_target(tgt.value, rhs, env, ctrl)
+        elif isinstance(tgt, ast.Subscript):
+            eval_expr(tgt.slice, env, ctrl)
+            sub_rhs = rhs | params_in(tgt.slice, env)
+            if sub_rhs:
+                for n in _target_names(tgt.value):
+                    env[n] = env.get(n, frozenset()) | sub_rhs
+        elif isinstance(tgt, ast.Attribute):
+            if rhs:
+                for n in _target_names(tgt.value):
+                    env[n] = env.get(n, frozenset()) | rhs
+
+    def eval_expr(
+        node: ast.AST,
+        env: dict[str, frozenset[str]],
+        ctrl: frozenset[str],
+    ) -> None:
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+            return
+        if isinstance(node, ast.Lambda):
+            lbound: set[str] = {
+                a.arg for a in (*node.args.posonlyargs, *node.args.args, *node.args.kwonlyargs)
+            }
+            if node.args.vararg:
+                lbound.add(node.args.vararg.arg)
+            if node.args.kwarg:
+                lbound.add(node.args.kwarg.arg)
+            lam_env = {k: v for k, v in env.items() if k not in lbound}
+            eval_expr(node.body, lam_env, ctrl)
+            return
+        if isinstance(node, ast.NamedExpr):
+            eval_expr(node.value, env, ctrl)
+            apply_target(node.target, params_in(node.value, env) | ctrl, env, ctrl)
+            return
+        if isinstance(node, (ast.ListComp, ast.SetComp, ast.GeneratorExp, ast.DictComp)):
+            comp_env = dict(env)
+            for gen in node.generators:
+                eval_expr(gen.iter, comp_env, ctrl)
+                apply_target(gen.target, params_in(gen.iter, comp_env) | ctrl, comp_env, ctrl)
+                for cond in gen.ifs:
+                    eval_expr(cond, comp_env, ctrl)
+            if isinstance(node, ast.DictComp):
+                eval_expr(node.key, comp_env, ctrl)
+                eval_expr(node.value, comp_env, ctrl)
+            else:
+                eval_expr(node.elt, comp_env, ctrl)
+            return
+        if isinstance(node, ast.Call):
+            eval_expr(node.func, env, ctrl)
+            fwd: set[str] = set()
+            for arg in node.args:
+                eval_expr(arg, env, ctrl)
+                fwd.update(params_in(arg, env))
+            for kw in node.keywords:
+                eval_expr(kw.value, env, ctrl)
+                fwd.update(params_in(kw.value, env))
+            if fwd:
+                call_forwarded.setdefault(id(node), set()).update(fwd)
+            if (
+                isinstance(node.func, ast.Attribute)
+                and node.func.attr in _MUTATING_METHODS
+                and isinstance(node.func.value, ast.Name)
+                and node.func.value.id not in {"self", "cls", "_"}
+            ):
+                var = node.func.value.id
+                mut_rhs = frozenset(fwd) | ctrl
+                if mut_rhs:
+                    env[var] = env.get(var, frozenset()) | mut_rhs
+            return
+        for child in ast.iter_child_nodes(node):
+            eval_expr(child, env, ctrl)
+
+    def record_rhs_call_sink(expr: ast.AST, env: dict[str, frozenset[str]]) -> bool:
+        if not _has_non_trivial_call(expr):
+            return False
+        val = expr.value if isinstance(expr, ast.Await) else expr
+        if isinstance(val, ast.Call) and not _is_logging_call(val) and not _is_validation_call(val):
+            sunk.update(params_in(val.func, env))
+        return True
+
+    def exec_stmts(
+        stmts: list[ast.stmt],
+        env: dict[str, frozenset[str]],
+        ctrl: frozenset[str],
+        guard_params: frozenset[str],
+    ) -> tuple[dict[str, frozenset[str]], bool]:
+        has_effect = False
         for stmt in stmts:
             if isinstance(stmt, (ast.FunctionDef, ast.AsyncFunctionDef)):
                 inner_bound: set[str] = {
@@ -911,225 +1012,209 @@ def _collect_defuse_bindings(
                     and child.id not in inner_bound
                     and child.id not in {"self", "cls", "_"}
                 }
-                if free_loads:
-                    closure_reads.update(free_loads)
-                    bindings.append(([stmt.name], free_loads))
+                closure_reads.update(free_loads)
+                captured: set[str] = set()
+                for fname in free_loads:
+                    if fname in env:
+                        captured.update(env[fname])
+                sunk.update(captured)
+                bound = frozenset(captured) | ctrl
+                if bound:
+                    env[stmt.name] = bound
+                else:
+                    env.pop(stmt.name, None)
+            elif isinstance(stmt, (ast.ClassDef, ast.Pass)):
                 continue
-            if isinstance(stmt, ast.ClassDef):
-                continue
-            if isinstance(stmt, ast.Assign):
-                rnames = _expr_load_names(stmt.value)
-                for tgt in stmt.targets:
-                    if isinstance(tgt, ast.Subscript):
-                        rnames.update(_expr_load_names(tgt.slice))
-                    tnames = _target_names(tgt)
-                    if tnames and rnames:
-                        bindings.append((tnames, rnames))
-                scan_expr_named(stmt.value)
-            elif isinstance(stmt, ast.AnnAssign) and stmt.value is not None:
-                rnames = _expr_load_names(stmt.value)
-                if isinstance(stmt.target, ast.Subscript):
-                    rnames.update(_expr_load_names(stmt.target.slice))
-                tnames = _target_names(stmt.target)
-                if tnames and rnames:
-                    bindings.append((tnames, rnames))
-                scan_expr_named(stmt.value)
-            elif isinstance(stmt, ast.AugAssign):
-                rnames = _expr_load_names(stmt.value)
-                tnames = _target_names(stmt.target)
-                if tnames and rnames:
-                    bindings.append((tnames, rnames))
-                scan_expr_named(stmt.value)
-            elif isinstance(stmt, (ast.For, ast.AsyncFor)):
-                tnames = _target_names(stmt.target)
-                rnames = _expr_load_names(stmt.iter)
-                if tnames and rnames:
-                    bindings.append((tnames, rnames))
-                scan_expr_named(stmt.iter)
-                scan_stmts(stmt.body)
-                scan_stmts(stmt.orelse)
-            elif isinstance(stmt, (ast.With, ast.AsyncWith)):
-                for item in stmt.items:
-                    scan_expr_named(item.context_expr)
-                    if item.optional_vars is not None:
-                        tnames = _target_names(item.optional_vars)
-                        rnames = _expr_load_names(item.context_expr)
-                        if tnames and rnames:
-                            bindings.append((tnames, rnames))
-                scan_stmts(stmt.body)
-            elif isinstance(stmt, ast.If):
-                scan_expr_named(stmt.test)
-                scan_stmts(stmt.body)
-                scan_stmts(stmt.orelse)
-            elif isinstance(stmt, ast.While):
-                scan_expr_named(stmt.test)
-                scan_stmts(stmt.body)
-                scan_stmts(stmt.orelse)
-            elif isinstance(stmt, (ast.Try, getattr(ast, "TryStar", ast.Try))):
-                scan_stmts(stmt.body)
-                for handler in stmt.handlers:
-                    scan_stmts(handler.body)
-                scan_stmts(stmt.orelse)
-                scan_stmts(stmt.finalbody)
-            elif hasattr(ast, "Match") and isinstance(stmt, ast.Match):
-                scan_expr_named(stmt.subject)
-                for case in stmt.cases:
-                    scan_stmts(case.body)
-            elif isinstance(stmt, ast.Expr):
-                scan_expr_named(stmt.value)
-            elif isinstance(stmt, (ast.Return, ast.Yield, ast.YieldFrom)) and stmt.value is not None:
-                scan_expr_named(stmt.value)
-
-    scan_stmts(body)
-    return bindings, closure_reads
-
-
-def _analyze_defuse(
-    body: list[ast.stmt], calls: list[ast.Call], param_names: set[str]
-) -> tuple[dict[int, frozenset[str]], frozenset[str]]:
-    """Propagate parameter dependencies to outbound calls and classify real behavioral sinks."""
-    if not param_names:
-        return {}, frozenset()
-
-    deps: dict[str, set[str]] = {p: {p} for p in param_names}
-    bindings, closure_reads = _collect_defuse_bindings(body)
-
-    changed = True
-    while changed:
-        changed = False
-        for tnames, rnames in bindings:
-            propagated: set[str] = set()
-            for rname in rnames:
-                propagated.update(deps.get(rname, ()))
-            if not propagated:
-                continue
-            for tname in tnames:
-                bucket = deps.setdefault(tname, set())
-                if not propagated <= bucket:
-                    bucket.update(propagated)
-                    changed = True
-
-    def params_in_expr(expr: ast.AST) -> set[str]:
-        out: set[str] = set()
-        for name in _expr_load_names(expr):
-            out.update(deps.get(name, ()))
-        return out
-
-    call_forwarded: dict[int, frozenset[str]] = {}
-    for call_node in calls:
-        fwd: set[str] = set()
-        for arg in call_node.args:
-            fwd.update(params_in_expr(arg))
-        for kw in call_node.keywords:
-            fwd.update(params_in_expr(kw.value))
-        if fwd:
-            call_forwarded[id(call_node)] = frozenset(fwd)
-
-    sunk: set[str] = set()
-    for name in closure_reads:
-        sunk.update(deps.get(name, ()))
-
-    def collect_sinks(stmts: list[ast.stmt], guard_params: frozenset[str] = frozenset()) -> bool:
-        has_effect = False
-        for stmt in stmts:
-            if isinstance(stmt, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
-                continue
-            if isinstance(stmt, ast.Return):
+            elif isinstance(stmt, ast.Return):
                 if stmt.value is not None:
-                    sunk.update(params_in_expr(stmt.value))
+                    eval_expr(stmt.value, env, ctrl)
+                    sunk.update(params_in(stmt.value, env))
                 has_effect = True
             elif isinstance(stmt, (ast.Break, ast.Continue)):
                 has_effect = True
             elif isinstance(stmt, ast.Raise):
                 if stmt.exc is not None:
-                    exc_params = params_in_expr(stmt.exc)
+                    eval_expr(stmt.exc, env, ctrl)
+                    exc_params = params_in(stmt.exc, env)
                     sunk.update(exc_params - guard_params if guard_params else exc_params)
                 if stmt.cause is not None:
-                    sunk.update(params_in_expr(stmt.cause))
-            elif isinstance(stmt, (ast.Assert, ast.Pass)):
-                continue
+                    eval_expr(stmt.cause, env, ctrl)
+                    sunk.update(params_in(stmt.cause, env))
+            elif isinstance(stmt, ast.Assert):
+                eval_expr(stmt.test, env, ctrl)
+                if stmt.msg is not None:
+                    eval_expr(stmt.msg, env, ctrl)
             elif isinstance(stmt, ast.Expr):
+                eval_expr(stmt.value, env, ctrl)
                 val = stmt.value.value if isinstance(stmt.value, ast.Await) else stmt.value
                 if isinstance(val, ast.Yield):
                     if val.value is not None:
-                        sunk.update(params_in_expr(val.value))
+                        sunk.update(params_in(val.value, env))
                     has_effect = True
                 elif isinstance(val, ast.YieldFrom):
-                    sunk.update(params_in_expr(val.value))
+                    sunk.update(params_in(val.value, env))
                     has_effect = True
                 elif isinstance(val, ast.Call):
                     if not _is_logging_call(val) and not _is_validation_call(val):
                         sunk.update(call_forwarded.get(id(val), ()))
-                        sunk.update(params_in_expr(val.func))
+                        sunk.update(params_in(val.func, env))
                         has_effect = True
             elif isinstance(stmt, ast.Assign):
+                eval_expr(stmt.value, env, ctrl)
+                rhs = params_in(stmt.value, env) | ctrl
                 if any(_is_self_attr_target(t) for t in stmt.targets):
-                    sunk.update(params_in_expr(stmt.value))
+                    sunk.update(params_in(stmt.value, env))
                     has_effect = True
                 elif all(isinstance(t, ast.Name) and t.id == "_" for t in stmt.targets):
                     val = stmt.value.value if isinstance(stmt.value, ast.Await) else stmt.value
                     if isinstance(val, ast.Call) and not _is_logging_call(val) and not _is_validation_call(val):
-                        sunk.update(params_in_expr(val))
+                        sunk.update(params_in(val, env))
                         has_effect = True
-                elif _has_non_trivial_call(stmt.value):
+                elif record_rhs_call_sink(stmt.value, env):
                     has_effect = True
+                for tgt in stmt.targets:
+                    apply_target(tgt, rhs, env, ctrl)
             elif isinstance(stmt, ast.AnnAssign) and stmt.value is not None:
+                eval_expr(stmt.value, env, ctrl)
+                rhs = params_in(stmt.value, env) | ctrl
                 if _is_self_attr_target(stmt.target):
-                    sunk.update(params_in_expr(stmt.value))
+                    sunk.update(params_in(stmt.value, env))
                     has_effect = True
-                elif _has_non_trivial_call(stmt.value):
+                elif record_rhs_call_sink(stmt.value, env):
                     has_effect = True
+                apply_target(stmt.target, rhs, env, ctrl)
             elif isinstance(stmt, ast.AugAssign):
+                eval_expr(stmt.value, env, ctrl)
+                rhs = params_in(stmt.value, env) | ctrl
+                if isinstance(stmt.target, ast.Subscript):
+                    eval_expr(stmt.target.slice, env, ctrl)
+                    rhs = rhs | params_in(stmt.target.slice, env)
                 if _is_self_attr_target(stmt.target):
-                    sunk.update(params_in_expr(stmt.value))
+                    sunk.update(params_in(stmt.value, env))
                     has_effect = True
-                elif _has_non_trivial_call(stmt.value):
+                elif record_rhs_call_sink(stmt.value, env):
                     has_effect = True
+                if rhs:
+                    for tname in _target_names(stmt.target):
+                        env[tname] = env.get(tname, frozenset()) | rhs
             elif isinstance(stmt, ast.If):
-                test_params = frozenset(params_in_expr(stmt.test))
+                eval_expr(stmt.test, env, ctrl)
+                test_params = params_in(stmt.test, env)
+                if_ctrl = ctrl | test_params
                 sub_guard = guard_params | test_params
-                b_eff = collect_sinks(stmt.body, sub_guard)
-                e_eff = collect_sinks(stmt.orelse, sub_guard)
+                env_b, b_eff = exec_stmts(stmt.body, dict(env), if_ctrl, sub_guard)
+                env_e, e_eff = exec_stmts(stmt.orelse, dict(env), if_ctrl, sub_guard)
                 if b_eff or e_eff:
                     sunk.update(test_params)
                     has_effect = True
+                body_exits = _stmts_always_exit(stmt.body)
+                else_exits = _stmts_always_exit(stmt.orelse)
+                if body_exits and not else_exits:
+                    env = env_e
+                elif else_exits and not body_exits:
+                    env = env_b
+                else:
+                    env = join_envs(env_b, env_e)
             elif isinstance(stmt, ast.While):
-                test_params = frozenset(params_in_expr(stmt.test))
+                eval_expr(stmt.test, env, ctrl)
+                test_params = params_in(stmt.test, env)
                 sunk.update(test_params)
-                collect_sinks(stmt.body, guard_params | test_params)
-                collect_sinks(stmt.orelse, guard_params)
+                env_loop = dict(env)
+                for _ in range(max_loop_iters):
+                    loop_test_p = params_in(stmt.test, env_loop)
+                    sunk.update(loop_test_p)
+                    while_ctrl = ctrl | loop_test_p
+                    env_after, _ = exec_stmts(stmt.body, dict(env_loop), while_ctrl, guard_params | loop_test_p)
+                    eval_expr(stmt.test, env_after, ctrl)
+                    merged = join_envs(env_loop, env_after)
+                    if merged == env_loop:
+                        break
+                    env_loop = merged
+                env_else, _ = exec_stmts(stmt.orelse, dict(env_loop), ctrl, guard_params)
+                env = join_envs(env_loop, env_else)
                 has_effect = True
             elif isinstance(stmt, (ast.For, ast.AsyncFor)):
-                iter_params = params_in_expr(stmt.iter)
-                b_eff = collect_sinks(stmt.body, guard_params)
-                e_eff = collect_sinks(stmt.orelse, guard_params)
+                eval_expr(stmt.iter, env, ctrl)
+                iter_params = params_in(stmt.iter, env)
+                loop_ctrl = ctrl | iter_params
+                env_loop = dict(env)
+                b_eff = False
+                for _ in range(max_loop_iters):
+                    env_iter = dict(env_loop)
+                    apply_target(stmt.target, iter_params | ctrl, env_iter, ctrl)
+                    env_after, step_eff = exec_stmts(stmt.body, env_iter, loop_ctrl, guard_params)
+                    b_eff = b_eff or step_eff
+                    merged = join_envs(env_loop, env_after)
+                    if merged == env_loop:
+                        break
+                    env_loop = merged
+                env_else, e_eff = exec_stmts(stmt.orelse, dict(env_loop), ctrl, guard_params)
                 if b_eff or e_eff:
                     sunk.update(iter_params)
                     has_effect = True
+                env = join_envs(env_loop, env_else)
             elif isinstance(stmt, (ast.With, ast.AsyncWith)):
                 for item in stmt.items:
-                    sunk.update(params_in_expr(item.context_expr))
-                collect_sinks(stmt.body, guard_params)
-                has_effect = True
+                    eval_expr(item.context_expr, env, ctrl)
+                    ctx_params = params_in(item.context_expr, env)
+                    sunk.update(ctx_params)
+                    if item.optional_vars is not None:
+                        apply_target(item.optional_vars, ctx_params | ctrl, env, ctrl)
+                env, b_eff = exec_stmts(stmt.body, env, ctrl, guard_params)
+                has_effect = True if b_eff or stmt.items else has_effect
             elif isinstance(stmt, (ast.Try, getattr(ast, "TryStar", ast.Try))):
-                t_eff = collect_sinks(stmt.body, guard_params)
+                env_try, t_eff = exec_stmts(stmt.body, dict(env), ctrl, guard_params)
+                handler_base = join_envs(env, env_try)
+                live_post: list[dict[str, frozenset[str]]] = []
+                env_else = dict(env_try)
+                if not _stmts_always_exit(stmt.body):
+                    env_else, o_eff = exec_stmts(stmt.orelse, dict(env_try), ctrl, guard_params)
+                    t_eff = t_eff or o_eff
+                    if not _stmts_always_exit(stmt.orelse):
+                        live_post.append(env_else)
                 for handler in stmt.handlers:
-                    t_eff = collect_sinks(handler.body, guard_params) or t_eff
-                t_eff = collect_sinks(stmt.orelse, guard_params) or t_eff
-                t_eff = collect_sinks(stmt.finalbody, guard_params) or t_eff
-                has_effect = has_effect or t_eff
+                    h_in = dict(handler_base)
+                    if handler.name:
+                        h_in.pop(handler.name, None)
+                    env_h, h_eff = exec_stmts(handler.body, h_in, ctrl, guard_params)
+                    t_eff = t_eff or h_eff
+                    if not _stmts_always_exit(handler.body):
+                        live_post.append(env_h)
+                pre_final = live_post[0] if live_post else env_else
+                for extra_env in live_post[1:]:
+                    pre_final = join_envs(pre_final, extra_env)
+                env, f_eff = exec_stmts(stmt.finalbody, dict(pre_final), ctrl, guard_params)
+                has_effect = has_effect or t_eff or f_eff
             elif hasattr(ast, "Match") and isinstance(stmt, ast.Match):
-                subj_params = frozenset(params_in_expr(stmt.subject))
+                eval_expr(stmt.subject, env, ctrl)
+                subj_params = params_in(stmt.subject, env)
+                match_ctrl = ctrl | subj_params
+                live_cases: list[dict[str, frozenset[str]]] = [dict(env)]
                 m_eff = False
                 for case in stmt.cases:
-                    m_eff = collect_sinks(case.body, guard_params | subj_params) or m_eff
+                    case_in = dict(env)
+                    case_ctrl = match_ctrl
+                    if case.guard is not None:
+                        eval_expr(case.guard, case_in, ctrl)
+                        case_ctrl = match_ctrl | params_in(case.guard, case_in)
+                    env_c, c_eff = exec_stmts(case.body, case_in, case_ctrl, guard_params | subj_params)
+                    m_eff = m_eff or c_eff
+                    if not _stmts_always_exit(case.body):
+                        live_cases.append(env_c)
                 if m_eff:
                     sunk.update(subj_params)
                     has_effect = True
-        return has_effect
+                merged_cases = live_cases[0]
+                for extra_case in live_cases[1:]:
+                    merged_cases = join_envs(merged_cases, extra_case)
+                env = merged_cases
+        return env, has_effect
 
-    collect_sinks(body)
-    return call_forwarded, frozenset(sunk)
+    final_env, _ = exec_stmts(body, init_env, frozenset(), frozenset())
+    for name in closure_reads:
+        if name in final_env:
+            sunk.update(final_env[name])
+    return {cid: frozenset(ps) for cid, ps in call_forwarded.items() if ps}, frozenset(sunk)
 
 
 def _shift_call(call: CallFact, line_delta: int) -> CallFact:

@@ -967,8 +967,6 @@ def analyze_changed_files_in_index(
                 if _fn_ignores_param(owner_fn, parameter):
                     continue
                 owner_param_names = {p.name for p in owner_fn.parameters}
-                if parameter in owner_param_names and parameter in owner_fn.params_with_sink:
-                    continue
                 is_delegating_wrapper = (owner_fn.name == target.name) or (parameter in owner_param_names)
                 if not is_delegating_wrapper:
                     continue
@@ -1267,7 +1265,10 @@ def _collect_forwarded_keywords(index: MutableResolutionIndex) -> dict[tuple[str
 
 
 def _cold_wrapper_findings(
-    index: MutableResolutionIndex, forwarded_to_target: Mapping[tuple[str, str], set[str]]
+    index: MutableResolutionIndex,
+    forwarded_to_target: Mapping[tuple[str, str], set[str]],
+    *,
+    include_local_read: bool = False,
 ) -> tuple[list[Finding], int]:
     findings: list[Finding] = []
     inspected = 0
@@ -1338,7 +1339,8 @@ def _cold_wrapper_findings(
                         and (len(forwarded_opt) >= 3 if is_recursive else len(forwarded_opt) >= 2)
                     )
                     local_read_hit = (
-                        not is_recursive
+                        include_local_read
+                        and not is_recursive
                         and p in fn.local_name_reads
                         and p not in fn.params_with_sink
                         and bool(forwarded_opt)
@@ -1480,10 +1482,16 @@ def _cold_override_findings(index: MutableResolutionIndex) -> list[Finding]:
     return findings
 
 
-def audit_index(index: MutableResolutionIndex) -> tuple[list[Finding], int]:
+def audit_index(
+    index: MutableResolutionIndex,
+    *,
+    include_local_read: bool = False,
+) -> tuple[list[Finding], int]:
     """Scan a workspace snapshot without a diff for standing wrapper, dead-store, and override contracts."""
     forwarded_to_target = _collect_forwarded_keywords(index)
-    wrapper_findings, inspected = _cold_wrapper_findings(index, forwarded_to_target)
+    wrapper_findings, inspected = _cold_wrapper_findings(
+        index, forwarded_to_target, include_local_read=include_local_read
+    )
     all_attr_loads: set[str] = set()
     for ff in index.files.values():
         all_attr_loads.update(ff.attr_loads)
@@ -1500,6 +1508,7 @@ def audit_workspace(
     cache: FactCache | None = None,
     stub_files: Mapping[str, str] | None = None,
     runtime_edges: Iterable[ObservedCallEdge] | None = None,
+    include_local_read: bool = False,
 ) -> list[Finding]:
     """Audit a complete Python source mapping at rest for standing contract defects."""
     parse = cache.load if cache is not None else parse_file
@@ -1511,5 +1520,5 @@ def audit_workspace(
     }
     parsed_stubs = parse_stub_tree(stub_files) if stub_files else None
     index = build_index(parsed_files, stub_files=parsed_stubs, runtime_edges=runtime_edges)
-    findings, _ = audit_index(index)
+    findings, _ = audit_index(index, include_local_read=include_local_read)
     return findings

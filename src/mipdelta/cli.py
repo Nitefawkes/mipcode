@@ -670,7 +670,7 @@ def _run_audit_repo(
             parsed_files[path] = facts
     parsed_stubs = parse_stub_tree(stubs) if stubs else None
     index = build_index(parsed_files, stub_files=parsed_stubs, runtime_edges=runtime_edges)
-    findings, candidate_calls_inspected = audit_index(index)
+    findings, candidate_calls_inspected = audit_index(index, include_local_read=review)
     ranked = tuple(rank_findings(findings))
     advisory_budget = 250 if max_bytes is None else max_bytes
     advisory = format_advisory(ranked, max_bytes=advisory_budget) if ranked else ""

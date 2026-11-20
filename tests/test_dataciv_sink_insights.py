@@ -124,7 +124,10 @@ def test_b_cold_audit_catches_local_read_only_omission_and_abstains_appropriatel
         ),
     }
 
-    findings = audit_workspace(files)
+    # Default cold audit keeps local_read_hit behind include_local_read=True (--review)
+    assert audit_workspace(files) == []
+
+    findings = audit_workspace(files, include_local_read=True)
     flagged = [(f.symbol, f.evidence[0]) for f in findings if f.detector == "delegating_wrapper_review"]
     assert len(flagged) == 2
     assert all(sym == "_init_proxy_transport" for sym, _ in flagged)
@@ -283,7 +286,10 @@ def test_e_inline_comment_pragmas_suppress_in_diff_and_cold_audit():
         )
     ]
 
-    cold_findings = audit_workspace(after)
+    # Local-read omission of p3 stays gated behind include_local_read=True (--review)
+    assert audit_workspace(after) == []
+
+    cold_findings = audit_workspace(after, include_local_read=True)
     assert [(f.detector, f.symbol, f.evidence[0]) for f in cold_findings] == [
         (
             "delegating_wrapper_review",
@@ -312,11 +318,140 @@ def test_e_pragma_does_not_match_strings_or_leak_from_nested_functions():
         )
     }
 
-    findings = audit_workspace(files)
+    findings = audit_workspace(files, include_local_read=True)
     assert sorted(f.symbol for f in findings if f.detector == "delegating_wrapper_review") == [
         "nested_trap",
         "string_trap",
     ]
+
+
+def test_imperative_kwargs_and_branch_selected_dispatch_do_not_false_alarm():
+    before = {
+        "pkg/dispatch.py": (
+            "def fast_send(url, timeout=5.0, use_fast=False):\n"
+            "    return ('fast', url, timeout, use_fast)\n\n"
+            "def slow_send(url, timeout=5.0, use_fast=False):\n"
+            "    return ('slow', url, timeout, use_fast)\n\n"
+            "def send_cfg(url, cfg, timeout=5.0, retries=0, use_v2=False):\n"
+            "    return (url, cfg, timeout, retries, use_v2)\n\n"
+            "def send(url, verify=True, timeout=5.0, use_v2=False):\n"
+            "    return (url, verify, timeout, use_v2)\n\n"
+            "def wrap_kw(url, verify=True):\n"
+            "    return send(url, verify=verify)\n\n"
+            "def wrap_cfg(url, cfg, timeout=5.0):\n"
+            "    return send_cfg(url, cfg, timeout=timeout)\n\n"
+            "def wrap_branch_fn(url, timeout=5.0):\n"
+            "    return slow_send(url, timeout=timeout)\n\n"
+            "def wrap_branch_endpoint(url, timeout=5.0):\n"
+            "    return send(url, timeout=timeout)\n"
+        )
+    }
+    after = {
+        "pkg/dispatch.py": (
+            "def fast_send(url, timeout=5.0, use_fast=False):\n"
+            "    return ('fast', url, timeout, use_fast)\n\n"
+            "def slow_send(url, timeout=5.0, use_fast=False):\n"
+            "    return ('slow', url, timeout, use_fast)\n\n"
+            "def send_cfg(url, cfg, timeout=5.0, retries=0, use_v2=False):\n"
+            "    return (url, cfg, timeout, retries, use_v2)\n\n"
+            "def send(url, verify=True, timeout=5.0, use_v2=False):\n"
+            "    return (url, verify, timeout, use_v2)\n\n"
+            "def wrap_kw(url, verify=True, timeout=5.0):\n"
+            "    kw = {'verify': verify}\n"
+            "    if timeout is not None:\n"
+            "        kw['timeout'] = timeout\n"
+            "    return send(url, **kw)\n\n"
+            "def wrap_cfg(url, timeout=5.0, retries=0, use_v2=False):\n"
+            "    kw = {}\n"
+            "    if use_v2:\n"
+            "        kw['mode'] = 'v2'\n"
+            "    kw.setdefault('retries', retries)\n"
+            "    return send_cfg(url, kw, timeout=timeout)\n\n"
+            "def wrap_branch_fn(url, timeout=5.0, use_fast=False):\n"
+            "    if use_fast:\n"
+            "        fn = fast_send\n"
+            "    else:\n"
+            "        fn = slow_send\n"
+            "    return fn(url, timeout=timeout)\n\n"
+            "def wrap_branch_endpoint(url, verify=True, timeout=5.0, use_v2=False):\n"
+            "    if use_v2:\n"
+            "        endpoint = '/v2'\n"
+            "    else:\n"
+            "        endpoint = '/v1'\n"
+            "    return send(url + endpoint, verify=verify, timeout=timeout)\n"
+        )
+    }
+
+    assert analyze_delta(before, after) == []
+    assert audit_workspace(after) == []
+    assert audit_workspace(after, include_local_read=True) == []
+
+
+def test_section5_callee_added_param_still_flags_when_wrapper_stores_attr_or_calls_other_helper():
+    before_tb = {
+        "pkg/traceback.py": (
+            "class Traceback:\n"
+            "    def __init__(self, exc_type, *, show_locals=False):\n"
+            "        self.trace = self.extract(exc_type, show_locals=show_locals)\n"
+            "        self.show_locals = show_locals\n\n"
+            "    def extract(self, exc_type, *, show_locals=False):\n"
+            "        return (exc_type, show_locals)\n"
+        )
+    }
+    after_tb = {
+        "pkg/traceback.py": (
+            "class Traceback:\n"
+            "    def __init__(self, exc_type, *, show_locals=False, locals_max_depth=10):\n"
+            "        self.trace = self.extract(exc_type, show_locals=show_locals)\n"
+            "        self.show_locals = show_locals\n"
+            "        self.locals_max_depth = locals_max_depth\n\n"
+            "    def extract(self, exc_type, *, show_locals=False, locals_max_depth=10):\n"
+            "        return (exc_type, show_locals, locals_max_depth)\n"
+        )
+    }
+    tb_findings = analyze_delta(before_tb, after_tb)
+    tb_matches = [
+        f
+        for f in tb_findings
+        if f.detector == "delegating_wrapper_review" and f.symbol == "Traceback.__init__"
+    ]
+    assert tb_matches and any("locals_max_depth" in ev for f in tb_matches for ev in f.evidence)
+
+    before_cells = {
+        "pkg/cells.py": (
+            "def _split_text(text, total, unicode_version='auto'):\n"
+            "    return (text[:total], unicode_version)\n\n"
+            "def cell_len(text):\n"
+            "    return len(text)\n\n"
+            "def set_cell_size(text, total):\n"
+            "    cell_size = cell_len(text)\n"
+            "    if cell_size == total:\n"
+            "        return text\n"
+            "    text, _ = _split_text(text, total)\n"
+            "    return text\n"
+        )
+    }
+    after_cells = {
+        "pkg/cells.py": (
+            "def _split_text(text, total, unicode_version='auto'):\n"
+            "    return (text[:total], unicode_version)\n\n"
+            "def cell_len(text, unicode_version='auto'):\n"
+            "    return len(text)\n\n"
+            "def set_cell_size(text, total, unicode_version='auto'):\n"
+            "    cell_size = cell_len(text)\n"
+            "    if cell_size == total:\n"
+            "        return text\n"
+            "    text, _ = _split_text(text, total, unicode_version)\n"
+            "    return text\n"
+        )
+    }
+    cell_findings = analyze_delta(before_cells, after_cells)
+    cell_matches = [
+        f
+        for f in cell_findings
+        if f.detector == "delegating_wrapper_review" and f.symbol == "set_cell_size"
+    ]
+    assert cell_matches and any("unicode_version" in ev for f in cell_matches for ev in f.evidence)
 
 
 def test_zero_runtime_dependencies_in_mipdelta():
