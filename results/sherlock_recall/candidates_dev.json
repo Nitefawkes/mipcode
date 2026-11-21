@@ -1,0 +1,246 @@
+{
+  "set": "dev",
+  "partial": false,
+  "rows": [
+    {
+      "finding_id": "2025-06-superfluid-locker-system:H-1",
+      "index": 0,
+      "closeness": "file",
+      "site": {
+        "repo": "sherlock-audit/2025-06-superfluid-locker-system",
+        "ref": "d8beaeed47f766659a1600a87372a7905109aa3c",
+        "path": "fluid/packages/contracts/src/FluidLocker.sol",
+        "line_start": 420,
+        "line_end": 444,
+        "external": false
+      },
+      "analyzer": {
+        "detector": "state_sink_review",
+        "symbol": "FluidLocker._PERCENT_TO_BP",
+        "path": "fluid/packages/contracts/src/FluidLocker.sol",
+        "start_line": 132,
+        "end_line": 132,
+        "resolution_source": "static_ast",
+        "evidence": [
+          "private constant _PERCENT_TO_BP is declared in FluidLocker and never read in any method or modifier"
+        ]
+      }
+    },
+    {
+      "finding_id": "2025-06-superfluid-locker-system:M-4",
+      "index": 0,
+      "closeness": "file",
+      "site": {
+        "repo": "sherlock-audit/2025-06-superfluid-locker-system",
+        "ref": "d8beaeed47f766659a1600a87372a7905109aa3c",
+        "path": "fluid/packages/contracts/src/FluidLocker.sol",
+        "line_start": 420,
+        "line_end": 420,
+        "external": false
+      },
+      "analyzer": {
+        "detector": "state_sink_review",
+        "symbol": "FluidLocker._PERCENT_TO_BP",
+        "path": "fluid/packages/contracts/src/FluidLocker.sol",
+        "start_line": 132,
+        "end_line": 132,
+        "resolution_source": "static_ast",
+        "evidence": [
+          "private constant _PERCENT_TO_BP is declared in FluidLocker and never read in any method or modifier"
+        ]
+      }
+    },
+    {
+      "finding_id": "2024-02-perennial-v2-3:H-2",
+      "index": 0,
+      "closeness": "file",
+      "site": {
+        "repo": "sherlock-audit/2024-02-perennial-v2-3",
+        "ref": "86ea166a2055f68c4a2c3ff0a2b6bef037476bb8",
+        "path": "perennial-v2/packages/perennial/contracts/Market.sol",
+        "line_start": 604,
+        "line_end": 613,
+        "external": false
+      },
+      "analyzer": {
+        "detector": "state_sink_review",
+        "symbol": "Market.__unused0__",
+        "path": "perennial-v2/packages/perennial/contracts/Market.sol",
+        "start_line": 22,
+        "end_line": 22,
+        "resolution_source": "static_ast",
+        "evidence": [
+          "private state variable __unused0__ is declared in Market and never read in any method or modifier"
+        ]
+      }
+    },
+    {
+      "finding_id": "2024-02-perennial-v2-3:H-2",
+      "index": 1,
+      "closeness": "file",
+      "site": {
+        "repo": "sherlock-audit/2024-02-perennial-v2-3",
+        "ref": "86ea166a2055f68c4a2c3ff0a2b6bef037476bb8",
+        "path": "perennial-v2/packages/perennial/contracts/Market.sol",
+        "line_start": 604,
+        "line_end": 613,
+        "external": false
+      },
+      "analyzer": {
+        "detector": "state_sink_review",
+        "symbol": "Market.__unused1__",
+        "path": "perennial-v2/packages/perennial/contracts/Market.sol",
+        "start_line": 28,
+        "end_line": 28,
+        "resolution_source": "static_ast",
+        "evidence": [
+          "private state variable __unused1__ is declared in Market and never read in any method or modifier"
+        ]
+      }
+    },
+    {
+      "finding_id": "2024-02-perennial-v2-3:H-2",
+      "index": 2,
+      "closeness": "file",
+      "site": {
+        "repo": "sherlock-audit/2024-02-perennial-v2-3",
+        "ref": "86ea166a2055f68c4a2c3ff0a2b6bef037476bb8",
+        "path": "perennial-v2/packages/perennial/contracts/Market.sol",
+        "line_start": 604,
+        "line_end": 613,
+        "external": false
+      },
+      "analyzer": {
+        "detector": "state_sink_review",
+        "symbol": "Market.__unused2__",
+        "path": "perennial-v2/packages/perennial/contracts/Market.sol",
+        "start_line": 49,
+        "end_line": 49,
+        "resolution_source": "static_ast",
+        "evidence": [
+          "private state variable __unused2__ is declared in Market and never read in any method or modifier"
+        ]
+      }
+    },
+    {
+      "finding_id": "2024-02-perennial-v2-3:H-2",
+      "index": 3,
+      "closeness": "file",
+      "site": {
+        "repo": "sherlock-audit/2024-02-perennial-v2-3",
+        "ref": "86ea166a2055f68c4a2c3ff0a2b6bef037476bb8",
+        "path": "perennial-v2/packages/perennial/contracts/Market.sol",
+        "line_start": 604,
+        "line_end": 613,
+        "external": false
+      },
+      "analyzer": {
+        "detector": "state_sink_review",
+        "symbol": "Market.__unused3__",
+        "path": "perennial-v2/packages/perennial/contracts/Market.sol",
+        "start_line": 58,
+        "end_line": 58,
+        "resolution_source": "static_ast",
+        "evidence": [
+          "private state variable __unused3__ is declared in Market and never read in any method or modifier"
+        ]
+      }
+    },
+    {
+      "finding_id": "2024-02-perennial-v2-3:M-7",
+      "index": 0,
+      "closeness": "file",
+      "site": {
+        "repo": "sherlock-audit/2024-02-perennial-v2-3",
+        "ref": "86ea166a2055f68c4a2c3ff0a2b6bef037476bb8",
+        "path": "perennial-v2/packages/perennial/contracts/Market.sol",
+        "line_start": 503,
+        "line_end": 503,
+        "external": false
+      },
+      "analyzer": {
+        "detector": "state_sink_review",
+        "symbol": "Market.__unused0__",
+        "path": "perennial-v2/packages/perennial/contracts/Market.sol",
+        "start_line": 22,
+        "end_line": 22,
+        "resolution_source": "static_ast",
+        "evidence": [
+          "private state variable __unused0__ is declared in Market and never read in any method or modifier"
+        ]
+      }
+    },
+    {
+      "finding_id": "2024-02-perennial-v2-3:M-7",
+      "index": 1,
+      "closeness": "file",
+      "site": {
+        "repo": "sherlock-audit/2024-02-perennial-v2-3",
+        "ref": "86ea166a2055f68c4a2c3ff0a2b6bef037476bb8",
+        "path": "perennial-v2/packages/perennial/contracts/Market.sol",
+        "line_start": 503,
+        "line_end": 503,
+        "external": false
+      },
+      "analyzer": {
+        "detector": "state_sink_review",
+        "symbol": "Market.__unused1__",
+        "path": "perennial-v2/packages/perennial/contracts/Market.sol",
+        "start_line": 28,
+        "end_line": 28,
+        "resolution_source": "static_ast",
+        "evidence": [
+          "private state variable __unused1__ is declared in Market and never read in any method or modifier"
+        ]
+      }
+    },
+    {
+      "finding_id": "2024-02-perennial-v2-3:M-7",
+      "index": 2,
+      "closeness": "file",
+      "site": {
+        "repo": "sherlock-audit/2024-02-perennial-v2-3",
+        "ref": "86ea166a2055f68c4a2c3ff0a2b6bef037476bb8",
+        "path": "perennial-v2/packages/perennial/contracts/Market.sol",
+        "line_start": 503,
+        "line_end": 503,
+        "external": false
+      },
+      "analyzer": {
+        "detector": "state_sink_review",
+        "symbol": "Market.__unused2__",
+        "path": "perennial-v2/packages/perennial/contracts/Market.sol",
+        "start_line": 49,
+        "end_line": 49,
+        "resolution_source": "static_ast",
+        "evidence": [
+          "private state variable __unused2__ is declared in Market and never read in any method or modifier"
+        ]
+      }
+    },
+    {
+      "finding_id": "2024-02-perennial-v2-3:M-7",
+      "index": 3,
+      "closeness": "file",
+      "site": {
+        "repo": "sherlock-audit/2024-02-perennial-v2-3",
+        "ref": "86ea166a2055f68c4a2c3ff0a2b6bef037476bb8",
+        "path": "perennial-v2/packages/perennial/contracts/Market.sol",
+        "line_start": 503,
+        "line_end": 503,
+        "external": false
+      },
+      "analyzer": {
+        "detector": "state_sink_review",
+        "symbol": "Market.__unused3__",
+        "path": "perennial-v2/packages/perennial/contracts/Market.sol",
+        "start_line": 58,
+        "end_line": 58,
+        "resolution_source": "static_ast",
+        "evidence": [
+          "private state variable __unused3__ is declared in Market and never read in any method or modifier"
+        ]
+      }
+    }
+  ]
+}

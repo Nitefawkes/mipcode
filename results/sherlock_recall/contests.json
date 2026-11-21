@@ -1,0 +1,1232 @@
+{
+  "contests": [
+    {
+      "companion_repo": "sherlock-audit/2024-01-looksrare",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-01-looksrare-judging",
+      "n_findings": 4,
+      "name": "2024-01-looksrare",
+      "reason": "eligible",
+      "resolved_sha": "7d76b96a58a6aee38f23bb38b8a5daa3bdc03f7c",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-01-napier",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-01-napier-judging",
+      "n_findings": 17,
+      "name": "2024-01-napier",
+      "reason": "eligible",
+      "resolved_sha": "6313f34110b0d12677b389f0ecb3197038211e12",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-01-olympus-on-chain-governance",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-01-olympus-on-chain-governance-judging",
+      "n_findings": 4,
+      "name": "2024-01-olympus-on-chain-governance",
+      "reason": "eligible",
+      "resolved_sha": "6171681cfeec8a24b0449f988b75908b5e640a35",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-01-rio-vesting-escrow",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-01-rio-vesting-escrow-judging",
+      "n_findings": 1,
+      "name": "2024-01-rio-vesting-escrow",
+      "reason": "eligible",
+      "resolved_sha": "2d14c2b84b69c53a45c81aa4f907af9617f9a94f",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-01-telcoin",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-01-telcoin-judging",
+      "n_findings": 5,
+      "name": "2024-01-telcoin",
+      "reason": "eligible",
+      "resolved_sha": "0954297f4fefac82d45a79c73f3a4b8eb25f10e9",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-02-jala-swap",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-02-jala-swap-judging",
+      "n_findings": 3,
+      "name": "2024-02-jala-swap",
+      "reason": "eligible",
+      "resolved_sha": "030d3ed54214754301154bce0e58ea534100a7e3",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-02-leverage-contracts",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-02-leverage-contracts-judging",
+      "n_findings": 3,
+      "name": "2024-02-leverage-contracts",
+      "reason": "eligible",
+      "resolved_sha": "c9ac221d2a4c7dd427f62c8d30f90c2834ca7b91",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-02-mento",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-02-mento-judging",
+      "n_findings": 2,
+      "name": "2024-02-mento",
+      "reason": "eligible",
+      "resolved_sha": "24a0007769144859bb9e74b5126d4780047ef7c9",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-02-optimism-2024",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-02-optimism-2024-judging",
+      "n_findings": 4,
+      "name": "2024-02-optimism-2024",
+      "reason": "eligible",
+      "resolved_sha": "f216b0d3ad08c1a0ead557ea74691aaefd5fd489",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-02-perennial-v2-3",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-02-perennial-v2-3-judging",
+      "n_findings": 13,
+      "name": "2024-02-perennial-v2-3",
+      "reason": "eligible",
+      "resolved_sha": "86ea166a2055f68c4a2c3ff0a2b6bef037476bb8",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-02-perpetual",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-02-perpetual-judging",
+      "n_findings": 14,
+      "name": "2024-02-perpetual",
+      "reason": "eligible",
+      "resolved_sha": "02f17e70a23da5d71364268ccf7ed9ee7cedf428",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-02-radicalxchange",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-02-radicalxchange-judging",
+      "n_findings": 3,
+      "name": "2024-02-radicalxchange",
+      "reason": "eligible",
+      "resolved_sha": "459dfbfa73f74ed3422e894f6ff5fe2bbed146dd",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-02-rio-network-core-protocol",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-02-rio-network-core-protocol-judging",
+      "n_findings": 20,
+      "name": "2024-02-rio-network-core-protocol",
+      "reason": "eligible",
+      "resolved_sha": "4f01e065c1ed346875cf5b05d2b43e0bcdb4c849",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-02-rubicon-finance",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-02-rubicon-finance-judging",
+      "n_findings": 1,
+      "name": "2024-02-rubicon-finance",
+      "reason": "eligible",
+      "resolved_sha": "11cac67919e8a1303b3a3177291b88c0c70bf03b",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-02-smilee-finance",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-02-smilee-finance-judging",
+      "n_findings": 11,
+      "name": "2024-02-smilee-finance",
+      "reason": "eligible",
+      "resolved_sha": "3241f1bf0c8e951a41dd2e51997f64ef3ec017bd",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-02-tapioca",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-02-tapioca-judging",
+      "n_findings": 51,
+      "name": "2024-02-tapioca",
+      "reason": "eligible",
+      "resolved_sha": "dc2464f420927409a67763de6ec60fe5c028ab0e",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-02-telcoin-platform-audit-update",
+      "eligible": false,
+      "judging_repo": "sherlock-audit/2024-02-telcoin-platform-audit-update-judging",
+      "n_findings": 2,
+      "name": "2024-02-telcoin-platform-audit-update",
+      "reason": "non_solidity",
+      "resolved_sha": null,
+      "sol_share": 0.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-03-amphor",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-03-amphor-judging",
+      "n_findings": 5,
+      "name": "2024-03-amphor",
+      "reason": "eligible",
+      "resolved_sha": "6c797025ffe296e04607abf74400ff2bb36a7de3",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-03-arrakis",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-03-arrakis-judging",
+      "n_findings": 7,
+      "name": "2024-03-arrakis",
+      "reason": "eligible",
+      "resolved_sha": "64a7dc6ccb5de2824870474a9f35fd3386669e89",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-03-axis-finance",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-03-axis-finance-judging",
+      "n_findings": 18,
+      "name": "2024-03-axis-finance",
+      "reason": "eligible",
+      "resolved_sha": "cadf331f12b485bac184111cdc9ba1344d9fbf01",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-03-flat-money-fix-review-contest",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-03-flat-money-fix-review-contest-judging",
+      "n_findings": 3,
+      "name": "2024-03-flat-money-fix-review-contest",
+      "reason": "eligible",
+      "resolved_sha": "539341fdc92090c48792c454e35e5d739ee62820",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-03-goat-trading",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-03-goat-trading-judging",
+      "n_findings": 7,
+      "name": "2024-03-goat-trading",
+      "reason": "eligible",
+      "resolved_sha": "beb09519ad0c0ec0fdf5b96060fe5e4aafd71cff",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-03-nouns-dao-2",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-03-nouns-dao-2-judging",
+      "n_findings": 3,
+      "name": "2024-03-nouns-dao-2",
+      "reason": "eligible",
+      "resolved_sha": "8f6879efaf831eb7fc9d4a4ad2b62b5334220d87",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-03-vvv-vesting-staking",
+      "eligible": false,
+      "judging_repo": "sherlock-audit/2024-03-vvv-vesting-staking-judging",
+      "n_findings": 0,
+      "name": "2024-03-vvv-vesting-staking",
+      "reason": "no_high_or_medium",
+      "resolved_sha": null,
+      "sol_share": 0.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-03-wagmileverage-v2",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-03-wagmileverage-v2-judging",
+      "n_findings": 2,
+      "name": "2024-03-wagmileverage-v2",
+      "reason": "eligible",
+      "resolved_sha": "169e587af8e9dcff9dd351443e1f64933e762e1d",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-03-woofi-swap",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-03-woofi-swap-judging",
+      "n_findings": 9,
+      "name": "2024-03-woofi-swap",
+      "reason": "eligible",
+      "resolved_sha": "65185691c91541e33f84b77d4c6290182f137092",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-03-zap-protocol",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-03-zap-protocol-judging",
+      "n_findings": 6,
+      "name": "2024-03-zap-protocol",
+      "reason": "eligible",
+      "resolved_sha": "c2ad35aa844899fa24f6ed0cbfcf6c7e611b061a",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-03-zivoe",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-03-zivoe-judging",
+      "n_findings": 22,
+      "name": "2024-03-zivoe",
+      "reason": "eligible",
+      "resolved_sha": "d4111645b19a1ad3ccc899bea073b6f19be04ccd",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-04-alchemix",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-04-alchemix-judging",
+      "n_findings": 1,
+      "name": "2024-04-alchemix",
+      "reason": "eligible",
+      "resolved_sha": "32e4902f77b05ea856cf52617c55c3450507281c",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-04-arcadia-pricing-module",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-04-arcadia-pricing-module-judging",
+      "n_findings": 3,
+      "name": "2024-04-arcadia-pricing-module",
+      "reason": "eligible",
+      "resolved_sha": "54832626b806dcb72e250935fc193acb95e0cf8a",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-04-interest-rate-model",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-04-interest-rate-model-judging",
+      "n_findings": 18,
+      "name": "2024-04-interest-rate-model",
+      "reason": "eligible",
+      "resolved_sha": "8f6ef1b0868d3ea3a98a5ab7e8b3a164857681d7",
+      "sol_share": 0.9811320754716981
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-04-teller-finance",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-04-teller-finance-judging",
+      "n_findings": 29,
+      "name": "2024-04-teller-finance",
+      "reason": "eligible",
+      "resolved_sha": "defe55469a2576735af67483acf31d623e13592d",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-04-titles",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-04-titles-judging",
+      "n_findings": 17,
+      "name": "2024-04-titles",
+      "reason": "eligible",
+      "resolved_sha": "d7f60952df22da00b772db5d3a8272a988546089",
+      "sol_share": 0.9642857142857143
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-04-xkeeper",
+      "eligible": false,
+      "judging_repo": "sherlock-audit/2024-04-xkeeper-judging",
+      "n_findings": 2,
+      "name": "2024-04-xkeeper",
+      "reason": "non_solidity",
+      "resolved_sha": null,
+      "sol_share": 0.3333333333333333
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-05-aleo",
+      "eligible": false,
+      "judging_repo": "sherlock-audit/2024-05-aleo-judging",
+      "n_findings": 4,
+      "name": "2024-05-aleo",
+      "reason": "non_solidity",
+      "resolved_sha": null,
+      "sol_share": 0.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-05-andromeda-ado",
+      "eligible": false,
+      "judging_repo": "sherlock-audit/2024-05-andromeda-ado-judging",
+      "n_findings": 16,
+      "name": "2024-05-andromeda-ado",
+      "reason": "non_solidity",
+      "resolved_sha": null,
+      "sol_share": 0.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-05-beefy-cowcentrated-liquidity-manager",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-05-beefy-cowcentrated-liquidity-manager-judging",
+      "n_findings": 1,
+      "name": "2024-05-beefy-cowcentrated-liquidity-manager",
+      "reason": "eligible",
+      "resolved_sha": "42ef5f0eac1bc954e888cf5bfb85cbf24c08ec76",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-05-elfi-protocol",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-05-elfi-protocol-judging",
+      "n_findings": 57,
+      "name": "2024-05-elfi-protocol",
+      "reason": "eligible",
+      "resolved_sha": "8a1a01804a7de7f73a04d794bf6b8104528681ad",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-05-gamma-staking",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-05-gamma-staking-judging",
+      "n_findings": 2,
+      "name": "2024-05-gamma-staking",
+      "reason": "eligible",
+      "resolved_sha": "703fd3604069489937037f20490ec8c492c0508e",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-05-kwenta-x-perennial-integration-update",
+      "eligible": false,
+      "judging_repo": "sherlock-audit/2024-05-kwenta-x-perennial-integration-update-judging",
+      "n_findings": 0,
+      "name": "2024-05-kwenta-x-perennial-integration-update",
+      "reason": "no_high_or_medium",
+      "resolved_sha": null,
+      "sol_share": 0.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-05-midas",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-05-midas-judging",
+      "n_findings": 3,
+      "name": "2024-05-midas",
+      "reason": "eligible",
+      "resolved_sha": "a4a3cc23bb891913ce44665a4cdea9f5c1190f6c",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-05-napier-update",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-05-napier-update-judging",
+      "n_findings": 11,
+      "name": "2024-05-napier-update",
+      "reason": "eligible",
+      "resolved_sha": "c31af59c6399182fd04b40530d79d98632d2bfa7",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-05-pooltogether",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-05-pooltogether-judging",
+      "n_findings": 22,
+      "name": "2024-05-pooltogether",
+      "reason": "eligible",
+      "resolved_sha": "1aa1b8c028b659585e4c7a6b9b652fb075f86db3",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-05-sophon",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-05-sophon-judging",
+      "n_findings": 5,
+      "name": "2024-05-sophon",
+      "reason": "eligible",
+      "resolved_sha": "05059e53755f24ae9e3a3bb2996de15df0289a6c",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-05-tokensoft-distributor-contracts-update",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-05-tokensoft-distributor-contracts-update-judging",
+      "n_findings": 2,
+      "name": "2024-05-tokensoft-distributor-contracts-update",
+      "reason": "eligible",
+      "resolved_sha": "67edd899612619b0acefdcb0783ef7a8a75caeac",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-06-allora",
+      "eligible": false,
+      "judging_repo": "sherlock-audit/2024-06-allora-judging",
+      "n_findings": 49,
+      "name": "2024-06-allora",
+      "reason": "non_solidity",
+      "resolved_sha": null,
+      "sol_share": 0.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-06-boost-aa-wallet",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-06-boost-aa-wallet-judging",
+      "n_findings": 7,
+      "name": "2024-06-boost-aa-wallet",
+      "reason": "eligible|mixed_pins",
+      "resolved_sha": "78930f2ed6570f30e356b5529bd4bcbe5194eb8b",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-06-leveraged-vaults",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-06-leveraged-vaults-judging",
+      "n_findings": 19,
+      "name": "2024-06-leveraged-vaults",
+      "reason": "eligible",
+      "resolved_sha": "14d3eaf0445c251c52c86ce88a84a3f5b9dfad94",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-06-magicsea",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-06-magicsea-judging",
+      "n_findings": 16,
+      "name": "2024-06-magicsea",
+      "reason": "eligible",
+      "resolved_sha": "42e799446595c542eff9519353d3becc50cdba63",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-06-makerdao-endgame",
+      "eligible": false,
+      "judging_repo": "sherlock-audit/2024-06-makerdao-endgame-judging",
+      "n_findings": 0,
+      "name": "2024-06-makerdao-endgame",
+      "reason": "no_high_or_medium",
+      "resolved_sha": null,
+      "sol_share": 0.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-06-mellow",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-06-mellow-judging",
+      "n_findings": 4,
+      "name": "2024-06-mellow",
+      "reason": "eligible",
+      "resolved_sha": "26aa0445ec405a4ad637bddeeedec4efe1eba8d2",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-06-new-scope",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-06-new-scope-judging",
+      "n_findings": 26,
+      "name": "2024-06-new-scope",
+      "reason": "eligible",
+      "resolved_sha": "c8300e73f4d751796daad3dadbae4d11072b3d79",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-06-symmetrical-update-2",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-06-symmetrical-update-2-judging",
+      "n_findings": 5,
+      "name": "2024-06-symmetrical-update-2",
+      "reason": "eligible",
+      "resolved_sha": "f5b76ca33f5f05b927a9c0f2f57938e919d6420b",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-06-union-finance-update-2",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-06-union-finance-update-2-judging",
+      "n_findings": 9,
+      "name": "2024-06-union-finance-update-2",
+      "reason": "eligible",
+      "resolved_sha": "7ffe43f68a1b8e8de1dfd9de5a4d89c90fd6f710",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-06-velocimeter",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-06-velocimeter-judging",
+      "n_findings": 18,
+      "name": "2024-06-velocimeter",
+      "reason": "eligible",
+      "resolved_sha": "63818925987a5115a80eff4bd12578146a844cfd",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-07-exactly-stacking-contracts",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-07-exactly-stacking-contracts-judging",
+      "n_findings": 13,
+      "name": "2024-07-exactly-stacking-contracts",
+      "reason": "eligible",
+      "resolved_sha": "3eb87e3edf3bcd57c4cc1c6a73e8255f575b76de",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-07-kwenta-staking-contracts",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-07-kwenta-staking-contracts-judging",
+      "n_findings": 1,
+      "name": "2024-07-kwenta-staking-contracts",
+      "reason": "eligible",
+      "resolved_sha": "0527fb7425206a3338c23177416436c6286cedf9",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-07-sense-points-marketplace",
+      "eligible": false,
+      "judging_repo": "sherlock-audit/2024-07-sense-points-marketplace-judging",
+      "n_findings": 0,
+      "name": "2024-07-sense-points-marketplace",
+      "reason": "no_high_or_medium",
+      "resolved_sha": null,
+      "sol_share": 0.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-08-cork-protocol",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-08-cork-protocol-judging",
+      "n_findings": 18,
+      "name": "2024-08-cork-protocol",
+      "reason": "eligible",
+      "resolved_sha": "db23bf67e45781b00ee6de5f6f23e621af16bd7e",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-08-flayer",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-08-flayer-judging",
+      "n_findings": 47,
+      "name": "2024-08-flayer",
+      "reason": "eligible",
+      "resolved_sha": "0ec252cf9ef0f3470191dcf8318f6835f5ef688c",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-08-midas-minter-redeemer",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-08-midas-minter-redeemer-judging",
+      "n_findings": 6,
+      "name": "2024-08-midas-minter-redeemer",
+      "reason": "eligible",
+      "resolved_sha": "52b77ba39be51f18a5b0736dfbe7f2acbbeba6e3",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-08-morphl2",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-08-morphl2-judging",
+      "n_findings": 14,
+      "name": "2024-08-morphl2",
+      "reason": "eligible",
+      "resolved_sha": "98e0ec4c5bbd0b28f3d3a9e9159d1184bc45b38d",
+      "sol_share": 0.8
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-08-perennial-v2-update-3",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-08-perennial-v2-update-3-judging",
+      "n_findings": 21,
+      "name": "2024-08-perennial-v2-update-3",
+      "reason": "eligible",
+      "resolved_sha": "ac46a2fc8baf6c827ee20c69eecae66561a5c65f",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-08-saffron-finance",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-08-saffron-finance-judging",
+      "n_findings": 5,
+      "name": "2024-08-saffron-finance",
+      "reason": "eligible",
+      "resolved_sha": "38dd9c8436db341c331f1b14545770c1766fc0ee",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-08-sentiment-v2",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-08-sentiment-v2-judging",
+      "n_findings": 26,
+      "name": "2024-08-sentiment-v2",
+      "reason": "eligible|mixed_pins",
+      "resolved_sha": "0b472f4bffdb2c7432a5d21f1636139cc01561a5",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-08-tokamak-network",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-08-tokamak-network-judging",
+      "n_findings": 1,
+      "name": "2024-08-tokamak-network",
+      "reason": "eligible",
+      "resolved_sha": "6d4cf9ea730d5b52b622f0b3afd41a35d3eba8a2",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-08-velar-artha",
+      "eligible": false,
+      "judging_repo": "sherlock-audit/2024-08-velar-artha-judging",
+      "n_findings": 12,
+      "name": "2024-08-velar-artha",
+      "reason": "non_solidity",
+      "resolved_sha": null,
+      "sol_share": 0.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-08-winnables-raffles",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-08-winnables-raffles-judging",
+      "n_findings": 8,
+      "name": "2024-08-winnables-raffles",
+      "reason": "eligible",
+      "resolved_sha": "81b28633d0f450e33a8b32976e17122418f5d47e",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-08-woofi-solana-deployment",
+      "eligible": false,
+      "judging_repo": "sherlock-audit/2024-08-woofi-solana-deployment-judging",
+      "n_findings": 5,
+      "name": "2024-08-woofi-solana-deployment",
+      "reason": "non_solidity",
+      "resolved_sha": null,
+      "sol_share": 0.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-09-orderly-network-solana-contract",
+      "eligible": false,
+      "judging_repo": "sherlock-audit/2024-09-orderly-network-solana-contract-judging",
+      "n_findings": 3,
+      "name": "2024-09-orderly-network-solana-contract",
+      "reason": "non_solidity",
+      "resolved_sha": null,
+      "sol_share": 0.3333333333333333
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-09-predict-fun",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-09-predict-fun-judging",
+      "n_findings": 5,
+      "name": "2024-09-predict-fun",
+      "reason": "eligible",
+      "resolved_sha": "41e70f9eed3f00dd29aba4038544150f5b35dccb",
+      "sol_share": 0.875
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-09-symmio-v0-8-4-update-contest",
+      "eligible": false,
+      "judging_repo": "sherlock-audit/2024-09-symmio-v0-8-4-update-contest-judging",
+      "n_findings": 5,
+      "name": "2024-09-symmio-v0-8-4-update-contest",
+      "reason": "non_solidity",
+      "resolved_sha": null,
+      "sol_share": 0.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-10-axion",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-10-axion-judging",
+      "n_findings": 10,
+      "name": "2024-10-axion",
+      "reason": "eligible|mixed_pins",
+      "resolved_sha": "c65e662999d0c79439703fc6713814b4ad023e01",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-10-debita",
+      "eligible": false,
+      "judging_repo": "sherlock-audit/2024-10-debita-judging",
+      "n_findings": 0,
+      "name": "2024-10-debita",
+      "reason": "companion_repo_missing",
+      "resolved_sha": null,
+      "sol_share": 0.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-10-ethos-network",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-10-ethos-network-judging",
+      "n_findings": 3,
+      "name": "2024-10-ethos-network",
+      "reason": "eligible|mixed_pins",
+      "resolved_sha": "db37b9dc2b792e245eb683d8a956bcb7ef2f1a27",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-10-gamma-rewarder",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-10-gamma-rewarder-judging",
+      "n_findings": 2,
+      "name": "2024-10-gamma-rewarder",
+      "reason": "eligible",
+      "resolved_sha": "475f7fbd0f7c2717ed585a67632e9a675b51c306",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-10-mento-update",
+      "eligible": false,
+      "judging_repo": "sherlock-audit/2024-10-mento-update-judging",
+      "n_findings": 5,
+      "name": "2024-10-mento-update",
+      "reason": "non_solidity",
+      "resolved_sha": null,
+      "sol_share": 0.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-10-morpho-x-index",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-10-morpho-x-index-judging",
+      "n_findings": 1,
+      "name": "2024-10-morpho-x-index",
+      "reason": "eligible",
+      "resolved_sha": "2f125406e0dd3b1fc029b9a47fe97bfbf906fce2",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-11-autonomint",
+      "eligible": false,
+      "judging_repo": "sherlock-audit/2024-11-autonomint-judging",
+      "n_findings": 0,
+      "name": "2024-11-autonomint",
+      "reason": "no_high_or_medium",
+      "resolved_sha": null,
+      "sol_share": 0.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-11-ethos-network-ii",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-11-ethos-network-ii-judging",
+      "n_findings": 7,
+      "name": "2024-11-ethos-network-ii",
+      "reason": "eligible",
+      "resolved_sha": "57c02df7c56f0b18c681a89ebccc28c86c72d8d8",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-11-hats-protocol",
+      "eligible": false,
+      "judging_repo": "sherlock-audit/2024-11-hats-protocol-judging",
+      "n_findings": 2,
+      "name": "2024-11-hats-protocol",
+      "reason": "non_solidity",
+      "resolved_sha": null,
+      "sol_share": 0.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-11-nounsdao",
+      "eligible": false,
+      "judging_repo": "sherlock-audit/2024-11-nounsdao-judging",
+      "n_findings": 0,
+      "name": "2024-11-nounsdao",
+      "reason": "no_high_or_medium",
+      "resolved_sha": null,
+      "sol_share": 0.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-11-oku",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-11-oku-judging",
+      "n_findings": 19,
+      "name": "2024-11-oku",
+      "reason": "eligible",
+      "resolved_sha": "ee3f781a73d65e33fb452c9a44eb1337c5cfdbd6",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-11-superfluid-locking-contract",
+      "eligible": false,
+      "judging_repo": "sherlock-audit/2024-11-superfluid-locking-contract-judging",
+      "n_findings": 6,
+      "name": "2024-11-superfluid-locking-contract",
+      "reason": "non_solidity",
+      "resolved_sha": null,
+      "sol_share": 0.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-11-tally",
+      "eligible": false,
+      "judging_repo": "sherlock-audit/2024-11-tally-judging",
+      "n_findings": 0,
+      "name": "2024-11-tally",
+      "reason": "no_high_or_medium",
+      "resolved_sha": null,
+      "sol_share": 0.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-11-telcoin",
+      "eligible": false,
+      "judging_repo": "sherlock-audit/2024-11-telcoin-judging",
+      "n_findings": 0,
+      "name": "2024-11-telcoin",
+      "reason": "no_high_or_medium",
+      "resolved_sha": null,
+      "sol_share": 0.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-11-teller-finance-update",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-11-teller-finance-update-judging",
+      "n_findings": 11,
+      "name": "2024-11-teller-finance-update",
+      "reason": "eligible",
+      "resolved_sha": "0c8535728f97d37a4052d2a25909d28db886a422",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-11-vvv-exchange-update",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-11-vvv-exchange-update-judging",
+      "n_findings": 1,
+      "name": "2024-11-vvv-exchange-update",
+      "reason": "eligible",
+      "resolved_sha": "1791f41b310489aaa66de349ef1b9e4bd331f14b",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-12-babylon",
+      "eligible": false,
+      "judging_repo": "sherlock-audit/2024-12-babylon-judging",
+      "n_findings": 0,
+      "name": "2024-12-babylon",
+      "reason": "companion_repo_missing",
+      "resolved_sha": null,
+      "sol_share": 0.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-12-ethos-update",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-12-ethos-update-judging",
+      "n_findings": 2,
+      "name": "2024-12-ethos-update",
+      "reason": "eligible",
+      "resolved_sha": "c3a2b007d0ddfcb476f300f8b766808f0e3e2dfd",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-12-mach-finance",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-12-mach-finance-judging",
+      "n_findings": 1,
+      "name": "2024-12-mach-finance",
+      "reason": "eligible",
+      "resolved_sha": "94f707dd94fc13dc0132deaa89c68f53bed306fa",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-12-numa-audit",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2024-12-numa-audit-judging",
+      "n_findings": 16,
+      "name": "2024-12-numa-audit",
+      "reason": "eligible",
+      "resolved_sha": "ae1d7781efb4cb2c3a40c642887ddadeecabb97d",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-12-plaza-finance",
+      "eligible": false,
+      "judging_repo": "sherlock-audit/2024-12-plaza-finance-judging",
+      "n_findings": 0,
+      "name": "2024-12-plaza-finance",
+      "reason": "no_high_or_medium",
+      "resolved_sha": null,
+      "sol_share": 0.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2024-12-seda-protocol",
+      "eligible": false,
+      "judging_repo": "sherlock-audit/2024-12-seda-protocol-judging",
+      "n_findings": 34,
+      "name": "2024-12-seda-protocol",
+      "reason": "non_solidity",
+      "resolved_sha": null,
+      "sol_share": 0.09615384615384616
+    },
+    {
+      "companion_repo": "sherlock-audit/2025-01-aave-v3-3",
+      "eligible": false,
+      "judging_repo": "sherlock-audit/2025-01-aave-v3-3-judging",
+      "n_findings": 0,
+      "name": "2025-01-aave-v3-3",
+      "reason": "no_high_or_medium",
+      "resolved_sha": null,
+      "sol_share": 0.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2025-01-peapods-finance",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2025-01-peapods-finance-judging",
+      "n_findings": 41,
+      "name": "2025-01-peapods-finance",
+      "reason": "eligible",
+      "resolved_sha": "d28eb19f4b39d3db7997477460f9f9c76839cb0c",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2025-01-perennial-v2-4-update",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2025-01-perennial-v2-4-update-judging",
+      "n_findings": 7,
+      "name": "2025-01-perennial-v2-4-update",
+      "reason": "eligible",
+      "resolved_sha": "2381b47e69b17fe892b1d1d0f467c358cf950143",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2025-02-rova",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2025-02-rova-judging",
+      "n_findings": 2,
+      "name": "2025-02-rova",
+      "reason": "eligible",
+      "resolved_sha": "53fb6d71d253676bfbd00926e8f217f40c62d8c5",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2025-02-yieldoor",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2025-02-yieldoor-judging",
+      "n_findings": 17,
+      "name": "2025-02-yieldoor",
+      "reason": "eligible",
+      "resolved_sha": "b5a0f779dce4236b02665606adb610099451a51a",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2025-03-crestal-network",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2025-03-crestal-network-judging",
+      "n_findings": 7,
+      "name": "2025-03-crestal-network",
+      "reason": "eligible",
+      "resolved_sha": "27a3c28155702b3a68f29347efedffb048010e33",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2025-03-pinlink-rwa-tokenized-depin-marketplace",
+      "eligible": false,
+      "judging_repo": "sherlock-audit/2025-03-pinlink-rwa-tokenized-depin-marketplace-judging",
+      "n_findings": 0,
+      "name": "2025-03-pinlink-rwa-tokenized-depin-marketplace",
+      "reason": "no_high_or_medium",
+      "resolved_sha": null,
+      "sol_share": 0.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2025-03-symm-io-stacking",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2025-03-symm-io-stacking-judging",
+      "n_findings": 6,
+      "name": "2025-03-symm-io-stacking",
+      "reason": "eligible",
+      "resolved_sha": "d7cf7fc96af1c25b53a7b500a98b411cd018c0d3",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2025-04-aegis-op-grant",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2025-04-aegis-op-grant-judging",
+      "n_findings": 3,
+      "name": "2025-04-aegis-op-grant",
+      "reason": "eligible",
+      "resolved_sha": "4aceb235db96b2299bb95ebf16e83a24f987bf3e",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2025-04-burve",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2025-04-burve-judging",
+      "n_findings": 15,
+      "name": "2025-04-burve",
+      "reason": "eligible",
+      "resolved_sha": "44cba36e2a0c3cd7b6999459bf7746db92f8cc0a",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2025-04-pareto-contest",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2025-04-pareto-contest-judging",
+      "n_findings": 2,
+      "name": "2025-04-pareto-contest",
+      "reason": "eligible",
+      "resolved_sha": "2737be49a226bcab2aafccf8c8786f27ef11ce5a",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2025-05-dodo-cross-chain-dex",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2025-05-dodo-cross-chain-dex-judging",
+      "n_findings": 17,
+      "name": "2025-05-dodo-cross-chain-dex",
+      "reason": "eligible",
+      "resolved_sha": "d4834a468f7dad56b007b4450397289d4f767757",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2025-05-layeredge",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2025-05-layeredge-judging",
+      "n_findings": 3,
+      "name": "2025-05-layeredge",
+      "reason": "eligible",
+      "resolved_sha": "708c5b5345ed50cd0bde7b0a8a548c8936639683",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2025-05-lend-audit-contest",
+      "eligible": false,
+      "judging_repo": "sherlock-audit/2025-05-lend-audit-contest-judging",
+      "n_findings": 0,
+      "name": "2025-05-lend-audit-contest",
+      "reason": "no_high_or_medium",
+      "resolved_sha": null,
+      "sol_share": 0.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2025-05-yearn-ybold",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2025-05-yearn-ybold-judging",
+      "n_findings": 3,
+      "name": "2025-05-yearn-ybold",
+      "reason": "eligible",
+      "resolved_sha": "88a3b89c05fd6e59ec130c79659195cd05d872af",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2025-06-notional-exponent",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2025-06-notional-exponent-judging",
+      "n_findings": 37,
+      "name": "2025-06-notional-exponent",
+      "reason": "eligible",
+      "resolved_sha": "82c87105f6b32bb362d7523356f235b5b07509f9",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2025-06-superfluid-locker-system",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2025-06-superfluid-locker-system-judging",
+      "n_findings": 8,
+      "name": "2025-06-superfluid-locker-system",
+      "reason": "eligible",
+      "resolved_sha": "d8beaeed47f766659a1600a87372a7905109aa3c",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2025-06-symbiotic-relay",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2025-06-symbiotic-relay-judging",
+      "n_findings": 7,
+      "name": "2025-06-symbiotic-relay",
+      "reason": "eligible",
+      "resolved_sha": "435a21fd81bcd588439feef3108580f535b9e5eb",
+      "sol_share": 0.8888888888888888
+    },
+    {
+      "companion_repo": "sherlock-audit/2025-07-allbridge-core-yield",
+      "eligible": false,
+      "judging_repo": "sherlock-audit/2025-07-allbridge-core-yield-judging",
+      "n_findings": 2,
+      "name": "2025-07-allbridge-core-yield",
+      "reason": "non_solidity",
+      "resolved_sha": null,
+      "sol_share": 0.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2025-07-cap",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2025-07-cap-judging",
+      "n_findings": 10,
+      "name": "2025-07-cap",
+      "reason": "eligible",
+      "resolved_sha": "2bd34fa369d36af8ecc377090d3292ea74ccc669",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2025-07-debank",
+      "eligible": false,
+      "judging_repo": "sherlock-audit/2025-07-debank-judging",
+      "n_findings": 0,
+      "name": "2025-07-debank",
+      "reason": "no_high_or_medium",
+      "resolved_sha": null,
+      "sol_share": 0.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2025-07-malda",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2025-07-malda-judging",
+      "n_findings": 17,
+      "name": "2025-07-malda",
+      "reason": "eligible",
+      "resolved_sha": "798d00b879b8412ca4049ba09dba5ae42464cfe7",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2025-07-mellow-flexible-vaults",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2025-07-mellow-flexible-vaults-judging",
+      "n_findings": 15,
+      "name": "2025-07-mellow-flexible-vaults",
+      "reason": "eligible",
+      "resolved_sha": "eca8836d68d65bcbfc52c6f04cf6b4b1597555bf",
+      "sol_share": 1.0
+    },
+    {
+      "companion_repo": "sherlock-audit/2025-07-oku-trade-order-types",
+      "eligible": true,
+      "judging_repo": "sherlock-audit/2025-07-oku-trade-order-types-judging",
+      "n_findings": 1,
+      "name": "2025-07-oku-trade-order-types",
+      "reason": "eligible",
+      "resolved_sha": "0c17cd6ff7dc313b7ddebe6811bacffe4de43756",
+      "sol_share": 1.0
+    }
+  ],
+  "dev": [
+    "2025-06-superfluid-locker-system",
+    "2024-04-alchemix",
+    "2024-06-new-scope",
+    "2024-02-perennial-v2-3"
+  ],
+  "draw_order": [
+    "2025-06-superfluid-locker-system",
+    "2024-04-alchemix",
+    "2024-06-new-scope",
+    "2024-02-perennial-v2-3",
+    "2024-02-jala-swap",
+    "2024-01-olympus-on-chain-governance",
+    "2024-04-interest-rate-model",
+    "2024-07-kwenta-staking-contracts",
+    "2024-06-leveraged-vaults",
+    "2024-11-ethos-network-ii",
+    "2024-08-saffron-finance",
+    "2024-03-nouns-dao-2",
+    "2024-04-arcadia-pricing-module",
+    "2025-07-malda",
+    "2024-01-looksrare",
+    "2024-04-teller-finance",
+    "2024-12-numa-audit",
+    "2024-02-leverage-contracts",
+    "2024-07-exactly-stacking-contracts",
+    "2024-05-napier-update"
+  ],
+  "measurement": [
+    "2024-02-jala-swap",
+    "2024-01-olympus-on-chain-governance",
+    "2024-04-interest-rate-model",
+    "2024-07-kwenta-staking-contracts",
+    "2024-06-leveraged-vaults",
+    "2024-11-ethos-network-ii",
+    "2024-08-saffron-finance",
+    "2024-03-nouns-dao-2",
+    "2024-04-arcadia-pricing-module",
+    "2025-07-malda",
+    "2024-01-looksrare",
+    "2024-04-teller-finance",
+    "2024-12-numa-audit",
+    "2024-02-leverage-contracts",
+    "2024-07-exactly-stacking-contracts",
+    "2024-05-napier-update"
+  ],
+  "n_eligible": 89,
+  "seed": 20261118
+}

@@ -1,0 +1,206 @@
+{
+  "set": "dev",
+  "partial": false,
+  "rows": [
+    {
+      "finding_id": "2025-06-superfluid-locker-system:H-1",
+      "index": 0,
+      "verdict": "unrelated",
+      "rationale": "The analyzer flags an unused private constant, _PERCENT_TO_BP. The finding is about provideLiquidity not checking getAvailableBalance, which lets staked tokens leave the locker. The two have nothing in common.",
+      "call": {
+        "model": "claude-sonnet-5-5",
+        "effort": "medium",
+        "status": "ok",
+        "data": {
+          "verdict": "unrelated",
+          "rationale": "The analyzer flags an unused private constant, _PERCENT_TO_BP. The finding is about provideLiquidity not checking getAvailableBalance, which lets staked tokens leave the locker. The two have nothing in common."
+        },
+        "served_model": "claude-sonnet-5-5",
+        "fallback_ran": false,
+        "refusal_category": null,
+        "in_tok": 4131,
+        "out_tok": 152
+      }
+    },
+    {
+      "finding_id": "2025-06-superfluid-locker-system:M-4",
+      "index": 0,
+      "verdict": "unrelated",
+      "rationale": "The analyzer flags an unused private constant, _PERCENT_TO_BP. The finding is about provideLiquidity and withdrawLiquidity missing the unlockAvailable modifier. The two are unrelated.",
+      "call": {
+        "model": "claude-sonnet-5-5",
+        "effort": "medium",
+        "status": "ok",
+        "data": {
+          "verdict": "unrelated",
+          "rationale": "The analyzer flags an unused private constant, _PERCENT_TO_BP. The finding is about provideLiquidity and withdrawLiquidity missing the unlockAvailable modifier. The two are unrelated."
+        },
+        "served_model": "claude-sonnet-5-5",
+        "fallback_ran": false,
+        "refusal_category": null,
+        "in_tok": 3539,
+        "out_tok": 149
+      }
+    },
+    {
+      "finding_id": "2024-02-perennial-v2-3:H-2",
+      "index": 0,
+      "verdict": "unrelated",
+      "rationale": "The analyzer flags an unused deprecated storage slot (__unused0__) in Market. The finding is about expired oracle versions being reported as valid because validity is derived from price != 0. The two have nothing in common.",
+      "call": {
+        "model": "claude-sonnet-5-5",
+        "effort": "medium",
+        "status": "ok",
+        "data": {
+          "verdict": "unrelated",
+          "rationale": "The analyzer flags an unused deprecated storage slot (__unused0__) in Market. The finding is about expired oracle versions being reported as valid because validity is derived from price != 0. The two have nothing in common."
+        },
+        "served_model": "claude-sonnet-5-5",
+        "fallback_ran": false,
+        "refusal_category": null,
+        "in_tok": 4194,
+        "out_tok": 146
+      }
+    },
+    {
+      "finding_id": "2024-02-perennial-v2-3:H-2",
+      "index": 1,
+      "verdict": "unrelated",
+      "rationale": "The analyzer flags an unused deprecated storage slot (__unused1__) in Market. The finding concerns expired oracle versions being returned as valid by KeeperOracle.at. The two share no root cause.",
+      "call": {
+        "model": "claude-sonnet-5-5",
+        "effort": "medium",
+        "status": "ok",
+        "data": {
+          "verdict": "unrelated",
+          "rationale": "The analyzer flags an unused deprecated storage slot (__unused1__) in Market. The finding concerns expired oracle versions being returned as valid by KeeperOracle.at. The two share no root cause."
+        },
+        "served_model": "claude-sonnet-5-5",
+        "fallback_ran": false,
+        "refusal_category": null,
+        "in_tok": 4038,
+        "out_tok": 145
+      }
+    },
+    {
+      "finding_id": "2024-02-perennial-v2-3:H-2",
+      "index": 2,
+      "verdict": "unrelated",
+      "rationale": "The analyzer flags an unused deprecated storage slot (__unused2__) in Market. The finding is about KeeperOracle returning expired versions as valid because it infers validity from a nonzero price. These are unrelated.",
+      "call": {
+        "model": "claude-sonnet-5-5",
+        "effort": "medium",
+        "status": "ok",
+        "data": {
+          "verdict": "unrelated",
+          "rationale": "The analyzer flags an unused deprecated storage slot (__unused2__) in Market. The finding is about KeeperOracle returning expired versions as valid because it infers validity from a nonzero price. These are unrelated."
+        },
+        "served_model": "claude-sonnet-5-5",
+        "fallback_ran": false,
+        "refusal_category": null,
+        "in_tok": 4049,
+        "out_tok": 149
+      }
+    },
+    {
+      "finding_id": "2024-02-perennial-v2-3:H-2",
+      "index": 3,
+      "verdict": "unrelated",
+      "rationale": "The analyzer flags an unused deprecated storage slot (__unused3__) in Market. The finding is about expired oracle versions being reported as valid because KeeperOracle stores no validity flag. The two share no code or root cause.",
+      "call": {
+        "model": "claude-sonnet-5-5",
+        "effort": "medium",
+        "status": "ok",
+        "data": {
+          "verdict": "unrelated",
+          "rationale": "The analyzer flags an unused deprecated storage slot (__unused3__) in Market. The finding is about expired oracle versions being reported as valid because KeeperOracle stores no validity flag. The two share no code or root cause."
+        },
+        "served_model": "claude-sonnet-5-5",
+        "fallback_ran": false,
+        "refusal_category": null,
+        "in_tok": 4099,
+        "out_tok": 151
+      }
+    },
+    {
+      "finding_id": "2024-02-perennial-v2-3:M-7",
+      "index": 0,
+      "verdict": "unrelated",
+      "rationale": "The analyzer flags an unused deprecated storage slot (__unused0__) in Market. The finding concerns liquidation orders being able to set referrers in _processReferrer. The two share no root cause.",
+      "call": {
+        "model": "claude-sonnet-5-5",
+        "effort": "medium",
+        "status": "ok",
+        "data": {
+          "verdict": "unrelated",
+          "rationale": "The analyzer flags an unused deprecated storage slot (__unused0__) in Market. The finding concerns liquidation orders being able to set referrers in _processReferrer. The two share no root cause."
+        },
+        "served_model": "claude-sonnet-5-5",
+        "fallback_ran": false,
+        "refusal_category": null,
+        "in_tok": 3834,
+        "out_tok": 142
+      }
+    },
+    {
+      "finding_id": "2024-02-perennial-v2-3:M-7",
+      "index": 1,
+      "verdict": "unrelated",
+      "rationale": "The analyzer flags an unused deprecated storage slot (__unused1__). The finding concerns liquidation orders being able to set a referrer in _processReferrer. The two have no connection.",
+      "call": {
+        "model": "claude-sonnet-5-5",
+        "effort": "medium",
+        "status": "ok",
+        "data": {
+          "verdict": "unrelated",
+          "rationale": "The analyzer flags an unused deprecated storage slot (__unused1__). The finding concerns liquidation orders being able to set a referrer in _processReferrer. The two have no connection."
+        },
+        "served_model": "claude-sonnet-5-5",
+        "fallback_ran": false,
+        "refusal_category": null,
+        "in_tok": 3673,
+        "out_tok": 138
+      }
+    },
+    {
+      "finding_id": "2024-02-perennial-v2-3:M-7",
+      "index": 2,
+      "verdict": "unrelated",
+      "rationale": "The analyzer flags an unused deprecated storage slot (__unused2__) in Market. The finding is about _processReferrer letting liquidation orders set a referrer. The two share no root cause.",
+      "call": {
+        "model": "claude-sonnet-5-5",
+        "effort": "medium",
+        "status": "ok",
+        "data": {
+          "verdict": "unrelated",
+          "rationale": "The analyzer flags an unused deprecated storage slot (__unused2__) in Market. The finding is about _processReferrer letting liquidation orders set a referrer. The two share no root cause."
+        },
+        "served_model": "claude-sonnet-5-5",
+        "fallback_ran": false,
+        "refusal_category": null,
+        "in_tok": 3686,
+        "out_tok": 140
+      }
+    },
+    {
+      "finding_id": "2024-02-perennial-v2-3:M-7",
+      "index": 3,
+      "verdict": "unrelated",
+      "rationale": "The analyzer flags an unused deprecated storage slot (__unused3__). The finding concerns a liquidation order being able to set a referrer in _processReferrer. The two have no connection.",
+      "call": {
+        "model": "claude-sonnet-5-5",
+        "effort": "medium",
+        "status": "ok",
+        "data": {
+          "verdict": "unrelated",
+          "rationale": "The analyzer flags an unused deprecated storage slot (__unused3__). The finding concerns a liquidation order being able to set a referrer in _processReferrer. The two have no connection."
+        },
+        "served_model": "claude-sonnet-5-5",
+        "fallback_ran": false,
+        "refusal_category": null,
+        "in_tok": 3742,
+        "out_tok": 138
+      }
+    }
+  ]
+}

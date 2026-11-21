@@ -1,0 +1,604 @@
+{
+  "set": "dev",
+  "engine_commit": "3ebdabd",
+  "contests": [
+    {
+      "name": "2025-06-superfluid-locker-system",
+      "companion_repo": "sherlock-audit/2025-06-superfluid-locker-system",
+      "resolved_sha": "d8beaeed47f766659a1600a87372a7905109aa3c",
+      "files_scanned": 223,
+      "production_files": 129,
+      "production_lines": 29446,
+      "wall_ms": 7408.2,
+      "all_findings_count": 60,
+      "findings": [
+        {
+          "detector": "state_sink_review",
+          "symbol": "FluidLocker._PERCENT_TO_BP",
+          "path": "fluid/packages/contracts/src/FluidLocker.sol",
+          "start_line": 132,
+          "end_line": 132,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "private constant _PERCENT_TO_BP is declared in FluidLocker and never read in any method or modifier"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "PoolNFTBase._reserve6",
+          "path": "protocol-monorepo/packages/ethereum-contracts/contracts/agreements/gdav1/PoolNFTBase.sol",
+          "start_line": 53,
+          "end_line": 53,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "private state variable _reserve6 is declared in PoolNFTBase and never read in any method or modifier"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "PoolNFTBase._reserve7",
+          "path": "protocol-monorepo/packages/ethereum-contracts/contracts/agreements/gdav1/PoolNFTBase.sol",
+          "start_line": 54,
+          "end_line": 54,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "private state variable _reserve7 is declared in PoolNFTBase and never read in any method or modifier"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "PoolNFTBase._reserve8",
+          "path": "protocol-monorepo/packages/ethereum-contracts/contracts/agreements/gdav1/PoolNFTBase.sol",
+          "start_line": 55,
+          "end_line": 55,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "private state variable _reserve8 is declared in PoolNFTBase and never read in any method or modifier"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "PoolNFTBase._reserve9",
+          "path": "protocol-monorepo/packages/ethereum-contracts/contracts/agreements/gdav1/PoolNFTBase.sol",
+          "start_line": 56,
+          "end_line": 56,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "private state variable _reserve9 is declared in PoolNFTBase and never read in any method or modifier"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "PoolNFTBase._reserve10",
+          "path": "protocol-monorepo/packages/ethereum-contracts/contracts/agreements/gdav1/PoolNFTBase.sol",
+          "start_line": 57,
+          "end_line": 57,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "private state variable _reserve10 is declared in PoolNFTBase and never read in any method or modifier"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "PoolNFTBase._reserve11",
+          "path": "protocol-monorepo/packages/ethereum-contracts/contracts/agreements/gdav1/PoolNFTBase.sol",
+          "start_line": 58,
+          "end_line": 58,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "private state variable _reserve11 is declared in PoolNFTBase and never read in any method or modifier"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "PoolNFTBase._reserve12",
+          "path": "protocol-monorepo/packages/ethereum-contracts/contracts/agreements/gdav1/PoolNFTBase.sol",
+          "start_line": 59,
+          "end_line": 59,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "private state variable _reserve12 is declared in PoolNFTBase and never read in any method or modifier"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "PoolNFTBase._reserve13",
+          "path": "protocol-monorepo/packages/ethereum-contracts/contracts/agreements/gdav1/PoolNFTBase.sol",
+          "start_line": 60,
+          "end_line": 60,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "private state variable _reserve13 is declared in PoolNFTBase and never read in any method or modifier"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "PoolNFTBase._reserve14",
+          "path": "protocol-monorepo/packages/ethereum-contracts/contracts/agreements/gdav1/PoolNFTBase.sol",
+          "start_line": 61,
+          "end_line": 61,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "private state variable _reserve14 is declared in PoolNFTBase and never read in any method or modifier"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "PoolNFTBase._reserve15",
+          "path": "protocol-monorepo/packages/ethereum-contracts/contracts/agreements/gdav1/PoolNFTBase.sol",
+          "start_line": 62,
+          "end_line": 62,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "private state variable _reserve15 is declared in PoolNFTBase and never read in any method or modifier"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "PoolNFTBase._reserve16",
+          "path": "protocol-monorepo/packages/ethereum-contracts/contracts/agreements/gdav1/PoolNFTBase.sol",
+          "start_line": 63,
+          "end_line": 63,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "private state variable _reserve16 is declared in PoolNFTBase and never read in any method or modifier"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "PoolNFTBase._reserve17",
+          "path": "protocol-monorepo/packages/ethereum-contracts/contracts/agreements/gdav1/PoolNFTBase.sol",
+          "start_line": 64,
+          "end_line": 64,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "private state variable _reserve17 is declared in PoolNFTBase and never read in any method or modifier"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "PoolNFTBase._reserve18",
+          "path": "protocol-monorepo/packages/ethereum-contracts/contracts/agreements/gdav1/PoolNFTBase.sol",
+          "start_line": 65,
+          "end_line": 65,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "private state variable _reserve18 is declared in PoolNFTBase and never read in any method or modifier"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "PoolNFTBase._reserve19",
+          "path": "protocol-monorepo/packages/ethereum-contracts/contracts/agreements/gdav1/PoolNFTBase.sol",
+          "start_line": 66,
+          "end_line": 66,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "private state variable _reserve19 is declared in PoolNFTBase and never read in any method or modifier"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "PoolNFTBase._reserve20",
+          "path": "protocol-monorepo/packages/ethereum-contracts/contracts/agreements/gdav1/PoolNFTBase.sol",
+          "start_line": 67,
+          "end_line": 67,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "private state variable _reserve20 is declared in PoolNFTBase and never read in any method or modifier"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "SuperfluidPool._DEFAULT_ERC20_NAME",
+          "path": "protocol-monorepo/packages/ethereum-contracts/contracts/agreements/gdav1/SuperfluidPool.sol",
+          "start_line": 86,
+          "end_line": 86,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "internal constant _DEFAULT_ERC20_NAME is declared in SuperfluidPool and never read in any method or modifier"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "SuperfluidPool._DEFAULT_ERC20_SYMBOL",
+          "path": "protocol-monorepo/packages/ethereum-contracts/contracts/agreements/gdav1/SuperfluidPool.sol",
+          "start_line": 87,
+          "end_line": 87,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "internal constant _DEFAULT_ERC20_SYMBOL is declared in SuperfluidPool and never read in any method or modifier"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "SuperToken._reserve24",
+          "path": "protocol-monorepo/packages/ethereum-contracts/contracts/superfluid/SuperToken.sol",
+          "start_line": 106,
+          "end_line": 106,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "private state variable _reserve24 is declared in SuperToken and never read in any method or modifier"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "SuperToken._reserve25",
+          "path": "protocol-monorepo/packages/ethereum-contracts/contracts/superfluid/SuperToken.sol",
+          "start_line": 107,
+          "end_line": 107,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "private state variable _reserve25 is declared in SuperToken and never read in any method or modifier"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "SuperToken._reserve26",
+          "path": "protocol-monorepo/packages/ethereum-contracts/contracts/superfluid/SuperToken.sol",
+          "start_line": 108,
+          "end_line": 108,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "private state variable _reserve26 is declared in SuperToken and never read in any method or modifier"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "SuperToken._reserve27",
+          "path": "protocol-monorepo/packages/ethereum-contracts/contracts/superfluid/SuperToken.sol",
+          "start_line": 109,
+          "end_line": 109,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "private state variable _reserve27 is declared in SuperToken and never read in any method or modifier"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "SuperToken._reserve28",
+          "path": "protocol-monorepo/packages/ethereum-contracts/contracts/superfluid/SuperToken.sol",
+          "start_line": 110,
+          "end_line": 110,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "private state variable _reserve28 is declared in SuperToken and never read in any method or modifier"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "SuperToken._reserve29",
+          "path": "protocol-monorepo/packages/ethereum-contracts/contracts/superfluid/SuperToken.sol",
+          "start_line": 111,
+          "end_line": 111,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "private state variable _reserve29 is declared in SuperToken and never read in any method or modifier"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "SuperToken._reserve30",
+          "path": "protocol-monorepo/packages/ethereum-contracts/contracts/superfluid/SuperToken.sol",
+          "start_line": 112,
+          "end_line": 112,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "private state variable _reserve30 is declared in SuperToken and never read in any method or modifier"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "SuperfluidToken._reserve5",
+          "path": "protocol-monorepo/packages/ethereum-contracts/contracts/superfluid/SuperfluidToken.sol",
+          "start_line": 43,
+          "end_line": 43,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "private state variable _reserve5 is declared in SuperfluidToken and never read in any method or modifier"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "SuperfluidToken._reserve6",
+          "path": "protocol-monorepo/packages/ethereum-contracts/contracts/superfluid/SuperfluidToken.sol",
+          "start_line": 44,
+          "end_line": 44,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "private state variable _reserve6 is declared in SuperfluidToken and never read in any method or modifier"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "SuperfluidToken._reserve7",
+          "path": "protocol-monorepo/packages/ethereum-contracts/contracts/superfluid/SuperfluidToken.sol",
+          "start_line": 45,
+          "end_line": 45,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "private state variable _reserve7 is declared in SuperfluidToken and never read in any method or modifier"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "SuperfluidToken._reserve8",
+          "path": "protocol-monorepo/packages/ethereum-contracts/contracts/superfluid/SuperfluidToken.sol",
+          "start_line": 46,
+          "end_line": 46,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "private state variable _reserve8 is declared in SuperfluidToken and never read in any method or modifier"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "SuperfluidToken._reserve9",
+          "path": "protocol-monorepo/packages/ethereum-contracts/contracts/superfluid/SuperfluidToken.sol",
+          "start_line": 47,
+          "end_line": 47,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "private state variable _reserve9 is declared in SuperfluidToken and never read in any method or modifier"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "SuperfluidToken._reserve10",
+          "path": "protocol-monorepo/packages/ethereum-contracts/contracts/superfluid/SuperfluidToken.sol",
+          "start_line": 48,
+          "end_line": 48,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "private state variable _reserve10 is declared in SuperfluidToken and never read in any method or modifier"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "SuperfluidToken._reserve11",
+          "path": "protocol-monorepo/packages/ethereum-contracts/contracts/superfluid/SuperfluidToken.sol",
+          "start_line": 49,
+          "end_line": 49,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "private state variable _reserve11 is declared in SuperfluidToken and never read in any method or modifier"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "SuperfluidToken._reserve12",
+          "path": "protocol-monorepo/packages/ethereum-contracts/contracts/superfluid/SuperfluidToken.sol",
+          "start_line": 50,
+          "end_line": 50,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "private state variable _reserve12 is declared in SuperfluidToken and never read in any method or modifier"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2024-04-alchemix",
+      "companion_repo": "sherlock-audit/2024-04-alchemix",
+      "resolved_sha": "32e4902f77b05ea856cf52617c55c3450507281c",
+      "files_scanned": 218,
+      "production_files": 162,
+      "production_lines": 19055,
+      "wall_ms": 1991.6,
+      "all_findings_count": 46,
+      "findings": [
+        {
+          "detector": "state_sink_review",
+          "symbol": "FuseTokenAdapterV1.FIXED_POINT_SCALAR",
+          "path": "v2-foundry/src/adapters/fuse/FuseTokenAdapterV1.sol",
+          "start_line": 39,
+          "end_line": 39,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "private constant FIXED_POINT_SCALAR is declared in FuseTokenAdapterV1 and never read in any method or modifier"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "OptimismAaveRewardCollector.FIXED_POINT_SCALAR",
+          "path": "v2-foundry/src/utils/collectors/OptimismAaveRewardCollector.sol",
+          "start_line": 34,
+          "end_line": 34,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "internal constant FIXED_POINT_SCALAR is declared in OptimismAaveRewardCollector and never read in any method or modifier"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "OptimismAaveRewardCollector.BPS",
+          "path": "v2-foundry/src/utils/collectors/OptimismAaveRewardCollector.sol",
+          "start_line": 35,
+          "end_line": 35,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "internal constant BPS is declared in OptimismAaveRewardCollector and never read in any method or modifier"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "OptimismRewardCollector.aaveIncentives",
+          "path": "v2-foundry/src/utils/collectors/OptimismRewardCollector.sol",
+          "start_line": 30,
+          "end_line": 30,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "internal constant aaveIncentives is declared in OptimismRewardCollector and never read in any method or modifier"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "OptimismRewardCollector.FIXED_POINT_SCALAR",
+          "path": "v2-foundry/src/utils/collectors/OptimismRewardCollector.sol",
+          "start_line": 36,
+          "end_line": 36,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "internal constant FIXED_POINT_SCALAR is declared in OptimismRewardCollector and never read in any method or modifier"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "OptimismRewardCollector.BPS",
+          "path": "v2-foundry/src/utils/collectors/OptimismRewardCollector.sol",
+          "start_line": 37,
+          "end_line": 37,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "internal constant BPS is declared in OptimismRewardCollector and never read in any method or modifier"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "VesperRewardCollector.FIXED_POINT_SCALAR",
+          "path": "v2-foundry/src/utils/collectors/VesperRewardCollector.sol",
+          "start_line": 34,
+          "end_line": 34,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "internal constant FIXED_POINT_SCALAR is declared in VesperRewardCollector and never read in any method or modifier"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "VesperRewardCollector.vaETH",
+          "path": "v2-foundry/src/utils/collectors/VesperRewardCollector.sol",
+          "start_line": 52,
+          "end_line": 52,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "internal constant vaETH is declared in VesperRewardCollector and never read in any method or modifier"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "VesperRewardCollector.vspRewardToken",
+          "path": "v2-foundry/src/utils/collectors/VesperRewardCollector.sol",
+          "start_line": 56,
+          "end_line": 56,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "internal constant vspRewardToken is declared in VesperRewardCollector and never read in any method or modifier"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2024-06-new-scope",
+      "companion_repo": "sherlock-audit/2024-06-new-scope",
+      "resolved_sha": "c8300e73f4d751796daad3dadbae4d11072b3d79",
+      "files_scanned": 122,
+      "production_files": 82,
+      "production_lines": 10925,
+      "wall_ms": 1048.1,
+      "all_findings_count": 10,
+      "findings": [
+        {
+          "detector": "parameter_sink_review",
+          "symbol": "StakeDAOStrategy._collectFee",
+          "path": "zerolend-one/contracts/periphery/stakedao/StakeDAOStrategy.sol",
+          "start_line": 1531,
+          "end_line": 1561,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "parameter _tokenId of StakeDAOStrategy._collectFee is never read in body or modifiers"
+          ]
+        },
+        {
+          "detector": "parameter_sink_review",
+          "symbol": "StakeDAOStrategy._collectFee",
+          "path": "zerolend-one/contracts/periphery/stakedao/StakeDAOStrategy.sol",
+          "start_line": 1531,
+          "end_line": 1561,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "parameter _recipient of StakeDAOStrategy._collectFee is never read in body or modifiers"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "PoolDataProvider.ETH",
+          "path": "zerolend-one/contracts/periphery/ui-helpers/PoolDataProvider.sol",
+          "start_line": 30,
+          "end_line": 30,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "internal constant ETH is declared in PoolDataProvider and never read in any method or modifier"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2024-02-perennial-v2-3",
+      "companion_repo": "sherlock-audit/2024-02-perennial-v2-3",
+      "resolved_sha": "86ea166a2055f68c4a2c3ff0a2b6bef037476bb8",
+      "files_scanned": 158,
+      "production_files": 109,
+      "production_lines": 11191,
+      "wall_ms": 975.5,
+      "all_findings_count": 5,
+      "findings": [
+        {
+          "detector": "state_sink_review",
+          "symbol": "Vault.__unused0__",
+          "path": "perennial-v2/packages/perennial-vault/contracts/Vault.sol",
+          "start_line": 47,
+          "end_line": 47,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "private state variable __unused0__ is declared in Vault and never read in any method or modifier"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "Market.__unused0__",
+          "path": "perennial-v2/packages/perennial/contracts/Market.sol",
+          "start_line": 22,
+          "end_line": 22,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "private state variable __unused0__ is declared in Market and never read in any method or modifier"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "Market.__unused1__",
+          "path": "perennial-v2/packages/perennial/contracts/Market.sol",
+          "start_line": 28,
+          "end_line": 28,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "private state variable __unused1__ is declared in Market and never read in any method or modifier"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "Market.__unused2__",
+          "path": "perennial-v2/packages/perennial/contracts/Market.sol",
+          "start_line": 49,
+          "end_line": 49,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "private state variable __unused2__ is declared in Market and never read in any method or modifier"
+          ]
+        },
+        {
+          "detector": "state_sink_review",
+          "symbol": "Market.__unused3__",
+          "path": "perennial-v2/packages/perennial/contracts/Market.sol",
+          "start_line": 58,
+          "end_line": 58,
+          "resolution_source": "static_ast",
+          "evidence": [
+            "private state variable __unused3__ is declared in Market and never read in any method or modifier"
+          ]
+        }
+      ]
+    }
+  ]
+}
