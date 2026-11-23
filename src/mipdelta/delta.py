@@ -110,9 +110,11 @@ def _path_tier(path: str) -> int:
     if (
         parts[0] in _SUPPORT_DIRS
         or any(p in _SUPPORT_DIRS for p in parts[:-1])
-        or leaf == "tasks.py"
+        or leaf in {"tasks.py", "mocks.py"}
         or leaf.endswith("mock.sol")
         or leaf.startswith("mock_")
+        or leaf.endswith("_mock.py")
+        or leaf.endswith("_mocks.py")
     ):
         return 1
     return 0

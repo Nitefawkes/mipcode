@@ -12,7 +12,7 @@ from pathlib import Path
 import pytest
 
 from mipdelta import cli
-from mipdelta.delta import format_advisory, rank_findings, summarize_actual_delta
+from mipdelta.delta import _path_tier, format_advisory, rank_findings, summarize_actual_delta
 from mipdelta.facts import parse_file
 from mipdelta.ledger import ObligationLedger, format_open_obligations, format_thrash_advisory
 from mipdelta.model import Finding
@@ -85,6 +85,47 @@ def test_rank_findings_prioritizes_production_over_support_and_test_paths():
 
     advisory = format_advisory(findings, max_bytes=250, max_items=3)
     assert "pkg/z_client.py:42" in advisory
+
+
+def test_path_tier_demotes_foundry_tests_mocks_and_test_directories():
+    assert _path_tier("src/vault/Vault.sol") == 0
+    assert _path_tier("pkg/client.py") == 0
+    assert _path_tier("pkg/auth_mock.py") == 1
+    assert _path_tier("pkg/mock_auth.py") == 1
+    assert _path_tier("contracts/mocks/VaultMock.sol") == 1
+    assert _path_tier("test/Vault.t.sol") == 2
+    assert _path_tier("src/Vault.t.sol") == 2
+    assert _path_tier("test/helpers.py") == 2
+    assert _path_tier("tests/helpers.py") == 2
+
+
+def test_format_advisory_ten_plus_distinct_sites_stay_under_250b_without_mid_token_truncation():
+    findings = [
+        Finding(
+            "required_keyword_missing",
+            f"Service.call_{i:02d}",
+            f"pkg/mod_{i:02d}.py",
+            10 + i,
+            10 + i,
+            "candidate",
+            ("missing strict",),
+            "static_ast",
+        )
+        for i in range(12)
+    ]
+    advisory = format_advisory(findings, max_bytes=250, max_items=3)
+    assert len(advisory.encode("utf-8")) <= 250
+    assert "..." not in advisory
+    assert advisory.startswith("[mip-delta] pkg/mod_00.py:10 required_keyword_missing[static] Service.call_00")
+    assert "(+" in advisory and advisory.endswith(")")
+    # Every listed item before the (+N) suffix must be a complete, unclipped finding token.
+    body = advisory.removeprefix("[mip-delta] ").rsplit(" (+", 1)[0]
+    for token in body.split("; "):
+        parts = token.split(" ")
+        assert len(parts) == 3
+        assert parts[0].endswith(".py:" + parts[0].split(":")[-1])
+        assert parts[1] == "required_keyword_missing[static]"
+        assert parts[2].startswith("Service.call_")
 
 
 def test_format_advisory_collapses_identical_sites_so_distinct_sites_are_not_crowded_out():
@@ -327,6 +368,42 @@ def test_ledger_detects_three_consecutive_stalled_writes_on_same_file():
     assert repaired.thrashing is False and repaired.advisory_text == "" and repaired.open_obligations == 0
 
 
+def test_ledger_partial_obligation_reduction_resets_stall_counter():
+    app_two = (
+        "from lib import load\n\n"
+        "def use_one():\n    a, b = load('x')\n    return a\n\n"
+        "def use_two():\n    x, y = load('y')\n    return x\n"
+    )
+    app_one_fixed = (
+        "from lib import load\n\n"
+        "def use_one():\n    a, b, c = load('x')\n    return a\n\n"
+        "def use_two():\n    x, y = load('y')\n    return x\n"
+    )
+    session = DeltaSession.from_workspace({"lib.py": LIB, "app.py": app_two})
+    opened = session.apply_write("lib.py", LIB_THREE)
+    assert opened.open_obligations == 2 and opened.thrashing is False
+
+    # 2 stalled writes on app.py (counter -> 2, still silent)
+    s1 = session.apply_write("app.py", app_two + "# stall 1\n")
+    s2 = session.apply_write("app.py", app_two + "# stall 2\n")
+    assert s1.thrashing is False and s2.thrashing is False
+
+    # Partial fix (2 -> 1 open obligations) must reset stalled_writes to 0
+    partial = session.apply_write("app.py", app_one_fixed)
+    assert partial.open_obligations == 1 and partial.thrashing is False and partial.advisory_text == ""
+
+    # Next 2 stalled writes on app.py stay silent (counter 1, 2) because partial reduction reset it
+    p1 = session.apply_write("app.py", app_one_fixed + "# after partial 1\n")
+    p2 = session.apply_write("app.py", app_one_fixed + "# after partial 2\n")
+    assert p1.thrashing is False and p1.advisory_text == ""
+    assert p2.thrashing is False and p2.advisory_text == ""
+
+    # 3rd consecutive stalled write after the partial reduction triggers thrash
+    p3 = session.apply_write("app.py", app_one_fixed + "# after partial 3\n")
+    assert p3.thrashing is True
+    assert p3.advisory_text.startswith("[mip-delta:thrash] stalled (3 writes to app.py without reducing 1 open):")
+
+
 def test_claude_post_edit_hook_emits_thrash_advisory_on_oscillation_and_stall(tmp_path):
     repo = _make_repo(tmp_path, {"lib.py": LIB, "app.py": APP})
 
@@ -508,3 +585,21 @@ def test_review_receives_canonical_actual_delta_in_prompt(tmp_path, monkeypatch,
     assert "=== CANONICAL STRUCTURAL DELTA (GROUND TRUTH) ===" in rendered
     assert "mod.py::callee (params_changed)" in rendered
     assert "mod.py::callee +ValueError" in rendered
+
+
+def test_mcp_server_dict_tool_executes_under_fastmcp_fallback(monkeypatch):
+    import asyncio
+    from semantic_lod import mcp_server
+
+    if mcp_server.mcp_app is None:
+        pytest.skip("mcp SDK not installed")
+    demo_dir = Path(__file__).resolve().parents[1] / "demo_engine"
+    if not (demo_dir / ".lod.json").is_file():
+        pytest.skip("demo_engine/.lod.json not present")
+    monkeypatch.setattr(mcp_server, "LOD_PATH", demo_dir / ".lod.json")
+    res = asyncio.run(mcp_server.mcp_app.call_tool("lod_map", {"token_budget": 300}))
+    raw = res[0].text if isinstance(res, (list, tuple)) and res and hasattr(res[0], "text") else str(res)
+    parsed = json.loads(raw)
+    assert isinstance(parsed, dict)
+    assert "top_modules_by_centrality" in parsed
+    assert parsed["resolution"] == "L0_WORLD_MAP"

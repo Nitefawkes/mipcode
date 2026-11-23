@@ -2364,11 +2364,8 @@ if mcp_app is not None:
     def _register_mcp_tool(fn) -> None:
         try:
             mcp_app.tool()(fn)
-        except Exception:
-            try:
-                mcp_app.tool(structured_output=False)(fn)
-            except Exception:
-                pass
+        except (TypeError, ValueError):
+            mcp_app.tool(structured_output=False)(fn)
 
     for _tool_fn in (
         # Primary MipCode tools (`mip_*`)
