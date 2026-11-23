@@ -98,7 +98,12 @@ def _is_test_path(path: str) -> bool:
         or leaf.endswith("_test.py")
         or leaf.endswith(".t.sol")
         or leaf.endswith("_test.sol")
-        or (orig_leaf.startswith("Test") and leaf.endswith(".sol"))
+        or (
+            orig_leaf.startswith("Test")
+            and leaf.endswith(".sol")
+            and len(orig_leaf) > 4
+            and not orig_leaf[4].islower()
+        )
         or leaf == "conftest.py"
     )
 
