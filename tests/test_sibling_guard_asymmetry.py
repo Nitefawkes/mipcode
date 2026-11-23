@@ -841,3 +841,311 @@ contract SafeVersioned {
 }
 """
     assert _sga({"contracts/SafeVersioned.sol": src}) == []
+
+
+# ---------------------------------------------------------------------------
+# v2.1: Cross-library storage-struct pooling & anti-collision isolation
+# ---------------------------------------------------------------------------
+
+
+def test_v21_cross_library_pooling_flags_omitted_sync_with_cross_file_peers():
+    types_sol = """
+pragma solidity ^0.8.20;
+library Types {
+    struct PoolData {
+        uint256 liquidity;
+        uint256 accrued;
+    }
+}
+"""
+    rate_lib = """
+pragma solidity ^0.8.20;
+import {Types} from "./Types.sol";
+library RateLib {
+    function syncRates(Types.PoolData storage self) internal {
+        self.accrued += 1;
+    }
+    function initPool(Types.PoolData storage self) internal {
+        self.liquidity = 0;
+    }
+}
+"""
+    lib_a = """
+pragma solidity ^0.8.20;
+import {Types} from "./Types.sol";
+import {RateLib} from "./RateLib.sol";
+library LibA {
+    using RateLib for Types.PoolData;
+    function executeSupply(Types.PoolData storage pool, uint256 amt) external {
+        pool.syncRates();
+        pool.liquidity += amt;
+    }
+}
+"""
+    lib_b = """
+pragma solidity ^0.8.20;
+import {Types} from "./Types.sol";
+import {RateLib} from "./RateLib.sol";
+library LibB {
+    function executeWithdraw(Types.PoolData storage pool, uint256 amt) external {
+        RateLib.syncRates(pool);
+        pool.liquidity -= amt;
+    }
+}
+"""
+    lib_c = """
+pragma solidity ^0.8.20;
+import {Types} from "./Types.sol";
+library LibC {
+    function sweepTreasury(Types.PoolData storage pool, uint256 amt) external {
+        pool.liquidity -= amt;
+    }
+}
+"""
+    files = {
+        "contracts/core/Types.sol": types_sol,
+        "contracts/core/RateLib.sol": rate_lib,
+        "contracts/core/LibA.sol": lib_a,
+        "contracts/core/LibB.sol": lib_b,
+        "contracts/core/LibC.sol": lib_c,
+    }
+    hits = _sga(files)
+    assert [(h.path, h.symbol) for h in hits] == [
+        ("contracts/core/LibC.sol", "LibC.sweepTreasury")
+    ]
+    ev = hits[0].evidence[0]
+    assert "syncRates()" in ev
+    assert "LibA.executeSupply" in ev
+    assert "LibB.executeWithdraw" in ev
+    assert "Types.PoolData" in ev
+
+    adv = format_advisory(hits, max_bytes=250)
+    assert len(adv.encode("utf-8")) <= 250
+    grouped, total = _group_findings(hits, lambda f: f.symbol)
+    assert total == 1
+    assert grouped[0]["lines"] == [hits[0].start_line]
+
+
+def test_v21_cross_library_unqualified_struct_imported_from_same_file_pools():
+    shared_types = """
+pragma solidity ^0.8.20;
+struct SharedVaultState {
+    uint256 total;
+    uint256 index;
+}
+"""
+    lib_1 = """
+pragma solidity ^0.8.20;
+import {SharedVaultState} from "../types/VaultTypes.sol";
+library VaultLibOne {
+    function supply(SharedVaultState storage st, uint256 x) external {
+        st.syncIndex();
+        st.total += x;
+    }
+}
+"""
+    lib_2 = """
+pragma solidity ^0.8.20;
+import {SharedVaultState} from "../types/VaultTypes.sol";
+library VaultLibTwo {
+    function withdraw(SharedVaultState storage st, uint256 x) external {
+        st.syncIndex();
+        st.total -= x;
+    }
+}
+"""
+    lib_3 = """
+pragma solidity ^0.8.20;
+import {SharedVaultState} from "../types/VaultTypes.sol";
+library VaultLibThree {
+    function skimFees(SharedVaultState storage st, uint256 x) external {
+        st.total -= x;
+    }
+}
+"""
+    hits = _sga(
+        {
+            "contracts/types/VaultTypes.sol": shared_types,
+            "contracts/logic/VaultLibOne.sol": lib_1,
+            "contracts/logic/VaultLibTwo.sol": lib_2,
+            "contracts/logic/VaultLibThree.sol": lib_3,
+        }
+    )
+    assert [(h.path, h.symbol) for h in hits] == [
+        ("contracts/logic/VaultLibThree.sol", "VaultLibThree.skimFees")
+    ]
+    assert "VaultLibOne.supply" in hits[0].evidence[0]
+    assert "VaultLibTwo.withdraw" in hits[0].evidence[0]
+
+
+def test_v21_cross_library_blocks_unrelated_generic_struct_name_collisions():
+    # Two separate packages each defining/using their own local unqualified `State` struct MUST NOT pool
+    pkg_a_1 = """
+pragma solidity ^0.8.20;
+struct State { uint256 x; }
+library PkgALib1 {
+    function op1(State storage s, uint256 v) external {
+        s.syncState();
+        s.x += v;
+    }
+    function op2(State storage s, uint256 v) external {
+        s.syncState();
+        s.x -= v;
+    }
+}
+"""
+    pkg_b = """
+pragma solidity ^0.8.20;
+struct State { uint256 y; }
+library PkgBLib {
+    function mutateY(State storage s, uint256 v) external {
+        s.y += v;
+    }
+}
+"""
+    assert _sga({"contracts/pkgA/PkgALib1.sol": pkg_a_1, "contracts/pkgB/PkgBLib.sol": pkg_b}) == []
+
+
+def test_v21_cross_library_isolates_test_and_mock_libraries_from_production():
+    types_sol = """
+pragma solidity ^0.8.20;
+library Types {
+    struct PoolData { uint256 liquidity; }
+}
+"""
+    prod_a = """
+pragma solidity ^0.8.20;
+import {Types} from "./Types.sol";
+library ProdA {
+    function supply(Types.PoolData storage pool, uint256 amt) external {
+        pool.syncRates();
+        pool.liquidity += amt;
+    }
+}
+"""
+    prod_b = """
+pragma solidity ^0.8.20;
+import {Types} from "./Types.sol";
+library ProdB {
+    function withdraw(Types.PoolData storage pool, uint256 amt) external {
+        pool.syncRates();
+        pool.liquidity -= amt;
+    }
+}
+"""
+    # Scenario 1: Mock/test library omits syncRates -> MUST NOT be flagged via production cross-lib pool
+    mock_lib = """
+pragma solidity ^0.8.20;
+import {Types} from "../core/Types.sol";
+library PoolMock {
+    function mockDrain(Types.PoolData storage pool, uint256 amt) external {
+        pool.liquidity -= amt;
+    }
+}
+"""
+    test_lib = """
+pragma solidity ^0.8.20;
+import {Types} from "../contracts/core/Types.sol";
+library PoolTestHelper {
+    function helperDrain(Types.PoolData storage pool, uint256 amt) external {
+        pool.liquidity -= amt;
+    }
+}
+"""
+    hits_1 = _sga(
+        {
+            "contracts/core/Types.sol": types_sol,
+            "contracts/core/ProdA.sol": prod_a,
+            "contracts/core/ProdB.sol": prod_b,
+            "contracts/mocks/PoolMock.sol": mock_lib,
+            "test/PoolTestHelper.t.sol": test_lib,
+        }
+    )
+    assert hits_1 == []
+
+    # Scenario 2: Fake sync calls in test/mock libraries MUST NOT create consensus over a production library
+    prod_only = """
+pragma solidity ^0.8.20;
+import {Types} from "./Types.sol";
+library ProdOnly {
+    function drain(Types.PoolData storage pool, uint256 amt) external {
+        pool.liquidity -= amt;
+    }
+}
+"""
+    mock_fake_1 = """
+pragma solidity ^0.8.20;
+import {Types} from "../core/Types.sol";
+library FakeSyncMock1 {
+    function op1(Types.PoolData storage pool, uint256 amt) external {
+        pool.fakeSync();
+        pool.liquidity += amt;
+    }
+}
+"""
+    mock_fake_2 = """
+pragma solidity ^0.8.20;
+import {Types} from "../core/Types.sol";
+library FakeSyncMock2 {
+    function op2(Types.PoolData storage pool, uint256 amt) external {
+        pool.fakeSync();
+        pool.liquidity += amt;
+    }
+}
+"""
+    hits_2 = _sga(
+        {
+            "contracts/core/Types.sol": types_sol,
+            "contracts/core/ProdOnly.sol": prod_only,
+            "contracts/mocks/FakeSyncMock1.sol": mock_fake_1,
+            "test/FakeSyncMock2.t.sol": mock_fake_2,
+        }
+    )
+    assert hits_2 == []
+
+
+def test_v21_cross_library_wrapper_delegation_and_no_intra_duplication():
+    types_sol = """
+pragma solidity ^0.8.20;
+library Types {
+    struct PoolData { uint256 liquidity; }
+}
+"""
+    lib_a = """
+pragma solidity ^0.8.20;
+import {Types} from "./Types.sol";
+library LibA {
+    function supply(Types.PoolData storage pool, uint256 amt) external {
+        pool.syncRates();
+        pool.liquidity += amt;
+    }
+    function withdraw(Types.PoolData storage pool, uint256 amt) external {
+        pool.syncRates();
+        pool.liquidity -= amt;
+    }
+    // Omitted inside LibA itself -> intra-library fires once; cross-library must NOT duplicate it
+    function skim(Types.PoolData storage pool, uint256 amt) external {
+        pool.liquidity -= amt;
+    }
+}
+"""
+    lib_b = """
+pragma solidity ^0.8.20;
+import {Types} from "./Types.sol";
+import {LibA} from "./LibA.sol";
+library LibB {
+    // Delegates to LibA.supply (which calls syncRates) -> 0 findings on LibB.wrapperSupply
+    function wrapperSupply(Types.PoolData storage pool, uint256 amt) external {
+        pool.liquidity += 0;
+        LibA.supply(pool, amt);
+    }
+}
+"""
+    hits = _sga(
+        {
+            "contracts/Types.sol": types_sol,
+            "contracts/LibA.sol": lib_a,
+            "contracts/LibB.sol": lib_b,
+        }
+    )
+    assert [(h.path, h.symbol) for h in hits] == [("contracts/LibA.sol", "LibA.skim")]

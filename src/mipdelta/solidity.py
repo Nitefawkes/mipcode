@@ -1,10 +1,12 @@
 """Zero-dependency structural analyzer and contract-delta detector for Solidity (.sol)."""
 from __future__ import annotations
 
+import posixpath
 import re
 from dataclasses import dataclass, field
 from typing import Iterable, Mapping
 
+from .delta import _path_tier, is_vendored_path
 from .model import Finding
 
 _IDENT_RE = re.compile(r"\b([A-Za-z_$][A-Za-z0-9_$]*)\b")
@@ -1435,6 +1437,10 @@ _INIT_OR_CONFIG_EXEMPT_RE = re.compile(
     r"^(?:init|initialize|reinitialize|executeinit|set|submit|accept|configure|config|pause|unpause|freeze|unfreeze|emergency|rescue|forcewithdraw|ragequit|reapprove|sweep)",
     re.IGNORECASE,
 )
+_LIB_SYNC_EXEMPT_RE = re.compile(
+    r"^(?:init|initialize|reinitialize|executeinit|set|configure|config|pause|unpause|freeze|unfreeze|emergency|rescue|forcewithdraw|ragequit)",
+    re.IGNORECASE,
+)
 _FOUNDRY_TEST_FN_RE = re.compile(r"^(?:test(?:_|Fuzz|Fail|Fork)?|invariant_|setUp$)")
 _SYNC_HELPER_NAME_RE = re.compile(
     r"^_?(?:sync|accrue|checkpoint|update|settle|refresh|snapshot|reconcile|cumulate|rebase|touch|poke|drip|compound)",
@@ -2151,6 +2157,296 @@ def _surface_display(surface: str) -> str:
     return surface
 
 
+_CROSS_LIB_EXCLUDED_SEGMENTS = frozenset({"lib", "node_modules", "vendor", "third_party"})
+_UTILITY_STRUCT_CONTAINERS = frozenset(
+    {
+        "EnumerableSet",
+        "EnumerableMap",
+        "Checkpoints",
+        "BitMaps",
+        "Counters",
+        "Timers",
+        "DoubleEndedQueue",
+        "Heap",
+        "MerkleTree",
+    }
+)
+_PRIMITIVE_TYPE_PREFIXES = ("uint", "int", "address", "bool", "bytes", "string", "mapping")
+_NAMED_IMPORT_RE = re.compile(r"\bimport\s*\{([^}]+)\}\s*from\s*[\"']([^\"']+)[\"']\s*;")
+_STAR_IMPORT_RE = re.compile(r"\bimport\s*\*\s*as\s+([A-Za-z_$][A-Za-z0-9_$]*)\s+from\s*[\"']([^\"']+)[\"']\s*;")
+_BARE_IMPORT_RE = re.compile(
+    r"\bimport\s+[\"']([^\"']+)[\"'](?:\s+as\s+([A-Za-z_$][A-Za-z0-9_$]*))?\s*;"
+)
+_STRUCT_DECL_RE = re.compile(r"\bstruct\s+([A-Za-z_$][A-Za-z0-9_$]*)\s*\{")
+
+
+def _strip_sol_comments_only(source: str) -> str:
+    """Mask `//` and `/* */` comments while preserving string literals (for import path extraction)."""
+    chars = list(source)
+    n = len(chars)
+    i = 0
+    while i < n:
+        ch = chars[i]
+        nxt = chars[i + 1] if i + 1 < n else ""
+        if ch in ('"', "'"):
+            quote = ch
+            i += 1
+            while i < n:
+                if chars[i] == "\\" and i + 1 < n:
+                    i += 2
+                    continue
+                if chars[i] == quote:
+                    i += 1
+                    break
+                i += 1
+            continue
+        if ch == "/" and nxt == "/":
+            chars[i] = " "
+            chars[i + 1] = " "
+            i += 2
+            while i < n and chars[i] != "\n":
+                chars[i] = " "
+                i += 1
+            continue
+        if ch == "/" and nxt == "*":
+            chars[i] = " "
+            chars[i + 1] = " "
+            i += 2
+            while i < n:
+                if chars[i] == "*" and i + 1 < n and chars[i + 1] == "/":
+                    chars[i] = " "
+                    chars[i + 1] = " "
+                    i += 2
+                    break
+                if chars[i] != "\n":
+                    chars[i] = " "
+                i += 1
+            continue
+        i += 1
+    return "".join(chars)
+
+
+def _normalize_import_target(from_file: str, raw_target: str) -> str:
+    norm_from = from_file.replace("\\", "/")
+    raw = raw_target.replace("\\", "/").strip()
+    if raw.startswith(("./", "../")):
+        base_dir = posixpath.dirname(norm_from)
+        joined = posixpath.join(base_dir, raw) if base_dir else raw
+        return posixpath.normpath(joined)
+    return posixpath.normpath(raw)
+
+
+def _extract_sol_imports(source: str, file_path: str) -> tuple[dict[str, str], tuple[str, ...]]:
+    """Return `(symbol_to_resolved_path, bare_import_paths)` for a Solidity file."""
+    no_comments = _strip_sol_comments_only(source)
+    sym_map: dict[str, str] = {}
+    bare_paths: list[str] = []
+    for m in _NAMED_IMPORT_RE.finditer(no_comments):
+        target = _normalize_import_target(file_path, m.group(2))
+        for item in m.group(1).split(","):
+            toks = item.strip().split()
+            if not toks:
+                continue
+            if len(toks) >= 3 and toks[1] == "as":
+                sym_map[toks[2]] = target
+            else:
+                sym_map[toks[0]] = target
+    for m in _STAR_IMPORT_RE.finditer(no_comments):
+        sym_map[m.group(1)] = _normalize_import_target(file_path, m.group(2))
+    for m in _BARE_IMPORT_RE.finditer(no_comments):
+        target = _normalize_import_target(file_path, m.group(1))
+        if m.group(2):
+            sym_map[m.group(2)] = target
+        else:
+            bare_paths.append(target)
+    return sym_map, tuple(bare_paths)
+
+
+def _is_production_cross_lib_path(path: str) -> bool:
+    norm = path.replace("\\", "/")
+    if _path_tier(norm) != 0 or is_vendored_path(norm):
+        return False
+    dirs = [p.lower() for p in norm.split("/")[:-1] if p]
+    return not any(d in _CROSS_LIB_EXCLUDED_SEGMENTS for d in dirs)
+
+
+def _resolve_cross_lib_struct_id(
+    file_path: str,
+    stype: str,
+    file_imports: Mapping[str, tuple[dict[str, str], tuple[str, ...]]],
+    file_local_structs: Mapping[str, frozenset[str]],
+    file_local_containers: Mapping[str, frozenset[str]],
+) -> str | None:
+    """Resolve an unambiguous workspace-wide canonical struct identity, or None if unsafe/generic."""
+    s = stype.strip()
+    if not s or "(" in s or "[" in s or " " in s:
+        return None
+    low = s.lower()
+    if any(low == p or low.startswith(p) and (len(low) == len(p) or low[len(p)].isdigit()) for p in _PRIMITIVE_TYPE_PREFIXES):
+        return None
+
+    norm_path = file_path.replace("\\", "/")
+    sym_map, bare_imports = file_imports.get(norm_path, ({}, ()))
+
+    if "." in s:
+        container, struct_name = s.split(".", 1)
+        if not container or not struct_name or container in _UTILITY_STRUCT_CONTAINERS:
+            return None
+        if container in sym_map:
+            return f"struct:{sym_map[container]}::{container}.{struct_name}"
+        if container in file_local_containers.get(norm_path, frozenset()):
+            return f"struct:{norm_path}::{container}.{struct_name}"
+        for bpath in bare_imports:
+            if container in file_local_containers.get(bpath, frozenset()):
+                return f"struct:{bpath}::{container}.{struct_name}"
+        return f"qualified:{container}.{struct_name}"
+
+    # Unqualified StructName: MUST resolve unambiguously to a shared defining file (never pool bare names)
+    if s in sym_map:
+        return f"struct:{sym_map[s]}::{s}"
+    if s in file_local_structs.get(norm_path, frozenset()):
+        return f"struct:{norm_path}::{s}"
+    for bpath in bare_imports:
+        if s in file_local_structs.get(bpath, frozenset()):
+            return f"struct:{bpath}::{s}"
+    return None
+
+
+@dataclass(frozen=True)
+class _CrossLibFnRecord:
+    """Normalized production library function summary for cross-library storage-struct consensus."""
+
+    path: str
+    library_name: str
+    fn: SolFunctionFact
+    struct_surfaces: dict[str, str]  # canonical_struct_id -> display type name
+    uncond_sync: dict[str, tuple[str, str]]  # sync_key -> (display_label, method_name)
+    any_sync: frozenset[str]  # all sync_keys invoked anywhere (incl. conditional/2-hop)
+    external_lib_calls: frozenset[tuple[str, str]]  # (TargetLib, method) calls for 2-hop cross-lib delegation
+    exempt_for_sync: bool
+
+
+def _detect_cross_library_guard_asymmetry(
+    records: list[_CrossLibFnRecord],
+    defining_libs_by_method: Mapping[str, frozenset[str]],
+    intra_emitted: set[tuple[str, str, int, str]],
+) -> list[Finding]:
+    """Pool tier-0 production library functions across files by unambiguous `<StructType> storage` identity."""
+    if len(records) < 3:
+        return []
+
+    # Index records by (library_name, fn.name) for 2-hop cross-library delegation check
+    by_lib_fn: dict[tuple[str, str], list[_CrossLibFnRecord]] = {}
+    for rec in records:
+        by_lib_fn.setdefault((rec.library_name, rec.fn.name), []).append(rec)
+
+    # Propagate `any_sync` across 1-2 hops of cross-library delegation so wrappers do not false-positive
+    eff_any_sync_by_rec: dict[int, set[str]] = {}
+    for rec in records:
+        s = set(rec.any_sync)
+        visited: set[int] = {id(rec)}
+        frontier: list[tuple[_CrossLibFnRecord, int]] = [(rec, 0)]
+        while frontier:
+            cur, depth = frontier.pop(0)
+            if depth >= 2:
+                continue
+            for target_lib, target_fn in cur.external_lib_calls:
+                for cand in by_lib_fn.get((target_lib, target_fn), ()):
+                    if id(cand) in visited:
+                        continue
+                    visited.add(id(cand))
+                    s.update(cand.any_sync)
+                    frontier.append((cand, depth + 1))
+        eff_any_sync_by_rec[id(rec)] = s
+
+    # Group records by canonical struct identity
+    groups_by_struct: dict[str, list[_CrossLibFnRecord]] = {}
+    for rec in records:
+        for sid in rec.struct_surfaces:
+            groups_by_struct.setdefault(sid, []).append(rec)
+
+    # Deduplicate findings across struct buckets by (path, symbol, start_line, method_name)
+    hits: dict[
+        tuple[str, str, int, str],
+        tuple[_CrossLibFnRecord, str, set[str], set[str]],
+    ] = {}
+
+    for sid, raw_group in sorted(groups_by_struct.items()):
+        # Must span at least 2 distinct libraries/files to be a cross-library pool
+        if len({(r.path, r.library_name) for r in raw_group}) < 2:
+            continue
+
+        # Partition by visibility tier (`external`/`public` entry points vs `internal` helper libraries)
+        # so low-level `using Lib for Struct` internal primitives never mix with high-level `external` logic facets.
+        ext_group = [r for r in raw_group if r.fn.visibility in ("external", "public")]
+        int_group = [r for r in raw_group if r.fn.visibility == "internal"]
+        subgroups = [g for g in (ext_group, int_group) if len(g) >= 3 and len({(r.path, r.library_name) for r in g}) >= 2]
+
+        for group in subgroups:
+            n = len(group)
+            guard_members: dict[str, list[_CrossLibFnRecord]] = {}
+            guard_meta: dict[str, tuple[str, str]] = {}
+            for rec in group:
+                for skey, (slabel, mname) in rec.uncond_sync.items():
+                    if not skey.startswith(f"xsync:{sid}."):
+                        continue
+                    guard_members.setdefault(skey, []).append(rec)
+                    guard_meta.setdefault(skey, (slabel, mname))
+
+            for skey, guarded in guard_members.items():
+                if len(guarded) < 2:
+                    continue
+                slabel, mname = guard_meta[skey]
+                def_libs = defining_libs_by_method.get(mname, frozenset())
+                # Exclude defining primitive libraries (e.g., library that implements `syncRates`) from consensus denominator & targets
+                pool = [r for r in group if r.library_name not in def_libs]
+                pool_n = len(pool)
+                guarded_pool = [r for r in guarded if r.library_name not in def_libs]
+                if pool_n < 3 or len(guarded_pool) < 2 or len(guarded_pool) * 3 < pool_n * 2:
+                    continue
+                guarded_ids = {id(r) for r in guarded_pool}
+                peer_names = sorted({f"{r.library_name}.{r.fn.name}" for r in guarded_pool})
+                for rec in pool:
+                    if id(rec) in guarded_ids:
+                        continue
+                    if rec.exempt_for_sync:
+                        continue
+                    if skey in eff_any_sync_by_rec[id(rec)]:
+                        continue
+                    sym = f"{rec.library_name}.{rec.fn.name}"
+                    if (rec.path, sym, rec.fn.start_line, mname) in intra_emitted:
+                        continue
+                    hkey = (rec.path, sym, rec.fn.start_line, mname)
+                    surf_disp = rec.struct_surfaces[sid]
+                    if hkey not in hits:
+                        hits[hkey] = (rec, slabel, {surf_disp}, set(peer_names))
+                    else:
+                        hits[hkey][2].add(surf_disp)
+                        hits[hkey][3].update(peer_names)
+
+    findings: list[Finding] = []
+    for (fpath, sym, sline, mname), (rec, slabel, surfs, peers) in sorted(hits.items()):
+        peer_list = ", ".join(sorted(peers)[:3])
+        if len(peers) > 3:
+            peer_list += f" (+{len(peers) - 3})"
+        surf_list = ", ".join(sorted(surfs)[:2])
+        findings.append(
+            Finding(
+                detector="sibling_guard_asymmetry",
+                symbol=sym,
+                path=fpath,
+                start_line=rec.fn.start_line,
+                end_line=rec.fn.end_line,
+                evidence=(
+                    f"omits state-sync call {slabel} invoked by sibling(s) {peer_list} on {surf_list}",
+                ),
+                resolution_source="static_ast",
+                confidence="high",
+            )
+        )
+    return findings
+
+
 def _detect_sibling_guard_asymmetry(
     path: str,
     contract: SolContractFact,
@@ -2159,6 +2455,11 @@ def _detect_sibling_guard_asymmetry(
     workspace_libraries: frozenset[str],
     readonly_lib_methods: Mapping[str, frozenset[str]] = {},
     all_readonly_lib_methods: frozenset[str] = frozenset(),
+    cross_lib_collector: list[_CrossLibFnRecord] | None = None,
+    file_imports: Mapping[str, tuple[dict[str, str], tuple[str, ...]]] = {},
+    file_local_structs: Mapping[str, frozenset[str]] = {},
+    file_local_containers: Mapping[str, frozenset[str]] = {},
+    intra_emitted: set[tuple[str, str, int, str]] | None = None,
 ) -> list[Finding]:
     if contract.kind == "interface":
         return []
@@ -2238,7 +2539,10 @@ def _detect_sibling_guard_asymmetry(
     else:
         eligible = raw_eligible
 
-    if len(eligible) < 2:
+    collect_cross_lib = (
+        is_library and cross_lib_collector is not None and _is_production_cross_lib_path(path)
+    )
+    if not eligible or (len(eligible) < 2 and not collect_cross_lib):
         return []
 
     # Precompute direct facts for every function reachable in contract + ancestors
@@ -2386,6 +2690,106 @@ def _detect_sibling_guard_asymmetry(
         eff_reent_surfaces[id(fn)] = prim | reent
         eff_ext_call[id(fn)] = has_ext
         eff_user_scoped[id(fn)] = user_scoped
+
+    if collect_cross_lib and cross_lib_collector is not None:
+        for fn in eligible:
+            struct_surfaces: dict[str, str] = {}
+            stype_to_sid: dict[str, str] = {}
+            for s in eff_surfaces[id(fn)]:
+                if not s.startswith("storage:"):
+                    continue
+                stype = s[len("storage:") :]
+                sid = _resolve_cross_lib_struct_id(
+                    path, stype, file_imports, file_local_structs, file_local_containers
+                )
+                if sid is not None:
+                    struct_surfaces[sid] = stype
+                    stype_to_sid[stype] = sid
+            if not struct_surfaces:
+                continue
+
+            # Map unconditional & any-depth sync calls on storage structs to canonical `xsync:<sid>.<method>` keys
+            # so Form 1 (`pool.syncRates()`) and Form 2 (`RateLib.syncRates(pool)`) match cleanly across libraries.
+            def _map_cross_sync(calls_seq: Iterable[SolCallFact], svars: Mapping[str, str]) -> dict[str, tuple[str, str]]:
+                out_sync: dict[str, tuple[str, str]] = {}
+                for c in calls_seq:
+                    cname = c.callee_name
+                    if not cname or cname[0].isupper() or not c.target_expr:
+                        continue
+                    base = _extract_base_ident(c.target_expr)
+                    if not base or base in _PURE_EXTERNAL_TARGETS or base in _TRANSFER_HELPER_LIBS:
+                        continue
+                    if base in svars:
+                        stype = svars[base]
+                        sid = stype_to_sid.get(stype) or _resolve_cross_lib_struct_id(
+                            path, stype, file_imports, file_local_structs, file_local_containers
+                        )
+                        if sid and not _is_readonly_or_primitive_sync_method(
+                            cname, None, readonly_lib_methods, all_readonly_lib_methods
+                        ):
+                            short_t = stype.rsplit(".", 1)[-1]
+                            out_sync.setdefault(f"xsync:{sid}.{cname}", (f"{short_t}.{cname}()", cname))
+                    elif base[0].isupper() and base not in all_vars and c.arg_exprs:
+                        arg0 = _extract_base_ident(c.arg_exprs[0])
+                        if arg0 and arg0 in svars:
+                            stype = svars[arg0]
+                            sid = stype_to_sid.get(stype) or _resolve_cross_lib_struct_id(
+                                path, stype, file_imports, file_local_structs, file_local_containers
+                            )
+                            if sid and not _is_readonly_or_primitive_sync_method(
+                                cname, base, readonly_lib_methods, all_readonly_lib_methods
+                            ):
+                                out_sync.setdefault(f"xsync:{sid}.{cname}", (f"{base}.{cname}()", cname))
+                return out_sync
+
+            uncond_xsync = _map_cross_sync(_extract_unconditional_calls(fn.body_masked), direct_storage_vars_cache[id(fn)])
+            any_xsync_map = _map_cross_sync(fn.calls, direct_storage_vars_cache[id(fn)])
+            any_xsync = set(any_xsync_map.keys())
+
+            # Propagate unconditional & conditional cross-sync steps from 1-2 hop intra-library helpers
+            x_visited: set[int] = {id(fn)}
+            x_frontier: list[tuple[SolFunctionFact, int, bool]] = [(fn, 0, True)]
+            ext_lib_calls: set[tuple[str, str]] = set()
+            while x_frontier:
+                cur, depth, is_uncond_path = x_frontier.pop(0)
+                cur_uncond_names = _top_level_unconditional_callees(cur.body_masked) if is_uncond_path else set()
+                for c in cur.calls:
+                    if c.target_expr is not None:
+                        base = _extract_base_ident(c.target_expr)
+                        if base and base in workspace_libraries and base != contract.name:
+                            ext_lib_calls.add((base, c.callee_name))
+                        continue
+                    if depth >= 2:
+                        continue
+                    for cand in all_fns_by_name.get(c.callee_name, ()):
+                        if not cand.has_body or cand.visibility not in ("internal", "private") or id(cand) in x_visited:
+                            continue
+                        x_visited.add(id(cand))
+                        _ensure_direct(cand)
+                        cand_svars = direct_storage_vars_cache[id(cand)]
+                        child_uncond = is_uncond_path and (c.callee_name in cur_uncond_names)
+                        if child_uncond:
+                            for sk, meta in _map_cross_sync(_extract_unconditional_calls(cand.body_masked), cand_svars).items():
+                                uncond_xsync.setdefault(sk, meta)
+                        any_xsync.update(_map_cross_sync(cand.calls, cand_svars).keys())
+                        x_frontier.append((cand, depth + 1, child_uncond))
+
+            exempt_sync = bool(_LIB_SYNC_EXEMPT_RE.match(fn.name.lstrip("_")))
+            cross_lib_collector.append(
+                _CrossLibFnRecord(
+                    path=path,
+                    library_name=contract.name,
+                    fn=fn,
+                    struct_surfaces=struct_surfaces,
+                    uncond_sync=uncond_xsync,
+                    any_sync=frozenset(any_xsync),
+                    external_lib_calls=frozenset(ext_lib_calls),
+                    exempt_for_sync=exempt_sync,
+                )
+            )
+
+        if len(eligible) < 2:
+            return []
 
     contract_has_deadline_state = any(
         sv.name.lower() in {d.lower() for d in _DEADLINE_IDENTS} for sv in all_vars.values()
@@ -2585,6 +2989,9 @@ def _detect_sibling_guard_asymmetry(
         surf_list = ", ".join(sorted({_surface_display(s) for s in surfs})[:2])
         if gkey.startswith("sync:"):
             ev_msg = f"omits state-sync call {glabel} invoked by sibling(s) {peer_list} on {surf_list}"
+            if intra_emitted is not None:
+                mname = gkey.rsplit(".", 1)[-1]
+                intra_emitted.add((path, f"{contract.name}.{fn.name}", fn.start_line, mname))
         else:
             ev_msg = f"missing {glabel} enforced by sibling(s) {peer_list} on {surf_list}"
         findings.append(
@@ -2611,13 +3018,24 @@ def audit_solidity_workspace(files: Mapping[str, str]) -> list[Finding]:
     workspace_libraries: set[str] = set()
     readonly_lib_methods_mut: dict[str, set[str]] = {}
     all_readonly_methods: set[str] = set()
-    for f in parsed.values():
+    defining_libs_mut: dict[str, set[str]] = {}
+    file_imports: dict[str, tuple[dict[str, str], tuple[str, ...]]] = {}
+    file_local_structs: dict[str, frozenset[str]] = {}
+    file_local_containers: dict[str, frozenset[str]] = {}
+
+    for path, f in parsed.items():
+        norm_path = path.replace("\\", "/")
+        file_imports[norm_path] = _extract_sol_imports(f.source, norm_path)
+        file_local_structs[norm_path] = frozenset(_STRUCT_DECL_RE.findall(f.masked_source))
+        file_local_containers[norm_path] = frozenset(c.name for c in f.contracts)
         for c in f.contracts:
             contracts_by_name.setdefault(c.name, []).append(c)
             if c.kind == "library":
                 workspace_libraries.add(c.name)
                 ro_set = readonly_lib_methods_mut.setdefault(c.name, set())
                 for fn in c.functions:
+                    if fn.has_body:
+                        defining_libs_mut.setdefault(fn.name, set()).add(c.name)
                     if fn.mutability in ("view", "pure"):
                         ro_set.add(fn.name)
                         all_readonly_methods.add(fn.name)
@@ -2625,6 +3043,10 @@ def audit_solidity_workspace(files: Mapping[str, str]) -> list[Finding]:
     lib_set = frozenset(workspace_libraries)
     readonly_lib_map = {k: frozenset(v) for k, v in readonly_lib_methods_mut.items()}
     all_readonly_set = frozenset(all_readonly_methods)
+    defining_libs_map = {k: frozenset(v) for k, v in defining_libs_mut.items()}
+
+    cross_lib_records: list[_CrossLibFnRecord] = []
+    intra_emitted: set[tuple[str, str, int, str]] = set()
 
     findings: list[Finding] = []
     for path, f_facts in parsed.items():
@@ -2645,8 +3067,14 @@ def audit_solidity_workspace(files: Mapping[str, str]) -> list[Finding]:
                     lib_set,
                     readonly_lib_map,
                     all_readonly_set,
+                    cross_lib_records,
+                    file_imports,
+                    file_local_structs,
+                    file_local_containers,
+                    intra_emitted,
                 )
             )
+    findings.extend(_detect_cross_library_guard_asymmetry(cross_lib_records, defining_libs_map, intra_emitted))
     return findings
 
 
