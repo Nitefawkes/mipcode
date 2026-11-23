@@ -261,7 +261,7 @@ def _group_findings(
             grouped.append(item)
         else:
             seen[key]["site_count_in_group"] += 1
-            if len(seen[key]["lines"]) < 6:
+            if finding.start_line not in seen[key]["lines"] and len(seen[key]["lines"]) < 6:
                 seen[key]["lines"].append(finding.start_line)
     return grouped[:MAX_UNIQUE_SITES], len(rows)
 

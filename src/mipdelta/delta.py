@@ -82,7 +82,7 @@ def is_vendored_path(path: str) -> bool:
     return "packages" in dirs[1:]
 
 
-_SUPPORT_DIRS = frozenset({"docs", "doc", "examples", "benchmarks", "scripts", "tasks"})
+_SUPPORT_DIRS = frozenset({"docs", "doc", "examples", "benchmarks", "scripts", "tasks", "mocks", "mock", "fixtures"})
 _TEST_DIRS = frozenset({"test", "tests", "testing", "test_suite"})
 
 
@@ -100,13 +100,20 @@ def _is_test_path(path: str) -> bool:
 
 
 def _path_tier(path: str) -> int:
-    """Risk tier for a path: 0 = production source, 1 = docs/examples/scripts, 2 = tests."""
+    """Risk tier for a path: 0 = production source, 1 = docs/examples/scripts/mocks, 2 = tests."""
     if _is_test_path(path):
         return 2
     parts = [p for p in path.replace("\\", "/").lower().split("/") if p]
     if not parts:
         return 0
-    if parts[0] in _SUPPORT_DIRS or any(p in _SUPPORT_DIRS for p in parts[:-1]) or parts[-1] == "tasks.py":
+    leaf = parts[-1]
+    if (
+        parts[0] in _SUPPORT_DIRS
+        or any(p in _SUPPORT_DIRS for p in parts[:-1])
+        or leaf == "tasks.py"
+        or leaf.endswith("mock.sol")
+        or leaf.startswith("mock_")
+    ):
         return 1
     return 0
 
@@ -506,7 +513,7 @@ def summarize_actual_delta(
     mutated_signatures: list[str] = []
     new_raises: list[str] = []
 
-    for path in sorted(before_changed.keys() | after_changed.keys()):
+    for path in sorted(before_changed.keys() | after_changed.keys(), key=lambda p: (_path_tier(p), p)):
         if is_vendored_path(path):
             continue
         old_file = before_changed.get(path)
@@ -568,19 +575,38 @@ def summarize_actual_delta(
 
 
 def format_advisory(findings: Iterable[Finding], *, max_bytes: int = 250, max_items: int = 3) -> str:
-    """Format ranked candidate findings into a bounded post-write advisory string (0 bytes when empty)."""
+    """Format ranked candidate findings into a bounded post-write advisory string (0 bytes when empty).
+
+    Collapses identical `(path, start_line, detector, symbol, resolution_source)` sites with `(xN)`
+    so multi-parameter drops on one line do not crowd out distinct sites inside the byte budget.
+    """
     ranked = rank_findings(findings)
     if not ranked:
         return ""
+    grouped: list[tuple[Finding, int]] = []
+    group_index: dict[tuple[str, int, str, str, str], int] = {}
+    for row in ranked:
+        key = (row.path, row.start_line, row.detector, row.symbol, row.resolution_source)
+        pos = group_index.get(key)
+        if pos is None:
+            group_index[key] = len(grouped)
+            grouped.append((row, 1))
+        else:
+            lead, count = grouped[pos]
+            grouped[pos] = (lead, count + 1)
+
     header = "[mip-delta]"
     items: list[str] = []
     total_count = len(ranked)
-    for row in ranked[:max_items]:
+    shown_count = 0
+    for row, count in grouped[:max_items]:
         tag = _PROVENANCE_TAG.get(row.resolution_source, "cand")
-        item = f"{row.path}:{row.start_line} {row.detector}[{tag}] {row.symbol}"
+        mult = f" (x{count})" if count > 1 else ""
+        item = f"{row.path}:{row.start_line} {row.detector}[{tag}] {row.symbol}{mult}"
         candidate_text = header + " " + "; ".join([*items, item])
-        if total_count > len(items) + 1:
-            rem = total_count - (len(items) + 1)
+        next_shown = shown_count + count
+        if total_count > next_shown:
+            rem = total_count - next_shown
             if len((candidate_text + f" (+{rem})").encode("utf-8")) > max_bytes:
                 if not items:
                     trimmed = candidate_text.encode("utf-8")[: max(0, max_bytes - 3)].decode("utf-8", errors="ignore")
@@ -592,10 +618,11 @@ def format_advisory(findings: Iterable[Finding], *, max_bytes: int = 250, max_it
                 return trimmed + "..."
             break
         items.append(item)
-    rem = total_count - len(items)
+        shown_count = next_shown
+    rem = total_count - shown_count
     suffix = f" (+{rem})" if rem > 0 else ""
     out = header + " " + "; ".join(items) + suffix
-    if len(items) == 1 and rem == 0 and ranked[0].evidence:
+    if len(items) == 1 and rem == 0 and total_count == 1 and ranked[0].evidence:
         with_ev = f"{out} ({ranked[0].evidence[0]})"
         if len(with_ev.encode("utf-8")) <= max_bytes:
             out = with_ev

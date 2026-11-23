@@ -69,17 +69,64 @@ def test_rank_findings_prioritizes_production_over_support_and_test_paths():
     findings = [
         Finding("delegating_wrapper_review", "bench", "benchmarks/a_bench.py", 10, 10, "candidate", ("e",), "static_ast"),
         Finding("delegating_wrapper_review", "demo", "examples/a_demo.py", 10, 10, "candidate", ("e",), "static_ast"),
+        Finding("delegating_wrapper_review", "mock", "contracts/mocks/AMock.sol", 10, 10, "candidate", ("e",), "static_ast"),
         Finding("delegating_wrapper_review", "helper", "test/a_helper.py", 10, 10, "candidate", ("e",), "static_ast"),
         Finding("delegating_wrapper_review", "fix", "conftest.py", 10, 10, "candidate", ("e",), "static_ast"),
         Finding("delegating_wrapper_review", "Client.send", "pkg/z_client.py", 42, 42, "candidate", ("e",), "static_ast"),
     ]
     ranked = rank_findings(findings)
     assert ranked[0].path == "pkg/z_client.py"
-    assert [f.path for f in ranked[1:3]] == ["benchmarks/a_bench.py", "examples/a_demo.py"]
-    assert {f.path for f in ranked[3:]} == {"conftest.py", "test/a_helper.py"}
+    assert [f.path for f in ranked[1:4]] == [
+        "benchmarks/a_bench.py",
+        "contracts/mocks/AMock.sol",
+        "examples/a_demo.py",
+    ]
+    assert {f.path for f in ranked[4:]} == {"conftest.py", "test/a_helper.py"}
 
     advisory = format_advisory(findings, max_bytes=250, max_items=3)
     assert "pkg/z_client.py:42" in advisory
+
+
+def test_format_advisory_collapses_identical_sites_so_distinct_sites_are_not_crowded_out():
+    findings = [
+        Finding(
+            "delegating_wrapper_review",
+            "Traceback.__init__",
+            "rich/traceback.py",
+            309,
+            309,
+            "candidate",
+            (f"omits opt_{i}",),
+            "static_ast",
+        )
+        for i in range(5)
+    ] + [
+        Finding(
+            "delegating_wrapper_review",
+            "Traceback.extract",
+            "rich/traceback.py",
+            487,
+            487,
+            "candidate",
+            ("omits depth",),
+            "static_ast",
+        ),
+        Finding(
+            "parameter_sink_review",
+            "Traceback.__init__",
+            "rich/traceback.py",
+            283,
+            283,
+            "candidate",
+            ("dead self.x",),
+            "static_ast",
+        ),
+    ]
+    advisory = format_advisory(findings, max_bytes=250, max_items=3)
+    assert "rich/traceback.py:309 delegating_wrapper_review[static] Traceback.__init__ (x5)" in advisory
+    assert "rich/traceback.py:487 delegating_wrapper_review[static] Traceback.extract" in advisory
+    assert advisory.count("rich/traceback.py:309") == 1
+    assert len(advisory.encode("utf-8")) <= 250
 
 
 def test_rank_findings_prevents_underscore_private_paths_and_symbols_from_evicting_public_apis():
@@ -352,11 +399,20 @@ def test_summarize_actual_delta_captures_mutated_signatures_and_new_raises():
         "class ApiError(Exception):\n    pass\n\n"
         "async def fetch(url, *, strict):\n    if not strict:\n        raise ApiError('bad')\n    return url, 1\n"
     )
-    before_facts = {"pkg/api.py": parse_file("pkg/api.py", before_src)}
-    after_facts = {"pkg/api.py": parse_file("pkg/api.py", after_src)}
+    before_facts = {
+        "tests/a_test.py": parse_file("tests/a_test.py", "def test_old():\n    return 1\n"),
+        "pkg/api.py": parse_file("pkg/api.py", before_src),
+    }
+    after_facts = {
+        "tests/a_test.py": parse_file("tests/a_test.py", ""),
+        "pkg/api.py": parse_file("pkg/api.py", after_src),
+    }
     summary = summarize_actual_delta(before_facts, after_facts, findings=[])
-    assert "pkg/api.py::fetch (params_changed,async_changed,return_changed)" in summary["mutated_signatures"]
-    assert "pkg/api.py::legacy (removed)" in summary["mutated_signatures"]
+    assert summary["mutated_signatures"][:2] == [
+        "pkg/api.py::fetch (params_changed,async_changed,return_changed)",
+        "pkg/api.py::legacy (removed)",
+    ]
+    assert summary["mutated_signatures"][-1] == "tests/a_test.py::test_old (removed)"
     assert summary["new_raises"] == ["pkg/api.py::fetch +ApiError"]
     assert summary["open_count"] == 0
     assert set(summary) == {
