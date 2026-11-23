@@ -540,3 +540,304 @@ contract Vault {
     assert payload["advisory_utf8_bytes"] <= 250
     dets = [(f["detector"], f["symbol"]) for f in payload["findings"]]
     assert ("sibling_guard_asymmetry", "Vault.setC") in dets
+
+
+# ---------------------------------------------------------------------------
+# v2 Upgrade A & B: Library storage-struct grouping & state-sync steps
+# ---------------------------------------------------------------------------
+
+
+def test_v2_library_storage_struct_detects_omitted_state_sync_calls():
+    src = """
+pragma solidity ^0.8.20;
+
+struct PoolState {
+    uint256 totalAssets;
+    uint256 accruedIndex;
+}
+
+library AccountingLib {
+    function syncAccounting(PoolState storage self) internal {
+        self.accruedIndex += 1;
+    }
+
+    function sync(PoolState storage self, uint256 delta) internal {
+        self.accruedIndex += delta;
+    }
+}
+
+library PoolOps {
+    using AccountingLib for PoolState;
+
+    function executeSupply(PoolState storage state, uint256 amt) external {
+        state.syncAccounting();
+        AccountingLib.sync(state, amt);
+        state.totalAssets += amt;
+    }
+
+    function executeWithdraw(PoolState storage state, uint256 amt) external {
+        state.syncAccounting();
+        AccountingLib.sync(state, amt);
+        state.totalAssets -= amt;
+    }
+
+    function executeBorrow(PoolState storage state, uint256 amt) external {
+        state.syncAccounting();
+        AccountingLib.sync(state, amt);
+        state.totalAssets -= amt;
+    }
+
+    function fastWithdraw(PoolState storage state, uint256 amt) external {
+        state.totalAssets -= amt;
+    }
+}
+"""
+    hits = _sga({"contracts/PoolOps.sol": src})
+    assert len(hits) == 2
+    assert {h.symbol for h in hits} == {"PoolOps.fastWithdraw"}
+    ev_all = " | ".join(h.evidence[0] for h in hits)
+    assert "PoolState.syncAccounting()" in ev_all
+    assert "AccountingLib.sync()" in ev_all
+    assert "PoolState" in ev_all
+
+    # Advisory stays strictly <= 250 B and review grouping deduplicates unique line numbers
+    adv = format_advisory(hits, max_bytes=250)
+    assert len(adv.encode("utf-8")) <= 250
+    grouped, total = _group_findings(hits, lambda f: f.symbol)
+    assert total == 2
+    assert len(grouped) == 1
+    assert grouped[0]["lines"] == [hits[0].start_line]
+
+
+def test_v2_library_mapping_storage_alias_and_contract_internal_sync_step():
+    src = """
+pragma solidity ^0.8.20;
+
+struct ReserveData {
+    uint256 liquidity;
+    uint256 rate;
+}
+
+library ReserveLib {
+    function refreshRates(ReserveData storage self) internal {
+        self.rate += 1;
+    }
+}
+
+library LendingLogic {
+    using ReserveLib for ReserveData;
+
+    function executeSupply(mapping(address => ReserveData) storage reserves, address asset, uint256 amt) external {
+        ReserveData storage reserve = reserves[asset];
+        reserve.refreshRates();
+        reserve.liquidity += amt;
+    }
+
+    function executeWithdraw(mapping(address => ReserveData) storage reserves, address asset, uint256 amt) external {
+        ReserveData storage reserve = reserves[asset];
+        reserve.refreshRates();
+        reserve.liquidity -= amt;
+    }
+
+    function executeTreasurySweep(mapping(address => ReserveData) storage reserves, address asset, uint256 amt) external {
+        ReserveData storage reserve = reserves[asset];
+        reserve.liquidity -= amt;
+    }
+}
+
+contract DebtVault {
+    uint256 public totalDebt;
+    uint256 public lastAccrual;
+
+    function _accrueInterest() internal {
+        lastAccrual = block.timestamp;
+        totalDebt += 1;
+    }
+
+    function borrow(uint256 amt) external {
+        _accrueInterest();
+        totalDebt += amt;
+    }
+
+    function repay(uint256 amt) external {
+        _accrueInterest();
+        totalDebt -= amt;
+    }
+
+    function forgiveDebt(uint256 amt) external {
+        totalDebt -= amt;
+    }
+}
+"""
+    hits = _sga({"contracts/LendingLogic.sol": src})
+    symbols = {h.symbol for h in hits}
+    assert "LendingLogic.executeTreasurySweep" in symbols
+    assert "DebtVault.forgiveDebt" in symbols
+    ev_by_sym = {h.symbol: h.evidence[0] for h in hits}
+    assert "ReserveData.refreshRates()" in ev_by_sym["LendingLogic.executeTreasurySweep"]
+    assert "_accrueInterest()" in ev_by_sym["DebtVault.forgiveDebt"]
+
+
+def test_v2_library_math_and_conditional_or_minority_sync_produce_zero_findings():
+    src = """
+pragma solidity ^0.8.20;
+
+struct PoolState {
+    uint256 totalAssets;
+    uint256 index;
+}
+
+library Math {
+    function max(uint256 a, uint256 b) internal pure returns (uint256) { return a > b ? a : b; }
+    function min(uint256 a, uint256 b) internal pure returns (uint256) { return a < b ? a : b; }
+    function mulDiv(uint256 x, uint256 y, uint256 d) internal pure returns (uint256) { return (x * y) / d; }
+}
+
+library SafeCast {
+    function toUint128(uint256 x) internal pure returns (uint128) { require(x <= type(uint128).max); return uint128(x); }
+    function toUint96(uint256 x) internal pure returns (uint96) { require(x <= type(uint96).max); return uint96(x); }
+}
+
+library BitMaps {
+    struct BitMap { mapping(uint256 => uint256) _data; }
+    function get(BitMap storage bitmap, uint256 idx) internal view returns (bool) {
+        return bitmap._data[idx] != 0;
+    }
+    function set(BitMap storage bitmap, uint256 idx) internal {
+        bitmap._data[idx] = 1;
+    }
+    function unset(BitMap storage bitmap, uint256 idx) internal {
+        bitmap._data[idx] = 0;
+    }
+}
+
+library ConditionalAndMinorityOps {
+    function syncAccounting(PoolState storage self) internal {
+        self.index += 1;
+    }
+
+    // Conditional sync in branches must NOT qualify as an unconditional invariant
+    function opA(PoolState storage s, uint256 amt, bool flag) external {
+        if (flag) {
+            syncAccounting(s);
+        }
+        s.totalAssets += amt;
+    }
+
+    function opB(PoolState storage s, uint256 amt, bool flag) external {
+        if (flag) {
+            syncAccounting(s);
+        }
+        s.totalAssets -= amt;
+    }
+
+    // Only 1 of 3 calls unconditionally (< 2/3) -> must NOT fire
+    function opC(PoolState storage s, uint256 amt) external {
+        syncAccounting(s);
+        s.totalAssets += amt;
+    }
+}
+"""
+    assert _sga({"contracts/Libs.sol": src}) == []
+
+
+# ---------------------------------------------------------------------------
+# v2 Upgrade C: Versioned-flow sibling pairing across separate storage
+# ---------------------------------------------------------------------------
+
+
+def test_v2_versioned_flow_pairs_v1_v2_even_on_separate_storage():
+    src = """
+pragma solidity ^0.8.20;
+
+interface IERC20 {
+    function transfer(address to, uint256 amt) external returns (bool);
+}
+
+contract LiquidityLocker {
+    bool public unlocked;
+    IERC20 public token;
+    mapping(address => uint256) public v1Positions;
+    mapping(address => uint256) public v2Positions;
+
+    modifier whenUnlocked() {
+        if (!unlocked) revert("locked");
+        _;
+    }
+
+    modifier nonReentrant() { _; }
+
+    function provideLiquidity(uint256 amt) external whenUnlocked nonReentrant {
+        v1Positions[msg.sender] += amt;
+        token.transfer(msg.sender, amt);
+    }
+
+    function withdrawLiquidity(uint256 amt) external whenUnlocked nonReentrant {
+        v1Positions[msg.sender] -= amt;
+        token.transfer(msg.sender, amt);
+    }
+
+    // Separate V2 storage: misses custom lifecycle modifier `whenUnlocked` present on V1
+    function provideLiquidityV2(uint256 amt) external nonReentrant {
+        v2Positions[msg.sender] += amt;
+        token.transfer(msg.sender, amt);
+    }
+
+    function withdrawLiquidityV2(uint256 amt) external nonReentrant {
+        v2Positions[msg.sender] -= amt;
+        token.transfer(msg.sender, amt);
+    }
+}
+"""
+    hits = _sga({"contracts/LiquidityLocker.sol": src})
+    assert [(h.symbol, h.detector) for h in hits] == [
+        ("LiquidityLocker.provideLiquidityV2", "sibling_guard_asymmetry"),
+        ("LiquidityLocker.withdrawLiquidityV2", "sibling_guard_asymmetry"),
+    ]
+    assert all("whenUnlocked" in h.evidence[0] for h in hits)
+
+
+def test_v2_versioned_flow_suppresses_delegating_inline_equivalent_and_create2():
+    src = """
+pragma solidity ^0.8.20;
+
+contract SafeVersioned {
+    bool public unlocked;
+    uint256 public v1Total;
+    uint256 public v2Total;
+
+    modifier whenUnlocked() {
+        if (!unlocked) revert("locked");
+        _;
+    }
+
+    function deposit(uint256 amt) public whenUnlocked {
+        v1Total += amt;
+    }
+
+    // Delegates unconditionally to V1 -> inherits whenUnlocked -> 0 findings
+    function depositV2(uint256 amt) external {
+        deposit(amt);
+    }
+
+    function withdraw(uint256 amt) external whenUnlocked {
+        v1Total -= amt;
+    }
+
+    // Enforces the exact same state flag inline -> 0 findings
+    function withdrawV2(uint256 amt) external {
+        if (!unlocked) revert("locked");
+        v2Total -= amt;
+    }
+
+    // EVM CREATE / CREATE2 / CREATE3 opcodes are NOT V1/V2 versioned siblings
+    function deployCreate(bytes memory code) external whenUnlocked {
+        v1Total += code.length;
+    }
+
+    function deployCreate2(bytes memory code) external {
+        v2Total += code.length;
+    }
+}
+"""
+    assert _sga({"contracts/SafeVersioned.sol": src}) == []

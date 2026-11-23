@@ -1431,6 +1431,56 @@ _TIMELOCK_MOD_RE = re.compile(r"(?:aftertimelock|timelock|afterdelay)", re.IGNOR
 _CONFIG_SETTER_RE = re.compile(
     r"^(?:set|add|remove|delete|clear|update|configure|config|revoke|submit|grant|enable|disable|register|unregister|pause|unpause|freeze|unfreeze|whitelist|blacklist)[A-Z_]"
 )
+_INIT_OR_CONFIG_EXEMPT_RE = re.compile(
+    r"^(?:init|initialize|reinitialize|executeinit|set|submit|accept|configure|config|pause|unpause|freeze|unfreeze|emergency|rescue|forcewithdraw|ragequit|reapprove|sweep)",
+    re.IGNORECASE,
+)
+_FOUNDRY_TEST_FN_RE = re.compile(r"^(?:test(?:_|Fuzz|Fail|Fork)?|invariant_|setUp$)")
+_SYNC_HELPER_NAME_RE = re.compile(
+    r"^_?(?:sync|accrue|checkpoint|update|settle|refresh|snapshot|reconcile|cumulate|rebase|touch|poke|drip|compound)",
+    re.IGNORECASE,
+)
+_EXTERNAL_INTERFACE_TYPE_RE = re.compile(r"^(?:address|payable|I[A-Z][A-Za-z0-9_$]*)$")
+_READONLY_OR_PRIMITIVE_SYNC_RE = re.compile(
+    r"^(?:(?:get|is|has|can|to|from|try|at|set|add|sub|mul|div|ray|wad)(?:[A-Z_0-9]|$)|"
+    r"(?:preview|calculate|compute|quote|convert|encode|decode|format|parse|view|read|fetch|load|"
+    r"check|verify|validate|assert|require|count|len|length|size|index|find|exists|contains|"
+    r"latest|current|next|prev|max|min|total|balance|allowance|decimals|name|symbol|owner|paused|"
+    r"cache|values|keys|push|pop|remove|clear|delete|increment|decrement|percent|safe|approve|"
+    r"transfer|mint|burn|emit))",
+)
+_STORAGE_LOCAL_REF_RE = re.compile(
+    r"\b([A-Za-z_$][A-Za-z0-9_$.]*)\s+storage\s+([A-Za-z_$][A-Za-z0-9_$]*)\s*=\s*([A-Za-z_$][A-Za-z0-9_$]*)\b"
+)
+_EXPLICIT_VERSION_RE = re.compile(r"^(.+?)(?:_?[vV])([1-9]\d*)$")
+_TRAILING_DIGIT_VERSION_RE = re.compile(r"^([A-Za-z_]{4,})([2-9])$")
+_NON_VERSION_DIGIT_STEMS = frozenset(
+    {
+        "erc",
+        "eip",
+        "sha",
+        "keccak",
+        "weth",
+        "uint",
+        "int",
+        "bytes",
+        "create",
+        "deploycreate",
+        "compute",
+        "log",
+        "token",
+        "amount",
+        "price",
+        "tick",
+        "sqrt",
+        "pair",
+        "pool",
+        "hash",
+        "slot",
+        "word",
+        "limb",
+    }
+)
 
 
 def _is_caller_auth_cond(cond: str) -> bool:
@@ -1864,8 +1914,237 @@ def _pair_relation(name_a: str, name_b: str) -> str | None:
     return None
 
 
+def _normalize_storage_type(type_str: str) -> str | None:
+    if not re.search(r"\bstorage\b", type_str):
+        return None
+    cleaned = re.sub(r"\bstorage\b", "", type_str).strip()
+    cleaned = re.sub(r"\s*=>\s*", "=>", cleaned)
+    cleaned = re.sub(r"\s*\(\s*", "(", cleaned)
+    cleaned = re.sub(r"\s*\)\s*", ")", cleaned)
+    cleaned = re.sub(r"\s+", " ", cleaned)
+    return cleaned or None
+
+
+def _extract_storage_vars(fn: SolFunctionFact) -> dict[str, str]:
+    """Return `{var_name: canonical_storage_type}` for `storage` params and local `storage` aliases."""
+    svars: dict[str, str] = {}
+    for p in fn.params:
+        if not p.name:
+            continue
+        norm_t = _normalize_storage_type(p.type_str)
+        if norm_t:
+            svars[p.name] = norm_t
+    if svars:
+        for m in _STORAGE_LOCAL_REF_RE.finditer(fn.body_masked):
+            local_type, local_name, rhs_ident = m.group(1).strip(), m.group(2).strip(), m.group(3).strip()
+            if rhs_ident in svars and local_name not in svars:
+                svars[local_name] = local_type
+    return svars
+
+
+def _extract_unconditional_calls(body_masked: str) -> tuple[SolCallFact, ...]:
+    """Return calls occurring outside conditional/loop/try blocks (`unchecked { ... }` stays unconditional)."""
+    skip_kw = {
+        "if",
+        "for",
+        "while",
+        "catch",
+        "switch",
+        "return",
+        "require",
+        "assert",
+        "revert",
+        "emit",
+        "new",
+        "delete",
+        "unchecked",
+        "assembly",
+        "try",
+        "function",
+        "mapping",
+    }
+    # Build top-level unconditional spans by masking out `{ ... }` blocks except `unchecked { ... }`
+    chars = list(body_masked)
+    n = len(chars)
+    i = 0
+    while i < n:
+        if chars[i] == "{":
+            # Look backward for preceding keyword to see if this brace is `unchecked {`
+            prev_end = i - 1
+            while prev_end >= 0 and body_masked[prev_end].isspace():
+                prev_end -= 1
+            prev_start = prev_end
+            while prev_start >= 0 and (body_masked[prev_start].isalnum() or body_masked[prev_start] in "_$"):
+                prev_start -= 1
+            prev_word = body_masked[prev_start + 1 : prev_end + 1] if prev_end >= 0 else ""
+            if prev_word == "unchecked":
+                chars[i] = " "
+                close_b = _find_matching(body_masked, i, "{", "}")
+                if close_b > i:
+                    chars[close_b] = " "
+                i += 1
+                continue
+            close_b = _find_matching(body_masked, i, "{", "}")
+            if close_b < 0:
+                break
+            for k in range(i, close_b + 1):
+                if chars[k] != "\n":
+                    chars[k] = " "
+            i = close_b + 1
+            continue
+        # Also mask single-statement `if (...) stmt;` where stmt has no `{`
+        if (chars[i] == "i" and i + 1 < n and chars[i + 1] == "f"
+                and (i == 0 or not (body_masked[i - 1].isalnum() or body_masked[i - 1] in "_$"))
+                and (i + 2 >= n or not (body_masked[i + 2].isalnum() or body_masked[i + 2] in "_$"))):
+            open_p = _skip_ws(body_masked, i + 2)
+            if open_p < n and body_masked[open_p] == "(":
+                close_p = _find_matching(body_masked, open_p, "(", ")")
+                if close_p > open_p:
+                    after_p = _skip_ws(body_masked, close_p + 1)
+                    if after_p < n and body_masked[after_p] != "{":
+                        semi = body_masked.find(";", after_p)
+                        if semi > after_p:
+                            for k in range(after_p, semi + 1):
+                                if chars[k] != "\n":
+                                    chars[k] = " "
+                            i = semi + 1
+                            continue
+        i += 1
+    top_text = "".join(chars)
+    calls = _extract_calls(top_text, 1)
+    return tuple(c for c in calls if c.callee_name not in skip_kw)
+
+
+def _is_readonly_or_primitive_sync_method(
+    callee_name: str,
+    target_lib: str | None,
+    readonly_lib_methods: Mapping[str, frozenset[str]],
+    all_readonly_lib_methods: frozenset[str],
+) -> bool:
+    if callee_name.startswith("_"):
+        stem = callee_name.lstrip("_")
+        if _READONLY_OR_PRIMITIVE_SYNC_RE.match(stem):
+            return True
+    elif _READONLY_OR_PRIMITIVE_SYNC_RE.match(callee_name):
+        return True
+    if target_lib and target_lib in readonly_lib_methods and callee_name in readonly_lib_methods[target_lib]:
+        return True
+    if target_lib is None and callee_name in all_readonly_lib_methods:
+        return True
+    return False
+
+
+def _is_storage_ref_mutated(body_masked: str, var_name: str) -> bool:
+    """True when a `storage` struct/mapping param or local ref has its fields/entries mutated (ignores `Type storage var = rhs;`)."""
+    # Strip local `Type storage var_name = ...;` initializer LHS so pointer binding is not miscounted as a write
+    cleaned = re.sub(
+        rf"\b[A-Za-z_$][A-Za-z0-9_$.]*\s+storage\s+{re.escape(var_name)}\s*=",
+        " ",
+        body_masked,
+    )
+    return _is_state_var_mutated(cleaned, var_name)
+
+
+def _extract_sync_steps(
+    calls: Iterable[SolCallFact],
+    storage_vars: Mapping[str, str],
+    mutable_vars: Mapping[str, SolStateVarFact],
+    all_vars: Mapping[str, SolStateVarFact],
+    mutating_internal_helpers: frozenset[str],
+    readonly_lib_methods: Mapping[str, frozenset[str]],
+    all_readonly_lib_methods: frozenset[str],
+) -> dict[str, str]:
+    """Extract canonical structural state-sync / accounting step calls from a call sequence."""
+    steps: dict[str, str] = {}
+    for call in calls:
+        cname = call.callee_name
+        # Solidity events and custom errors are PascalCase; state-sync functions are camelCase or `_`-prefixed
+        if not cname or cname[0].isupper():
+            continue
+        if call.target_expr is None:
+            if (
+                cname in mutating_internal_helpers
+                and _SYNC_HELPER_NAME_RE.match(cname)
+                and cname not in _INTERNAL_ACCOUNTING_SINKS
+                and cname not in _REENTRANCY_HELPERS
+                and cname not in _NOT_PAUSED_HELPERS
+                and cname not in _CALLER_AUTH_HELPERS
+                and not _READONLY_OR_PRIMITIVE_SYNC_RE.match(cname.lstrip("_"))
+            ):
+                steps.setdefault(f"sync:self.{cname}", f"{cname}()")
+            continue
+
+        base = _extract_base_ident(call.target_expr)
+        if not base or base in _PURE_EXTERNAL_TARGETS or base in _TRANSFER_HELPER_LIBS:
+            continue
+
+        # Form 1: `storageParam.syncMethod(...)` (library storage struct) or non-interface struct stateVar
+        if base in storage_vars:
+            if not _is_readonly_or_primitive_sync_method(cname, None, readonly_lib_methods, all_readonly_lib_methods):
+                stype = storage_vars[base]
+                short_type = stype.rsplit(".", 1)[-1]
+                steps.setdefault(f"sync:{stype}.{cname}", f"{short_type}.{cname}()")
+            continue
+        if base in mutable_vars:
+            sv = mutable_vars[base]
+            # Never treat external contract interface calls (`IERC20`, `IWETH`, `address`, `IController`) as storage syncs
+            t_clean = sv.type_str.strip().split()[0] if sv.type_str.strip() else ""
+            if (
+                t_clean
+                and not _EXTERNAL_INTERFACE_TYPE_RE.match(t_clean)
+                and _SYNC_HELPER_NAME_RE.match(cname)
+                and not _is_readonly_or_primitive_sync_method(cname, None, readonly_lib_methods, all_readonly_lib_methods)
+            ):
+                steps.setdefault(f"sync:{base}.{cname}", f"{base}.{cname}()")
+            continue
+
+        # Form 2: `SomeLib.syncMethod(storageParam_or_structStateVar, ...)` (`SomeLib` must be PascalCase library, not an immutable/state var)
+        if base[0].isupper() and base not in all_vars and call.arg_exprs:
+            arg0 = _extract_base_ident(call.arg_exprs[0])
+            if arg0 and arg0 in storage_vars:
+                if not _is_readonly_or_primitive_sync_method(
+                    cname, base, readonly_lib_methods, all_readonly_lib_methods
+                ):
+                    steps.setdefault(f"sync:{base}.{cname}", f"{base}.{cname}()")
+            elif arg0 and arg0 in mutable_vars:
+                sv = mutable_vars[arg0]
+                t_clean = sv.type_str.strip().split()[0] if sv.type_str.strip() else ""
+                if (
+                    t_clean
+                    and not _EXTERNAL_INTERFACE_TYPE_RE.match(t_clean)
+                    and _SYNC_HELPER_NAME_RE.match(cname)
+                    and not _is_readonly_or_primitive_sync_method(
+                        cname, base, readonly_lib_methods, all_readonly_lib_methods
+                    )
+                ):
+                    steps.setdefault(f"sync:{base}.{cname}", f"{base}.{cname}()")
+    return steps
+
+
+def _split_version_stem(name: str) -> tuple[str, int]:
+    """Return `(normalized_stem, version_number)` for explicit versioned flows (`foo` <-> `fooV2`/`foo_v2`/`foo2`)."""
+    stripped = name.lstrip("_")
+    m = _EXPLICIT_VERSION_RE.match(stripped)
+    if m:
+        stem = m.group(1).rstrip("_").lower()
+        ver = int(m.group(2))
+        if len(stem) >= 4 and stem not in _NON_VERSION_DIGIT_STEMS:
+            return (stem, ver)
+    m2 = _TRAILING_DIGIT_VERSION_RE.match(stripped)
+    if m2:
+        stem = m2.group(1).rstrip("_").lower()
+        ver = int(m2.group(2))
+        if (
+            len(stem) >= 4
+            and stem not in _NON_VERSION_DIGIT_STEMS
+            and not stem.endswith("create")
+        ):
+            return (stem, ver)
+    return (stripped.lower(), 1)
+
+
 def _surface_display(surface: str) -> str:
-    for pfx in ("state:", "token_out:", "token_io:", "sink:"):
+    for pfx in ("state:", "storage:", "token_out:", "token_io:", "sink:"):
         if surface.startswith(pfx):
             label = surface[len(pfx) :]
             return "ETH transfer" if label == "eth_out" else label
@@ -1878,9 +2157,12 @@ def _detect_sibling_guard_asymmetry(
     contracts_by_name: Mapping[str, list[SolContractFact]],
     ancestor_fns: Mapping[str, list[SolFunctionFact]],
     workspace_libraries: frozenset[str],
+    readonly_lib_methods: Mapping[str, frozenset[str]] = {},
+    all_readonly_lib_methods: frozenset[str] = frozenset(),
 ) -> list[Finding]:
-    if contract.kind in ("interface", "library"):
+    if contract.kind == "interface":
         return []
+    is_library = contract.kind == "library"
 
     all_vars = _collect_ancestor_state_vars(contract, contracts_by_name)
     mutable_vars = {
@@ -1909,16 +2191,53 @@ def _detect_sibling_guard_asymmetry(
         if classified is not None and classified[0].startswith("mod:") and classified[2]:
             custom_mod_inline_idents[classified[0]] = classified[2]
 
-    eligible: list[SolFunctionFact] = [
+    # Identify intra-contract/library internal/private helpers that mutate state or storage params
+    mutating_internal_helpers: set[str] = set()
+    helper_mutated_state_vars: dict[str, set[str]] = {}
+    for fns in all_fns_by_name.values():
+        for hfn in fns:
+            if not hfn.has_body or hfn.mutability in ("view", "pure"):
+                continue
+            if hfn.visibility not in ("internal", "private"):
+                continue
+            h_svars = _extract_storage_vars(hfn)
+            h_prim, _ = _extract_direct_surfaces(hfn, mutable_vars, all_vars)
+            mutates_storage_param = any(
+                _is_storage_ref_mutated(hfn.body_masked, sv_name) for sv_name in h_svars
+            )
+            if h_prim or mutates_storage_param:
+                mutating_internal_helpers.add(hfn.name)
+                h_state_only = {s for s in h_prim if s.startswith("state:")}
+                if h_state_only and len(h_state_only) == len(h_prim) and not mutates_storage_param:
+                    helper_mutated_state_vars.setdefault(hfn.name, set()).update(h_state_only)
+    mutating_internal_set = frozenset(mutating_internal_helpers)
+
+    allowed_vis = ("external", "public", "internal") if is_library else ("external", "public")
+    raw_eligible: list[SolFunctionFact] = [
         fn
         for fn in contract.functions
         if fn.has_body
-        and fn.visibility in ("external", "public")
+        and fn.visibility in allowed_vis
         and fn.name not in ("constructor", "receive", "fallback")
+        and not fn.name.lstrip("_").lower().startswith(("init", "initialize", "reinitialize"))
+        and not _FOUNDRY_TEST_FN_RE.match(fn.name)
         and fn.mutability not in ("view", "pure")
         and fn.body_masked.strip()
         and not _PURE_REVERT_BODY_RE.match(fn.body_masked)
     ]
+    if is_library:
+        # In libraries, keep only functions accepting a `storage` parameter, and exclude
+        # `_`-prefixed internal sub-helpers that are called by sibling functions in the same library.
+        called_within_lib = {c.callee_name for fn in raw_eligible for c in fn.calls if c.target_expr is None}
+        eligible = [
+            fn
+            for fn in raw_eligible
+            if _extract_storage_vars(fn)
+            and not (fn.visibility == "internal" and fn.name.startswith("_") and fn.name in called_within_lib)
+        ]
+    else:
+        eligible = raw_eligible
+
     if len(eligible) < 2:
         return []
 
@@ -1927,20 +2246,76 @@ def _detect_sibling_guard_asymmetry(
     direct_surfaces_cache: dict[int, tuple[set[str], set[str]]] = {}
     direct_ext_cache: dict[int, bool] = {}
     direct_user_scoped_cache: dict[int, bool] = {}
+    direct_uncond_sync_cache: dict[int, dict[str, str]] = {}
+    direct_any_sync_cache: dict[int, set[str]] = {}
+    direct_storage_vars_cache: dict[int, dict[str, str]] = {}
+
+    def _storage_mutated_surfaces(fn: SolFunctionFact, svars: Mapping[str, str]) -> set[str]:
+        out: set[str] = set()
+        if not svars:
+            return out
+        for vname, stype in svars.items():
+            if _is_storage_ref_mutated(fn.body_masked, vname):
+                out.add(f"storage:{stype}")
+        for call in fn.calls:
+            if not call.target_expr or not call.callee_name or call.callee_name[0].isupper():
+                continue
+            base = _extract_base_ident(call.target_expr)
+            if not base or base in _PURE_EXTERNAL_TARGETS or base in _TRANSFER_HELPER_LIBS:
+                continue
+            if base in svars:
+                if not _is_readonly_or_primitive_sync_method(
+                    call.callee_name, None, readonly_lib_methods, all_readonly_lib_methods
+                ):
+                    out.add(f"storage:{svars[base]}")
+            elif base[0].isupper() and call.arg_exprs:
+                arg0 = _extract_base_ident(call.arg_exprs[0])
+                if arg0 and arg0 in svars:
+                    if not _is_readonly_or_primitive_sync_method(
+                        call.callee_name, base, readonly_lib_methods, all_readonly_lib_methods
+                    ):
+                        out.add(f"storage:{svars[arg0]}")
+        return out
 
     def _ensure_direct(fn: SolFunctionFact) -> None:
         fid = id(fn)
         if fid in direct_guards_cache:
             return
+        svars = _extract_storage_vars(fn)
+        direct_storage_vars_cache[fid] = svars
         direct_guards_cache[fid] = _extract_direct_guards(
             fn, modifier_defs, zero_arg_view_helpers, custom_mod_inline_idents
         )
-        direct_surfaces_cache[fid] = _extract_direct_surfaces(fn, mutable_vars, all_vars)
+        prim, reent = _extract_direct_surfaces(fn, mutable_vars, all_vars)
+        if is_library:
+            prim |= _storage_mutated_surfaces(fn, svars)
+        direct_surfaces_cache[fid] = (prim, reent)
         direct_ext_cache[fid] = _is_external_call_in_fn(fn, all_vars, workspace_libraries)
         direct_user_scoped_cache[fid] = bool(_USER_SCOPED_RE.search(fn.body_masked))
+        uncond_calls = _extract_unconditional_calls(fn.body_masked)
+        direct_uncond_sync_cache[fid] = _extract_sync_steps(
+            uncond_calls,
+            svars,
+            mutable_vars,
+            all_vars,
+            mutating_internal_set,
+            readonly_lib_methods,
+            all_readonly_lib_methods,
+        )
+        all_sync = _extract_sync_steps(
+            fn.calls,
+            svars,
+            mutable_vars,
+            all_vars,
+            mutating_internal_set,
+            readonly_lib_methods,
+            all_readonly_lib_methods,
+        )
+        direct_any_sync_cache[fid] = set(all_sync.keys())
 
-    # Resolve effective guards (unconditional 2-hop delegation), surfaces (2-hop internal helpers), and ext calls
+    # Resolve effective guards, sync steps, surfaces (2-hop internal helpers), and ext calls
     eff_guards: dict[int, dict[str, str]] = {}
+    eff_any_sync: dict[int, set[str]] = {}
     eff_surfaces: dict[int, set[str]] = {}
     eff_reent_surfaces: dict[int, set[str]] = {}
     eff_ext_call: dict[int, bool] = {}
@@ -1949,11 +2324,14 @@ def _detect_sibling_guard_asymmetry(
     for fn in eligible:
         _ensure_direct(fn)
         guards = dict(direct_guards_cache[id(fn)])
+        for sk, sl in direct_uncond_sync_cache[id(fn)].items():
+            guards.setdefault(sk, sl)
+        any_sync = set(direct_any_sync_cache[id(fn)])
         prim, reent = set(direct_surfaces_cache[id(fn)][0]), set(direct_surfaces_cache[id(fn)][1])
         has_ext = direct_ext_cache[id(fn)]
         user_scoped = direct_user_scoped_cache[id(fn)]
 
-        # 1) Guard inheritance via unconditional intra-contract / inherited calls (depth <= 2)
+        # 1) Guard & unconditional sync inheritance via unconditional intra-contract / inherited calls (depth <= 2)
         g_visited: set[int] = {id(fn)}
         g_frontier: list[tuple[SolFunctionFact, int]] = [(fn, 0)]
         while g_frontier:
@@ -1968,9 +2346,12 @@ def _detect_sibling_guard_asymmetry(
                     _ensure_direct(cand)
                     for gk, gl in direct_guards_cache[id(cand)].items():
                         guards.setdefault(gk, gl)
+                    for sk, sl in direct_uncond_sync_cache[id(cand)].items():
+                        guards.setdefault(sk, sl)
+                    any_sync.update(direct_any_sync_cache[id(cand)])
                     g_frontier.append((cand, depth + 1))
 
-        # 2) Surface & external-call propagation via internal/private helpers (depth <= 2)
+        # 2) Surface, conditional-sync satisfaction & external-call propagation via internal/private helpers (depth <= 2)
         s_visited: set[int] = {id(fn)}
         s_frontier: list[tuple[SolFunctionFact, int]] = [(fn, 0)]
         while s_frontier:
@@ -1992,6 +2373,7 @@ def _detect_sibling_guard_asymmetry(
                     c_prim, c_reent = direct_surfaces_cache[id(cand)]
                     prim.update(c_prim)
                     reent.update(c_reent)
+                    any_sync.update(direct_any_sync_cache[id(cand)])
                     if direct_ext_cache[id(cand)]:
                         has_ext = True
                     if direct_user_scoped_cache[id(cand)]:
@@ -1999,6 +2381,7 @@ def _detect_sibling_guard_asymmetry(
                     s_frontier.append((cand, depth + 1))
 
         eff_guards[id(fn)] = guards
+        eff_any_sync[id(fn)] = any_sync
         eff_surfaces[id(fn)] = prim
         eff_reent_surfaces[id(fn)] = prim | reent
         eff_ext_call[id(fn)] = has_ext
@@ -2023,7 +2406,6 @@ def _detect_sibling_guard_asymmetry(
         if gkey == "reentrancy":
             if not eff_ext_call[id(fn)]:
                 return True
-            # Admin-only config/sweep function vs permissionless user flow is not a peer reentrancy omission
             if "caller_auth" in eff_guards[id(fn)] and guarded_peers:
                 if not any("caller_auth" in eff_guards[id(p)] for p in guarded_peers):
                     return True
@@ -2037,7 +2419,6 @@ def _detect_sibling_guard_asymmetry(
                 return True
             if low_name in {"transfer", "deposit", "lock", "repay", "fund", "donate"}:
                 return True
-            # Pure admin-config setters (`set*`/`add*`/`update*`) do not imply `caller_auth` on a non-setter protocol crank
             peers = list(guarded_peers)
             if peers and all(_CONFIG_SETTER_RE.match(p.name) for p in peers) and not _CONFIG_SETTER_RE.match(fn.name):
                 return True
@@ -2047,6 +2428,20 @@ def _detect_sibling_guard_asymmetry(
                 p.name and p.name.lower() in {d.lower() for d in _DEADLINE_IDENTS} for p in fn.params
             )
             return not (has_deadline_param or contract_has_deadline_state)
+        if gkey.startswith("sync:"):
+            # Satisfied if target calls the sync step even conditionally or via 2-hop helper
+            if gkey in eff_any_sync[id(fn)]:
+                return True
+            # If sync step is a simple intra-contract state-var helper whose mutated state vars are already
+            # directly written inline by target (e.g., `_updateLastTotalAssets` vs inline `lastTotalAssets = ...`), exempt.
+            if gkey.startswith("sync:self."):
+                hname = gkey.removeprefix("sync:self.")
+                h_vars = helper_mutated_state_vars.get(hname)
+                if h_vars and h_vars <= eff_surfaces[id(fn)]:
+                    return True
+            if _INIT_OR_CONFIG_EXEMPT_RE.match(fn.name.lstrip("_")):
+                return True
+            return False
         if gkey.startswith("mod:"):
             return bool(_EMERGENCY_OR_PAUSE_FN_RE.search(fn.name))
         if gkey.startswith("helper:"):
@@ -2071,8 +2466,9 @@ def _detect_sibling_guard_asymmetry(
     for fn in eligible:
         for s in eff_surfaces[id(fn)]:
             surface_groups.setdefault(s, []).append(fn)
-        for s in eff_reent_surfaces[id(fn)]:
-            reent_groups.setdefault(s, []).append(fn)
+        if not is_library:
+            for s in eff_reent_surfaces[id(fn)]:
+                reent_groups.setdefault(s, []).append(fn)
 
     def _eval_consensus_group(surface: str, group: list[SolFunctionFact], allowed_guards: set[str] | None) -> None:
         n = len(group)
@@ -2084,6 +2480,8 @@ def _detect_sibling_guard_asymmetry(
             for gkey, glabel in eff_guards[id(fn)].items():
                 if allowed_guards is not None and gkey not in allowed_guards:
                     continue
+                if is_library and not (gkey.startswith("sync:") or gkey in {"caller_auth", "not_paused", "deadline"}):
+                    continue
                 guard_members.setdefault(gkey, []).append(fn)
                 guard_labels.setdefault(gkey, glabel)
         for gkey, guarded in guard_members.items():
@@ -2091,7 +2489,6 @@ def _detect_sibling_guard_asymmetry(
                 continue
             guarded_ids = {id(f) for f in guarded}
             if gkey == "deadline":
-                # Parameter-scoped guard: only siblings that accept a deadline/expiry belong in the denominator
                 applicable = [f for f in group if id(f) in guarded_ids or not _is_exempt(f, gkey, guarded)]
                 denom = len(applicable)
                 if denom < 3 or len(guarded) * 3 < denom * 2:
@@ -2111,38 +2508,72 @@ def _detect_sibling_guard_asymmetry(
         if surf not in surface_groups:
             _eval_consensus_group(surf, grp, allowed_guards={"reentrancy"})
 
-    # Rule B: Matched risk-equivalent opposite pairs & same-verb variant/batch pairs
-    for i in range(len(eligible)):
-        fa = eligible[i]
-        for j in range(i + 1, len(eligible)):
-            fb = eligible[j]
-            rel = _pair_relation(fa.name, fb.name)
-            if rel is None:
-                continue
-            shared_prim = eff_surfaces[id(fa)] & eff_surfaces[id(fb)]
-            shared_reent = eff_reent_surfaces[id(fa)] & eff_reent_surfaces[id(fb)]
-            if not shared_prim and not shared_reent:
-                continue
-            ga = eff_guards[id(fa)]
-            gb = eff_guards[id(fb)]
-            for guarded_fn, target_fn, g_have, g_miss in ((fa, fb, ga, gb), (fb, fa, gb, ga)):
-                for gkey, glabel in g_have.items():
-                    if gkey in g_miss:
-                        continue
-                    if rel == "opposite":
-                        # On opposite pairs (deposit/withdraw, lock/unlock), only symmetric state-safety guards apply
-                        if not (gkey in {"reentrancy", "not_paused"} or gkey.startswith("mod:")):
+    # Rule B: Matched risk-equivalent opposite pairs & same-verb variant/batch pairs (contracts only)
+    if not is_library:
+        for i in range(len(eligible)):
+            fa = eligible[i]
+            for j in range(i + 1, len(eligible)):
+                fb = eligible[j]
+                rel = _pair_relation(fa.name, fb.name)
+                if rel is None:
+                    continue
+                shared_prim = eff_surfaces[id(fa)] & eff_surfaces[id(fb)]
+                shared_reent = eff_reent_surfaces[id(fa)] & eff_reent_surfaces[id(fb)]
+                if not shared_prim and not shared_reent:
+                    continue
+                ga = eff_guards[id(fa)]
+                gb = eff_guards[id(fb)]
+                for guarded_fn, target_fn, g_have, g_miss in ((fa, fb, ga, gb), (fb, fa, gb, ga)):
+                    for gkey, glabel in g_have.items():
+                        if gkey in g_miss:
                             continue
-                    else:
-                        # Same-verb variant/batch pair (withdraw/withdrawAll, mint/mintBatch)
-                        if gkey.startswith("helper:"):
+                        if gkey.startswith("sync:"):
                             continue
-                    shared = shared_reent if gkey == "reentrancy" else shared_prim
-                    if not shared:
+                        if rel == "opposite":
+                            if not (gkey in {"reentrancy", "not_paused"} or gkey.startswith("mod:")):
+                                continue
+                        else:
+                            if gkey.startswith("helper:"):
+                                continue
+                        shared = shared_reent if gkey == "reentrancy" else shared_prim
+                        if not shared:
+                            continue
+                        if _is_exempt(target_fn, gkey, (guarded_fn,)):
+                            continue
+                        _record_hit(target_fn, gkey, glabel, sorted(shared)[0], (guarded_fn.name,))
+
+        # Rule C: Versioned-flow sibling pairing (`<stem>` <-> `<stem>V2`/`<stem>_v2`/`<stem>2`, `<stem>V1` <-> `<stem>V2`)
+        by_vstem: dict[str, list[tuple[int, SolFunctionFact]]] = {}
+        for fn in eligible:
+            vstem, ver = _split_version_stem(fn.name)
+            by_vstem.setdefault(vstem, []).append((ver, fn))
+        for vstem, entries in sorted(by_vstem.items()):
+            versions = {v for v, _ in entries}
+            if len(versions) < 2:
+                continue
+            entries.sort(key=lambda pair: (pair[0], pair[1].start_line))
+            for idx_a in range(len(entries)):
+                ver_a, base_fn = entries[idx_a]
+                for idx_b in range(idx_a + 1, len(entries)):
+                    ver_b, newer_fn = entries[idx_b]
+                    if ver_a >= ver_b:
                         continue
-                    if _is_exempt(target_fn, gkey, (guarded_fn,)):
-                        continue
-                    _record_hit(target_fn, gkey, glabel, sorted(shared)[0], (guarded_fn.name,))
+                    g_base = eff_guards[id(base_fn)]
+                    g_new = eff_guards[id(newer_fn)]
+                    shared = eff_surfaces[id(base_fn)] & eff_surfaces[id(newer_fn)]
+                    surf_label = sorted(shared)[0] if shared else f"versioned sibling {base_fn.name}"
+                    for gkey, glabel in g_base.items():
+                        if gkey in g_new:
+                            continue
+                        if not (
+                            gkey in {"reentrancy", "not_paused", "caller_auth"}
+                            or gkey.startswith("mod:")
+                            or gkey.startswith("sync:")
+                        ):
+                            continue
+                        if _is_exempt(newer_fn, gkey, (base_fn,)):
+                            continue
+                        _record_hit(newer_fn, gkey, glabel, surf_label, (base_fn.name,))
 
     findings: list[Finding] = []
     for (fn_id, gkey), (fn, glabel, surfs, peers) in sorted(
@@ -2152,6 +2583,10 @@ def _detect_sibling_guard_asymmetry(
         if len(peers) > 3:
             peer_list += f" (+{len(peers) - 3})"
         surf_list = ", ".join(sorted({_surface_display(s) for s in surfs})[:2])
+        if gkey.startswith("sync:"):
+            ev_msg = f"omits state-sync call {glabel} invoked by sibling(s) {peer_list} on {surf_list}"
+        else:
+            ev_msg = f"missing {glabel} enforced by sibling(s) {peer_list} on {surf_list}"
         findings.append(
             Finding(
                 detector="sibling_guard_asymmetry",
@@ -2159,9 +2594,7 @@ def _detect_sibling_guard_asymmetry(
                 path=path,
                 start_line=fn.start_line,
                 end_line=fn.end_line,
-                evidence=(
-                    f"missing {glabel} enforced by sibling(s) {peer_list} on {surf_list}",
-                ),
+                evidence=(ev_msg,),
                 resolution_source="static_ast",
                 confidence="high",
             )
@@ -2176,13 +2609,22 @@ def audit_solidity_workspace(files: Mapping[str, str]) -> list[Finding]:
     }
     contracts_by_name: dict[str, list[SolContractFact]] = {}
     workspace_libraries: set[str] = set()
+    readonly_lib_methods_mut: dict[str, set[str]] = {}
+    all_readonly_methods: set[str] = set()
     for f in parsed.values():
         for c in f.contracts:
             contracts_by_name.setdefault(c.name, []).append(c)
             if c.kind == "library":
                 workspace_libraries.add(c.name)
+                ro_set = readonly_lib_methods_mut.setdefault(c.name, set())
+                for fn in c.functions:
+                    if fn.mutability in ("view", "pure"):
+                        ro_set.add(fn.name)
+                        all_readonly_methods.add(fn.name)
     descendants = _collect_inheritance_descendants(contracts_by_name)
     lib_set = frozenset(workspace_libraries)
+    readonly_lib_map = {k: frozenset(v) for k, v in readonly_lib_methods_mut.items()}
+    all_readonly_set = frozenset(all_readonly_methods)
 
     findings: list[Finding] = []
     for path, f_facts in parsed.items():
@@ -2195,7 +2637,15 @@ def audit_solidity_workspace(files: Mapping[str, str]) -> list[Finding]:
                 findings.extend(_detect_unused_params(path, contract, fn, ancestor_fns, raw_lines))
             findings.extend(_detect_wrapper_and_override_drops(path, contract, ancestor_fns))
             findings.extend(
-                _detect_sibling_guard_asymmetry(path, contract, contracts_by_name, ancestor_fns, lib_set)
+                _detect_sibling_guard_asymmetry(
+                    path,
+                    contract,
+                    contracts_by_name,
+                    ancestor_fns,
+                    lib_set,
+                    readonly_lib_map,
+                    all_readonly_set,
+                )
             )
     return findings
 
