@@ -63,6 +63,7 @@ from .review import (
 )
 from .session import DeltaSession
 from .solidity import analyze_solidity_delta, audit_solidity_workspace
+from .solidity_fork import analyze_solidity_fork_diff
 from .stubs import parse_stub_tree
 
 _SKIP_DIRS = {"__pycache__", "venv", ".venv", "build", "dist", "node_modules"}
@@ -799,6 +800,40 @@ def _run_audit_solidity(
     return 0
 
 
+def _run_fork_diff(
+    upstream_path: Path,
+    fork_path: Path,
+    max_bytes: int | None,
+    output_format: str,
+    fail_on_findings: bool,
+) -> int:
+    t0 = time.perf_counter()
+    upstream_files = _load_solidity_sources(upstream_path)
+    fork_files = _load_solidity_sources(fork_path)
+    include_non_prod = upstream_path.is_file() and fork_path.is_file()
+    findings, summary = analyze_solidity_fork_diff(
+        upstream_files, fork_files, include_non_prod=include_non_prod
+    )
+    ranked = tuple(rank_findings(findings))
+    advisory_budget = 250 if max_bytes is None else max_bytes
+    advisory = format_advisory(ranked, max_bytes=advisory_budget) if ranked else ""
+    wall_ms = round((time.perf_counter() - t0) * 1000.0, 3)
+    payload: dict[str, Any] = {
+        "mode": "solidity-fork-diff",
+        "upstream_path": str(upstream_path),
+        "fork_path": str(fork_path),
+        "advisory_text": advisory,
+        "advisory_utf8_bytes": len(advisory.encode("utf-8")),
+        "wall_ms": wall_ms,
+        "findings": [_finding_json(f) for f in ranked],
+        **summary,
+    }
+    _emit_cli_output(output_format, payload, advisory, [])
+    if fail_on_findings and ranked:
+        return 1
+    return 0
+
+
 def _run_pair_delta(
     before_path: Path,
     after_path: Path,
@@ -807,6 +842,16 @@ def _run_pair_delta(
     fail_on_findings: bool,
     enable: Iterable[str] = (),
 ) -> int:
+    if before_path.is_dir() != after_path.is_dir():
+        raise AnalysisError("--before and --after must either both be files or both be directories.")
+    if before_path.is_dir() and after_path.is_dir():
+        return _run_fork_diff(
+            upstream_path=before_path,
+            fork_path=after_path,
+            max_bytes=max_bytes,
+            output_format=output_format,
+            fail_on_findings=fail_on_findings,
+        )
     t0 = time.perf_counter()
     rel = after_path.name
     before_text = _decode_source(before_path.name, before_path.read_bytes())
@@ -1066,8 +1111,19 @@ def main_cli(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Scan Solidity (.sol) files under --root (directory or single file) for structural contract defects",
     )
-    parser.add_argument("--before", type=Path, default=None, help="Before-change source file for pair delta comparison (.sol or .py)")
-    parser.add_argument("--after", type=Path, default=None, help="After-change source file for pair delta comparison (.sol or .py)")
+    parser.add_argument(
+        "--fork-diff",
+        action="store_true",
+        help="Compare fork Solidity tree (--root) against upstream Solidity tree (--upstream) for invariant regressions",
+    )
+    parser.add_argument(
+        "--upstream",
+        type=Path,
+        default=None,
+        help="Upstream Solidity directory or .sol file for --fork-diff comparison",
+    )
+    parser.add_argument("--before", type=Path, default=None, help="Before-change source file or directory for pair delta comparison (.sol or .py)")
+    parser.add_argument("--after", type=Path, default=None, help="After-change source file or directory for pair delta comparison (.sol or .py)")
     parser.add_argument(
         "--run-pytest",
         action="store_true",
@@ -1168,6 +1224,10 @@ def main_cli(argv: list[str] | None = None) -> int:
         parser.error("--open needs --ledger.")
     if (args.before is None) != (args.after is None):
         parser.error("--before and --after must be passed together.")
+    if args.fork_diff and args.upstream is None:
+        parser.error("--fork-diff requires --upstream.")
+    if args.upstream is not None and not args.fork_diff:
+        parser.error("--upstream requires --fork-diff.")
     if args.ledger is not None and not (args.check_git or args.check_merge or args.run_pytest):
         parser.error("--ledger applies to --check-git, --check-merge, and --run-pytest.")
     if not (
@@ -1176,12 +1236,13 @@ def main_cli(argv: list[str] | None = None) -> int:
         or args.run_pytest
         or args.audit_repo
         or args.audit_solidity
+        or args.fork_diff
         or (args.before is not None and args.after is not None)
         or (args.write_path and args.candidate_file is not None)
     ):
         parser.error(
             "Either pass --check-git, --check-merge, --run-pytest, --audit-repo, --audit-solidity, "
-            "--before/--after, or both --write-path and --candidate-file."
+            "--fork-diff, --before/--after, or both --write-path and --candidate-file."
         )
 
     try:
@@ -1196,6 +1257,19 @@ def main_cli(argv: list[str] | None = None) -> int:
             )
 
         root = args.root.resolve()
+        if args.fork_diff:
+            upstream_resolved = args.upstream.resolve()
+            if not upstream_resolved.exists():
+                raise AnalysisError(f"Upstream Solidity target does not exist: {upstream_resolved}")
+            if not root.exists():
+                raise AnalysisError(f"Fork Solidity target does not exist: {root}")
+            return _run_fork_diff(
+                upstream_path=upstream_resolved,
+                fork_path=root,
+                max_bytes=args.max_bytes,
+                output_format=output_format,
+                fail_on_findings=args.fail_on_findings,
+            )
         if args.audit_solidity:
             if not root.exists():
                 raise AnalysisError(f"Solidity audit target does not exist: {root}")

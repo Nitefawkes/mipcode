@@ -37,6 +37,7 @@ from .monitoring import (
 from .resolve import MutableResolutionIndex
 from .session import DeltaSession
 from .solidity import analyze_solidity_delta, audit_solidity_workspace, parse_solidity_file
+from .solidity_fork import analyze_solidity_fork_diff
 from .stubs import TypeCandidateIndex, parse_stub_tree
 
 
@@ -86,6 +87,7 @@ __all__ = [
     "analyze_changed_files_in_index",
     "analyze_delta",
     "analyze_solidity_delta",
+    "analyze_solidity_fork_diff",
     "audit_index",
     "audit_solidity_workspace",
     "audit_workspace",
