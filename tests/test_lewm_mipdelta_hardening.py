@@ -92,6 +92,8 @@ def test_path_tier_demotes_foundry_tests_mocks_and_test_directories():
     assert _path_tier("src/vault/Vault.sol") == 0
     assert _path_tier("pkg/client.py") == 0
     assert _path_tier("contracts/Testimonial.sol") == 0
+    assert _path_tier("programs/marginfi/src/lib.rs") == 0
+    assert _path_tier("src/hammock/pool.rs") == 0
 
     # Solidity non-production conventions (all tier 1+)
     for sol_path in (
@@ -109,8 +111,8 @@ def test_path_tier_demotes_foundry_tests_mocks_and_test_directories():
     ):
         assert _path_tier(sol_path) >= 1, f"expected non-production tier for {sol_path}"
 
-    # Python non-production conventions (all tier 1+)
-    for py_path in (
+    # Python & Rust/Anchor non-production conventions (all tier 1+)
+    for non_prod in (
         "tests/helpers.py",
         "test/helpers.py",
         "mock/client.py",
@@ -121,8 +123,13 @@ def test_path_tier_demotes_foundry_tests_mocks_and_test_directories():
         "pkg/auth_test.py",
         "pkg/mock_auth.py",
         "pkg/auth_mock.py",
+        "programs/drift-mocks/src/lib.rs",
+        "programs/kamino_mocks/src/lib.rs",
+        "programs/mock-oracle/src/lib.rs",
+        "programs/foo_mock.rs",
+        "programs/marginfi/tests.rs",
     ):
-        assert _path_tier(py_path) >= 1, f"expected non-production tier for {py_path}"
+        assert _path_tier(non_prod) >= 1, f"expected non-production tier for {non_prod}"
 
 
 def test_format_advisory_ten_plus_distinct_sites_stay_under_250b_without_mid_token_truncation():

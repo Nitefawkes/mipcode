@@ -761,19 +761,44 @@ def _resolve_handler_text(struct: AnchorAccountsStruct, parsed_files: Mapping[st
     return "\n".join(chunks)
 
 
+_FLAG_PAUSED_RE = re.compile(r"(?:^|[^A-Za-z0-9]|_)paused(?:$|[^A-Za-z0-9]|_)", re.IGNORECASE)
+_FLAG_LIQUIDATING_RE = re.compile(
+    r"(?:^|[^A-Za-z0-9]|_)(?:liquidating|in_liquidation)(?:$|[^A-Za-z0-9]|_)", re.IGNORECASE
+)
+_FLAG_FROZEN_RE = re.compile(
+    r"(?:^|[^A-Za-z0-9]|_)(?:frozen|disabled|is_active)(?:$|[^A-Za-z0-9]|_)", re.IGNORECASE
+)
+_OPT_SOME_KEY_RE = re.compile(
+    r"(?:Option\s*::\s*)?Some\s*\(\s*&?\s*(\$SELF|[A-Za-z_][A-Za-z0-9_]*)\s*\.\s*key\s*\(\s*\)\s*\)"
+)
+_OPT_MAP_CLOSURE_KEY_RE = re.compile(
+    r"(\$SELF|[A-Za-z_][A-Za-z0-9_]*)\s*(?:\.\s*as_ref\s*\(\s*\))?\s*\.\s*map\s*\(\s*\|\s*([A-Za-z_][A-Za-z0-9_]*)\s*\|\s*&?\s*\2\s*\.\s*key\s*\(\s*\)\s*\)"
+)
+_OPT_MAP_FN_KEY_RE = re.compile(
+    r"(\$SELF|[A-Za-z_][A-Za-z0-9_]*)\s*(?:\.\s*as_ref\s*\(\s*\))?\s*\.\s*map\s*\(\s*(?:anchor_lang\s*::\s*prelude\s*::\s*)?Key\s*::\s*key\s*\)"
+)
+
+
+def _normalize_opt_key_expr(text: str) -> str:
+    out = _OPT_SOME_KEY_RE.sub(r"$OPTKEY(\1)", text)
+    out = _OPT_MAP_CLOSURE_KEY_RE.sub(r"$OPTKEY(\1)", out)
+    out = _OPT_MAP_FN_KEY_RE.sub(r"$OPTKEY(\1)", out)
+    return re.sub(r"\s+", "", out)
+
+
 def _normalize_constraint_expr(expr: str, self_var: str) -> str:
     replaced = re.sub(rf"\b{re.escape(self_var)}\b", "$SELF", expr)
-    return re.sub(r"\s+", "", replaced)
+    return _normalize_opt_key_expr(replaced)
 
 
 def _extract_canonical_flag_guards(texts: Iterable[str]) -> dict[str, str]:
     joined = "\n".join(texts)
     out: dict[str, str] = {}
-    if re.search(r"\b(?:is_paused|paused)\b", joined, re.IGNORECASE):
+    if _FLAG_PAUSED_RE.search(joined):
         out["cond:not_paused"] = "not-paused guard"
-    if re.search(r"\b(?:is_liquidating|liquidating|in_liquidation)\b", joined, re.IGNORECASE):
+    if _FLAG_LIQUIDATING_RE.search(joined):
         out["cond:not_liquidating"] = "not-liquidating guard"
-    if re.search(r"\b(?:is_frozen|frozen|is_disabled|disabled|is_active)\b", joined, re.IGNORECASE):
+    if _FLAG_FROZEN_RE.search(joined):
         out["cond:not_frozen"] = "not-frozen/active guard"
     return out
 
@@ -979,13 +1004,13 @@ def _audit_program_structs(
             preds: dict[str, tuple[str, tuple[str, ...]]] = {}
             for f_t in all_tfs:
                 for expr in f_t.constraints:
-                    if re.search(r"\b(?:paused|is_paused|liquidating|is_liquidating|frozen|is_frozen|is_active)\b", expr, re.IGNORECASE):
+                    if _extract_canonical_flag_guards((expr,)):
                         continue
                     norm_e = _normalize_constraint_expr(expr, f_t.name)
                     if len(norm_e) < 6:
                         continue
                     partner_fields = tuple(
-                        sorted(tok for tok in _IDENT_RE.findall(expr) if tok in fmap and tok != f_t.name)
+                        sorted(tok for tok in _IDENT_RE.findall(norm_e) if tok in fmap and tok != f_t.name)
                     )
                     if not partner_fields:
                         continue
@@ -1027,9 +1052,9 @@ def _audit_program_structs(
                 htext = handler_by_struct[id(s)]
                 if not htext:
                     return False
-                norm_h = re.sub(r"\s+", "", htext)
+                norm_h = _normalize_opt_key_expr(htext)
                 return any(
-                    pkey[len("cond:pred:") :].replace("$SELF.", f"{f_t.name}.") in norm_h
+                    pkey[len("cond:pred:") :].replace("$SELF.", f"{f_t.name}.").replace("$OPTKEY($SELF)", f"$OPTKEY({f_t.name})") in norm_h
                     for f_t in occs_by_s[id(s)]
                 )
 

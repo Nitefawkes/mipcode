@@ -450,3 +450,102 @@ pub struct CalculateReward<'info> { #[account(mut)] pub st: Account<'info, Item>
     assert [(f.symbol, f.evidence[0].startswith("missing constraint `cfg.active_vault()")) for f in findings] == [
         ("WithdrawFromVaultBox", True)
     ]
+
+
+def test_mechanical_polish_mock_crates_bitflags_and_option_key_normalization():
+    prod_src = """
+use anchor_lang::prelude::*;
+
+// Multi-line block constraint checking ACCOUNT_FROZEN + IS_PAUSED + FLAG_LIQUIDATING
+#[derive(Accounts)]
+pub struct FlashStart<'info> {
+    #[account(
+        mut,
+        has_one = authority,
+        constraint = {
+            let acc = user_acc.load()?;
+            !acc.get_flag(ACCOUNT_FROZEN)
+                && !acc.get_flag(IS_PAUSED)
+                && !acc.get_flag(FLAG_LIQUIDATING)
+        } @Err::Bad,
+        constraint = order.load()?.escrow == Some(escrow.key()),
+    )]
+    pub user_acc: AccountLoader<'info, UserAcc>,
+    #[account(mut)]
+    pub order: AccountLoader<'info, OrdAcc>,
+    pub escrow: Option<InterfaceAccount<'info, TokenAccount>>,
+    pub authority: Signer<'info>,
+}
+
+// Sibling uses helper `account_not_frozen_for_authority`, `paused`, `is_liquidating`, and `.as_ref().map(|a| a.key())` -> ZERO FPs
+#[derive(Accounts)]
+pub struct FlashEnd<'info> {
+    #[account(
+        mut,
+        has_one = authority,
+        constraint = {
+            let a = user_acc.load()?;
+            account_not_frozen_for_authority(&a, authority.key()) && !a.paused && !a.is_liquidating
+        },
+        constraint = order.load()?.escrow == escrow.as_ref().map(|a| a.key()),
+    )]
+    pub user_acc: AccountLoader<'info, UserAcc>,
+    #[account(mut)]
+    pub order: AccountLoader<'info, OrdAcc>,
+    pub escrow: Option<InterfaceAccount<'info, TokenAccount>>,
+    pub authority: Signer<'info>,
+}
+
+// Third sibling uses Option::Some / .map(|x| x.key()) + Key::key equivalent and `paused` -> ZERO FPs
+#[derive(Accounts)]
+pub struct FlashSettle<'info> {
+    #[account(
+        mut,
+        has_one = authority,
+        constraint = !user_acc.load()?.is_frozen && !user_acc.load()?.paused && !user_acc.load()?.liquidating,
+        constraint = order.load()?.escrow == Option::Some(escrow.key()),
+    )]
+    pub user_acc: AccountLoader<'info, UserAcc>,
+    #[account(mut)]
+    pub order: AccountLoader<'info, OrdAcc>,
+    pub escrow: Option<InterfaceAccount<'info, TokenAccount>>,
+    pub authority: Signer<'info>,
+}
+
+// Fourth sibling uses `.map(Key::key)` and all flags EXCEPT freeze guard, AND omits `has_one = authority` -> flagged for BOTH
+#[derive(Accounts)]
+pub struct BadSibling<'info> {
+    #[account(
+        mut,
+        constraint = !user_acc.load()?.paused && !user_acc.load()?.liquidating,
+        constraint = order.load()?.escrow == escrow.as_ref().map(Key::key),
+    )]
+    pub user_acc: AccountLoader<'info, UserAcc>,
+    #[account(mut)]
+    pub order: AccountLoader<'info, OrdAcc>,
+    pub escrow: Option<InterfaceAccount<'info, TokenAccount>>,
+    pub authority: Signer<'info>,
+}
+"""
+    mock_crate_src = """
+use anchor_lang::prelude::*;
+#[derive(Accounts)]
+pub struct MockA<'info> { #[account(mut, has_one = owner)] pub m: Account<'info, MockSt>, pub owner: Signer<'info> }
+#[derive(Accounts)]
+pub struct MockB<'info> { #[account(mut, has_one = owner)] pub m: Account<'info, MockSt>, pub owner: Signer<'info> }
+#[derive(Accounts)]
+pub struct MockBad<'info> { #[account(mut)] pub m: Account<'info, MockSt>, pub owner: Signer<'info> }
+"""
+    findings = audit_anchor_workspace(
+        {
+            "programs/marginfi/src/flash.rs": prod_src,
+            "programs/drift-mocks/src/lib.rs": mock_crate_src,
+            "programs/kamino_mocks/src/lib.rs": mock_crate_src,
+        }
+    )
+    by_sym_ev = [(f.symbol, f.evidence[0]) for f in findings]
+    assert all(sym == "BadSibling" for sym, _ in by_sym_ev), by_sym_ev
+    assert any("has_one = authority" in ev for _, ev in by_sym_ev)
+    assert any("not-frozen/active guard" in ev for _, ev in by_sym_ev)
+    assert not any("escrow" in ev for _, ev in by_sym_ev), by_sym_ev
+    assert not any("MockBad" in sym for sym, _ in by_sym_ev), by_sym_ev

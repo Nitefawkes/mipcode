@@ -117,6 +117,14 @@ def _is_test_path(path: str) -> bool:
     )
 
 
+def _is_mock_dir(segment: str) -> bool:
+    return (
+        segment in {"mock", "mocks"}
+        or segment.endswith(("-mock", "-mocks", "_mock", "_mocks"))
+        or segment.startswith(("mock-", "mocks-", "mock_", "mocks_"))
+    )
+
+
 def _path_tier(path: str) -> int:
     """Risk tier for a path: 0 = production source, 1 = docs/examples/scripts/mocks, 2 = tests."""
     if _is_test_path(path):
@@ -127,13 +135,16 @@ def _path_tier(path: str) -> int:
     leaf = parts[-1]
     if (
         parts[0] in _SUPPORT_DIRS
-        or any(p in _SUPPORT_DIRS for p in parts[:-1])
+        or (len(parts) > 1 and any(p in _SUPPORT_DIRS or _is_mock_dir(p) for p in parts[:-1]))
+        or (len(parts) == 1 and _is_mock_dir(parts[0]))
         or leaf in {"tasks.py", "mocks.py"}
         or leaf.endswith(".s.sol")
         or leaf.endswith("mock.sol")
         or leaf.startswith("mock_")
         or leaf.endswith("_mock.py")
         or leaf.endswith("_mocks.py")
+        or leaf.endswith("_mock.rs")
+        or leaf.endswith("_mocks.rs")
     ):
         return 1
     return 0
