@@ -13,6 +13,7 @@ from dataclasses import dataclass
 from hashlib import sha1
 from typing import Any, Callable, Iterable, Mapping
 
+from .delta import finding_rank_key
 from .model import FileFacts, Finding
 
 _PROVENANCE_TAG = {
@@ -21,6 +22,8 @@ _PROVENANCE_TAG = {
     "static_type_candidate": "type-cand",
 }
 
+STALLED_WRITE_THRESHOLD = 3
+
 
 @dataclass(frozen=True)
 class Obligation:
@@ -28,6 +31,7 @@ class Obligation:
     anchor: str
     finding: Finding
     waived: str | None = None
+    reopen_count: int = 0
 
 
 @dataclass(frozen=True)
@@ -35,6 +39,9 @@ class LedgerUpdate:
     opened: tuple[Obligation, ...]
     discharged: tuple[Obligation, ...]
     open: tuple[Obligation, ...]
+    reopened: tuple[Obligation, ...] = ()
+    stalled_writes: int = 0
+    thrashing: bool = False
 
 
 def enclosing_function(facts: FileFacts | None, line: int) -> str:
@@ -83,19 +90,26 @@ def _finding_from_dict(row: Mapping[str, Any]) -> Finding:
 
 
 class ObligationLedger:
-    """Tracks which findings are new, still open, discharged, or waived."""
+    """Tracks which findings are new, still open, discharged, waived, or oscillating."""
 
     def __init__(self) -> None:
         self._open: dict[str, Obligation] = {}
         self._waived: dict[str, str] = {}
         self._reported_at_stop: set[str] = set()
+        self._ever_discharged: set[str] = set()
+        self._reopen_counts: dict[str, int] = {}
+        self._stalled_writes: int = 0
+        self._last_touched_path: str | None = None
 
     def update(
         self,
         findings: Iterable[Finding],
         anchor_for: Callable[[Finding], str] = lambda finding: "",
+        *,
+        edited_path: str | None = None,
     ) -> LedgerUpdate:
         """Replace the open set with the current findings and report what changed."""
+        prev_open_count = sum(1 for item in self._open.values() if item.waived is None)
         groups: dict[tuple[str, str, str, str], list[Finding]] = {}
         for finding in findings:
             anchor = anchor_for(finding)
@@ -105,24 +119,57 @@ class ObligationLedger:
             # Several identical sites in one function are told apart by their order.
             for ordinal, finding in enumerate(sorted(rows, key=lambda row: (row.start_line, row.end_line))):
                 identifier = _obligation_id(finding, anchor, ordinal)
-                current.setdefault(
-                    identifier, Obligation(identifier, anchor, finding, self._waived.get(identifier))
-                )
+                if identifier in current:
+                    continue
+                waived = self._waived.get(identifier)
+                reopen_count = self._reopen_counts.get(identifier, 0)
+                if identifier not in self._open and waived is None and identifier in self._ever_discharged:
+                    reopen_count += 1
+                    self._reopen_counts[identifier] = reopen_count
+                current[identifier] = Obligation(identifier, anchor, finding, waived, reopen_count)
         opened = tuple(
             item for key, item in current.items() if key not in self._open and item.waived is None
         )
         discharged = tuple(
             item for key, item in self._open.items() if key not in current and item.waived is None
         )
+        for item in discharged:
+            self._ever_discharged.add(item.id)
+        reopened = tuple(item for item in opened if item.reopen_count >= 1)
+
         self._open = current
         self._reported_at_stop &= set(current)
-        return LedgerUpdate(opened, discharged, self.open())
+        now_open = self.open()
+        now_open_count = len(now_open)
+
+        if now_open_count == 0 or prev_open_count == 0:
+            self._stalled_writes = 0
+            self._last_touched_path = edited_path if (now_open_count > 0 and edited_path) else None
+        elif edited_path:
+            if discharged or now_open_count < prev_open_count:
+                self._stalled_writes = 0
+                self._last_touched_path = edited_path
+            elif edited_path == self._last_touched_path:
+                self._stalled_writes += 1
+            else:
+                self._stalled_writes = 1
+                self._last_touched_path = edited_path
+
+        thrashing = bool(reopened) or (now_open_count > 0 and self._stalled_writes >= STALLED_WRITE_THRESHOLD)
+        return LedgerUpdate(
+            opened,
+            discharged,
+            now_open,
+            reopened=reopened,
+            stalled_writes=self._stalled_writes,
+            thrashing=thrashing,
+        )
 
     def open(self) -> tuple[Obligation, ...]:
         return tuple(
             sorted(
                 (item for item in self._open.values() if item.waived is None),
-                key=lambda item: (item.finding.path, item.finding.start_line, item.finding.detector, item.id),
+                key=lambda item: (*finding_rank_key(item.finding), item.id),
             )
         )
 
@@ -136,7 +183,7 @@ class ObligationLedger:
             return False
         note = reason or "waived"
         self._waived[identifier] = note
-        self._open[identifier] = Obligation(item.id, item.anchor, item.finding, note)
+        self._open[identifier] = Obligation(item.id, item.anchor, item.finding, note, item.reopen_count)
         return True
 
     def unreported_at_stop(self) -> tuple[Obligation, ...]:
@@ -147,7 +194,7 @@ class ObligationLedger:
         self._reported_at_stop.update(item.id for item in obligations)
 
     def to_dict(self) -> dict[str, Any]:
-        return {
+        payload: dict[str, Any] = {
             "schema": "mipdelta.ledger.v1",
             "open": [
                 {"id": item.id, "anchor": item.anchor, "finding": _finding_to_dict(item.finding)}
@@ -156,6 +203,15 @@ class ObligationLedger:
             "waived": dict(sorted(self._waived.items())),
             "reported_at_stop": sorted(self._reported_at_stop),
         }
+        if self._ever_discharged:
+            payload["ever_discharged"] = sorted(self._ever_discharged)
+        if self._reopen_counts:
+            payload["reopen_counts"] = dict(sorted(self._reopen_counts.items()))
+        if self._stalled_writes > 0:
+            payload["stalled_writes"] = self._stalled_writes
+        if self._last_touched_path:
+            payload["last_touched_path"] = self._last_touched_path
+        return payload
 
     @classmethod
     def from_dict(cls, data: Mapping[str, Any]) -> "ObligationLedger":
@@ -163,6 +219,14 @@ class ObligationLedger:
         if data.get("schema") != "mipdelta.ledger.v1":
             return ledger
         ledger._waived = {str(key): str(value) for key, value in dict(data.get("waived", {})).items()}
+        ledger._ever_discharged = {str(item) for item in data.get("ever_discharged", ())}
+        ledger._reopen_counts = {
+            str(key): max(0, int(value))
+            for key, value in dict(data.get("reopen_counts", {})).items()
+        }
+        ledger._stalled_writes = max(0, int(data.get("stalled_writes", 0) or 0))
+        last_path = data.get("last_touched_path")
+        ledger._last_touched_path = str(last_path) if isinstance(last_path, str) and last_path else None
         for row in data.get("open", ()):
             identifier = str(row["id"])
             ledger._open[identifier] = Obligation(
@@ -170,6 +234,7 @@ class ObligationLedger:
                 str(row.get("anchor", "")),
                 _finding_from_dict(row["finding"]),
                 ledger._waived.get(identifier),
+                ledger._reopen_counts.get(identifier, 0),
             )
         ledger._reported_at_stop = {str(item) for item in data.get("reported_at_stop", ())} & set(ledger._open)
         return ledger
@@ -191,6 +256,53 @@ def format_open_obligations(
         finding = item.finding
         tag = _PROVENANCE_TAG.get(finding.resolution_source, "cand")
         text = f"{finding.path}:{finding.start_line} {finding.detector}[{tag}] {finding.symbol}"
+        if show_ids:
+            text += f" #{item.id}"
+        rest = rows[index + 1:]
+        tail = _rollup(rest)
+        candidate = header + " " + "; ".join([*items, text]) + tail
+        if len(candidate.encode("utf-8")) > max_bytes and items:
+            break
+        items.append(text)
+    out = header + " " + "; ".join(items) + _rollup(rows[len(items):])
+    if len(out.encode("utf-8")) > max_bytes:
+        out = out.encode("utf-8")[: max(0, max_bytes - 3)].decode("utf-8", errors="ignore") + "..."
+    return out
+
+
+def format_thrash_advisory(
+    update: LedgerUpdate,
+    *,
+    edited_path: str | None = None,
+    max_bytes: int = 600,
+    show_ids: bool = False,
+) -> str:
+    """Format a widened advisory when obligations oscillate or consecutive writes stall."""
+    if not update.thrashing or not update.open:
+        return ""
+    if update.reopened:
+        max_reopen = max(item.reopen_count for item in update.reopened)
+        lead = update.reopened[0]
+        scope = lead.anchor or lead.finding.symbol
+        header = (
+            f"[mip-delta:thrash] oscillating (reopened {max_reopen}x in {scope}); "
+            f"{len(update.open)} open:"
+        )
+        reopened_ids = {item.id for item in update.reopened}
+        rows = [*update.reopened, *(item for item in update.open if item.id not in reopened_ids)]
+    else:
+        target = edited_path or "file"
+        header = (
+            f"[mip-delta:thrash] stalled ({update.stalled_writes} writes to {target} without reducing "
+            f"{len(update.open)} open):"
+        )
+        rows = list(update.open)
+    items: list[str] = []
+    for index, item in enumerate(rows):
+        finding = item.finding
+        tag = _PROVENANCE_TAG.get(finding.resolution_source, "cand")
+        anchor_note = f" in {item.anchor}" if item.anchor and item.anchor != finding.symbol else ""
+        text = f"{finding.path}:{finding.start_line} {finding.detector}[{tag}] {finding.symbol}{anchor_note}"
         if show_ids:
             text += f" #{item.id}"
         rest = rows[index + 1:]

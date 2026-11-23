@@ -21,6 +21,7 @@ from pathlib import Path
 from typing import Any, Callable, Iterable, Mapping
 
 from .cache import FactCache
+from .delta import rank_findings
 from .ledger import enclosing_function
 from .model import Finding, FunctionFact
 
@@ -29,16 +30,18 @@ DEFAULT_CLI_MODEL = "haiku"
 MAX_DIFF_CHARS = 45_000
 MAX_UNIQUE_SITES = 12
 MAX_SNIPPETS = 8
+MAX_CALLEE_SNIPPETS = 2
 MAX_SNIPPET_LINES = 100
 MAX_SNIPPET_CHARS = 3_200
 
 REVIEW_SYSTEM_PROMPT = """You are a strict, concise Stage-2 triage reviewer for `mip-delta`, a Python cross-file contract checker.
 Stage 1 flagged candidate cross-file or contract issues (unused newly added parameter, unforwarded optional parameter in a delegating wrapper, dead `self.<param>` attribute store, subclass/base override mismatch, removed callable still referenced, async/coroutine or return-arity mismatch at caller, or newly raised exception not caught by caller).
-Given the commit/edit summary, changed test filenames, production `.py` diff, Stage-1 advisories, and post-change code snippets at the flagged sites, classify into ONE verdict:
+Given the commit/edit summary, canonical structural delta (deterministic AST ground truth when present), changed test filenames, production `.py` diff, Stage-1 advisories, and post-change code snippets at the flagged sites, classify into ONE verdict:
 - `confirm_omission`: concrete evidence in the diff and snippets shows a real bug, missing caller/override update, unforwarded option across sibling wrappers, dead newly-added parameter/store, unhandled runtime break, or broken async call (unawaited, dropped, or execution-timing-shifted, e.g., eager-to-deferred coroutine/async execution).
 - `review_worthy`: ambiguous contract seam with real risk (including uncertain execution-timing shifts, async coroutine deferral, or cross-file behavioral risk) that warrants a developer's quick look even if it might turn out intentional.
 - `suppress_false_alarm`: Stage-1 alert is clearly benign, intentional, name-shadowed, dynamically handled (`*args`/`**kwargs`/`locals()`), compat-preserved, or otherwise false.
 
+Treat the deterministic `CANONICAL STRUCTURAL DELTA` and actual code diff/snippets as ground truth over any commit subject or author summary claim.
 Treat a newly async target whose calls changed from eager execution to deferred storage/teardown awaiting as at least `review_worthy` (or `confirm_omission` if batch/callback timing visibly regresses), never as benign merely because the coroutine is awaited later.
 Also check carefully for common static-AST false positives before confirming:
 - Local variable shadowing or unrelated same-named symbol in a different class/scope.
@@ -154,7 +157,10 @@ def _extract_snippet(
         span_start, span_end = max(1, line - 20), line + 20
     code = _numbered_slice(text, span_start, span_end)
     if len(code) > MAX_SNIPPET_CHARS:
-        code = code[:MAX_SNIPPET_CHARS] + "\n... [snippet truncated]"
+        if from_top:
+            code = code[:MAX_SNIPPET_CHARS] + "\n... [snippet truncated]"
+        else:
+            code = _trim_code_around_focus(code, span_start, line, MAX_SNIPPET_CHARS)
     return {
         "path": path,
         "anchor": fn_key or f"<module:{line}>",
@@ -165,7 +171,56 @@ def _extract_snippet(
     }
 
 
+def _trim_code_around_focus(code: str, span_start: int, focus_line: int, max_chars: int) -> str:
+    """Trim an oversized numbered snippet symmetrically around `focus_line` so the flagged line is never clipped."""
+    lines = code.splitlines()
+    if not lines:
+        return code[:max_chars]
+    focus_idx = max(0, min(len(lines) - 1, focus_line - span_start))
+    prefix_note = "... [leading lines omitted]\n"
+    suffix_note = "\n... [snippet truncated]"
+    budget = max(80, max_chars - len(prefix_note) - len(suffix_note))
+
+    lo = focus_idx
+    hi = focus_idx
+    focus_text = lines[focus_idx]
+    if len(focus_text) > budget:
+        focus_text = focus_text[:budget]
+    used = len(focus_text)
+    selected_focus = [focus_text]
+
+    before: list[str] = []
+    after: list[str] = []
+    while lo > 0 or hi < len(lines) - 1:
+        progressed = False
+        if lo > 0:
+            cand = lines[lo - 1]
+            if used + len(cand) + 1 <= budget:
+                before.append(cand)
+                used += len(cand) + 1
+                lo -= 1
+                progressed = True
+        if hi < len(lines) - 1:
+            cand = lines[hi + 1]
+            if used + len(cand) + 1 <= budget:
+                after.append(cand)
+                used += len(cand) + 1
+                hi += 1
+                progressed = True
+        if not progressed:
+            break
+
+    body = "\n".join([*reversed(before), *selected_focus, *after])
+    if lo > 0:
+        body = prefix_note + body
+    if hi < len(lines) - 1:
+        body = body + suffix_note
+    return body
+
+
 _CALLEE_CONTRACT_RE = re.compile(r"\bcalls ([A-Za-z_][A-Za-z0-9_.]*) without forwarding\b")
+_DIFF_GIT_HEADER_RE = re.compile(r"^diff --git a/(.+?) b/(.+)$")
+_DIFF_MINUS_HEADER_RE = re.compile(r"^--- (?:a/)?(.+)$")
 
 
 def _find_function_in_sources(
@@ -185,7 +240,7 @@ def _group_findings(
     findings: Iterable[Finding],
     anchor_for: Callable[[Finding], str],
 ) -> tuple[list[dict[str, Any]], int]:
-    rows = list(findings)
+    rows = rank_findings(findings)
     grouped: list[dict[str, Any]] = []
     seen: dict[tuple[str, str, str, str], dict[str, Any]] = {}
     for finding in rows:
@@ -206,15 +261,88 @@ def _group_findings(
             grouped.append(item)
         else:
             seen[key]["site_count_in_group"] += 1
-            if len(seen[key]["lines"]) < 6:
+            if finding.start_line not in seen[key]["lines"] and len(seen[key]["lines"]) < 6:
                 seen[key]["lines"].append(finding.start_line)
     return grouped[:MAX_UNIQUE_SITES], len(rows)
 
 
-def _cap_diff(diff_text: str) -> str:
+def _split_unified_diff_sections(diff_text: str) -> list[tuple[str | None, str]]:
+    """Split a unified diff into `(path, section_text)` pairs, preserving non-header text intact."""
+    lines = diff_text.splitlines(keepends=True)
+    if not lines:
+        return []
+    sections: list[tuple[str | None, list[str]]] = []
+    current_path: str | None = None
+    current_lines: list[str] = []
+
+    def _flush() -> None:
+        if current_lines:
+            sections.append((current_path, current_lines[:]))
+            current_lines.clear()
+
+    idx = 0
+    while idx < len(lines):
+        line = lines[idx]
+        git_match = _DIFF_GIT_HEADER_RE.match(line.rstrip("\r\n"))
+        if git_match:
+            _flush()
+            current_path = git_match.group(2).strip()
+            current_lines.append(line)
+            idx += 1
+            continue
+        if (
+            line.startswith("--- ")
+            and idx + 1 < len(lines)
+            and lines[idx + 1].startswith("+++ ")
+            and not any(existing.startswith("diff --git ") for existing in current_lines)
+        ):
+            _flush()
+            plus_line = lines[idx + 1].rstrip("\r\n")[4:].strip()
+            if plus_line.startswith("b/"):
+                plus_line = plus_line[2:]
+            minus_match = _DIFF_MINUS_HEADER_RE.match(line.rstrip("\r\n"))
+            minus_path = minus_match.group(1).strip() if minus_match else ""
+            current_path = plus_line if plus_line and plus_line != "/dev/null" else minus_path
+            current_lines.append(line)
+            current_lines.append(lines[idx + 1])
+            idx += 2
+            continue
+        current_lines.append(line)
+        idx += 1
+    _flush()
+    return [(path, "".join(buf)) for path, buf in sections]
+
+
+def _cap_diff(diff_text: str, *, priority_paths: Iterable[str] = ()) -> str:
+    if len(diff_text) <= MAX_DIFF_CHARS:
+        return diff_text
+    flagged = {p.replace("\\", "/") for p in priority_paths if p}
+    if flagged:
+        sections = _split_unified_diff_sections(diff_text)
+        if len(sections) > 1:
+            prioritized = [text for path, text in sections if path and path.replace("\\", "/") in flagged]
+            others = [text for path, text in sections if not path or path.replace("\\", "/") not in flagged]
+            if prioritized:
+                diff_text = "".join([*prioritized, *others])
     if len(diff_text) <= MAX_DIFF_CHARS:
         return diff_text
     return diff_text[:MAX_DIFF_CHARS] + f"\n... [truncated after {MAX_DIFF_CHARS} of {len(diff_text)} chars] ...\n"
+
+
+def _format_actual_delta_block(actual_delta: Mapping[str, Any]) -> list[str]:
+    sigs = [str(s) for s in actual_delta.get("mutated_signatures") or ()]
+    raises = [str(r) for r in actual_delta.get("new_raises") or ()]
+    opened = [str(x) for x in actual_delta.get("opened_obligations") or ()]
+    discharged = [str(x) for x in actual_delta.get("discharged_obligations") or ()]
+    open_count = actual_delta.get("open_count")
+    lines = ["", "=== CANONICAL STRUCTURAL DELTA (GROUND TRUTH) ==="]
+    lines.append("Mutated signatures: " + (", ".join(sigs[:12]) + (f" (+{len(sigs) - 12})" if len(sigs) > 12 else "") if sigs else "(none)"))
+    lines.append("New raises: " + (", ".join(raises[:10]) + (f" (+{len(raises) - 10})" if len(raises) > 10 else "") if raises else "(none)"))
+    lines.append(
+        f"Obligations: open_count={open_count if open_count is not None else 0}, "
+        f"opened={len(opened)}, discharged={len(discharged)}"
+    )
+    return lines
 
 
 def format_review_prompt(
@@ -226,6 +354,7 @@ def format_review_prompt(
     changed_test_files: Iterable[str] = (),
     subject: str = "(uncommitted workspace edit)",
     cache: FactCache | None = None,
+    actual_delta: Mapping[str, Any] | None = None,
 ) -> str:
     """Build a bounded, self-contained prompt bundle for Stage-2 triage."""
     fact_cache = cache if cache is not None else FactCache()
@@ -235,9 +364,15 @@ def format_review_prompt(
     parts = [
         f"Subject: {subject}",
         f"Changed test/support .py files: {tests_text}",
-        "",
-        f"=== STAGE-1 FINDINGS ({total_raw} raw sites, showing {len(grouped)} grouped) ===",
     ]
+    if actual_delta is not None:
+        parts.extend(_format_actual_delta_block(actual_delta))
+    parts.extend(
+        [
+            "",
+            f"=== STAGE-1 FINDINGS ({total_raw} raw sites, showing {len(grouped)} grouped) ===",
+        ]
+    )
     for idx, row in enumerate(grouped, 1):
         lines_str = ",".join(str(x) for x in row["lines"])
         parts.append(
@@ -246,11 +381,33 @@ def format_review_prompt(
             f"-- {row['evidence']}"
         )
 
+    # Pre-resolve callee contracts so flagged-site snippets cannot starve them out of MAX_SNIPPETS.
+    callee_contracts: list[tuple[str, str, FunctionFact]] = []
+    seen_callees: set[tuple[str, str]] = set()
+    for row in grouped:
+        match = _CALLEE_CONTRACT_RE.search(row["evidence"])
+        if match is None:
+            continue
+        target_qualname = match.group(1)
+        located = _find_function_in_sources(fact_cache, after_sources, target_qualname)
+        if located is None:
+            continue
+        target_path, target_fn = located
+        target_key = (target_path, target_qualname)
+        if target_key not in seen_callees:
+            seen_callees.add(target_key)
+            callee_contracts.append((target_path, target_qualname, target_fn))
+            if len(callee_contracts) >= MAX_CALLEE_SNIPPETS:
+                break
+
+    site_budget = max(1, MAX_SNIPPETS - len(callee_contracts))
     parts.append("")
     parts.append("=== POST-CHANGE SNIPPETS AT FLAGGED SITES ===")
     seen_targets: set[tuple[str, str]] = set()
     snippet_count = 0
     for row in grouped:
+        if snippet_count >= site_budget:
+            break
         target = (row["path"], row["anchor"])
         if target in seen_targets:
             continue
@@ -264,19 +421,9 @@ def format_review_prompt(
             parts.append("Top imports:\n" + snip["imports"])
         parts.append(f"Lines {snip['span'][0]}-{snip['span'][1]}:\n" + snip["code"])
         snippet_count += 1
+    for target_path, target_qualname, target_fn in callee_contracts:
         if snippet_count >= MAX_SNIPPETS:
             break
-    for row in grouped:
-        if snippet_count >= MAX_SNIPPETS:
-            break
-        match = _CALLEE_CONTRACT_RE.search(row["evidence"])
-        if match is None:
-            continue
-        target_qualname = match.group(1)
-        located = _find_function_in_sources(fact_cache, after_sources, target_qualname)
-        if located is None:
-            continue
-        target_path, target_fn = located
         target_key = (target_path, target_qualname)
         if target_key in seen_targets:
             continue
@@ -300,7 +447,8 @@ def format_review_prompt(
 
     parts.append("")
     parts.append("=== PRODUCTION .PY DIFF ===")
-    parts.append(_cap_diff(diff_text.strip()) or "(empty diff)")
+    priority_paths = [row["path"] for row in grouped]
+    parts.append(_cap_diff(diff_text.strip(), priority_paths=priority_paths) or "(empty diff)")
     return "\n".join(parts)
 
 
@@ -475,6 +623,7 @@ def review_findings(
     timeout_s: float = 60.0,
     cache: FactCache | None = None,
     transport: Callable[[str, str], ReviewResult] | None = None,
+    actual_delta: Mapping[str, Any] | None = None,
 ) -> ReviewResult:
     """Run Stage-2 triage on non-empty Stage-1 findings."""
     rows = list(findings)
@@ -488,6 +637,7 @@ def review_findings(
         changed_test_files=changed_test_files,
         subject=subject,
         cache=cache,
+        actual_delta=actual_delta,
     )
     chosen_model = model or os.environ.get("MIPDELTA_REVIEW_MODEL")
     if transport is not None:

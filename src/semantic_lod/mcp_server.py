@@ -2361,28 +2361,37 @@ except ImportError:
         mcp_app = None
 
 if mcp_app is not None:
-    # Primary MipCode tools (`mip_*`)
-    mcp_app.tool()(mip_map)
-    mcp_app.tool()(mip_symbols)
-    mcp_app.tool()(mip_zoom)
-    mcp_app.tool()(mip_trace)
-    mcp_app.tool()(mip_blast)
-    mcp_app.tool()(mip_guardrail)
-    mcp_app.tool()(mip_verify_edit)
-    mcp_app.tool()(mip_propose_delta)
-    mcp_app.tool()(mip_raycast)
-    mcp_app.tool()(mip_anisotropic_zoom)
-    # Backward-compatible aliases (`lod_*`)
-    mcp_app.tool()(lod_map)
-    mcp_app.tool()(lod_symbols)
-    mcp_app.tool()(lod_zoom)
-    mcp_app.tool()(lod_trace)
-    mcp_app.tool()(lod_blast_radius)
-    mcp_app.tool()(lod_raycast)
-    mcp_app.tool()(lod_anisotropic_zoom)
-    mcp_app.tool()(lod_propose_context_delta)
-    mcp_app.tool()(lod_verify_edit_eligibility)
-    mcp_app.tool()(lod_pre_edit_guardrail)
+    def _register_mcp_tool(fn) -> None:
+        try:
+            mcp_app.tool()(fn)
+        except (TypeError, ValueError):
+            mcp_app.tool(structured_output=False)(fn)
+
+    for _tool_fn in (
+        # Primary MipCode tools (`mip_*`)
+        mip_map,
+        mip_symbols,
+        mip_zoom,
+        mip_trace,
+        mip_blast,
+        mip_guardrail,
+        mip_verify_edit,
+        mip_propose_delta,
+        mip_raycast,
+        mip_anisotropic_zoom,
+        # Backward-compatible aliases (`lod_*`)
+        lod_map,
+        lod_symbols,
+        lod_zoom,
+        lod_trace,
+        lod_blast_radius,
+        lod_raycast,
+        lod_anisotropic_zoom,
+        lod_propose_context_delta,
+        lod_verify_edit_eligibility,
+        lod_pre_edit_guardrail,
+    ):
+        _register_mcp_tool(_tool_fn)
 
 if __name__ == "__main__":
     if "--verify-edit" in sys.argv:

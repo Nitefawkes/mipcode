@@ -20,12 +20,15 @@ _DETECTOR_PRIORITY = {
     "required_keyword_missing": 1,
     "call_signature_review": 1,
     "removed_callable_review": 1,
+    "try_catch_sink_review": 2,
     "callback_binding_review": 2,
     "override_signature_review": 3,
+    "override_modifier_review": 3,
     "return_contract_review": 4,
     "exception_contract_review": 5,
     "delegating_wrapper_review": 6,
     "parameter_sink_review": 7,
+    "state_sink_review": 8,
     "parameter_truthiness_review": 8,
     "state_field_review": 9,
     "optional_keyword_contract": 10,
@@ -79,12 +82,78 @@ def is_vendored_path(path: str) -> bool:
     return "packages" in dirs[1:]
 
 
+_SUPPORT_DIRS = frozenset({"docs", "doc", "examples", "benchmarks", "scripts", "tasks", "mocks", "mock", "fixtures"})
+_TEST_DIRS = frozenset({"test", "tests", "testing", "test_suite"})
+
+
 def _is_test_path(path: str) -> bool:
     parts = path.replace("\\", "/").lower().split("/")
-    if any(p in {"tests", "testing", "test_suite"} for p in parts[:-1]):
+    if any(p in _TEST_DIRS for p in parts[:-1]):
         return True
     leaf = parts[-1] if parts else ""
-    return leaf.startswith("test_") or leaf.endswith("_test.py")
+    return (
+        leaf.startswith("test_")
+        or leaf.endswith("_test.py")
+        or leaf.endswith(".t.sol")
+        or leaf == "conftest.py"
+    )
+
+
+def _path_tier(path: str) -> int:
+    """Risk tier for a path: 0 = production source, 1 = docs/examples/scripts/mocks, 2 = tests."""
+    if _is_test_path(path):
+        return 2
+    parts = [p for p in path.replace("\\", "/").lower().split("/") if p]
+    if not parts:
+        return 0
+    leaf = parts[-1]
+    if (
+        parts[0] in _SUPPORT_DIRS
+        or any(p in _SUPPORT_DIRS for p in parts[:-1])
+        or leaf in {"tasks.py", "mocks.py"}
+        or leaf.endswith("mock.sol")
+        or leaf.startswith("mock_")
+        or leaf.endswith("_mock.py")
+        or leaf.endswith("_mocks.py")
+    ):
+        return 1
+    return 0
+
+
+def _is_single_underscore_private(name: str) -> bool:
+    return name.startswith("_") and not (name.startswith("__") and name.endswith("__"))
+
+
+def _is_private_path(path: str) -> bool:
+    parts = [p for p in path.replace("\\", "/").split("/") if p]
+    if not parts:
+        return False
+    for directory in parts[:-1]:
+        if _is_single_underscore_private(directory):
+            return True
+    stem = parts[-1].rsplit(".", 1)[0]
+    return _is_single_underscore_private(stem)
+
+
+def _is_private_symbol(symbol: str) -> bool:
+    leaf = symbol.rsplit(".", 1)[-1]
+    return _is_single_underscore_private(leaf)
+
+
+def finding_rank_key(finding: Finding) -> tuple:
+    """Deterministic risk-stratified sort key preventing low-leverage tail clipping."""
+    return (
+        _path_tier(finding.path),
+        _DETECTOR_PRIORITY.get(finding.detector, 99),
+        0
+        if finding.resolution_source == "observed_runtime"
+        else (1 if finding.resolution_source == "static_ast" else 2),
+        1 if _is_private_path(finding.path) else 0,
+        1 if _is_private_symbol(finding.symbol) else 0,
+        finding.path,
+        finding.start_line,
+        finding.symbol,
+    )
 
 
 def _required_kwonly(function: FunctionFact | None) -> set[str]:
@@ -424,35 +493,122 @@ def deduplicate_findings(findings: Iterable[Finding]) -> list[Finding]:
 
 
 def rank_findings(findings: Iterable[Finding]) -> list[Finding]:
-    """Deterministic risk-stratified ranking prioritizing production seams over test files."""
+    """Deterministic risk-stratified ranking prioritizing production seams over support/test files."""
     deduped = deduplicate_findings(findings)
-    return sorted(
-        deduped,
-        key=lambda r: (
-            1 if _is_test_path(r.path) else 0,
-            _DETECTOR_PRIORITY.get(r.detector, 99),
-            0 if r.resolution_source == "observed_runtime" else (1 if r.resolution_source == "static_ast" else 2),
-            r.path,
-            r.start_line,
-            r.symbol,
-        ),
-    )
+    return sorted(deduped, key=finding_rank_key)
+
+
+def summarize_actual_delta(
+    before_changed: Mapping[str, FileFacts | None],
+    after_changed: Mapping[str, FileFacts],
+    *,
+    opened: Iterable[object] = (),
+    discharged: Iterable[object] = (),
+    open_obligations: Iterable[object] | None = None,
+    findings: Iterable[Finding] = (),
+) -> dict[str, object]:
+    """Synthesize a deterministic canonical structural delta tuple from AST facts and obligations.
+
+    Emits exact ground-truth mutations without trusting agent prose or commit messages:
+    `{mutated_signatures, new_raises, opened_obligations, discharged_obligations, open_count}`.
+    """
+    mutated_signatures: list[str] = []
+    new_raises: list[str] = []
+
+    for path in sorted(before_changed.keys() | after_changed.keys(), key=lambda p: (_path_tier(p), p)):
+        if is_vendored_path(path):
+            continue
+        old_file = before_changed.get(path)
+        new_file = after_changed.get(path)
+        if new_file is not None and new_file.parse_error is not None:
+            continue
+        old_map = old_file.functions if old_file and old_file.parse_error is None else {}
+        new_map = new_file.functions if new_file else {}
+        for qualname in sorted(old_map.keys() | new_map.keys()):
+            old = old_map.get(qualname)
+            new = new_map.get(qualname)
+            if old is not None and new is None:
+                mutated_signatures.append(f"{path}::{qualname} (removed)")
+                continue
+            if old is None and new is not None:
+                if _required_kwonly(new):
+                    mutated_signatures.append(f"{path}::{qualname} (added_required_kwonly)")
+                continue
+            if old is None or new is None:
+                continue
+            tags: list[str] = []
+            if old.parameters != new.parameters:
+                tags.append("params_changed")
+            if old.is_async != new.is_async:
+                tags.append("async_changed")
+            if (
+                old.return_tuple_arities != new.return_tuple_arities
+                or old.has_explicit_none_return != new.has_explicit_none_return
+            ):
+                tags.append("return_changed")
+            if tags:
+                mutated_signatures.append(f"{path}::{qualname} ({','.join(tags)})")
+            added_exc = sorted(new.raised_exceptions - old.raised_exceptions)
+            for exc_name in added_exc:
+                new_raises.append(f"{path}::{qualname} +{exc_name}")
+
+    def _id_of(item: object) -> str:
+        item_id = getattr(item, "id", None)
+        if isinstance(item_id, str) and item_id:
+            return item_id
+        if isinstance(item, Finding):
+            return f"{item.path}:{item.start_line}:{item.detector}:{item.symbol}"
+        return str(item)
+
+    opened_ids = [_id_of(item) for item in opened]
+    discharged_ids = [_id_of(item) for item in discharged]
+    if open_obligations is not None:
+        open_count = sum(1 for _ in open_obligations)
+    else:
+        open_count = len(deduplicate_findings(findings))
+
+    return {
+        "mutated_signatures": mutated_signatures,
+        "new_raises": new_raises,
+        "opened_obligations": opened_ids,
+        "discharged_obligations": discharged_ids,
+        "open_count": open_count,
+    }
 
 
 def format_advisory(findings: Iterable[Finding], *, max_bytes: int = 250, max_items: int = 3) -> str:
-    """Format ranked candidate findings into a bounded post-write advisory string (0 bytes when empty)."""
+    """Format ranked candidate findings into a bounded post-write advisory string (0 bytes when empty).
+
+    Collapses identical `(path, start_line, detector, symbol, resolution_source)` sites with `(xN)`
+    so multi-parameter drops on one line do not crowd out distinct sites inside the byte budget.
+    """
     ranked = rank_findings(findings)
     if not ranked:
         return ""
+    grouped: list[tuple[Finding, int]] = []
+    group_index: dict[tuple[str, int, str, str, str], int] = {}
+    for row in ranked:
+        key = (row.path, row.start_line, row.detector, row.symbol, row.resolution_source)
+        pos = group_index.get(key)
+        if pos is None:
+            group_index[key] = len(grouped)
+            grouped.append((row, 1))
+        else:
+            lead, count = grouped[pos]
+            grouped[pos] = (lead, count + 1)
+
     header = "[mip-delta]"
     items: list[str] = []
     total_count = len(ranked)
-    for row in ranked[:max_items]:
+    shown_count = 0
+    for row, count in grouped[:max_items]:
         tag = _PROVENANCE_TAG.get(row.resolution_source, "cand")
-        item = f"{row.path}:{row.start_line} {row.detector}[{tag}] {row.symbol}"
+        mult = f" (x{count})" if count > 1 else ""
+        item = f"{row.path}:{row.start_line} {row.detector}[{tag}] {row.symbol}{mult}"
         candidate_text = header + " " + "; ".join([*items, item])
-        if total_count > len(items) + 1:
-            rem = total_count - (len(items) + 1)
+        next_shown = shown_count + count
+        if total_count > next_shown:
+            rem = total_count - next_shown
             if len((candidate_text + f" (+{rem})").encode("utf-8")) > max_bytes:
                 if not items:
                     trimmed = candidate_text.encode("utf-8")[: max(0, max_bytes - 3)].decode("utf-8", errors="ignore")
@@ -464,10 +620,11 @@ def format_advisory(findings: Iterable[Finding], *, max_bytes: int = 250, max_it
                 return trimmed + "..."
             break
         items.append(item)
-    rem = total_count - len(items)
+        shown_count = next_shown
+    rem = total_count - shown_count
     suffix = f" (+{rem})" if rem > 0 else ""
     out = header + " " + "; ".join(items) + suffix
-    if len(items) == 1 and rem == 0 and ranked[0].evidence:
+    if len(items) == 1 and rem == 0 and total_count == 1 and ranked[0].evidence:
         with_ev = f"{out} ({ranked[0].evidence[0]})"
         if len(with_ev.encode("utf-8")) <= max_bytes:
             out = with_ev
