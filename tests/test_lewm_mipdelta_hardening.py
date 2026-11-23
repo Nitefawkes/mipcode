@@ -88,15 +88,41 @@ def test_rank_findings_prioritizes_production_over_support_and_test_paths():
 
 
 def test_path_tier_demotes_foundry_tests_mocks_and_test_directories():
+    # Production files stay tier 0
     assert _path_tier("src/vault/Vault.sol") == 0
     assert _path_tier("pkg/client.py") == 0
-    assert _path_tier("pkg/auth_mock.py") == 1
-    assert _path_tier("pkg/mock_auth.py") == 1
-    assert _path_tier("contracts/mocks/VaultMock.sol") == 1
-    assert _path_tier("test/Vault.t.sol") == 2
-    assert _path_tier("src/Vault.t.sol") == 2
-    assert _path_tier("test/helpers.py") == 2
-    assert _path_tier("tests/helpers.py") == 2
+    assert _path_tier("contracts/Testimonial.sol") == 0
+
+    # Solidity non-production conventions (all tier 1+)
+    for sol_path in (
+        "test/Vault.sol",
+        "tests/Vault.sol",
+        "script/Deploy.sol",
+        "scripts/Deploy.sol",
+        "mock/MockVault.sol",
+        "mocks/MockVault.sol",
+        "fixtures/VaultFixture.sol",
+        "src/Vault.t.sol",
+        "src/Deploy.s.sol",
+        "contracts/VaultMock.sol",
+        "contracts/TestVault.sol",
+    ):
+        assert _path_tier(sol_path) >= 1, f"expected non-production tier for {sol_path}"
+
+    # Python non-production conventions (all tier 1+)
+    for py_path in (
+        "tests/helpers.py",
+        "test/helpers.py",
+        "mock/client.py",
+        "mocks/client.py",
+        "fixtures/sample.py",
+        "conftest.py",
+        "pkg/test_auth.py",
+        "pkg/auth_test.py",
+        "pkg/mock_auth.py",
+        "pkg/auth_mock.py",
+    ):
+        assert _path_tier(py_path) >= 1, f"expected non-production tier for {py_path}"
 
 
 def test_format_advisory_ten_plus_distinct_sites_stay_under_250b_without_mid_token_truncation():

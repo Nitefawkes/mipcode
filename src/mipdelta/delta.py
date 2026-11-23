@@ -82,19 +82,28 @@ def is_vendored_path(path: str) -> bool:
     return "packages" in dirs[1:]
 
 
-_SUPPORT_DIRS = frozenset({"docs", "doc", "examples", "benchmarks", "scripts", "tasks", "mocks", "mock", "fixtures"})
+_SUPPORT_DIRS = frozenset({"docs", "doc", "examples", "benchmarks", "script", "scripts", "tasks", "mocks", "mock", "fixtures"})
 _TEST_DIRS = frozenset({"test", "tests", "testing", "test_suite"})
 
 
 def _is_test_path(path: str) -> bool:
-    parts = path.replace("\\", "/").lower().split("/")
+    orig_parts = path.replace("\\", "/").split("/")
+    parts = [p.lower() for p in orig_parts]
     if any(p in _TEST_DIRS for p in parts[:-1]):
         return True
     leaf = parts[-1] if parts else ""
+    orig_leaf = orig_parts[-1] if orig_parts else ""
     return (
         leaf.startswith("test_")
         or leaf.endswith("_test.py")
         or leaf.endswith(".t.sol")
+        or leaf.endswith("_test.sol")
+        or (
+            orig_leaf.startswith("Test")
+            and leaf.endswith(".sol")
+            and len(orig_leaf) > 4
+            and not orig_leaf[4].islower()
+        )
         or leaf == "conftest.py"
     )
 
@@ -111,6 +120,7 @@ def _path_tier(path: str) -> int:
         parts[0] in _SUPPORT_DIRS
         or any(p in _SUPPORT_DIRS for p in parts[:-1])
         or leaf in {"tasks.py", "mocks.py"}
+        or leaf.endswith(".s.sol")
         or leaf.endswith("mock.sol")
         or leaf.startswith("mock_")
         or leaf.endswith("_mock.py")
