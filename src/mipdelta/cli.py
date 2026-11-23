@@ -31,6 +31,7 @@ from pathlib import Path
 from typing import Any, Callable, Iterable, Mapping
 
 from . import __version__
+from .anchor import audit_anchor_workspace
 from .cache import FactCache
 from .delta import (
     OPT_IN_DETECTORS,
@@ -834,6 +835,48 @@ def _run_fork_diff(
     return 0
 
 
+def _load_rust_sources(root: Path) -> dict[str, str]:
+    if root.is_file():
+        return {root.name: _decode_source(root.name, root.read_bytes())}
+    skip_dirs = _SKIP_DIRS | {"target", "vendor", "third_party"}
+    files: dict[str, str] = {}
+    for p in sorted(root.rglob("*.rs")):
+        rel = p.relative_to(root).as_posix()
+        parts = rel.split("/")
+        if any(part.startswith(".") or part in skip_dirs for part in parts[:-1]):
+            continue
+        if p.is_file():
+            files[rel] = _decode_source(rel, p.read_bytes())
+    return files
+
+
+def _run_audit_anchor(
+    root: Path,
+    max_bytes: int | None,
+    output_format: str,
+    fail_on_findings: bool,
+) -> int:
+    t0 = time.perf_counter()
+    rs_files = _load_rust_sources(root)
+    findings = audit_anchor_workspace(rs_files)
+    ranked = tuple(rank_findings(findings))
+    advisory_budget = 250 if max_bytes is None else max_bytes
+    advisory = format_advisory(ranked, max_bytes=advisory_budget) if ranked else ""
+    wall_ms = round((time.perf_counter() - t0) * 1000.0, 3)
+    payload: dict[str, Any] = {
+        "mode": "audit-anchor",
+        "files_scanned": len(rs_files),
+        "advisory_text": advisory,
+        "advisory_utf8_bytes": len(advisory.encode("utf-8")),
+        "wall_ms": wall_ms,
+        "findings": [_finding_json(f) for f in ranked],
+    }
+    _emit_cli_output(output_format, payload, advisory, [])
+    if fail_on_findings and ranked:
+        return 1
+    return 0
+
+
 def _run_pair_delta(
     before_path: Path,
     after_path: Path,
@@ -1122,6 +1165,11 @@ def main_cli(argv: list[str] | None = None) -> int:
         default=None,
         help="Upstream Solidity directory or .sol file for --fork-diff comparison",
     )
+    parser.add_argument(
+        "--audit-anchor",
+        action="store_true",
+        help="Scan Anchor/Solana (.rs) files under --root (directory or single file) for sibling account constraint asymmetry",
+    )
     parser.add_argument("--before", type=Path, default=None, help="Before-change source file or directory for pair delta comparison (.sol or .py)")
     parser.add_argument("--after", type=Path, default=None, help="After-change source file or directory for pair delta comparison (.sol or .py)")
     parser.add_argument(
@@ -1237,12 +1285,13 @@ def main_cli(argv: list[str] | None = None) -> int:
         or args.audit_repo
         or args.audit_solidity
         or args.fork_diff
+        or args.audit_anchor
         or (args.before is not None and args.after is not None)
         or (args.write_path and args.candidate_file is not None)
     ):
         parser.error(
             "Either pass --check-git, --check-merge, --run-pytest, --audit-repo, --audit-solidity, "
-            "--fork-diff, --before/--after, or both --write-path and --candidate-file."
+            "--fork-diff, --audit-anchor, --before/--after, or both --write-path and --candidate-file."
         )
 
     try:
@@ -1274,6 +1323,15 @@ def main_cli(argv: list[str] | None = None) -> int:
             if not root.exists():
                 raise AnalysisError(f"Solidity audit target does not exist: {root}")
             return _run_audit_solidity(
+                root=root,
+                max_bytes=args.max_bytes,
+                output_format=output_format,
+                fail_on_findings=args.fail_on_findings,
+            )
+        if args.audit_anchor:
+            if not root.exists():
+                raise AnalysisError(f"Anchor audit target does not exist: {root}")
+            return _run_audit_anchor(
                 root=root,
                 max_bytes=args.max_bytes,
                 output_format=output_format,

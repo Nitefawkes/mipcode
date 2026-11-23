@@ -2,6 +2,7 @@ import importlib.metadata
 import re
 from pathlib import Path
 
+from .anchor import audit_anchor_workspace, parse_anchor_file
 from .cache import CacheStats, FactCache
 from .delta import (
     OPT_IN_DETECTORS,
@@ -88,6 +89,7 @@ __all__ = [
     "analyze_delta",
     "analyze_solidity_delta",
     "analyze_solidity_fork_diff",
+    "audit_anchor_workspace",
     "audit_index",
     "audit_solidity_workspace",
     "audit_workspace",
@@ -97,6 +99,7 @@ __all__ = [
     "format_thrash_advisory",
     "gateway_tool_schemas",
     "install_process_collector_from_env",
+    "parse_anchor_file",
     "parse_file",
     "parse_solidity_file",
     "parse_stub_tree",

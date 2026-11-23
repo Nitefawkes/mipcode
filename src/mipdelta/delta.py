@@ -25,6 +25,7 @@ _DETECTOR_PRIORITY = {
     "override_signature_review": 3,
     "override_modifier_review": 3,
     "sibling_guard_asymmetry": 3,
+    "anchor_sibling_constraint_asymmetry": 3,
     "fork_dropped_guard": 2,
     "fork_dropped_sync": 3,
     "fork_sync_order_shift": 3,
@@ -88,7 +89,7 @@ def is_vendored_path(path: str) -> bool:
     return "packages" in dirs[1:]
 
 
-_SUPPORT_DIRS = frozenset({"docs", "doc", "examples", "benchmarks", "script", "scripts", "tasks", "mocks", "mock", "fixtures"})
+_SUPPORT_DIRS = frozenset({"docs", "doc", "examples", "benchmarks", "benches", "script", "scripts", "tasks", "mocks", "mock", "fixtures"})
 _TEST_DIRS = frozenset({"test", "tests", "testing", "test_suite"})
 
 
@@ -102,6 +103,8 @@ def _is_test_path(path: str) -> bool:
     return (
         leaf.startswith("test_")
         or leaf.endswith("_test.py")
+        or leaf.endswith("_test.rs")
+        or leaf == "tests.rs"
         or leaf.endswith(".t.sol")
         or leaf.endswith("_test.sol")
         or (
