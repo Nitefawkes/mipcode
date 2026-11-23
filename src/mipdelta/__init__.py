@@ -10,11 +10,14 @@ from .delta import (
     audit_index,
     audit_workspace,
     deduplicate_findings,
+    finding_rank_key,
     format_advisory,
     rank_findings,
+    summarize_actual_delta,
 )
 from .facts import parse_file
 from .gateway import ContainedGatewaySession, DeltaImpactSideband, gateway_tool_schemas
+from .ledger import format_thrash_advisory
 from .model import (
     CallFact,
     ClassFact,
@@ -87,11 +90,14 @@ __all__ = [
     "audit_solidity_workspace",
     "audit_workspace",
     "deduplicate_findings",
+    "finding_rank_key",
     "format_advisory",
+    "format_thrash_advisory",
     "gateway_tool_schemas",
     "install_process_collector_from_env",
     "parse_file",
     "parse_solidity_file",
     "parse_stub_tree",
     "rank_findings",
+    "summarize_actual_delta",
 ]

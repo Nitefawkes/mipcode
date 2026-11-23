@@ -5,8 +5,21 @@ import time
 from typing import Iterable, Mapping, Sequence
 
 from .cache import FactCache
-from .delta import analyze_changed_files_in_index, enabled_detectors, format_advisory, rank_findings
-from .ledger import LedgerUpdate, Obligation, ObligationLedger, enclosing_function, format_open_obligations
+from .delta import (
+    analyze_changed_files_in_index,
+    enabled_detectors,
+    format_advisory,
+    rank_findings,
+    summarize_actual_delta,
+)
+from .ledger import (
+    LedgerUpdate,
+    Obligation,
+    ObligationLedger,
+    enclosing_function,
+    format_open_obligations,
+    format_thrash_advisory,
+)
 from .model import (
     CustodyReport,
     FileFacts,
@@ -133,7 +146,10 @@ class DeltaSession:
         ]
 
     def _refresh_obligations(
-        self, *, legacy_optional_keyword_all_callers: bool = False
+        self,
+        *,
+        legacy_optional_keyword_all_callers: bool = False,
+        edited_path: str | None = None,
     ) -> tuple[LedgerUpdate, bool, int]:
         """Compare the session baseline with the current sources and update the ledger."""
         changed_paths = self._changed_paths()
@@ -151,6 +167,7 @@ class DeltaSession:
         update = self.ledger.update(
             findings,
             lambda finding: enclosing_function(self._active_facts.get(finding.path), finding.start_line),
+            edited_path=edited_path,
         )
         return update, cross_triggered, calls_inspected
 
@@ -163,6 +180,22 @@ class DeltaSession:
     def finalize_advisory(self, *, max_bytes: int = 600, show_ids: bool = False) -> str:
         """List obligations still open, or return an empty string when none remain."""
         return format_open_obligations(self.ledger.open(), max_bytes=max_bytes, show_ids=show_ids)
+
+    def actual_delta(
+        self,
+        *,
+        opened: Iterable[Obligation] = (),
+        discharged: Iterable[Obligation] = (),
+    ) -> dict[str, object]:
+        """Return the canonical deterministic structural delta against the session baseline."""
+        changed = self._changed_paths()
+        return summarize_actual_delta(
+            {p: self._baseline_facts.get(p) for p in changed},
+            {p: self._active_facts[p] for p in changed},
+            opened=opened,
+            discharged=discharged,
+            open_obligations=self.ledger.open(),
+        )
 
     def apply_write(
         self,
@@ -204,11 +237,17 @@ class DeltaSession:
         self.index.add_file(new_facts)
 
         update, cross_triggered, calls_inspected = self._refresh_obligations(
-            legacy_optional_keyword_all_callers=legacy_optional_keyword_all_callers
+            legacy_optional_keyword_all_callers=legacy_optional_keyword_all_callers,
+            edited_path=norm,
         )
         findings = [item.finding for item in update.opened]
         ranked = rank_findings(findings)
-        advisory = format_advisory(ranked, max_bytes=self.max_advisory_bytes)
+        if update.thrashing:
+            advisory = format_thrash_advisory(
+                update, edited_path=norm, max_bytes=max(self.max_advisory_bytes, 600)
+            )
+        else:
+            advisory = format_advisory(ranked, max_bytes=self.max_advisory_bytes)
         cpu_elapsed = time.process_time() - cpu_start
         wall_elapsed = time.perf_counter() - wall_start
 
@@ -228,6 +267,7 @@ class DeltaSession:
             wall_seconds=wall_elapsed,
             discharged_findings=tuple(item.finding for item in update.discharged),
             open_obligations=len(update.open),
+            thrashing=update.thrashing,
         )
 
     def evaluate_new_runtime_findings(

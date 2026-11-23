@@ -244,3 +244,4 @@ class WriteDeltaResult:
     wall_seconds: float
     discharged_findings: tuple[Finding, ...] = ()
     open_obligations: int = 0
+    thrashing: bool = False

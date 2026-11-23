@@ -40,8 +40,16 @@ from .delta import (
     format_advisory,
     is_vendored_path,
     rank_findings,
+    summarize_actual_delta,
 )
-from .ledger import LedgerUpdate, Obligation, ObligationLedger, enclosing_function, format_open_obligations
+from .ledger import (
+    LedgerUpdate,
+    Obligation,
+    ObligationLedger,
+    enclosing_function,
+    format_open_obligations,
+    format_thrash_advisory,
+)
 from .model import FileFacts, Finding, ObservedCallEdge, SourceFile
 from .monitoring import load_runtime_edges as _load_runtime_edges
 from .resolve import build_index
@@ -224,6 +232,8 @@ class _GitCheck:
     workspace_parsed: bool = False
     after_files: Mapping[str, str] = field(default_factory=dict)
     cache: FactCache | None = None
+    before_changed_facts: Mapping[str, FileFacts | None] = field(default_factory=dict)
+    after_changed_facts: Mapping[str, FileFacts] = field(default_factory=dict)
 
 
 def _collect_git_findings(
@@ -262,6 +272,14 @@ def _collect_git_findings(
 
         return anchor_for
 
+    def _changed_fact_maps(
+        cache: FactCache, before: Mapping[str, str], after: Mapping[str, str]
+    ) -> tuple[dict[str, FileFacts | None], dict[str, FileFacts]]:
+        py_changed = [p for p in changed_paths if not p.endswith(".pyi")]
+        before_map = {p: (cache.load(p, before[p]) if p in before else None) for p in py_changed}
+        after_map = {p: cache.load(p, after[p]) for p in py_changed if p in after}
+        return before_map, after_map
+
     if local_first:
         after_changed = _read_sources(top, changed_paths)
         before_changed = _reconstruct_git_baseline(top, commit, after_changed, changed_paths)
@@ -274,6 +292,7 @@ def _collect_git_findings(
             enable=enable,
         )
         if not needs_workspace:
+            before_facts, after_facts = _changed_fact_maps(cache, before_changed, after_changed)
             return _GitCheck(
                 changed_paths,
                 findings,
@@ -283,6 +302,8 @@ def _collect_git_findings(
                 False,
                 after_changed,
                 cache,
+                before_facts,
+                after_facts,
             )
 
     tracked = _git_python_paths(root, top, "ls-files", "--cached", "-z")
@@ -300,6 +321,7 @@ def _collect_git_findings(
         runtime_edges=runtime_edges,
         enable=enable,
     )
+    before_facts, after_facts = _changed_fact_maps(cache, before_files, after_files)
     return _GitCheck(
         changed_paths,
         findings,
@@ -309,6 +331,8 @@ def _collect_git_findings(
         True,
         after_files,
         cache,
+        before_facts,
+        after_facts,
     )
 
 
@@ -567,12 +591,28 @@ def _run_git_check(
             "discharged": [_obligation_json(item) for item in update.discharged],
             "open": [_obligation_json(item) for item in update.open],
             "waived": [_obligation_json(item) for item in ledger.waived()],
+            "reopened": [_obligation_json(item) for item in update.reopened],
+            "thrashing": update.thrashing,
+            "stalled_writes": update.stalled_writes,
         }
         open_text = format_open_obligations(
             update.open, max_bytes=600 if max_bytes is None else max_bytes, show_ids=True
         )
         failing = bool(update.open)
-    advisory = format_advisory(reported, max_bytes=advisory_budget) if reported else ""
+    actual_delta = summarize_actual_delta(
+        check.before_changed_facts,
+        check.after_changed_facts,
+        opened=update.opened if update is not None else (),
+        discharged=update.discharged if update is not None else (),
+        open_obligations=update.open if update is not None else None,
+        findings=ranked,
+    )
+    if update is not None and update.thrashing:
+        advisory = format_thrash_advisory(
+            update, max_bytes=600 if max_bytes is None else max_bytes, show_ids=True
+        )
+    else:
+        advisory = format_advisory(reported, max_bytes=advisory_budget) if reported else ""
     if show_open:
         advisory = open_text
     review_result: ReviewResult | None = None
@@ -593,6 +633,7 @@ def _run_git_check(
             subject=f"working tree vs {base_ref}",
             model=review_model,
             cache=check.cache,
+            actual_delta=actual_delta,
         )
         advisory, failing = _apply_review_outcome(advisory, failing, review_result, show_open=show_open)
     wall_ms = round((time.perf_counter() - t0) * 1000.0, 3)
@@ -606,6 +647,7 @@ def _run_git_check(
         "advisory_utf8_bytes": len(advisory.encode("utf-8")),
         "wall_ms": wall_ms,
         "findings": [_finding_json(f) for f in ranked],
+        "actual_delta": actual_delta,
         **ledger_rows,
     }
     if source == "check-merge":
@@ -778,7 +820,13 @@ def _run_pair_delta(
         mode = "python-delta"
         _check_source_syntax(before_path.name, before_text)
         _check_source_syntax(after_path.name, after_text)
-        findings = analyze_delta({rel: before_text}, {rel: after_text}, enable=enable)
+        pair_cache = FactCache()
+        findings = analyze_delta({rel: before_text}, {rel: after_text}, cache=pair_cache, enable=enable)
+        delta_meta["actual_delta"] = summarize_actual_delta(
+            {rel: pair_cache.load(rel, before_text)},
+            {rel: pair_cache.load(rel, after_text)},
+            findings=findings,
+        )
     ranked = tuple(rank_findings(findings))
     advisory = format_advisory(ranked, max_bytes=advisory_budget) if ranked else ""
     wall_ms = round((time.perf_counter() - t0) * 1000.0, 3)
@@ -837,14 +885,25 @@ def _run_hook(kind: str, raw_event: str, enable: Iterable[str] = ()) -> int:
         ledger, pinned = _load_ledger_file(ledger_path)
         commit = pinned if pinned and _commit_exists(top, pinned) else head
         before = ledger.to_dict()
+        rel_edited = _relative_edit(edited, root, top) if kind == "claude-post-edit" else None
         check = _collect_git_findings(
             root, (top, commit), root / ".mipdelta" / "runtime", local_first=True, enable=enable
         )
-        update = ledger.update(check.findings, check.anchor_for)
+        update = ledger.update(check.findings, check.anchor_for, edited_path=rel_edited)
+        actual_delta = summarize_actual_delta(
+            check.before_changed_facts,
+            check.after_changed_facts,
+            opened=update.opened,
+            discharged=update.discharged,
+            open_obligations=update.open,
+        )
         output: dict[str, Any] | None = None
         pending: tuple[Obligation, ...] = ()
         if kind == "claude-post-edit":
-            if update.opened:
+            if update.thrashing:
+                text = format_thrash_advisory(update, edited_path=rel_edited, max_bytes=600, show_ids=True)
+                output = {"hookSpecificOutput": {"hookEventName": "PostToolUse", "additionalContext": text}}
+            elif update.opened:
                 text = format_advisory(rank_findings(item.finding for item in update.opened), max_bytes=250)
                 output = {"hookSpecificOutput": {"hookEventName": "PostToolUse", "additionalContext": text}}
         else:
@@ -859,6 +918,7 @@ def _run_hook(kind: str, raw_event: str, enable: Iterable[str] = ()) -> int:
                         f"{listed} Review these sites before finishing. If one is intentional, say so, "
                         f"or record it with: mip-delta --waive ID --ledger {relative}"
                     ),
+                    "actual_delta": actual_delta,
                 }
         if ledger.to_dict() != before:
             _save_ledger_file(ledger_path, ledger, commit)
@@ -870,13 +930,20 @@ def _run_hook(kind: str, raw_event: str, enable: Iterable[str] = ()) -> int:
         if ledger_path.exists() or os.environ.get("MIPDELTA_LOG_ALL_RUNS"):
             try:
                 _prepare_state_dir(ledger_path.parent)
-                extra = {"edited_path": _relative_edit(edited, root, top)} if kind == "claude-post-edit" else {}
+                extra = {"edited_path": rel_edited} if kind == "claude-post-edit" else {}
                 raw_session = event.get("session_id")
                 log = _EventLog(
                     ledger_path, session=None if raw_session is None else str(raw_session), base_commit=commit, **extra
                 )
                 log.obligations("opened", update.opened)
                 log.obligations("discharged", update.discharged)
+                if update.thrashing:
+                    log.add(
+                        "thrashing",
+                        reopened_ids=[item.id for item in update.reopened],
+                        stalled_writes=update.stalled_writes,
+                        open_count=len(update.open),
+                    )
                 if pending:
                     log.add("stop_blocked", ids=[item.id for item in update.open], new_ids=[item.id for item in pending])
                 log.run(kind, wall_ms, update, len(check.changed_paths), check.workspace_parsed)
@@ -1194,6 +1261,10 @@ def main_cli(argv: list[str] | None = None) -> int:
         )
         session.add_runtime_edges(_load_runtime_edges(runtime_dir))
         res = session.apply_write(args.write_path, new_text)
+        actual_delta = session.actual_delta(
+            opened=session.open_obligations(),
+            discharged=(),
+        )
         review_result: ReviewResult | None = None
         advisory_text = res.advisory_text
         failing = bool(res.ranked_findings)
@@ -1213,6 +1284,7 @@ def main_cli(argv: list[str] | None = None) -> int:
                 subject=f"candidate edit {args.write_path}",
                 model=args.review_model,
                 cache=cache,
+                actual_delta=actual_delta,
             )
             advisory_text, failing = _apply_review_outcome(advisory_text, failing, review_result)
     except (AnalysisError, ReviewError, OSError) as exc:
@@ -1231,6 +1303,7 @@ def main_cli(argv: list[str] | None = None) -> int:
         "advisory_utf8_bytes": len(advisory_text.encode("utf-8")),
         "wall_ms": round(res.wall_seconds * 1000.0, 3),
         "findings": [_finding_json(f) for f in res.ranked_findings],
+        "actual_delta": actual_delta,
     }
     if review_result is not None:
         payload["review"] = review_result.to_dict()
