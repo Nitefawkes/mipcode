@@ -66,6 +66,12 @@ _STRUCT_HDR_RE = re.compile(
     r"\b(?:pub(?:\s*\([^)]*\))?\s+)?struct\s+([A-Za-z_][A-Za-z0-9_]*)\b"
 )
 _FN_CONTEXT_RE = re.compile(r"\bfn\s+([A-Za-z_][A-Za-z0-9_]*)\b")
+_IMPL_OR_TRAIT_ITEM_RE = re.compile(
+    r"(?:^|[\n;{}\]])\s*(?:(?:pub(?:\s*\([^)]*\))?\s+)?(?:unsafe\s+)?)?(?:impl|trait)\b"
+)
+_SELF_RECEIVER_RE = re.compile(
+    r"^\s*(?:&\s*(?:'[A-Za-z_][A-Za-z0-9_]*\s+)?(?:mut\s+)?|mut\s+)?self\b"
+)
 _IMPL_FOR_RE = re.compile(
     r"\bimpl\b(?:<[^>]*>)?\s+(?:[A-Za-z0-9_:]+\s+(?:<[^>]*>\s+)?for\s+)?([A-Za-z_][A-Za-z0-9_]*)(?:\s*<[^>]*>)?\s*\{"
 )
@@ -619,10 +625,41 @@ def _parse_account_field(
     )
 
 
+def _find_impl_or_trait_spans(masked: str) -> list[tuple[int, int]]:
+    """Return `(open_brace, close_brace)` spans for `impl` and `trait` item bodies."""
+    spans: list[tuple[int, int]] = []
+    n = len(masked)
+    for m in _IMPL_OR_TRAIT_ITEM_RE.finditer(masked):
+        paren = 0
+        bracket = 0
+        i = m.end()
+        while i < n:
+            ch = masked[i]
+            if ch == "(":
+                paren += 1
+            elif ch == ")" and paren > 0:
+                paren -= 1
+            elif ch == "[":
+                bracket += 1
+            elif ch == "]" and bracket > 0:
+                bracket -= 1
+            elif paren == 0 and bracket == 0:
+                if ch == ";":
+                    break
+                if ch == "{":
+                    close_b = _find_matching(masked, i, "{", "}")
+                    if close_b > i:
+                        spans.append((i, close_b))
+                    break
+            i += 1
+    return spans
+
+
 def _extract_handler_and_fn_bodies(masked: str) -> tuple[dict[str, str], dict[str, str]]:
-    """Return `(struct_name -> combined_handler_and_impl_body, fn_name -> body)`."""
+    """Return `(struct_name -> combined_handler_and_impl_body, free_fn_name -> body)`."""
     handler_chunks: dict[str, list[str]] = {}
     free_fns: dict[str, str] = {}
+    impl_spans = _find_impl_or_trait_spans(masked)
 
     for m in _FN_CONTEXT_RE.finditer(masked):
         fn_name = m.group(1)
@@ -642,7 +679,9 @@ def _extract_handler_and_fn_bodies(masked: str) -> tuple[dict[str, str], dict[st
         if close_b <= open_b:
             continue
         body = masked[open_b + 1 : close_b]
-        free_fns[fn_name] = body
+        in_impl_or_trait = any(start < m.start() < end for start, end in impl_spans)
+        if not in_impl_or_trait and not _SELF_RECEIVER_RE.match(sig_params):
+            free_fns[fn_name] = body
 
         ctx_m = re.search(r"\bContext\s*<", sig_params)
         if ctx_m:
@@ -714,14 +753,13 @@ def parse_anchor_file(path: str, source: str) -> AnchorFileFacts:
 
 
 def _program_scope_key(path: str) -> str:
-    norm = path.replace("\\", "/")
+    norm = re.sub(r"^(?:\./)+", "", path.replace("\\", "/"))
     pm = re.search(r"(?:^|/)programs/([^/]+)/", norm)
     if pm:
         return f"programs/{pm.group(1)}"
     if "/src/" in norm:
         return norm.split("/src/", 1)[0]
-    parts = [p for p in norm.split("/") if p]
-    return parts[0] if len(parts) > 1 else ""
+    return ""
 
 
 def _struct_pair_relation(name_a: str, name_b: str) -> str | None:
@@ -749,15 +787,19 @@ def _resolve_handler_text(struct: AnchorAccountsStruct, parsed_files: Mapping[st
     direct = parsed_files[struct.path].handler_bodies.get(struct.name, "")
     if not direct:
         return ""
+    local_free_fns = parsed_files[struct.path].free_fns
     chunks = [direct]
     seen: set[str] = set()
-    for cm in re.finditer(r"\b([a-z_][A-Za-z0-9_]*)\s*\(", direct):
+    for cm in re.finditer(r"(?<![A-Za-z0-9_.])([a-z_][A-Za-z0-9_]*)\s*\(", direct):
         cname = cm.group(1)
         if cname in seen or cname in {"require", "msg", "err", "ok", "some", "none"}:
             continue
         seen.add(cname)
-        if cname in prog_free_fns:
-            chunks.append(prog_free_fns[cname])
+        helper_body = local_free_fns.get(cname)
+        if helper_body is None:
+            helper_body = prog_free_fns.get(cname)
+        if helper_body:
+            chunks.append(helper_body)
     return "\n".join(chunks)
 
 
@@ -1288,9 +1330,16 @@ def audit_anchor_workspace(files: Mapping[str, str]) -> list[Finding]:
     findings: list[Finding] = []
     for _, prog_files in sorted(by_program.items()):
         prog_structs = [s for pf in prog_files for s in pf.structs]
-        prog_free_fns: dict[str, str] = {}
+        fn_counts: dict[str, int] = {}
         for pf in prog_files:
-            prog_free_fns.update(pf.free_fns)
+            for fn_name in pf.free_fns:
+                fn_counts[fn_name] = fn_counts.get(fn_name, 0) + 1
+        prog_free_fns = {
+            fn_name: body
+            for pf in prog_files
+            for fn_name, body in pf.free_fns.items()
+            if fn_counts.get(fn_name, 0) == 1
+        }
         findings.extend(_audit_program_structs(prog_structs, parsed_files, prog_free_fns))
 
     return rank_findings(findings)

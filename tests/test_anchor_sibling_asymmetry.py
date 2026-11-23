@@ -549,3 +549,228 @@ pub struct MockBad<'info> { #[account(mut)] pub m: Account<'info, MockSt>, pub o
     assert any("not-frozen/active guard" in ev for _, ev in by_sym_ev)
     assert not any("escrow" in ev for _, ev in by_sym_ev), by_sym_ev
     assert not any("MockBad" in sym for sym, _ in by_sym_ev), by_sym_ev
+
+
+def test_impl_method_isolation_and_single_crate_src_scope_parity():
+    state_bank_rs = """
+use anchor_lang::prelude::*;
+
+pub struct Bank {
+    pub is_frozen: bool,
+}
+
+impl Bank {
+    pub fn load(&self) -> Result<()> {
+        require!(!self.is_frozen, Err::Frozen);
+        Ok(())
+    }
+
+    pub fn helper_static() -> Result<()> {
+        let disabled = false;
+        require!(!disabled, Err::Disabled);
+        Ok(())
+    }
+}
+"""
+    utils_rs = """
+use anchor_lang::prelude::*;
+
+pub fn assert_not_paused(acc: &VaultState) -> Result<()> {
+    require!(!acc.paused, Err::Paused);
+    Ok(())
+}
+"""
+    instr_bank_rs = """
+use anchor_lang::prelude::*;
+
+#[derive(Accounts)]
+pub struct BankOpA<'info> {
+    #[account(mut, has_one = authority)]
+    pub bank: AccountLoader<'info, Bank>,
+    pub authority: Signer<'info>,
+}
+pub fn bank_op_a(ctx: Context<BankOpA>) -> Result<()> {
+    ctx.accounts.bank.load()?;
+    Ok(())
+}
+
+#[derive(Accounts)]
+pub struct BankOpB<'info> {
+    #[account(mut, has_one = authority)]
+    pub bank: AccountLoader<'info, Bank>,
+    pub authority: Signer<'info>,
+}
+pub fn bank_op_b(ctx: Context<BankOpB>) -> Result<()> {
+    ctx.accounts.bank.load()?;
+    Bank::helper_static()?;
+    Ok(())
+}
+
+#[derive(Accounts)]
+pub struct BankOpC<'info> {
+    #[account(mut, has_one = authority)]
+    pub bank: AccountLoader<'info, Bank>,
+    pub authority: Signer<'info>,
+}
+pub fn bank_op_c(ctx: Context<BankOpC>) -> Result<()> {
+    ctx.accounts.bank.load()?;
+    Ok(())
+}
+
+#[derive(Accounts)]
+pub struct BankAdminConfig<'info> {
+    #[account(mut, has_one = authority)]
+    pub bank: AccountLoader<'info, Bank>,
+    pub authority: Signer<'info>,
+}
+pub fn bank_admin_config(_ctx: Context<BankAdminConfig>) -> Result<()> {
+    Ok(())
+}
+"""
+    instr_vault_rs = """
+use anchor_lang::prelude::*;
+
+#[derive(Accounts)]
+pub struct OpOne<'info> {
+    #[account(mut, has_one = authority)]
+    pub vault: Account<'info, VaultState>,
+    pub authority: Signer<'info>,
+}
+pub fn op_one(ctx: Context<OpOne>) -> Result<()> {
+    utils::assert_not_paused(&ctx.accounts.vault)?;
+    Ok(())
+}
+
+#[derive(Accounts)]
+pub struct OpTwo<'info> {
+    #[account(mut, has_one = authority)]
+    pub vault: Account<'info, VaultState>,
+    pub authority: Signer<'info>,
+}
+pub fn op_two(ctx: Context<OpTwo>) -> Result<()> {
+    utils::assert_not_paused(&ctx.accounts.vault)?;
+    Ok(())
+}
+
+#[derive(Accounts)]
+pub struct OpThree<'info> {
+    #[account(mut, has_one = authority)]
+    pub vault: Account<'info, VaultState>,
+    pub authority: Signer<'info>,
+}
+pub fn op_three(ctx: Context<OpThree>) -> Result<()> {
+    utils::assert_not_paused(&ctx.accounts.vault)?;
+    Ok(())
+}
+
+#[derive(Accounts)]
+pub struct OpFour<'info> {
+    #[account(mut, has_one = authority)]
+    pub vault: Account<'info, VaultState>,
+    pub authority: Signer<'info>,
+}
+pub fn op_four(_ctx: Context<OpFour>) -> Result<()> {
+    Ok(())
+}
+"""
+    rel_files = {
+        "state/bank.rs": state_bank_rs,
+        "utils.rs": utils_rs,
+        "instructions/bank.rs": instr_bank_rs,
+        "instructions/vault.rs": instr_vault_rs,
+    }
+
+    layouts = [
+        {f"programs/demo/src/{k}": v for k, v in rel_files.items()},
+        {f"demo/src/{k}": v for k, v in rel_files.items()},
+        {f"src/{k}": v for k, v in rel_files.items()},
+        rel_files,
+    ]
+    results = [
+        [(f.symbol, f.evidence[0]) for f in audit_anchor_workspace(ws)]
+        for ws in layouts
+    ]
+    expected = results[0]
+    assert len(expected) == 1, expected
+    assert expected[0][0] == "OpFour", expected
+    assert "not-paused guard" in expected[0][1], expected
+    assert not any("BankAdminConfig" in sym for sym, _ in expected), expected
+    assert not any("not-frozen/active guard" in ev for _, ev in expected), expected
+    for idx, res in enumerate(results[1:], start=1):
+        assert res == expected, f"layout {idx} diverged: {res} != {expected}"
+
+    # Sibling crates directly under `<crate>/src/` (e.g. `--root programs/`) stay isolated
+    crate_a = """
+use anchor_lang::prelude::*;
+#[derive(Accounts)]
+pub struct AlphaA<'info> { #[account(mut, has_one = authority)] pub cfg: Account<'info, SharedCfg>, pub authority: Signer<'info> }
+#[derive(Accounts)]
+pub struct AlphaB<'info> { #[account(mut, has_one = authority)] pub cfg: Account<'info, SharedCfg>, pub authority: Signer<'info> }
+"""
+    crate_b = """
+use anchor_lang::prelude::*;
+#[derive(Accounts)]
+pub struct BetaOnly<'info> { #[account(mut)] pub cfg: Account<'info, SharedCfg>, pub authority: Signer<'info> }
+"""
+    assert audit_anchor_workspace({"demo_a/src/lib.rs": crate_a, "demo_b/src/lib.rs": crate_b}) == []
+
+
+def test_ambiguous_multi_file_free_fn_does_not_leak_while_local_resolves():
+    # Two files define `fn process()`, so a third file calling `process()` must NOT pick one arbitrarily
+    helper_a = """
+pub fn process(frozen: bool) { require!(!frozen); }
+"""
+    helper_b = """
+pub fn process(_unused: bool) { }
+"""
+    caller_c = """
+use anchor_lang::prelude::*;
+#[derive(Accounts)]
+pub struct CallA<'info> { #[account(mut, has_one = authority)] pub acc: Account<'info, Acc>, pub authority: Signer<'info> }
+pub fn c_a(ctx: Context<CallA>) { process(true); }
+#[derive(Accounts)]
+pub struct CallB<'info> { #[account(mut, has_one = authority)] pub acc: Account<'info, Acc>, pub authority: Signer<'info> }
+pub fn c_b(ctx: Context<CallB>) { process(true); }
+#[derive(Accounts)]
+pub struct CallC<'info> { #[account(mut, has_one = authority)] pub acc: Account<'info, Acc>, pub authority: Signer<'info> }
+pub fn c_c(ctx: Context<CallC>) { process(true); }
+#[derive(Accounts)]
+pub struct CallNone<'info> { #[account(mut, has_one = authority)] pub acc: Account<'info, Acc>, pub authority: Signer<'info> }
+pub fn c_none(_ctx: Context<CallNone>) { }
+"""
+    findings_ambig = audit_anchor_workspace(
+        {
+            "programs/app/src/h_a.rs": helper_a,
+            "programs/app/src/h_b.rs": helper_b,
+            "programs/app/src/caller.rs": caller_c,
+        }
+    )
+    assert findings_ambig == [], findings_ambig
+
+    # Same-file `fn process()` MUST still resolve locally even when another file also defines `fn process()`
+    local_mod = """
+use anchor_lang::prelude::*;
+fn process(paused: bool) { require!(!paused); }
+#[derive(Accounts)]
+pub struct LocalA<'info> { #[account(mut, has_one = authority)] pub acc: Account<'info, Acc>, pub authority: Signer<'info> }
+pub fn l_a(_ctx: Context<LocalA>) { process(false); }
+#[derive(Accounts)]
+pub struct LocalB<'info> { #[account(mut, has_one = authority)] pub acc: Account<'info, Acc>, pub authority: Signer<'info> }
+pub fn l_b(_ctx: Context<LocalB>) { process(false); }
+#[derive(Accounts)]
+pub struct LocalC<'info> { #[account(mut, has_one = authority)] pub acc: Account<'info, Acc>, pub authority: Signer<'info> }
+pub fn l_c(_ctx: Context<LocalC>) { process(false); }
+#[derive(Accounts)]
+pub struct LocalBad<'info> { #[account(mut, has_one = authority)] pub acc: Account<'info, Acc>, pub authority: Signer<'info> }
+pub fn l_bad(_ctx: Context<LocalBad>) { }
+"""
+    findings_local = audit_anchor_workspace(
+        {
+            "programs/app/src/local.rs": local_mod,
+            "programs/app/src/other.rs": helper_b,
+        }
+    )
+    assert len(findings_local) == 1, findings_local
+    assert findings_local[0].symbol == "LocalBad"
+    assert "not-paused guard" in findings_local[0].evidence[0]
+
