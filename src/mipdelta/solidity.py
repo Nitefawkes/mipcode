@@ -1093,16 +1093,1096 @@ def _detect_wrapper_and_override_drops(
     return findings
 
 
+_IGNORED_GUARD_MODIFIERS = frozenset(
+    {
+        "initializer",
+        "reinitializer",
+        "onlyInitializing",
+        "whenPaused",
+        "ifPaused",
+        "onlyPaused",
+        "onlyWhenPaused",
+        "onlyProxy",
+        "notDelegated",
+        "onlyDelegateCall",
+        "virtual",
+        "override",
+        "payable",
+        "view",
+        "pure",
+        "public",
+        "external",
+        "internal",
+        "private",
+    }
+)
+_REENTRANCY_MODIFIERS = frozenset(
+    {
+        "nonreentrant",
+        "nonreentranttransient",
+        "noreentrant",
+        "noreentrancy",
+        "reentrancyguard",
+        "lock",
+        "locked",
+        "mutex",
+    }
+)
+_REENTRANCY_HELPERS = frozenset(
+    {
+        "_nonReentrantBefore",
+        "_enterNonReentrant",
+        "_nonReentrant",
+        "_lock",
+    }
+)
+_NOT_PAUSED_MODIFIERS = frozenset(
+    {
+        "whennotpaused",
+        "notpaused",
+        "ifnotpaused",
+        "whenactive",
+        "notfrozen",
+        "whennotfrozen",
+        "notshutdown",
+        "whennotshutdown",
+        "whenopen",
+    }
+)
+_NOT_PAUSED_HELPERS = frozenset(
+    {
+        "_requireNotPaused",
+        "_whenNotPaused",
+        "_checkNotPaused",
+        "_ensureNotPaused",
+    }
+)
+_CALLER_AUTH_MODIFIERS = frozenset(
+    {
+        "onlyowner",
+        "onlyadmin",
+        "onlyrole",
+        "onlygovernance",
+        "onlyauthorized",
+        "onlyminter",
+        "onlyoperator",
+        "onlyguardian",
+        "onlymanager",
+        "onlykeeper",
+        "onlycontroller",
+        "onlyfactory",
+        "onlyrouter",
+        "onlypool",
+        "onlyvault",
+        "onlytimelock",
+        "onlyrelayer",
+        "onlypauser",
+        "onlyexecutor",
+        "onlystrategist",
+        "onlycurator",
+        "onlysentinel",
+        "onlytreasury",
+        "onlyregistry",
+        "onlybridge",
+        "onlygateway",
+        "onlysequencer",
+        "onlyvalidator",
+        "onlydeployer",
+        "onlymultisig",
+        "onlydao",
+        "onlyhook",
+        "onlyentrypoint",
+        "onlyself",
+        "onlythis",
+        "auth",
+        "restricted",
+        "requiresauth",
+    }
+)
+_CALLER_AUTH_HELPERS = frozenset(
+    {
+        "_checkOwner",
+        "_checkRole",
+        "_onlyOwner",
+        "_checkAdmin",
+        "_checkAuth",
+        "_requireAuth",
+        "_authorizeUpgrade",
+        "_checkAuthorized",
+        "_checkSender",
+        "_validateSender",
+        "_verifyCaller",
+        "_isAuthorized",
+        "_requireOwner",
+        "_assertOwner",
+    }
+)
+_PAUSE_STATE_IDENTS = frozenset(
+    {
+        "paused",
+        "_paused",
+        "isPaused",
+        "frozen",
+        "_frozen",
+        "isFrozen",
+        "shutdown",
+        "_shutdown",
+        "isShutdown",
+        "emergencyShutdown",
+    }
+)
+_DEADLINE_IDENTS = frozenset(
+    {
+        "deadline",
+        "expiry",
+        "expiration",
+        "validUntil",
+        "expiresAt",
+        "expireAt",
+        "maxTimestamp",
+        "timeout",
+    }
+)
+_TRANSFER_HELPER_LIBS = frozenset(
+    {
+        "TransferHelper",
+        "SafeTransferLib",
+        "SafeERC20",
+        "ERC20Helper",
+        "TokenHelper",
+    }
+)
+_TOKEN_OUT_METHODS = frozenset(
+    {
+        "transfer",
+        "safeTransfer",
+        "approve",
+        "safeApprove",
+        "forceApprove",
+        "safeIncreaseAllowance",
+        "burn",
+        "burnFrom",
+    }
+)
+_TOKEN_IN_METHODS = frozenset({"transferFrom", "safeTransferFrom"})
+_INTERNAL_ACCOUNTING_SINKS = frozenset(
+    {
+        "_mint",
+        "_safeMint",
+        "_burn",
+        "_transfer",
+        "_safeTransfer",
+        "_update",
+        "_deposit",
+        "_withdraw",
+        "_stake",
+        "_unstake",
+        "_borrow",
+        "_repay",
+        "_liquidate",
+        "_claim",
+        "_unlock",
+        "_lock",
+    }
+)
+_PURE_EXTERNAL_TARGETS = frozenset(
+    {
+        "this",
+        "super",
+        "abi",
+        "type",
+        "block",
+        "msg",
+        "tx",
+        "Math",
+        "SignedMath",
+        "SafeCast",
+        "Strings",
+        "FixedPointMathLib",
+        "FullMath",
+        "TickMath",
+        "SqrtPriceMath",
+        "BitMath",
+        "UnsafeMath",
+        "ECDSA",
+        "MessageHashUtils",
+        "Base64",
+        "Bytes",
+        "LibString",
+        "LibBit",
+        "FixedPointMath",
+        "UD60x18",
+        "SD59x18",
+        "StorageSlot",
+        "Arrays",
+        "BitMaps",
+        "Checkpoints",
+        "EnumerableSet",
+        "EnumerableMap",
+        "TransientSlot",
+        "SlotDerivation",
+        "Panic",
+        "ShortStrings",
+        "Timers",
+        "Nonces",
+        "Counters",
+        "SafeMath",
+    }
+)
+_NON_EXTERNAL_STATE_TYPES = (
+    "mapping",
+    "uint",
+    "int",
+    "bool",
+    "bytes",
+    "string",
+    "enumerableset",
+    "enumerablemap",
+    "counters",
+    "bitmap",
+    "checkpoint",
+)
+_GENERIC_VIEW_HELPERS = frozenset(
+    {
+        "totalSupply",
+        "totalAssets",
+        "balanceOf",
+        "decimals",
+        "name",
+        "symbol",
+        "owner",
+        "paused",
+        "asset",
+        "DOMAIN_SEPARATOR",
+        "clock",
+    }
+)
+_PAIRED_OP_SETS: tuple[tuple[str, str], ...] = (
+    ("deposit", "withdraw"),
+    ("stake", "unstake"),
+    ("mint", "burn"),
+    ("lock", "unlock"),
+    ("borrow", "repay"),
+    ("supply", "redeem"),
+    ("addliquidity", "removeliquidity"),
+    ("provideliquidity", "withdrawliquidity"),
+    ("enter", "exit"),
+    ("wrap", "unwrap"),
+    ("openposition", "closeposition"),
+    ("delegate", "undelegate"),
+    ("claim", "emergencywithdraw"),
+)
+_ACTION_VARIANT_PREFIXES = ("batch", "multi", "safe", "try", "fast", "instant", "direct", "bulk")
+_ACTION_VARIANT_SUFFIXES = (
+    "withpermit",
+    "withsignature",
+    "withsig",
+    "withapproval",
+    "batch",
+    "all",
+    "eth",
+    "native",
+    "to",
+    "for",
+    "from",
+    "exact",
+    "v2",
+)
+_PUBLIC_CALLBACK_OR_INIT_NAMES = frozenset(
+    {
+        "initialize",
+        "reinitialize",
+        "init",
+        "approve",
+        "permit",
+        "increaseallowance",
+        "decreaseallowance",
+        "transferfrom",
+        "safetransferfrom",
+        "multicall",
+        "receiveflashloan",
+        "onflashloan",
+        "onerc721received",
+        "onerc1155received",
+        "onerc1155batchreceived",
+        "uniswapv3swapcallback",
+        "uniswapv3mintcallback",
+        "flashloancallback",
+    }
+)
+_LOCAL_DECL_RE = re.compile(
+    r"\b(?:u?int(?:8|16|24|32|40|48|56|64|72|80|88|96|104|112|120|128|136|144|152|160|168|176|184|192|200|208|216|224|232|240|248|256)?|address|bool|bytes(?:\d+)?|string)\s+"
+    r"(?:(?:memory|calldata|storage|payable)\s+)*([A-Za-z_$][A-Za-z0-9_$]*)\b"
+)
+_AUTH_CALL_OR_MAP_RE = re.compile(
+    r"(?:\b(?:hasRole|isOwner|isAdmin|isAuthorized|isAllowed|isOperator|isKeeper|isGuardian|isMinter|canCall|isApprovedForAll)\s*\(|"
+    r"\b(?:authorized|admins|operators|allowed|whitelist|whitelisted|minters|managers|owners|controllers|keepers|guardians|roles|isTrusted|approved|sources|harvesters)\s*\[[^\]]*(?:msg\.sender|_msgSender))"
+)
+_BOOL_SENDER_MAP_RE = re.compile(
+    r"^\s*!?\s*[A-Za-z_$][A-Za-z0-9_$]*\s*\[[^\]]*\b(?:msg\.sender|_msgSender\s*\(\s*\))\b[^\]]*\]\s*$"
+)
+_SENDER_CMP_RE = re.compile(
+    r"(?:\b(?:msg\.sender|_msgSender\s*\(\s*\))\s*(?:==|!=)\s*([^&|;)]+)|"
+    r"([^&|;(]+)\s*(?:==|!=)\s*\b(?:msg\.sender|_msgSender\s*\(\s*\)))"
+)
+_ZERO_ADDR_EXPR_RE = re.compile(r"^\s*address\s*\(\s*0\s*\)\s*$")
+_ALLOWANCE_AUTH_RE = re.compile(r"\b(?:_spendAllowance|_checkApproved|isApprovedForAll|isOperator)\s*\(")
+_TIMELOCK_MOD_RE = re.compile(r"(?:aftertimelock|timelock|afterdelay)", re.IGNORECASE)
+_CONFIG_SETTER_RE = re.compile(
+    r"^(?:set|add|remove|delete|clear|update|configure|config|revoke|submit|grant|enable|disable|register|unregister|pause|unpause|freeze|unfreeze|whitelist|blacklist)[A-Z_]"
+)
+
+
+def _is_caller_auth_cond(cond: str) -> bool:
+    if _AUTH_CALL_OR_MAP_RE.search(cond) or _BOOL_SENDER_MAP_RE.match(cond):
+        return True
+    for m in _SENDER_CMP_RE.finditer(cond):
+        other = (m.group(1) or m.group(2) or "").strip()
+        if other and not _ZERO_ADDR_EXPR_RE.match(other):
+            return True
+    return False
+
+
+def _has_global_pause_ident(cond: str) -> bool:
+    for ident in _IDENT_RE.findall(cond):
+        if ident in _PAUSE_STATE_IDENTS and not re.search(rf"\b{re.escape(ident)}\s*\[", cond):
+            return True
+    return False
+
+
+_USER_SCOPED_RE = re.compile(
+    r"(?:\b(?:balances|_balances|stakes|_stakes|deposits|_deposits|shares|_shares|positions|_positions|"
+    r"userInfo|users|accounts|debts|borrows|collateral|rewards|staked|locked|pending|allowances|_allowances|"
+    r"nonces|_nonces|credits|principal)\s*\[[^\]]*\b(?:msg\.sender|_msgSender\s*\(\s*\))\b|"
+    r"\b(?:sender|owner|account|user|caller|from)\s*:\s*(?:msg\.sender|_msgSender\s*\(\s*\))\b|"
+    r"\.(?:safeTransferFrom|transferFrom)\s*\(\s*(?:msg\.sender|_msgSender\s*\(\s*\))\b|"
+    r"\bmsg\.value\b)",
+)
+_EMERGENCY_OR_PAUSE_FN_RE = re.compile(
+    r"(?:^|_)(?:emergency|forcewithdraw|ragequit|rescue|unpause|pause|setpaused|freeze|unfreeze|shutdown|init|initialize|reinitialize)",
+    re.IGNORECASE,
+)
+_ETH_SEND_RE = re.compile(
+    r"(?:\.call\s*\{[^}]*\bvalue\s*:|\bsafeTransferETH\s*\(|\bsendValue\s*\(|payable\s*\([^)]*\)\s*\.(?:transfer|send)\s*\()"
+)
+_REENTRANT_ETH_SEND_RE = re.compile(
+    r"(?:\.call\s*\{[^}]*\bvalue\s*:|\bsafeTransferETH\s*\(|\bsendValue\s*\()"
+)
+_LOW_LEVEL_EXT_CALL_RE = re.compile(r"\.(?:call|delegatecall|staticcall)\s*(?:\{|\()")
+
+
+def _collect_ancestor_state_vars(
+    contract: SolContractFact,
+    contracts_by_name: Mapping[str, list[SolContractFact]],
+) -> dict[str, SolStateVarFact]:
+    result: dict[str, SolStateVarFact] = {sv.name: sv for sv in contract.state_vars}
+    seen: set[str] = {contract.name}
+    queue = list(contract.bases)
+    while queue:
+        base_name = queue.pop(0)
+        if base_name in seen:
+            continue
+        seen.add(base_name)
+        for base_c in contracts_by_name.get(base_name, ()):
+            for sv in base_c.state_vars:
+                result.setdefault(sv.name, sv)
+            queue.extend(base_c.bases)
+    return result
+
+
+def _collect_ancestor_modifiers(
+    contract: SolContractFact,
+    contracts_by_name: Mapping[str, list[SolContractFact]],
+) -> dict[str, tuple[tuple[SolParamFact, ...], str]]:
+    result: dict[str, tuple[tuple[SolParamFact, ...], str]] = {
+        name: (params, body) for name, params, body in contract.modifier_bodies
+    }
+    seen: set[str] = {contract.name}
+    queue = list(contract.bases)
+    while queue:
+        base_name = queue.pop(0)
+        if base_name in seen:
+            continue
+        seen.add(base_name)
+        for base_c in contracts_by_name.get(base_name, ()):
+            for name, params, body in base_c.modifier_bodies:
+                result.setdefault(name, (params, body))
+            queue.extend(base_c.bases)
+    return result
+
+
+def _extract_inline_guard_conditions(body_masked: str) -> list[str]:
+    """Extract boolean guard expressions from `require(cond, ...)` and `if (cond) revert ...`."""
+    conds: list[str] = []
+    n = len(body_masked)
+    for m in re.finditer(r"\brequire\s*\(", body_masked):
+        open_p = m.end() - 1
+        close_p = _find_matching(body_masked, open_p, "(", ")")
+        if close_p > open_p:
+            parts = _split_top_level(body_masked[open_p + 1 : close_p], ",")
+            if parts and parts[0].strip():
+                conds.append(parts[0].strip())
+    for m in re.finditer(r"\bif\s*\(", body_masked):
+        open_p = m.end() - 1
+        close_p = _find_matching(body_masked, open_p, "(", ")")
+        if close_p <= open_p:
+            continue
+        cond = body_masked[open_p + 1 : close_p].strip()
+        after = _skip_ws(body_masked, close_p + 1)
+        if after >= n:
+            continue
+        if re.match(r"revert\b", body_masked[after:]):
+            conds.append(cond)
+        elif body_masked[after] == "{":
+            close_b = _find_matching(body_masked, after, "{", "}")
+            if close_b > after:
+                inner = body_masked[after + 1 : close_b]
+                if (
+                    len(inner) <= 220
+                    and re.search(r"\brevert\b", inner)
+                    and not re.search(r"\bif\s*\(", inner)
+                ):
+                    conds.append(cond)
+    return conds
+
+
+def _top_level_unconditional_callees(body_masked: str) -> set[str]:
+    """Return bare callee names invoked at brace depth 0 (unconditional control flow)."""
+    callees: set[str] = set()
+    skip_kw = {
+        "if",
+        "for",
+        "while",
+        "catch",
+        "switch",
+        "return",
+        "require",
+        "assert",
+        "revert",
+        "emit",
+        "new",
+        "delete",
+        "unchecked",
+        "assembly",
+        "try",
+    }
+    depth = 0
+    n = len(body_masked)
+    i = 0
+    while i < n:
+        ch = body_masked[i]
+        if ch == "{":
+            depth += 1
+            i += 1
+        elif ch == "}":
+            depth = max(0, depth - 1)
+            i += 1
+        elif depth == 0 and (ch.isalpha() or ch in "_$"):
+            j = i + 1
+            while j < n and (body_masked[j].isalnum() or body_masked[j] in "_$"):
+                j += 1
+            tok = body_masked[i:j]
+            prev = i - 1
+            while prev >= 0 and body_masked[prev].isspace():
+                prev -= 1
+            nxt = _skip_ws(body_masked, j)
+            if (
+                tok not in skip_kw
+                and nxt < n
+                and body_masked[nxt] == "("
+                and (prev < 0 or body_masked[prev] != ".")
+            ):
+                callees.add(tok)
+            i = j
+        else:
+            i += 1
+    return callees
+
+
+def _extract_base_ident(expr: str) -> str | None:
+    s = expr.strip()
+    while s.startswith("(") and s.endswith(")"):
+        s = s[1:-1].strip()
+    cast_m = re.match(r"^(?:address|payable|I?[A-Z][A-Za-z0-9_$]*)\s*\((.+)\)$", s)
+    if cast_m:
+        s = cast_m.group(1).strip()
+    m = re.match(r"^([A-Za-z_$][A-Za-z0-9_$]*)", s)
+    return m.group(1) if m else None
+
+
+def _is_state_var_mutated(body_masked: str, var_name: str) -> bool:
+    esc = re.escape(var_name)
+    if re.search(rf"\b(?:delete|\+\+|--)\s*{esc}\b", body_masked):
+        return True
+    pat = _sol_ident_re(var_name, allow_member=False)
+    n = len(body_masked)
+    for m in pat.finditer(body_masked):
+        idx = _skip_ws(body_masked, m.end())
+        # Follow optional `[...]` or `.member` chains on the state variable
+        while idx < n:
+            if body_masked[idx] == "[":
+                close_b = _find_matching(body_masked, idx, "[", "]")
+                if close_b < 0:
+                    break
+                idx = _skip_ws(body_masked, close_b + 1)
+            elif body_masked[idx] == ".":
+                mem_m = re.match(r"\.\s*([A-Za-z_$][A-Za-z0-9_$]*)", body_masked[idx:])
+                if not mem_m:
+                    break
+                mem = mem_m.group(1)
+                after_mem = _skip_ws(body_masked, idx + mem_m.end())
+                if (
+                    mem in {"push", "pop", "add", "remove", "set", "clear", "increment", "decrement"}
+                    and after_mem < n
+                    and body_masked[after_mem] == "("
+                ):
+                    return True
+                idx = after_mem
+            else:
+                break
+        if idx >= n:
+            continue
+        rest = body_masked[idx : idx + 3]
+        if rest.startswith(("++", "--")):
+            return True
+        if rest.startswith("=") and not rest.startswith(("==", "=>")):
+            return True
+        if re.match(r"^(?:[+\-*/%|&^]|<<|>>)=", rest):
+            return True
+    return False
+
+
+def _is_external_call_in_fn(
+    fn: SolFunctionFact,
+    state_vars: Mapping[str, SolStateVarFact],
+    workspace_libraries: frozenset[str],
+) -> bool:
+    if _REENTRANT_ETH_SEND_RE.search(fn.body_masked) or _LOW_LEVEL_EXT_CALL_RE.search(fn.body_masked):
+        return True
+    for c in fn.calls:
+        if not c.target_expr:
+            continue
+        base = _extract_base_ident(c.target_expr)
+        if not base or base in _PURE_EXTERNAL_TARGETS:
+            continue
+        if base in _TRANSFER_HELPER_LIBS:
+            return True
+        if base in workspace_libraries:
+            continue
+        sv = state_vars.get(base)
+        if sv is not None:
+            tlow = sv.type_str.lower()
+            if any(tok in tlow for tok in _NON_EXTERNAL_STATE_TYPES):
+                continue
+        # Skip value-type method helpers like `.push()`, `.pop()`, `.length`, `.add()`, `.remove()`
+        if c.callee_name in {"push", "pop", "add", "remove", "contains", "length", "at", "values", "encode", "decode"}:
+            continue
+        return True
+    return False
+
+
+def _classify_modifier_guard(
+    mod_name: str,
+    modifier_defs: Mapping[str, tuple[tuple[SolParamFact, ...], str]],
+) -> tuple[str, str, frozenset[str]] | None:
+    """Return `(canonical_guard_key, display_label, inline_equiv_idents)` or None if ignored."""
+    if mod_name in _IGNORED_GUARD_MODIFIERS:
+        return None
+    low = mod_name.lower()
+    if low in _REENTRANCY_MODIFIERS:
+        return ("reentrancy", mod_name, frozenset())
+    if low in _NOT_PAUSED_MODIFIERS:
+        return ("not_paused", mod_name, frozenset())
+    if low in _CALLER_AUTH_MODIFIERS:
+        return ("caller_auth", mod_name, frozenset())
+    if re.search(r"(?:deadline|notexpired|beforeexpiry)", low):
+        return ("deadline", mod_name, frozenset())
+
+    mdef = modifier_defs.get(mod_name)
+    if mdef is not None:
+        mparams, mbody = mdef
+        conds = _extract_inline_guard_conditions(mbody)
+        has_revert = bool(_REQUIRE_RE.search(mbody))
+        if has_revert:
+            # Reentrancy lock pattern: checks a flag and writes it before and after `_;`
+            if "_;" in mbody and re.search(r"\b(?:locked|_locked|_status|_entered|reentrancy)\b", mbody, re.IGNORECASE):
+                return ("reentrancy", mod_name, frozenset())
+            for cond in conds:
+                if _is_caller_auth_cond(cond):
+                    return ("caller_auth", mod_name, frozenset())
+                if _has_global_pause_ident(cond):
+                    return ("not_paused", mod_name, frozenset())
+                cond_idents = set(_IDENT_RE.findall(cond))
+                if "timestamp" in cond_idents and (cond_idents & _DEADLINE_IDENTS):
+                    return ("deadline", mod_name, frozenset())
+            if re.match(r"^only[A-Z_]", mod_name) and re.search(r"\b(?:msg\.sender|_msgSender|hasRole|owner|admin)\b", mbody):
+                return ("caller_auth", mod_name, frozenset())
+            # Custom parameterless contract-defined invariant modifier (e.g., `unlockAvailable`)
+            if not mparams and not re.search(r"(?:paused|init|proxy|delegate)", low):
+                cond_idents = frozenset(
+                    ident
+                    for cond in conds
+                    for ident in _IDENT_RE.findall(cond)
+                    if ident not in {"msg", "sender", "block", "timestamp", "address", "true", "false"}
+                )
+                return (f"mod:{mod_name}", mod_name, cond_idents)
+
+    if re.match(r"^only[A-Z_]", mod_name):
+        return ("caller_auth", mod_name, frozenset())
+    return None
+
+
+def _extract_direct_guards(
+    fn: SolFunctionFact,
+    modifier_defs: Mapping[str, tuple[tuple[SolParamFact, ...], str]],
+    zero_arg_view_helpers: frozenset[str],
+    custom_mod_inline_idents: Mapping[str, frozenset[str]],
+) -> dict[str, str]:
+    guards: dict[str, str] = {}
+    for mod in fn.modifiers:
+        classified = _classify_modifier_guard(mod, modifier_defs)
+        if classified is not None:
+            gkey, glabel, _ = classified
+            guards.setdefault(gkey, glabel)
+
+    conds = _extract_inline_guard_conditions(fn.body_masked)
+    all_cond_idents: set[str] = set()
+    for cond in conds:
+        c_idents = set(_IDENT_RE.findall(cond))
+        all_cond_idents.update(c_idents)
+        if _is_caller_auth_cond(cond):
+            guards.setdefault("caller_auth", "msg.sender auth")
+        if _has_global_pause_ident(cond):
+            guards.setdefault("not_paused", "not-paused check")
+        if "timestamp" in c_idents and (c_idents & _DEADLINE_IDENTS):
+            guards.setdefault("deadline", "deadline check")
+        # 0-arg contract-local view/pure invariant predicate called inside guard condition
+        for cm in re.finditer(r"(?<![A-Za-z0-9_$.])([A-Za-z_$][A-Za-z0-9_$]*)\s*\(\s*\)", cond):
+            hname = cm.group(1)
+            if hname in zero_arg_view_helpers and hname not in _GENERIC_VIEW_HELPERS:
+                guards.setdefault(f"helper:{hname}", f"{hname}() check")
+
+    # Allowance/operator authorization helpers (e.g., ERC-20/4626/7540 `_spendAllowance` or `isOperator`)
+    if _ALLOWANCE_AUTH_RE.search(fn.body_masked):
+        guards.setdefault("caller_auth", "allowance/operator auth")
+
+    # Satisfy custom state-gate modifiers when the same underlying state flag is checked inline
+    for gkey, req_idents in custom_mod_inline_idents.items():
+        if req_idents and (req_idents <= all_cond_idents):
+            guards.setdefault(gkey, gkey.removeprefix("mod:"))
+
+    for callee in _top_level_unconditional_callees(fn.body_masked):
+        if callee in _REENTRANCY_HELPERS:
+            guards.setdefault("reentrancy", callee)
+        elif callee in _NOT_PAUSED_HELPERS:
+            guards.setdefault("not_paused", callee)
+        elif callee in _CALLER_AUTH_HELPERS:
+            guards.setdefault("caller_auth", callee)
+    return guards
+
+
+def _extract_direct_surfaces(
+    fn: SolFunctionFact,
+    mutable_vars: Mapping[str, SolStateVarFact],
+    all_vars: Mapping[str, SolStateVarFact],
+) -> tuple[set[str], set[str]]:
+    """Return `(primary_surfaces, reentrancy_only_surfaces)` for one function body."""
+    shadowed = {p.name for p in fn.params if p.name} | set(_LOCAL_DECL_RE.findall(fn.body_masked))
+    surfaces: set[str] = set()
+    reent_only: set[str] = set()
+
+    for var_name in mutable_vars:
+        if var_name in shadowed:
+            continue
+        if _is_state_var_mutated(fn.body_masked, var_name):
+            surfaces.add(f"state:{var_name}")
+
+    if _ETH_SEND_RE.search(fn.body_masked):
+        surfaces.add("sink:eth_out")
+
+    for call in fn.calls:
+        if call.target_expr is None:
+            if call.callee_name in _INTERNAL_ACCOUNTING_SINKS:
+                surfaces.add(f"sink:{call.callee_name}")
+            continue
+        base = _extract_base_ident(call.target_expr)
+        if not base:
+            continue
+        if base in _TRANSFER_HELPER_LIBS and call.arg_exprs:
+            tok = _extract_base_ident(call.arg_exprs[0])
+            if tok and tok in all_vars:
+                if call.callee_name in _TOKEN_OUT_METHODS:
+                    surfaces.add(f"token_out:{tok}")
+                    reent_only.add(f"token_io:{tok}")
+                elif call.callee_name in _TOKEN_IN_METHODS:
+                    reent_only.add(f"token_io:{tok}")
+        elif base in all_vars:
+            if call.callee_name in _TOKEN_OUT_METHODS:
+                surfaces.add(f"token_out:{base}")
+                reent_only.add(f"token_io:{base}")
+            elif call.callee_name in _TOKEN_IN_METHODS:
+                reent_only.add(f"token_io:{base}")
+
+    return surfaces, reent_only
+
+
+def _pair_relation(name_a: str, name_b: str) -> str | None:
+    """Return `'opposite'` for matched risk-equivalent pairs, `'variant'` for same-verb batch/variant pairs."""
+    a = name_a.lstrip("_").lower()
+    b = name_b.lstrip("_").lower()
+    if a == b:
+        return "variant"
+    for left, right in _PAIRED_OP_SETS:
+        if (a == left and b == right) or (a == right and b == left):
+            return "opposite"
+        if a.startswith(left) and b.startswith(right) and a[len(left) :] == b[len(right) :]:
+            return "opposite"
+        if a.startswith(right) and b.startswith(left) and a[len(right) :] == b[len(left) :]:
+            return "opposite"
+
+    def _verb_stem(n: str) -> str:
+        s = n
+        changed = True
+        while changed:
+            changed = False
+            for pfx in _ACTION_VARIANT_PREFIXES:
+                if s.startswith(pfx) and len(s) - len(pfx) >= 4:
+                    s = s[len(pfx) :]
+                    changed = True
+                    break
+            for sfx in _ACTION_VARIANT_SUFFIXES:
+                if s.endswith(sfx) and len(s) - len(sfx) >= 4:
+                    s = s[: -len(sfx)]
+                    changed = True
+                    break
+        return s
+
+    sa = _verb_stem(a)
+    sb = _verb_stem(b)
+    if len(sa) >= 4 and sa == sb:
+        return "variant"
+    return None
+
+
+def _surface_display(surface: str) -> str:
+    for pfx in ("state:", "token_out:", "token_io:", "sink:"):
+        if surface.startswith(pfx):
+            label = surface[len(pfx) :]
+            return "ETH transfer" if label == "eth_out" else label
+    return surface
+
+
+def _detect_sibling_guard_asymmetry(
+    path: str,
+    contract: SolContractFact,
+    contracts_by_name: Mapping[str, list[SolContractFact]],
+    ancestor_fns: Mapping[str, list[SolFunctionFact]],
+    workspace_libraries: frozenset[str],
+) -> list[Finding]:
+    if contract.kind in ("interface", "library"):
+        return []
+
+    all_vars = _collect_ancestor_state_vars(contract, contracts_by_name)
+    mutable_vars = {
+        name: sv for name, sv in all_vars.items() if not sv.is_constant and not sv.is_immutable
+    }
+    modifier_defs = _collect_ancestor_modifiers(contract, contracts_by_name)
+
+    # Index all contract + ancestor functions by name for helper/delegation resolution
+    all_fns_by_name: dict[str, list[SolFunctionFact]] = {}
+    for fn in contract.functions:
+        all_fns_by_name.setdefault(fn.name, []).append(fn)
+    for name, fns in ancestor_fns.items():
+        all_fns_by_name.setdefault(name, []).extend(fns)
+
+    zero_arg_view_helpers = frozenset(
+        fn.name
+        for fns in all_fns_by_name.values()
+        for fn in fns
+        if fn.has_body and fn.mutability in ("view", "pure") and len(fn.params) == 0
+    )
+
+    # Pre-collect inline-equivalent state identifiers for custom contract-defined modifiers
+    custom_mod_inline_idents: dict[str, frozenset[str]] = {}
+    for mod_name in modifier_defs:
+        classified = _classify_modifier_guard(mod_name, modifier_defs)
+        if classified is not None and classified[0].startswith("mod:") and classified[2]:
+            custom_mod_inline_idents[classified[0]] = classified[2]
+
+    eligible: list[SolFunctionFact] = [
+        fn
+        for fn in contract.functions
+        if fn.has_body
+        and fn.visibility in ("external", "public")
+        and fn.name not in ("constructor", "receive", "fallback")
+        and fn.mutability not in ("view", "pure")
+        and fn.body_masked.strip()
+        and not _PURE_REVERT_BODY_RE.match(fn.body_masked)
+    ]
+    if len(eligible) < 2:
+        return []
+
+    # Precompute direct facts for every function reachable in contract + ancestors
+    direct_guards_cache: dict[int, dict[str, str]] = {}
+    direct_surfaces_cache: dict[int, tuple[set[str], set[str]]] = {}
+    direct_ext_cache: dict[int, bool] = {}
+    direct_user_scoped_cache: dict[int, bool] = {}
+
+    def _ensure_direct(fn: SolFunctionFact) -> None:
+        fid = id(fn)
+        if fid in direct_guards_cache:
+            return
+        direct_guards_cache[fid] = _extract_direct_guards(
+            fn, modifier_defs, zero_arg_view_helpers, custom_mod_inline_idents
+        )
+        direct_surfaces_cache[fid] = _extract_direct_surfaces(fn, mutable_vars, all_vars)
+        direct_ext_cache[fid] = _is_external_call_in_fn(fn, all_vars, workspace_libraries)
+        direct_user_scoped_cache[fid] = bool(_USER_SCOPED_RE.search(fn.body_masked))
+
+    # Resolve effective guards (unconditional 2-hop delegation), surfaces (2-hop internal helpers), and ext calls
+    eff_guards: dict[int, dict[str, str]] = {}
+    eff_surfaces: dict[int, set[str]] = {}
+    eff_reent_surfaces: dict[int, set[str]] = {}
+    eff_ext_call: dict[int, bool] = {}
+    eff_user_scoped: dict[int, bool] = {}
+
+    for fn in eligible:
+        _ensure_direct(fn)
+        guards = dict(direct_guards_cache[id(fn)])
+        prim, reent = set(direct_surfaces_cache[id(fn)][0]), set(direct_surfaces_cache[id(fn)][1])
+        has_ext = direct_ext_cache[id(fn)]
+        user_scoped = direct_user_scoped_cache[id(fn)]
+
+        # 1) Guard inheritance via unconditional intra-contract / inherited calls (depth <= 2)
+        g_visited: set[int] = {id(fn)}
+        g_frontier: list[tuple[SolFunctionFact, int]] = [(fn, 0)]
+        while g_frontier:
+            cur, depth = g_frontier.pop(0)
+            if depth >= 2:
+                continue
+            for callee_name in _top_level_unconditional_callees(cur.body_masked):
+                for cand in all_fns_by_name.get(callee_name, ()):
+                    if not cand.has_body or id(cand) in g_visited:
+                        continue
+                    g_visited.add(id(cand))
+                    _ensure_direct(cand)
+                    for gk, gl in direct_guards_cache[id(cand)].items():
+                        guards.setdefault(gk, gl)
+                    g_frontier.append((cand, depth + 1))
+
+        # 2) Surface & external-call propagation via internal/private helpers (depth <= 2)
+        s_visited: set[int] = {id(fn)}
+        s_frontier: list[tuple[SolFunctionFact, int]] = [(fn, 0)]
+        while s_frontier:
+            cur, depth = s_frontier.pop(0)
+            if depth >= 2:
+                continue
+            for call in cur.calls:
+                if call.target_expr is not None:
+                    continue
+                for cand in all_fns_by_name.get(call.callee_name, ()):
+                    if (
+                        not cand.has_body
+                        or cand.visibility not in ("internal", "private")
+                        or id(cand) in s_visited
+                    ):
+                        continue
+                    s_visited.add(id(cand))
+                    _ensure_direct(cand)
+                    c_prim, c_reent = direct_surfaces_cache[id(cand)]
+                    prim.update(c_prim)
+                    reent.update(c_reent)
+                    if direct_ext_cache[id(cand)]:
+                        has_ext = True
+                    if direct_user_scoped_cache[id(cand)]:
+                        user_scoped = True
+                    s_frontier.append((cand, depth + 1))
+
+        eff_guards[id(fn)] = guards
+        eff_surfaces[id(fn)] = prim
+        eff_reent_surfaces[id(fn)] = prim | reent
+        eff_ext_call[id(fn)] = has_ext
+        eff_user_scoped[id(fn)] = user_scoped
+
+    contract_has_deadline_state = any(
+        sv.name.lower() in {d.lower() for d in _DEADLINE_IDENTS} for sv in all_vars.values()
+    )
+
+    def _is_time_gated_finalizer(fn: SolFunctionFact) -> bool:
+        if any(_TIMELOCK_MOD_RE.search(m) for m in fn.modifiers):
+            return True
+        for cond in _extract_inline_guard_conditions(fn.body_masked):
+            if "block.timestamp" in cond and re.search(r"\bblock\.timestamp\s*<", cond):
+                return True
+        return False
+
+    def _is_exempt(fn: SolFunctionFact, gkey: str, guarded_peers: Iterable[SolFunctionFact] = ()) -> bool:
+        low_name = fn.name.lstrip("_").lower()
+        if low_name in _PUBLIC_CALLBACK_OR_INIT_NAMES or low_name.startswith(("init", "initialize", "reinitialize")):
+            return True
+        if gkey == "reentrancy":
+            if not eff_ext_call[id(fn)]:
+                return True
+            # Admin-only config/sweep function vs permissionless user flow is not a peer reentrancy omission
+            if "caller_auth" in eff_guards[id(fn)] and guarded_peers:
+                if not any("caller_auth" in eff_guards[id(p)] for p in guarded_peers):
+                    return True
+            return False
+        if gkey == "not_paused":
+            return bool(_EMERGENCY_OR_PAUSE_FN_RE.search(fn.name))
+        if gkey == "caller_auth":
+            if eff_user_scoped[id(fn)]:
+                return True
+            if _is_time_gated_finalizer(fn):
+                return True
+            if low_name in {"transfer", "deposit", "lock", "repay", "fund", "donate"}:
+                return True
+            # Pure admin-config setters (`set*`/`add*`/`update*`) do not imply `caller_auth` on a non-setter protocol crank
+            peers = list(guarded_peers)
+            if peers and all(_CONFIG_SETTER_RE.match(p.name) for p in peers) and not _CONFIG_SETTER_RE.match(fn.name):
+                return True
+            return False
+        if gkey == "deadline":
+            has_deadline_param = any(
+                p.name and p.name.lower() in {d.lower() for d in _DEADLINE_IDENTS} for p in fn.params
+            )
+            return not (has_deadline_param or contract_has_deadline_state)
+        if gkey.startswith("mod:"):
+            return bool(_EMERGENCY_OR_PAUSE_FN_RE.search(fn.name))
+        if gkey.startswith("helper:"):
+            return bool(_EMERGENCY_OR_PAUSE_FN_RE.search(fn.name))
+        return False
+
+    # Collect missing-guard records keyed by `(fn_id, guard_key)` -> `(fn, guard_label, surfaces, peers)`
+    hits: dict[tuple[int, str], tuple[SolFunctionFact, str, set[str], set[str]]] = {}
+
+    def _record_hit(target: SolFunctionFact, gkey: str, glabel: str, surface: str, peers: Iterable[str]) -> None:
+        key = (id(target), gkey)
+        if key not in hits:
+            hits[key] = (target, glabel, {surface}, set(peers))
+        else:
+            _, _, surfs, pset = hits[key]
+            surfs.add(surface)
+            pset.update(peers)
+
+    # Rule A: Sibling-group consensus (`len(group) >= 3`, `>= 2` peers and `>= 2/3` of group enforce G)
+    surface_groups: dict[str, list[SolFunctionFact]] = {}
+    reent_groups: dict[str, list[SolFunctionFact]] = {}
+    for fn in eligible:
+        for s in eff_surfaces[id(fn)]:
+            surface_groups.setdefault(s, []).append(fn)
+        for s in eff_reent_surfaces[id(fn)]:
+            reent_groups.setdefault(s, []).append(fn)
+
+    def _eval_consensus_group(surface: str, group: list[SolFunctionFact], allowed_guards: set[str] | None) -> None:
+        n = len(group)
+        if n < 3:
+            return
+        guard_members: dict[str, list[SolFunctionFact]] = {}
+        guard_labels: dict[str, str] = {}
+        for fn in group:
+            for gkey, glabel in eff_guards[id(fn)].items():
+                if allowed_guards is not None and gkey not in allowed_guards:
+                    continue
+                guard_members.setdefault(gkey, []).append(fn)
+                guard_labels.setdefault(gkey, glabel)
+        for gkey, guarded in guard_members.items():
+            if len(guarded) < 2:
+                continue
+            guarded_ids = {id(f) for f in guarded}
+            if gkey == "deadline":
+                # Parameter-scoped guard: only siblings that accept a deadline/expiry belong in the denominator
+                applicable = [f for f in group if id(f) in guarded_ids or not _is_exempt(f, gkey, guarded)]
+                denom = len(applicable)
+                if denom < 3 or len(guarded) * 3 < denom * 2:
+                    continue
+                targets = [f for f in applicable if id(f) not in guarded_ids]
+            else:
+                if len(guarded) * 3 < n * 2:
+                    continue
+                targets = [f for f in group if id(f) not in guarded_ids and not _is_exempt(f, gkey, guarded)]
+            peer_names = sorted({f.name for f in guarded})
+            for fn in targets:
+                _record_hit(fn, gkey, guard_labels[gkey], surface, peer_names)
+
+    for surf, grp in sorted(surface_groups.items()):
+        _eval_consensus_group(surf, grp, allowed_guards=None)
+    for surf, grp in sorted(reent_groups.items()):
+        if surf not in surface_groups:
+            _eval_consensus_group(surf, grp, allowed_guards={"reentrancy"})
+
+    # Rule B: Matched risk-equivalent opposite pairs & same-verb variant/batch pairs
+    for i in range(len(eligible)):
+        fa = eligible[i]
+        for j in range(i + 1, len(eligible)):
+            fb = eligible[j]
+            rel = _pair_relation(fa.name, fb.name)
+            if rel is None:
+                continue
+            shared_prim = eff_surfaces[id(fa)] & eff_surfaces[id(fb)]
+            shared_reent = eff_reent_surfaces[id(fa)] & eff_reent_surfaces[id(fb)]
+            if not shared_prim and not shared_reent:
+                continue
+            ga = eff_guards[id(fa)]
+            gb = eff_guards[id(fb)]
+            for guarded_fn, target_fn, g_have, g_miss in ((fa, fb, ga, gb), (fb, fa, gb, ga)):
+                for gkey, glabel in g_have.items():
+                    if gkey in g_miss:
+                        continue
+                    if rel == "opposite":
+                        # On opposite pairs (deposit/withdraw, lock/unlock), only symmetric state-safety guards apply
+                        if not (gkey in {"reentrancy", "not_paused"} or gkey.startswith("mod:")):
+                            continue
+                    else:
+                        # Same-verb variant/batch pair (withdraw/withdrawAll, mint/mintBatch)
+                        if gkey.startswith("helper:"):
+                            continue
+                    shared = shared_reent if gkey == "reentrancy" else shared_prim
+                    if not shared:
+                        continue
+                    if _is_exempt(target_fn, gkey, (guarded_fn,)):
+                        continue
+                    _record_hit(target_fn, gkey, glabel, sorted(shared)[0], (guarded_fn.name,))
+
+    findings: list[Finding] = []
+    for (fn_id, gkey), (fn, glabel, surfs, peers) in sorted(
+        hits.items(), key=lambda kv: (kv[1][0].start_line, kv[1][0].name, kv[0][1])
+    ):
+        peer_list = ", ".join(sorted(peers)[:3])
+        if len(peers) > 3:
+            peer_list += f" (+{len(peers) - 3})"
+        surf_list = ", ".join(sorted({_surface_display(s) for s in surfs})[:2])
+        findings.append(
+            Finding(
+                detector="sibling_guard_asymmetry",
+                symbol=f"{contract.name}.{fn.name}",
+                path=path,
+                start_line=fn.start_line,
+                end_line=fn.end_line,
+                evidence=(
+                    f"missing {glabel} enforced by sibling(s) {peer_list} on {surf_list}",
+                ),
+                resolution_source="static_ast",
+                confidence="high",
+            )
+        )
+    return findings
+
+
 def audit_solidity_workspace(files: Mapping[str, str]) -> list[Finding]:
     """Run static structural contract auditing across a mapping of relative .sol paths to sources."""
     parsed: dict[str, SolFileFacts] = {
         path: parse_solidity_file(path, text) for path, text in sorted(files.items())
     }
     contracts_by_name: dict[str, list[SolContractFact]] = {}
+    workspace_libraries: set[str] = set()
     for f in parsed.values():
         for c in f.contracts:
             contracts_by_name.setdefault(c.name, []).append(c)
+            if c.kind == "library":
+                workspace_libraries.add(c.name)
     descendants = _collect_inheritance_descendants(contracts_by_name)
+    lib_set = frozenset(workspace_libraries)
 
     findings: list[Finding] = []
     for path, f_facts in parsed.items():
@@ -1114,6 +2194,9 @@ def audit_solidity_workspace(files: Mapping[str, str]) -> list[Finding]:
                 findings.extend(_detect_try_catch_sinks(path, contract, fn))
                 findings.extend(_detect_unused_params(path, contract, fn, ancestor_fns, raw_lines))
             findings.extend(_detect_wrapper_and_override_drops(path, contract, ancestor_fns))
+            findings.extend(
+                _detect_sibling_guard_asymmetry(path, contract, contracts_by_name, ancestor_fns, lib_set)
+            )
     return findings
 
 

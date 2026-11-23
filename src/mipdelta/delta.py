@@ -24,6 +24,7 @@ _DETECTOR_PRIORITY = {
     "callback_binding_review": 2,
     "override_signature_review": 3,
     "override_modifier_review": 3,
+    "sibling_guard_asymmetry": 3,
     "return_contract_review": 4,
     "exception_contract_review": 5,
     "delegating_wrapper_review": 6,
