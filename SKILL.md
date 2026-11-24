@@ -1,7 +1,7 @@
 ---
 name: mipcode
-description: Run mip-delta static checks on Python and Solidity changes or repositories to surface unforwarded wrapper arguments, stale callers, unused parameters/state variables, and override mismatches.
-version: v0.6.5
+description: Run mip-delta static checks on Python, Solidity (structural and fork diffs), and Solana/Anchor Rust changes or repositories to surface unforwarded wrapper arguments, stale callers, unused parameters/state variables, override mismatches, and asymmetric state or account guards.
+version: v0.6.6
 license: Apache-2.0
 homepage: https://coherion.net/mipcode
 repository: https://github.com/Nitefawkes/mipcode
@@ -9,7 +9,7 @@ repository: https://github.com/Nitefawkes/mipcode
 
 # MipCode (`mip-delta`) Agent Skill
 
-Use `mip-delta` (`coherion-mipcode` v0.6.5) after multi-file edits, before opening or merging a pull request, or when starting a Python or Solidity code audit.
+Use `mip-delta` (`coherion-mipcode` v0.6.6) after multi-file edits, before opening or merging a pull request, or when starting a Python, Solidity, or Solana/Anchor code audit.
 
 > **Treat findings as pointers to inspect, never verdicts.** Always open and read the cited file and line before changing code or reporting an upstream issue.
 
@@ -20,7 +20,7 @@ python -m pip install coherion-mipcode
 mip-delta --version
 ```
 
-`--check-git` and `--check-merge` require `git` in the workspace; `--audit-repo`, `--audit-solidity`, and `--before`/`--after` read files directly without git history.
+`--check-git` and `--check-merge` require `git` in the workspace; `--audit-repo`, `--audit-solidity`, `--fork-diff`, `--audit-anchor`, and `--before`/`--after` read files directly without git history.
 
 ## 2. Commands by Task
 
@@ -43,6 +43,14 @@ mip-delta --version
 - **Audit Solidity contracts (zero external Solidity toolchain required):**
   ```sh
   mip-delta --audit-solidity --root contracts/ --json
+  ```
+- **Compare a Solidity fork against its upstream baseline (research preview):**
+  ```sh
+  mip-delta --fork-diff --upstream upstream_contracts/ --root fork_contracts/ --json
+  ```
+- **Audit Solana/Anchor programs for `#[derive(Accounts)]` constraint asymmetry (zero external Rust/Anchor toolchain required, research preview):**
+  ```sh
+  mip-delta --audit-anchor --root programs/ --json
   ```
 - **Compare a before/after Python or Solidity file pair directly:**
   ```sh
@@ -83,7 +91,7 @@ mip-delta --version
   ```yaml
   repos:
     - repo: https://github.com/Nitefawkes/mipcode
-      rev: v0.6.4
+      rev: v0.6.6
       hooks:
         - id: mip-delta
   ```
@@ -104,7 +112,7 @@ mip-delta --version
 
 ## 5. Known Scope, Evidence & Limitations
 
-- Supports **Python and Solidity only** (and Solidity support is newer than Python).
+- Supports **Python, Solidity (`--audit-solidity`, `--fork-diff`), and Solana/Anchor Rust (`--audit-anchor`, research preview)** (Python checks are the primary tested target).
 - Across the public finding ledger (transcribed 2026-11-16; no scan dates recorded): **20 findings over 14 distinct sites across 43 distinct repositories** (44 scan targets, 7,778 files), with **35 of 43 distinct repositories silent** and **4 of 14 sites published as false reports** (`false_report`).
 - Fitted development benchmarks (`15 of 68` adjudicated replay sites useful across 5 Python repos; `18 of 37` flagged commits useful in baseline sieve Arm A over 67 commits) were measured on repositories the detectors had already seen and are not a forecast for unseen code.
 - In our only measurement on unseen code (the frozen **8-repository Solidity holdout**, `448` `.sol` files in `1.25 s`, `7 of 8` silent), `mip-delta` emitted `2` findings and **0 of 2** turned out to be real issues — too small a sample to estimate unseen precision.

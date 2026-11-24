@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "coherion-mipcode"
-version = "0.6.5"
-description = "Static Python call-contract checks and Solidity structural analysis with mip-delta"
+version = "0.6.6"
+description = "Static Python call-contract checks, Solidity structural/fork analysis, and Solana/Anchor constraint checks with mip-delta"
 readme = "README-pypi.md"
 requires-python = ">=3.10"
 license = "Apache-2.0"
@@ -13,7 +13,7 @@ license-files = ["LICENSE", "NOTICE"]
 authors = [
   {name = "Brian Gansz"}
 ]
-keywords = ["python", "static-analysis", "pre-commit", "code-review", "contract-testing", "ci", "ai-agents", "mipdelta", "mipcode"]
+keywords = ["python", "static-analysis", "pre-commit", "code-review", "contract-testing", "ci", "ai-agents", "solidity", "solana", "anchor", "mipdelta", "mipcode"]
 dependencies = []
 classifiers = [
   "Development Status :: 4 - Beta",

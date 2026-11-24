@@ -135,8 +135,26 @@ Static Solidity checks cover:
 - **`state_sink_review`:** `private` or `internal` constants and state variables never read in their contract or derived contracts (skipping `__gap` storage slots).
 - **`parameter_sink_review`:** Unused named parameters in concrete contract bodies.
 - **`delegating_wrapper_review` & `override_modifier_review`:** Wrapper/router calls dropping shared guard parameters (with branch-forwarding awareness) or overrides dropping security modifiers (`nonReentrant`, `whenNotPaused`, `onlyOwner`) without invoking `super`.
+- **`sibling_guard_asymmetry`:** Missing state guards (paused/frozen/initialized checks) or state-sync steps across sibling mutators sharing state variables or storage structs, including cross-library `<Struct> storage` pooling.
 
 See the [offline Solidity & Web3 evaluation](../results/solidity_bounty/README.md).
+
+## Compare a Solidity fork against upstream (`--fork-diff`)
+
+Research preview (zero external Solidity toolchain required). Compare a downstream fork tree (`--root`) against its upstream baseline (`--upstream`) to flag removed or weakened modifiers, checks, or state-sync steps at matched functions:
+
+```sh
+mip-delta --fork-diff --upstream upstream_contracts/ --root fork_contracts/ --json
+```
+
+## Audit Solana/Anchor programs (`--audit-anchor`)
+
+Research preview (zero external Rust/Anchor toolchain required). Scan Anchor `.rs` sources for sibling `#[derive(Accounts)]` constraint asymmetries (`has_one`, `seeds`, `Signer`, `mut`, token program/mint checks, and state-flag guards across handlers sharing an account type):
+
+```sh
+mip-delta --audit-anchor --root programs/ --json
+mip-delta --audit-anchor --root programs/ --format github
+```
 
 ## Audit a repository snapshot at rest (`--audit-repo`)
 

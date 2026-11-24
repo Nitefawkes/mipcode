@@ -59,7 +59,7 @@ def _resolve_package_version() -> str:
     try:
         return importlib.metadata.version("coherion-mipcode")
     except importlib.metadata.PackageNotFoundError:
-        return "0.6.5"
+        return "0.6.6"
 
 
 __version__ = _resolve_package_version()

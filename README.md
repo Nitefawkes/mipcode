@@ -88,7 +88,13 @@ mip-delta --audit-repo --root . --review
 
 ### Solidity & Web3 Contract-Delta Preview (`--audit-solidity`)
 
-`mip-delta` also includes a zero-dependency Solidity structural contract analyzer (`mipdelta.solidity`) targeting cross-contract and patch-delta defects where `solc` compiles cleanly: `try_catch_sink_review` (non-reverting `catch` leaving pre-allocated `memory` array slots zero-initialized before hash/emit sinks), `state_sink_review` (dead private/internal constants or state variables), `parameter_sink_review`, `delegating_wrapper_review` (with branch-forwarding awareness), and `override_modifier_review`.
+`mip-delta` also includes a zero-dependency Solidity structural contract analyzer (`mipdelta.solidity`) targeting cross-contract and patch-delta defects where `solc` compiles cleanly: `try_catch_sink_review` (non-reverting `catch` leaving pre-allocated `memory` array slots zero-initialized before hash/emit sinks), `state_sink_review` (dead private/internal constants or state variables), `parameter_sink_review`, `delegating_wrapper_review` (with branch-forwarding awareness), `override_modifier_review`, and `sibling_guard_asymmetry` (missing state guards or state-sync steps across sibling mutators sharing state or storage structs, including cross-library storage-struct pooling).
+
+In addition (research preview, zero external Solidity/Rust toolchains required), `mip-delta` supports:
+- **`--fork-diff` (`mipdelta.solidity_fork`):** Deterministic fork-vs-upstream invariant regression diffing (`--fork-diff --upstream <upstream> --root <fork>`).
+- **`--audit-anchor` (`mipdelta.anchor`):** Solana/Anchor `#[derive(Accounts)]` sibling constraint asymmetry auditing (`has_one`, `seeds`, `Signer`, mutability, and guard flags across sibling instructions sharing an account struct).
+
+See the [usage guide](docs/usage.md) and [v0.6 release notes](docs/release-notes-v0.6.md) for command details and scope notes.
 
 In our [offline Web3 & Solidity evaluation](results/solidity_bounty/README.md) ([curated harness](experiments/solidity_bounty/run_offline_eval.py), [12-target contest corpus](experiments/solidity_bounty/run_contest_corpus.py), [frozen `v0.6.4` holdout](experiments/solidity_bounty/run_holdout_corpus.py)):
 - **`WormholeGatewayAdapter._wormholeChainId` (`oz-community-contracts` @ `0361935dc5ed`):** Flagged independently (`state_sink_review`, `L28`) and corroborated by an independent upstream cleanup removing `_wormholeChainId` ([`openzeppelin-community-contracts#276`](https://github.com/OpenZeppelin/openzeppelin-community-contracts/pull/276)); the remaining `refundChain` duplicate `targetChain` at `_sendMessage` (`L333`) was reported by us in [`#321`](https://github.com/OpenZeppelin/openzeppelin-community-contracts/issues/321).
@@ -100,6 +106,8 @@ In our [offline Web3 & Solidity evaluation](results/solidity_bounty/README.md) (
 ```sh
 mip-delta --audit-solidity --root contracts/ --fail-on-findings
 mip-delta --before Vault_v1.sol --after Vault_v2.sol --json
+mip-delta --fork-diff --upstream upstream_contracts/ --root fork_contracts/ --json
+mip-delta --audit-anchor --root programs/ --json
 ```
 
 ## Quick start

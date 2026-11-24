@@ -2,8 +2,9 @@
 
 MipCode's `mip-delta` command checks Python changes for call sites, wrappers,
 and overrides that may need to change with them. It can also review a Python
-repository snapshot and run structural checks on Solidity source. This is a
-research preview. Findings are prompts for review.
+repository snapshot, run structural and fork-vs-upstream checks on Solidity
+source, and check Solana/Anchor `#[derive(Accounts)]` constraint symmetry.
+This is a research preview. Findings are prompts for review.
 
 ## Install
 
@@ -33,6 +34,18 @@ For a Solidity source tree:
 
 ```sh
 mip-delta --root . --audit-solidity
+```
+
+Compare a Solidity fork against its upstream contracts (research preview):
+
+```sh
+mip-delta --fork-diff --upstream upstream_contracts/ --root fork_contracts/
+```
+
+For a Solana/Anchor Rust program workspace (research preview):
+
+```sh
+mip-delta --root programs/ --audit-anchor
 ```
 
 These commands analyze source locally. Runtime observation with

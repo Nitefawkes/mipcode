@@ -1,12 +1,12 @@
 name: "mip-delta Architectural Delta Gate"
-description: "Deterministic Python & Solidity contract delta verification with optional Stage-2 triage."
+description: "Deterministic Python, Solidity, and Solana/Anchor contract delta verification with optional Stage-2 triage."
 branding:
   icon: "shield"
   color: "blue"
 
 inputs:
   mode:
-    description: "Analysis mode: check-git, check-merge, audit-repo, or audit-solidity"
+    description: "Analysis mode: check-git, check-merge, audit-repo, audit-solidity, or audit-anchor"
     required: false
     default: "check-git"
   base-ref:
@@ -68,6 +68,9 @@ runs:
             ;;
           audit-solidity)
             args+=(--audit-solidity)
+            ;;
+          audit-anchor)
+            args+=(--audit-anchor)
             ;;
           *)
             echo "::error::Unsupported mip-delta action mode: ${{ inputs.mode }}" >&2

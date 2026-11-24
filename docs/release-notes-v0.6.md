@@ -1,6 +1,13 @@
-# MipCode v0.6 research preview (v0.6.0 – v0.6.2)
+# MipCode v0.6 research preview (v0.6.0 – v0.6.6)
 
-Use `mip-delta` to check proposed edits or Git working tree changes for possible Python caller and contract breaks. Its short advisories point to source locations for review. For supported environments (CPython 3.12+), `--run-pytest` adds evidence about calls executed during tests. Start with the [quick start](../README.md#quick-start) and [usage guide](usage.md).
+Use `mip-delta` to check proposed edits, Git working tree changes, Solidity contracts/forks, or Solana/Anchor programs for possible contract or invariant breaks. Its short advisories point to source locations for review. For supported environments (CPython 3.12+), `--run-pytest` adds evidence about calls executed during tests. Start with the [quick start](../README.md#quick-start) and [usage guide](usage.md).
+
+## Updates in v0.6.6
+
+- **Solidity `sibling_guard_asymmetry` v2.1 (`--audit-solidity`):** Added deterministic sibling guard and state-sync asymmetry detection across functions sharing mutated state and across workspace libraries mutating the same `<Struct> storage` parameter.
+- **Solidity fork-vs-upstream diff (`--fork-diff` / `--upstream`, research preview):** Added zero-dependency fork-to-upstream Solidity regression comparison in `mipdelta.solidity_fork` to surface dropped guards or weakened checks in adapted contracts.
+- **Solana/Anchor constraint asymmetry audit (`--audit-anchor`, research preview):** Added zero-dependency Rust/Anchor scanner in `mipdelta.anchor` for `#[derive(Accounts)]` sibling constraint asymmetries (`has_one`, `seeds`, `Signer`, `mut`, flag guards), with unified single-crate `src/` scope resolution and `impl`-method isolation from free-function matching.
+- **GitHub Action update:** Added `audit-anchor` support to [`action.yml`](../action.yml).
 
 ## Updates through v0.6.2
 
