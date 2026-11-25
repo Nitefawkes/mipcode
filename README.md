@@ -1,10 +1,12 @@
-# MipCode v0.6 research preview
+![MipCode — Seam & Boundary Analyzer](docs/mipcodeseamimg.webp)
 
-[![CI](https://github.com/Nitefawkes/mipcode/actions/workflows/ci.yml/badge.svg)](https://github.com/Nitefawkes/mipcode/actions/workflows/ci.yml) [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
+# MipCode
 
-MipCode checks a Python change for places it left inconsistent. When a change alters a function's contract, the `mip-delta` command names the other files and lines that may need the same change: a caller that omits a newly required argument, a wrapper that accepts a new option and does not pass it on, an override that no longer matches its base.
+[![CI](https://github.com/Nitefawkes/mipcode/actions/workflows/ci.yml/badge.svg)](https://github.com/Nitefawkes/mipcode/actions/workflows/ci.yml) [![PyPI](https://img.shields.io/pypi/v/coherion-mipcode.svg)](https://pypi.org/project/coherion-mipcode/) [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://pypi.org/project/coherion-mipcode/) [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 
-Run it before a commit, on a pull request, or after a merge. It reads source only and needs no configuration. Most changes produce no output. Treat what it prints as a prompt for review, because most of its reports are not defects.
+MipCode (`mip-delta`) checks Python changes and resting repositories for seam and contract inconsistencies: a caller that omits a newly required argument, a delegating wrapper that accepts an option and fails to forward it, an unused `self.<param>` configuration store, or an override whose signature drifts from its base. It also includes zero-dependency structural and fork-vs-upstream checks for Solidity (`--audit-solidity`, `--fork-diff`) and Solana/Anchor `#[derive(Accounts)]` constraint symmetry (`--audit-anchor`).
+
+Run it before a commit, on a pull request, after a merge, or cold against `HEAD`. It reads source only and needs no configuration. Most changes produce no output. Treat what it prints as a prompt for review, because Stage-1 static reports can still include benign sites.
 
 ## What it finds
 
@@ -80,6 +82,7 @@ In a [24-repository cold sweep](results/cold_audit/README.md) ([protocol](experi
 - **22 of 24 repositories (`91.7%`) emitted zero alerts**, showing strict quietness on mature codebases even with no diff boundary.
 - **9 of 10 Stage-1 findings (`90.0%`) were real standing bugs:** `Textualize/rich` (`rich/traceback.py:309` `Traceback.__init__` dropping 5 `locals_*` options, `rich/traceback.py:487` recursive `Traceback.extract` dropping `locals_max_depth`/`locals_max_string` on `ExceptionGroup`s, and 2 dead `self.locals_hide_{dunder,sunder}` stores). In the initial sweep (`20/24` silent), it also caught MipCode's own `ContainedGatewaySession.__init__` storing an unread `self.max_visible_bytes` quota (`src/mipdelta/gateway.py`), which has since been enforced (`0` self-findings).
 - **`--review` reached `100%` kept precision for `$0.009854` total:** Stage-2 Haiku triage (reading injected `[callee contract]` signatures) suppressed the remaining benign `LazyFile` stdin `"-"` finding in `click` (`$0.001102`) while keeping `rich` (`confirm_omission`, `$0.008752`).
+- **Recent cold-audit catch & precision polish:** Subsequent cold sweeps caught `WeaviateHandshake.__init__` storing unread `batch_dynamic=True` while `write()` always called `fixed_size()` (reported in [`feyninc/chonkie#691`](https://github.com/feyninc/chonkie/issues/691)), and precision filters now suppress `raise NotImplementedError`-only override stubs, explicit deprecation-sentinel defaults, and leaf callees that never read an interface-compatibility parameter while preserving multi-hop wrapper drops (such as `Textualize/trogon`'s `focus(scroll_visible)` chain).
 
 ```sh
 mip-delta --audit-repo --root . --json
@@ -132,7 +135,7 @@ The report points to `consumer.py:5` and names `required_keyword_missing`.
 
 ## Where to run it
 
-- **Before a commit.** Add the [pre-commit hook](.pre-commit-hooks.yaml) to `.pre-commit-config.yaml` (`rev: v0.6.2` or `rev: main`, `id: mip-delta`) to stop the commit while reported sites are open. A site you judge intentional can be `--waive`d (see [usage guide](docs/usage.md#run-before-a-commit)).
+- **Before a commit.** Add the [pre-commit hook](.pre-commit-hooks.yaml) to `.pre-commit-config.yaml` (`rev: v0.6.6` or `rev: main`, `id: mip-delta`) to stop the commit while reported sites are open. A site you judge intentional can be `--waive`d (see [usage guide](docs/usage.md#run-before-a-commit)).
 - **On a pull request.** Use the [MipCode PR Caller Check on GitHub Marketplace](https://github.com/marketplace/actions/mipcode-pr-caller-check) to annotate affected Python callers. The [workflow example](docs/usage.md#run-on-a-pull-request) pins the tested Action and shows how to make findings block a job.
 - **After a merge.** Run `mip-delta --check-merge` (auto-resolving `MERGE_HEAD`, `HEAD^1`/`HEAD^2`, or `--base-ref`) to catch two branches that merged without textual conflicts yet broke a shared contract (see [usage guide](docs/usage.md#check-a-merge)).
 

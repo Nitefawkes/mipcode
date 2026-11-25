@@ -1,3 +1,5 @@
+![MipCode — Seam & Boundary Analyzer](https://raw.githubusercontent.com/Nitefawkes/mipcode/main/docs/mipcodeseamimg.webp)
+
 # MipCode
 
 MipCode's `mip-delta` command checks Python changes for call sites, wrappers,
