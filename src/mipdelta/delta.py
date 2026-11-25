@@ -687,6 +687,143 @@ def _fn_ignores_param(fn: FunctionFact, param: str) -> bool:
     return param in fn.ignored_params or _docstring_marks_ignored(fn, param)
 
 
+def _is_not_implemented_override_stub(fn: FunctionFact) -> bool:
+    """True when a method body is only an optional docstring and `raise NotImplementedError(...)`."""
+    node = fn._ast_node
+    if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) or not node.body:
+        return False
+    stmts = list(node.body)
+    if (
+        stmts
+        and isinstance(stmts[0], ast.Expr)
+        and isinstance(stmts[0].value, ast.Constant)
+        and isinstance(stmts[0].value.value, str)
+    ):
+        stmts = stmts[1:]
+    if not stmts:
+        return False
+    for stmt in stmts:
+        if not isinstance(stmt, ast.Raise) or stmt.exc is None:
+            return False
+        raised = stmt.exc.func if isinstance(stmt.exc, ast.Call) else stmt.exc
+        if isinstance(raised, ast.Name):
+            exc_name = raised.id
+        elif isinstance(raised, ast.Attribute):
+            exc_name = raised.attr
+        else:
+            return False
+        if exc_name != "NotImplementedError":
+            return False
+    return True
+
+
+def _is_deprecation_sentinel_default(default_text: str | None) -> bool:
+    """True only when a default expression is an explicit deprecation sentinel literal/name/attr."""
+    if not default_text or "deprecat" not in default_text.lower():
+        return False
+    return default_text.startswith(("Constant(value='", 'Constant(value="', "Name(id=", "Attribute("))
+
+
+def _iter_own_body_nodes(fn_node: ast.FunctionDef | ast.AsyncFunctionDef) -> Iterable[ast.AST]:
+    stack: list[ast.AST] = list(reversed(fn_node.body))
+    while stack:
+        node = stack.pop()
+        yield node
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef, ast.Lambda)):
+            continue
+        children = list(ast.iter_child_nodes(node))
+        stack.extend(reversed(children))
+
+
+def _root_name(expr: ast.AST) -> str | None:
+    cur = expr
+    while isinstance(cur, ast.Attribute):
+        cur = cur.value
+    return cur.id if isinstance(cur, ast.Name) else None
+
+
+def _expr_rooted_at_self_or_cls(expr: ast.AST) -> bool:
+    cur: ast.AST = expr
+    while True:
+        if isinstance(cur, ast.Attribute):
+            cur = cur.value
+        elif isinstance(cur, ast.Call):
+            cur = cur.func
+        elif isinstance(cur, ast.Subscript):
+            cur = cur.value
+        elif isinstance(cur, ast.Await):
+            cur = cur.value
+        else:
+            break
+    return isinstance(cur, ast.Name) and cur.id in {"self", "cls"}
+
+
+def _callee_is_leaf_ignoring_param(
+    target: FunctionFact,
+    param: str,
+    index: MutableResolutionIndex,
+) -> bool:
+    """True when `target` is a concrete leaf that never reads `param` and does not delegate onward."""
+    if target.is_stub:
+        return False
+    if param in target.local_name_reads or param in target.params_with_sink or param in target.field_writes:
+        return False
+    fn_node = target._ast_node
+    if not isinstance(fn_node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+        return False
+    if any(call.callee_name in {"locals", "vars"} for call in target.own_calls):
+        return False
+
+    self_derived_locals: set[str] = set()
+    calls_in_body: list[ast.Call] = []
+    for node in _iter_own_body_nodes(fn_node):
+        if isinstance(node, ast.Call):
+            calls_in_body.append(node)
+        elif isinstance(node, ast.Assign):
+            if _expr_rooted_at_self_or_cls(node.value):
+                for lhs in node.targets:
+                    if isinstance(lhs, ast.Name):
+                        self_derived_locals.add(lhs.id)
+        elif isinstance(node, ast.AnnAssign) and node.value is not None:
+            if isinstance(node.target, ast.Name) and _expr_rooted_at_self_or_cls(node.value):
+                self_derived_locals.add(node.target.id)
+
+    for call_node in calls_in_body:
+        func = call_node.func
+        if isinstance(func, ast.Attribute):
+            if isinstance(func.value, ast.Call):
+                super_head = func.value.func
+                if (isinstance(super_head, ast.Name) and super_head.id == "super") or (
+                    isinstance(super_head, ast.Attribute) and super_head.attr == "super"
+                ):
+                    return False
+                if _expr_rooted_at_self_or_cls(func.value):
+                    return False
+            if func.attr == target.name:
+                return False
+            if isinstance(func.value, ast.Attribute) and _root_name(func.value) in {"self", "cls"}:
+                return False
+            if isinstance(func.value, ast.Name) and func.value.id in self_derived_locals:
+                return False
+        elif isinstance(func, ast.Name):
+            if func.id == target.name:
+                return False
+
+    target_file = index.files.get(target.path)
+    if target_file is not None:
+        for call in target.own_calls:
+            for sub_target, _ in resolve_call_with_provenance(call, target_file, index):
+                if sub_target.path == target.path and sub_target.qualname == target.qualname:
+                    return False
+                if any(
+                    tp.name == param and tp.name not in {"self", "cls"}
+                    for tp in sub_target.parameters
+                ):
+                    return False
+
+    return True
+
+
 def analyze_changed_files_in_index(
     before_changed: Mapping[str, FileFacts | None],
     after_changed: Mapping[str, FileFacts],
@@ -938,7 +1075,7 @@ def analyze_changed_files_in_index(
                 if child.qualname == new.class_qualname and child.path == new.path:
                     continue
                 override = child.methods.get(new.name)
-                if override is None:
+                if override is None or _is_not_implemented_override_stub(override):
                     continue
                 override_params = _parameter_map(override)
                 evidence = []
@@ -1153,7 +1290,15 @@ def analyze_changed_files_in_index(
                     continue
                 if _fn_ignores_param(owner_fn, parameter):
                     continue
-                owner_param_names = {p.name for p in owner_fn.parameters}
+                owner_params_map = _parameter_map(owner_fn)
+                target_params_map = _parameter_map(target)
+                owner_param = owner_params_map.get(parameter)
+                target_param = target_params_map.get(parameter)
+                if (owner_param is not None and _is_deprecation_sentinel_default(owner_param.default)) or (
+                    target_param is not None and _is_deprecation_sentinel_default(target_param.default)
+                ):
+                    continue
+                owner_param_names = set(owner_params_map)
                 is_delegating_wrapper = (owner_fn.name == target.name) or (parameter in owner_param_names)
                 if not is_delegating_wrapper:
                     continue
@@ -1202,6 +1347,13 @@ def analyze_changed_files_in_index(
             target_params = _parameter_map(target)
             target_param = target_params.get(parameter)
             if target_param is None or target_param.default is None:
+                continue
+            owner_param = _parameter_map(owner_fn).get(parameter)
+            if (owner_param is not None and _is_deprecation_sentinel_default(owner_param.default)) or (
+                _is_deprecation_sentinel_default(target_param.default)
+            ):
+                continue
+            if _callee_is_leaf_ignoring_param(target, parameter, index):
                 continue
             target_pos = [
                 p.name for p in target.parameters if p.name not in {"self", "cls"} and p.kind in {"posonly", "positional"}
@@ -1502,6 +1654,12 @@ def _cold_wrapper_findings(
                         continue
                     if _fn_ignores_param(fn, p):
                         continue
+                    if _is_deprecation_sentinel_default(owner_params[p].default) or _is_deprecation_sentinel_default(
+                        target_params[p].default
+                    ):
+                        continue
+                    if _callee_is_leaf_ignoring_param(target, p, index):
+                        continue
                     if _sibling_forwards_param(fn, target.name, p, target_pos):
                         continue
                     stem = _prefix_stem(p)
@@ -1630,6 +1788,7 @@ def _cold_override_findings(index: MutableResolutionIndex) -> list[Finding]:
                     or override.name.startswith("_")
                     or _has_kwarg(override)
                     or any(p.kind == "vararg" for p in override.parameters)
+                    or _is_not_implemented_override_stub(override)
                 ):
                     continue
                 base, _ = _nearest_base_method(cls, override.name, index)
